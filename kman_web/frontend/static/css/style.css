@@ -1,0 +1,22 @@
+.disordered{
+	background: #F06C51;
+	font-family: monospace;
+
+}
+.structured{
+	background: #99F051;
+	font-family: monospace;
+}
+.letterK{
+    color: #ff9393;
+}
+.letterK:hover{
+    color: #000000;
+}
+#block2{
+    margin: 30px;
+    float: right;
+}
+#block1{
+    float: left;
+}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block content %} 
+<div class = "panel-group" id="accordion">
+    <div class="panel panel-default" style="width=100%" id ="panel0">
+        <div class="panel-heading">
+        <strong>Job status: </strong><span class="label label-default" id="status">QUEUED</span>
+        </div>
+    </div>
+    <div class="panel panel-default" style="width=100%" id="panel1">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+        <button type="button" data-toggle="collapse" data-target="#collapseOne"><span class="glyphicon glyphicon-chevron-down"></span></button>
+        <strong>Disorder prediction</strong>
+        </h4>
+      </div>
+      <div id = "collapseOne" class = "panel-collapse collapse">
+        <div class="panel-body">
+          <div id="canvas" style="overflow:scroll; height:300px; width:100%;">
+          </div>
+          <div id="output">
+          </div>
+        </div>
+      </div>
+      <div class=panel-footer>
+        <div id="download">
+            <form action="{{ url_for("dashboard.download") }}" method=POST style="clear:both;" >
+                  <input type="hidden" id="download_pred_input" name="prediction"  style="display:none;"/>
+                  <button type="submit" id="download_pred_button" class="btn btn-primary btn-xs disabled" style="float:right;" value="Submit">
+                      <span class="glyphicon glyphicon-save"></span> Download
+                  </button>
+            </form>
+            <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel2">
+      <div class="panel-heading">
+          <h4 class="panel-title">
+              <button type="button" data-toggle="collapse" data-target="#collapseTwo"><span class="glyphicon glyphicon-chevron-down"></span></button>
+              <strong>Alignment</strong>
+              </a>
+          </h4>
+      </div>
+      <div id="collapseTwo" class = "panel-collapse collapse">
+          <div class="panel-body">
+            <div id="alignment_canvas" style="overflow:scroll; height:300px; width:100%;">
+            </div>
+          </div>
+      </div>
+      <div class=panel-footer>
+        <div id="download_alignment">
+            <form action="{{ url_for("dashboard.download_alignment") }}" method=POST style="clear:both;" >
+             <input type="hidden" id="download_al_input" name="alignment" style="display:none;"/>
+             <button type="submit" id="download_al_button" class="btn btn-primary btn-xs disabled" style="float:right;" value="Submit">
+                 <span class="glyphicon glyphicon-save"></span> Download
+             </button>
+            </form>
+            <div class="clearfix"></div>
+        </div>
+      </div>
+   </div>                
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script type="text/javascript">
+  if ("{{ output_type }}" == "predict"){
+     document.getElementById('panel2').style.display = 'none';
+  }
+  $(document).ready(function() {
+    var intervalId = setInterval(function(){
+        $.getJSON(
+          "{{ url_for('kman.get_kman_status', output_type=output_type, id=celery_id) }}",
+          function(data) {
+            $('#status').text(data['status']);
+
+            if (data['status'] == 'PENDING') {
+              $('#status').removeClass("label-default")
+                          .addClass("label-info");
+              $('#panel0').removeClass("panel-default")
+                          .addClass("panel-info");
+            }
+
+            if (data['status'] == 'FAILURE') {
+              clearInterval(intervalId);
+              $('#status').removeClass("label-default label-info")
+                          .addClass("label-danger");
+              $('#panel0').removeClass("panel-default panel-info")
+                          .addClass("panel-danger");
+              $('#output').text(data['message']);
+            }
+
+            if (data['status'] == 'SUCCESS') {
+              clearInterval(intervalId);
+              $('#status').removeClass("label-default label-info")
+                          .addClass("label-success");
+              $('#panel0').removeClass("panel-default panel-info")
+                          .addClass("panel-success");
+              $.getJSON(
+                  "{{ url_for('kman.get_kman_result', output_type=output_type, id=celery_id) }}",
+                function(data) {
+                    var proseq = new ProteinSequences("canvas", data['result']['prediction']);
+                    proseq.update()
+                    $('#collapseOne').addClass('in');
+                    var raw_data = get_text_data(data['result']['prediction']);
+                    document.getElementById('download_pred_input').value = raw_data;
+                    $('#download_pred_button').removeClass('disabled');
+                    if ("{{ output_type }}" == "predict_and_align"){
+                        var raw_alignment = data['result']['alignment']['raw'];
+                        document.getElementById('download_al_input').value = raw_alignment;
+                        var processed_alignment = data['result']['alignment']['processed'];
+                        var alignment = new SequenceAlignment('alignment_canvas',processed_alignment);
+                        alignment.update();
+                        $('#download_al_button').removeClass('disabled');
+                        $('#collapseTwo').addClass('in');
+                    }
+                });
+            }
+          }
+        )}, 1000);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{
+  "name": "kman-web",
+  "version": "0.0.0",
+  "homepage": "https://github.com/cmbi/kman-web",
+  "authors": [
+    "Joanna Lange <joasialange@gmail.com>"
+  ],
+  "license": "Unknown",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "kman_web/frontend/static/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  }
+}
