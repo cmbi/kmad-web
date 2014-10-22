@@ -8,17 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
     <!-- Javascript -->
-    <script type="text/javascript" src="{{ url_for('static', filename='jquery-1.11.1.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='jquery-ui.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='bootstrap-3.2.0-dist/js/bootstrap.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='kinetic.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='proseq.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='libs/bootstrap/dist/js/bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='libs/kineticjs/kinetic.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='joseq.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='txtproc.js') }}"></script>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.2.0-dist/css/bootstrap-theme.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-3.2.0-dist/css/bootstrap.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/dist/css/bootstrap-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/dist/css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
   </head>
