@@ -8,8 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{% endblock %}</title>
     <!-- Javascript -->
+    <script type="text/javascript" src="{{ url_for('static', filename='libs/jquery/jquery.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='libs/bootstrap/dist/js/bootstrap.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='libs/kineticjs/kinetic.js') }}"></script>
+
     <script type="text/javascript" src="{{ url_for('static', filename='js/joseq.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/txtproc.js') }}"></script>
 
