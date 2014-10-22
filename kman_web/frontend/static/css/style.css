@@ -10,13 +10,47 @@
 .letterK{
     color: #ff9393;
 }
-.letterK:hover{
-    color: #000000;
-}
+
 #block2{
     margin: 30px;
     float: right;
 }
 #block1{
     float: left;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #b24747;
+    outline: none;
+}
+.navbar-inverse .navbar-brand:hover {
+    color: #ff6666;
+    background-color: transparent;
+    outline: none;
+}
+.navbar-inverse .navbar-brand:focus {
+    color: #ff6666;
+    background-color: transparent;
+    outline: none;
+}
+.navbar-inverse .navbar-brand span {
+    color: #527acc;
+}
+.navbar-inverse .navbar-brand:focus span,
+.navbar-inverse .navbar-brand:hover span {
+    color: #6699FF;
+}
+.navbar-inverse .navbar-brand span span{
+    color: #cccc7a;
+}
+.navbar-inverse .navbar-brand:focus span span,
+.navbar-inverse .navbar-brand:hover span span {
+    color: #ffff99;
+}
+.navbar-inverse .navbar-brand span span span {
+    color: #7acc52;
+}
+.navbar-inverse .navbar-brand:focus span span span,
+.navbar-inverse .navbar-brand:hover span span span {
+    color: #99ff66;
 }
