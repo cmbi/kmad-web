@@ -16,5 +16,7 @@
     "tests"
   ],
   "dependencies": {
+    "bootstrap": "~3.2.0",
+    "kineticjs": "~5.1.0"
   }
 }
