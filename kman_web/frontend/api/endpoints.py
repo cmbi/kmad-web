@@ -59,7 +59,6 @@ def get_kman_result(output_type, id):
     from kman_web.tasks import get_task
     task = get_task(output_type)
     _log.debug("task is {}".format(task.__name__))
-    #response = {'result': task.AsyncResult(id).get()}
     result = task.AsyncResult(id).get()
     if output_type == "predict_and_align":
         response = {'result': {'prediction': result[0:-1], 'alignment': {'raw': result[-1][0],'processed':result[-1][1]}}}
