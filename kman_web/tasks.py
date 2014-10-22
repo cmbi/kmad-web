@@ -167,8 +167,6 @@ def align(d2p2, filename):
 
         ## 7chars ##
         toalign = convert_to_7chars(fastafile)          ## .7c filename
-        subprocess.call(["cp", toalign, "checkresult.7c"])
-        subprocess.call(["cp", fastafile, "checkresult.fasta"])
         codon_length = 7
         ## end of 7 ##
 
