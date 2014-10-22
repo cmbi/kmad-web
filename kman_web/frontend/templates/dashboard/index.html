@@ -39,39 +39,12 @@
 </div>
 </form>
 <br>
-<form method="post" action="{{ url_for('dashboard.index') }}" role="form_files"
-    enctype="multipart/form-data">
-    <div class=row>
-        <div class="col-xs-12">
-            {{ form_files.hidden_tag() }}
-            <div id=filename_div class="form-group">
-                {{ form_files.filename.label }}
-                {{ form_files.filename(class_='form-control', style="width:300px;") }}
-            </div>
-        </div>
-        <div class="col-xs-6"> 
-          <div id="form_files_submit_div" class="form-group ">
-              <button type="submit" name="filename" class="btn btn-primary">Submit</button>
-          </div>
-        </div>
-    </div>
-</form>
-<br>
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
 function show_sequence_input() {
     $('#sequence_div').removeClass('hidden');
 }
-$(function() {
-    $( "#menu" ).menu();
-});
-$(function() {
-    var availableTags = {{ calc|tojson|safe }};
-    $( "#tags" ).autocomplete({
-    source: availableTags
-    });
-});
 </script>
 {% endblock %}
 

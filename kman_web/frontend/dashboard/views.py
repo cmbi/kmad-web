@@ -3,7 +3,7 @@ import StringIO
 
 from flask import Blueprint, render_template, request, redirect, url_for, send_file
 
-from kman_web.frontend.dashboard.forms import KmanForm, FilenameForm
+from kman_web.frontend.dashboard.forms import KmanForm
 from kman_web.services.files import get_calculated_results
 from kman_web.services.kman import KmanStrategyFactory
 from kman_web.services.predictors import run_predictions, get_results
@@ -18,7 +18,6 @@ bp = Blueprint('dashboard', __name__)
 @bp.route("/", methods=['POST', 'GET'])
 def index():
     form = KmanForm()
-    form_files = FilenameForm()
     if form.validate_on_submit() and form.sequence.data and form.output_type.data:
         data = form.sequence.data
         strategy = KmanStrategyFactory.create(form.output_type.data)
@@ -30,13 +29,8 @@ def index():
         return redirect(url_for('dashboard.output',
                                 output_type=form.output_type.data,
                                 celery_id=celery_id))
-    #elif request.form['btn'] == "filename" and form_files.validate_on_submit():
-    elif form_files.validate_on_submit() and form_files.filename.data:
-        filename_data = form_files.filename.data
-        return redirect(url_for('dashboard.previous_output', filename=filename_data))
-    calculated = get_calculated_results()
     _log.info("Rendering index page")
-    return render_template('dashboard/index.html', calc=calculated, form=form, form_files=form_files)
+    return render_template('dashboard/index.html', form=form)
 
 
 @bp.route('/out', methods=['POST'])
