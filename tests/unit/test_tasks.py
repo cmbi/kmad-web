@@ -126,11 +126,17 @@ class TestTasks(object):
         eq_(result.get(), expected)
 
         ## check: sequence found in swissprot, but not found in d2p2
-        mock_call.return_value = [True, 'CRAM_CRAAB']
+        mock_call.return_value = [True, 'P01542']
         expected = [False, []]
 
         result = query_d2p2.delay(filename)
         eq_(result.get(), expected)
+
+        ## check: sequence found in d2p2
+        mock_call.return_value = [True, 'P10636']
+
+        result = query_d2p2.delay(filename).get()
+        eq_(result[0], True)
 
 
 
