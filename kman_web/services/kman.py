@@ -39,7 +39,6 @@ class PredictStrategy(object):
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta",delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
         sequence = fasta_seq.splitlines()[1]
-        seq_id = getID(fasta_seq, tmp_file.name)
         _log.debug("Created tmp file '{}'".format(tmp_file.name))
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
@@ -47,7 +46,7 @@ class PredictStrategy(object):
 
         methods = ["dummy"]
         tasks_to_run = [get_seq.s(fasta_seq)]
-        tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name, seq_id) for pred_name in methods] 
+        tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name) for pred_name in methods] 
         job = chain(query_d2p2.s(tmp_file.name), group(tasks_to_run), postprocess.s(tmp_file.name, self.output_type))()
         task_id = job.id
 
@@ -64,7 +63,6 @@ class PredictAndAlignStrategy(object):
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta",delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
         sequence = fasta_seq.splitlines()[1]
-        seq_id = getID(fasta_seq, tmp_file.name)
         _log.debug("Created tmp file '{}'".format(tmp_file.name))
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
@@ -74,7 +72,7 @@ class PredictAndAlignStrategy(object):
         #methods = ["spine", "predisorder", "psipred", "disopred"]
         methods = ["dummy"]
         tasks_to_run = [get_seq.s(fasta_seq)]
-        tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name, seq_id) for pred_name in methods] 
+        tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name) for pred_name in methods] 
         tasks_to_run += [align.s(tmp_file.name)]
         job = chain(query_d2p2.s(tmp_file.name), group(tasks_to_run), postprocess.s(tmp_file.name, self.output_type))()
         task_id = job.id

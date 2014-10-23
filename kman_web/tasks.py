@@ -41,7 +41,7 @@ def postprocess(result, filename, output_type):
 
 
 @celery_app.task
-def run_single_predictor(d2p2_result, fasta_file, pred_name, seq_id):
+def run_single_predictor(d2p2_result, fasta_file, pred_name):
     out_dir = "kman_web/results"
     _log.debug("Run single predictor")
     if d2p2_result[0]:
@@ -77,13 +77,10 @@ def run_single_predictor(d2p2_result, fasta_file, pred_name, seq_id):
                     #out_file = "test.ss2"
                     args = [method, fasta_file]
                 _log.debug("Running command '{}'".format(args))
-                new_out_name = out_dir+"/"+seq_id+extension[pred_name]
                 output = subprocess.call(args)
                 with open(out_file) as f:
                       data = f.read()
                 data = preprocess(data, pred_name)  
-                args = ["mv", out_file, new_out_name]
-                output = subprocess.call(args)
         except subprocess.CalledProcessError as e:
             _log.error("Error: {}".format(e.output))
             raise RuntimeError(e.output)
@@ -138,7 +135,6 @@ def query_d2p2(filename):
             data = 'seqids=["%s"]' % seq_id
             request = urllib2.Request('http://d2p2.pro/api/seqid', data)
             response = json.loads(urllib2.urlopen(request).read())
-            _log.debug("Response: {}".format(response))
             if response[seq_id]:
                 prediction = process_d2p2(response[seq_id][0][2]['disorder']['consensus'])
             else:

@@ -152,12 +152,18 @@ class TestTasks(object):
         result = query_d2p2.delay(filename)
         result.get()
         
+    @patch('kman_web.tasks.preprocess')    
+    @patch('subprocess.call')
+    def test_run_single_predictor(self, mock_subprocess):
+        filename = 'testdata/test.fasta'
+        methods = ['psipred', 'predisorder', 'disopred', 'spined']
         
-        
-        
+        for pred_name in methods:
 
-    def test_run_single_predictor(self):
-        pass
+            
+            
+            
+        
         
     
   
