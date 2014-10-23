@@ -71,7 +71,8 @@ class PredictAndAlignStrategy(object):
             f.write(fasta_seq)
 
 
-        methods = ["spine", "predisorder", "psipred", "disopred"]
+        #methods = ["spine", "predisorder", "psipred", "disopred"]
+        methods = ["dummy"]
         tasks_to_run = [get_seq.s(fasta_seq)]
         tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name, seq_id) for pred_name in methods] 
         tasks_to_run += [align.s(tmp_file.name)]

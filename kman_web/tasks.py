@@ -20,7 +20,6 @@ _log = logging.getLogger(__name__)
 
 @celery_app.task
 def postprocess(result, filename, output_type):  
-    _log.debug(result)
     ## process result and remove tmp files
     prefix = filename[0:14] 
     if glob.glob('%s*' % prefix):
@@ -40,15 +39,14 @@ def postprocess(result, filename, output_type):
     #        methods.add(i[0])
 
     ## If the results are not form the d2p2 database, then process them (find consensus, and filter out short stretches)
-    if output_type == "predict_and_align" and not (len(result[:-1]) == 2 and result[1][0] == "D2P2"):
+    if output_type == 'predict_and_align' and not (len(result) == 3 and result[1][0] == 'D2P2'):
         consensus = find_consensus_disorder(result[1:-1])   ## first element is the sequence, last element is the alignement
         result = result[:-1] + [consensus] + [result[-1]]
         result = result[:-1] + [filter_out_short_stretches(consensus[1])] + [result[-1]]   ##so that the alignment stays at teh very end
-    elif output_type == "predict" and not (len(result) == 2 and result[1][0] == "D2P2"):
+    elif output_type == 'predict' and not (len(result) == 2 and result[1][0] == 'D2P2'):
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
-
     return result
 
 
@@ -110,9 +108,7 @@ def align(d2p2, filename):
         fastafile = get_fasta_from_blast(out_blast, filename)     ## fasta filename
 
         ## 7chars ##
-        _log.debug("preconvert")
         toalign = convert_to_7chars(fastafile)          ## .7c filename
-        _log.debug("postconvert")
         codon_length = 7
         ## end of 7 ##
 
@@ -177,24 +173,3 @@ def get_task(output_type):
     _log.debug("Got task '{}'".format(task.__name__))
     return task
 
-## TEST TASKS ##
-@celery_app.task
-def add(pair):
-    return pair[0] + pair[1]
-
-
-@celery_app.task
-def tsum(numbers):
-    _log.debug("tsum args")
-    _log.debug(locals())
-    return ['numbers',[0 for i in range(758)]]
-
-
-@celery_app.task
-def get_number():
-    return 1
-
-
-@celery_app.task
-def get_numbers():
-    return [1,1]
