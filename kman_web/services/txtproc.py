@@ -82,7 +82,7 @@ def find_seqid_blast(filename):
             i += 2
             e_val = blast[i].split()[-1]
             seq_id = blast[i].split()[0].split("|")
-            if e_val == '0.0':
+            if e_val < '1e-5':
                 j = i+1
                 while j < len(blast):
                     if ">" in blast[j]:

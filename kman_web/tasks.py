@@ -8,7 +8,7 @@ import urllib2
 from celery import current_app as celery_app, chord
 from kman_web.default_settings import *
 
-from kman_web.services import txtproc
+from kman_web.services.txtproc import preprocess, process_alignment, decode, find_seqid_blast, process_d2p2
 from kman_web.services.consensus import find_consensus_disorder, filter_out_short_stretches
 from kman_web.services.convert import convert_to_7chars
 from kman_web.services.files import get_fasta_from_blast, disopred_outfilename, predisorder_outfilename, psipred_outfilename
@@ -91,7 +91,7 @@ def run_single_predictor(d2p2_result, fasta_file, pred_name, seq_id):
                 output = subprocess.call(args)
                 with open(out_file) as f:
                       data = f.read()
-                data = txtproc.preprocess(data, pred_name)  
+                data = preprocess(data, pred_name)  
                 args = ["mv", out_file, new_out_name]
                 output = subprocess.call(args)
         except subprocess.CalledProcessError as e:
@@ -125,8 +125,8 @@ def align(d2p2, filename):
     except subprocess.CalledProcessError as e:
         _log.error("Error: {}".format(e.output))
         raise RuntimeError(e.output)
-    alignment_list = txtproc.process_alignment(alignment, codon_length)
-    alignment = txtproc.decode(alignment, codon_length)
+    alignment_list = process_alignment(alignment, codon_length)
+    alignment = decode(alignment, codon_length)
     return [alignment,alignment_list]
 
 
@@ -143,13 +143,14 @@ def query_d2p2(filename):
         out_blast = filename.split(".")[0]+".blastp"
         args = ["blastp","-query",filename,"-evalue","1e-5","-num_threads","15","-db",SWISSPROT_DB,"-out",out_blast]
         output = subprocess.call(args)
-        [found_it, seq_id] = txtproc.find_seqid_blast(out_blast)
+        [found_it, seq_id] = find_seqid_blast(out_blast)
         if found_it:
             data = 'seqids=["%s"]' % seq_id
             request = urllib2.Request('http://d2p2.pro/api/seqid', data)
             response = json.loads(urllib2.urlopen(request).read())
+            _log.debug("Response: {}".format(response))
             if response[seq_id]:
-                prediction = txtproc.process_d2p2(response[seq_id][0][2]['disorder']['consensus'])
+                prediction = process_d2p2(response[seq_id][0][2]['disorder']['consensus'])
             else:
                 found_it = False
     except subprocess.CalledProcessError as e:
@@ -166,7 +167,7 @@ def get_task(output_type):
     """
     _log.info("Getting task for output '{}'".format(output_type))
     if output_type == 'predict' or output_type == "predict_and_align":
-        task = run_single_predictor
+        task = postprocess
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
 

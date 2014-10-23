@@ -25,10 +25,10 @@ class TestTasks(object):
         eq_(result.get(), output)
         
 
+    @patch('kman_web.tasks.convert_to_7chars')
+    @patch('kman_web.tasks.get_fasta_from_blast')
     @patch('subprocess.call')
     @patch('kman_web.tasks.open', mock_open(read_data=alignment_7c), create=True)
-    @patch('kman_web.tasks.get_fasta_from_blast')
-    @patch('kman_web.tasks.convert_to_7chars')
     def test_align(self, mock_subprocess, mock_call1, mock_call2):
         filename = 'testdata/test.fasta'
         mock_call1.return_value = 'testdata/test.blastp'
@@ -41,10 +41,10 @@ class TestTasks(object):
         eq_(result.get(), expected)
 
 
+    @patch('kman_web.tasks.convert_to_7chars')
+    @patch('kman_web.tasks.get_fasta_from_blast')
     @patch('subprocess.call')
     @patch('kman_web.tasks.open', mock_open(read_data=alignment_7c), create=True)
-    @patch('kman_web.tasks.get_fasta_from_blast')
-    @patch('kman_web.tasks.convert_to_7chars')
     @raises(RuntimeError)
     def test_align_subprc_error(self, mock_subprocess, mock_call1, mock_call2):
         mock_call1.return_value = 'testdata/test.blastp'
@@ -92,10 +92,68 @@ class TestTasks(object):
         eq_(result.get(), expected)
 
         
-
-
+    def test_get_task(self):
+        output_type = 'predict'
         
-               
+        from kman_web.tasks import get_task, postprocess
+
+        expected = postprocess
+        result = get_task(output_type)
+        eq_(result, expected)
+
+    @raises(ValueError)
+    def test_get_value_error(self):
+        output_type = 'incorrect_value'
+  
+        from kman_web.tasks import get_task
+  
+        get_task(output_type)
+
+
+    @patch('kman_web.tasks.find_seqid_blast')
+    @patch('subprocess.call')
+    def test_query_d2p2(self, mock_subprocess, mock_call):
+        filename = 'testdata/test.fasta'
+        mock_subprocess.return_value = 'testdata/test.blastp'
+        mock_call.return_value = [False, '']
+
+        from kman_web.tasks import query_d2p2
+
+        ## check: sequence not found in swissprot
+        expected = [False, []]
+
+        result = query_d2p2.delay(filename)
+        eq_(result.get(), expected)
+
+
+
+    #@patch('subprocess.call')
+    #@raises(RuntimeError)
+    #def test_query_d2p2_subprc_error(self, mock_subprocess):
+    #    filename = 'testdata/test.fasta'
+    #    mock_subprocess.side_effect = subprocess.CalledProcessError(
+    #        "returncode", "cmd", "output")
+    #    
+    #    #from kman_web.tasks import query_d2p2
+
+    #    #result = query_d2p2.delay(filename)
+    #    #result.get()
+    #    #query_d2p2(filename)
+    #    raise RuntimeError 
+        
+        
+        
+        
+
+    def test_run_single_predictor(self):
+        pass
+        
+    
+  
+    
+
+    
+           
 
 
 
