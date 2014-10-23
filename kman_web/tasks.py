@@ -28,16 +28,6 @@ def postprocess(result, filename, output_type):
     if glob.glob('%s*' % prefix):
         os.system('rm %s*' % prefix)    #rm tmpXXXXXX*
 
-    ## remove duplicates (consequence of each run_single_predictor task passing the D2P2 result)
-    #methods = set()
-    #tmp = result[:] 
-    #end  = None if output_type == "predict" else -1 ## if predict then the result is shorter by one element
-    #for i in tmp[1:end]:
-    #    if i[0] in methods:
-    #        result.remove(i)
-    #    else:
-    #        methods.add(i[0])
-
     ## If the results are not form the d2p2 database, then process them (find consensus, and filter out short stretches)
     if output_type == 'predict_and_align' and not (len(result) == 3 and result[1][0] == 'D2P2'):
         consensus = find_consensus_disorder(result[1:-1])   ## first element is the sequence, last element is the alignement
