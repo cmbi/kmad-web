@@ -87,7 +87,18 @@ def get_fasta_from_blast(blast_name, query_filename):
     outfile.close()
     return outfile_name
     
-    
+
+def disopred_outfilename(fasta_file):
+    return '.'.join(fasta_file.split('.')[:-1])+".diso"
+
+
+def psipred_outfilename(fasta_file):
+    return ('.'.join(fasta_file.split('.')[:-1])+".ss2").split('/')[-1]
+
+
+def predisorder_outfilename(fasta_file):
+    return '.'.join(fasta_file.split('.')[:-1])+".predisorder" 
+
 
 
 

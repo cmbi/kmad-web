@@ -1,3 +1,4 @@
+import glob
 import json
 import logging
 import os
@@ -8,86 +9,25 @@ from celery import current_app as celery_app, chord
 from kman_web.default_settings import *
 
 from kman_web.services import txtproc
+from kman_web.services.consensus import find_consensus_disorder, filter_out_short_stretches
 from kman_web.services.convert import convert_to_7chars
-from kman_web.services.files import get_fasta_from_blast
+from kman_web.services.files import get_fasta_from_blast, disopred_outfilename, predisorder_outfilename, psipred_outfilename
 
 
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
-def find_consensus_disorder(odd):
-    odd_list = [i[1] for i in odd]
-    consensus = ["consensus", []]
-    half = float(len(odd_list))/2
-    for i in range(len(odd_list[0])):
-        column = [odd_list[j][i] for j in range(len(odd_list))]
-        if column.count(0) > half:
-            consensus[1] += [0]
-        elif column.count(2) > half:
-            consensus[1] += [2]
-        else:
-            consensus[1] += [1]
-    return consensus
-
-
-def find_next_length(seq, pos):
-    state = seq[pos]
-    n_length = 1
-    for i in seq[pos+1:]:
-        if i == state:
-            n_length += 1
-        else:
-            break
-    return n_length
-
-
-def filter_out_short_stretches(cons):
-    new_cons = ["filtered", []]
-    prev_length, curr_length, next_length = 0, 0, 0
-    curr_state = cons[0] # current state {no, maybe, yes} {0,1,2}
-    for i in range(len(cons)):
-        if cons[i] == curr_state:
-            curr_length += 1
-        else:       #the end of the current state - check if it's long enough if not change it to another state & add the elements form the curr_state to the new_cons
-            next_state = cons[i]
-            if curr_length < 4 and curr_length < prev_length and prev_state == next_state and curr_length < find_next_length(cons, i):
-                new_cons[1] += [prev_state for j in range(curr_length)]    # add curr_length elements of previous(=next) state
-            else:
-                new_cons[1] += [curr_state for j in range(curr_length)]    
-            prev_length = curr_length
-            prev_state = curr_state
-            curr_state = cons[i]
-            curr_length = 1
-    if curr_length < 4 and curr_length < prev_length:
-        new_cons[1] += [prev_state for j in range(curr_length)]    
-    else:
-        new_cons[1] += [curr_state for j in range(curr_length)]     
-    
-    return new_cons 
-
-
-def disopred_outfilename(fasta_file):
-    return '.'.join(fasta_file.split('.')[:-1])+".diso"
-
-
-def psipred_outfilename(fasta_file):
-    return ('.'.join(fasta_file.split('.')[:-1])+".ss2").split('/')[-1]
-
-
-def predisorder_outfilename(fasta_file):
-    return '.'.join(fasta_file.split('.')[:-1])+".predisorder" 
-
-
 @celery_app.task
-def postprocess(result, filename, output_type):  #process result and remove tmp files
-    try:
-        prefix = filename[0:14] 
-        os.system("rm %s*" % prefix)    #rm /tmp/tmpXXXXXX*
-        prefix = prefix[5:]
-        os.system("rm %s*" % prefix)    #rm tmpXXXXXX*
-    except:
-        _log.debug("No files to remove")
+def postprocess(result, filename, output_type):  
+    ## process result and remove tmp files
+    prefix = filename[0:14] 
+    if glob.glob('%s*' % prefix):
+        os.system('rm %s*' % prefix)    #rm /tmp/tmpXXXXXX*
+    prefix = prefix[5:]
+    if glob.glob('%s*' % prefix):
+        os.system('rm %s*' % prefix)    #rm tmpXXXXXX*
+
     ## remove duplicates (consequence of each run_single_predictor task passing the D2P2 result)
     methods = set()
     tmp = result[:] 
@@ -97,6 +37,8 @@ def postprocess(result, filename, output_type):  #process result and remove tmp 
             result.remove(i)
         else:
             methods.add(i[0])
+
+    ## If the results are not form the d2p2 database, then process them (find consensus, and filter out short stretches)
     if output_type == "predict_and_align" and not (len(result[:-1]) == 2 and result[1][0] == "D2P2"):
         consensus = find_consensus_disorder(result[1:-1])   ## first element is the sequence, last element is the alignement
         result = result[:-1] + [consensus] + [result[-1]]
@@ -105,6 +47,7 @@ def postprocess(result, filename, output_type):  #process result and remove tmp 
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
+
     return result
 
 
