@@ -30,14 +30,14 @@ def postprocess(result, filename, output_type):
         os.system('rm %s*' % prefix)    #rm tmpXXXXXX*
 
     ## remove duplicates (consequence of each run_single_predictor task passing the D2P2 result)
-    methods = set()
-    tmp = result[:] 
-    end  = None if output_type == "predict" else -1 ## if predict then the result is shorter by one element
-    for i in tmp[1:end]:
-        if i[0] in methods:
-            result.remove(i)
-        else:
-            methods.add(i[0])
+    #methods = set()
+    #tmp = result[:] 
+    #end  = None if output_type == "predict" else -1 ## if predict then the result is shorter by one element
+    #for i in tmp[1:end]:
+    #    if i[0] in methods:
+    #        result.remove(i)
+    #    else:
+    #        methods.add(i[0])
 
     ## If the results are not form the d2p2 database, then process them (find consensus, and filter out short stretches)
     if output_type == "predict_and_align" and not (len(result[:-1]) == 2 and result[1][0] == "D2P2"):
@@ -125,7 +125,7 @@ def align(d2p2, filename):
         args = ["KMAN","-i",toalign,"-o",toalign,"-g","-5","-e","-1","-c",str(codon_length)]
         output = subprocess.call(args)
         
-        alignment = open(al_outfile).read()
+        alignment = open(al_outfile).read().encode('ascii', errors='ignore')
     except subprocess.CalledProcessError as e:
         _log.error("Error: {}".format(e.output))
         raise RuntimeError(e.output)

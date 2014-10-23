@@ -17,7 +17,7 @@ class TestTasks(object):
         cls.celery = create_celery_app(flask_app)
 
     def test_get_seq(self):
-        output = 'SEQ'
+        output = seq
     
         from kman_web.tasks import get_seq
     
@@ -33,15 +33,34 @@ class TestTasks(object):
         filename = 'testdata/test.fasta'
         mock_call1.return_value = 'testdata/test.blastp'
         mock_call2.return_value = 'testdata/test.7c'
-        output = [alignment_1c, alignment_1c_list]
+        expected = [alignment_1c, alignment_1c_list]
 
         from kman_web.tasks import align
 
         result = align.delay('d2p2', filename)
-        eq_(result.get(), output)
+        eq_(result.get(), expected)
 
 
     def test_postprocess(self):
+        filename = 'testdata/test.fasta'
+    
+        from kman_web.tasks import postprocess
+        
+        ## check d2p2 result and output type 'predict'
+        func_input = [seq, d2p2_result]
+        expected = func_input
+
+        result = postprocess.delay(func_input, filename, 'predict')
+        eq_(result.get(), expected)
+
+        ## check predictors result and output type 'predict'
+        func_input = [seq] + pred_result + [[alignment_1c, alignment_1c_list]]
+        expected = func_input
+        print func_input
+
+        result = postprocess.delay(func_input, filename, 'predict')
+        eq_(result.get(), expected)
+        
 
 
 
