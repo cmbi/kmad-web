@@ -115,11 +115,18 @@ class TestTasks(object):
     def test_query_d2p2(self, mock_subprocess, mock_call):
         filename = 'testdata/test.fasta'
         mock_subprocess.return_value = 'testdata/test.blastp'
-        mock_call.return_value = [False, '']
 
         from kman_web.tasks import query_d2p2
 
         ## check: sequence not found in swissprot
+        mock_call.return_value = [False, '']
+        expected = [False, []]
+
+        result = query_d2p2.delay(filename)
+        eq_(result.get(), expected)
+
+        ## check: sequence found in swissprot, but not found in d2p2
+        mock_call.return_value = [True, 'CRAM_CRAAB']
         expected = [False, []]
 
         result = query_d2p2.delay(filename)
