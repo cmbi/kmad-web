@@ -127,19 +127,17 @@ class TestTasks(object):
 
 
 
-    #@patch('subprocess.call')
-    #@raises(RuntimeError)
-    #def test_query_d2p2_subprc_error(self, mock_subprocess):
-    #    filename = 'testdata/test.fasta'
-    #    mock_subprocess.side_effect = subprocess.CalledProcessError(
-    #        "returncode", "cmd", "output")
-    #    
-    #    #from kman_web.tasks import query_d2p2
+    @patch('subprocess.call')
+    @raises(RuntimeError)
+    def test_query_d2p2_subprc_error(self, mock_subprocess):
+        filename = 'testdata/test.fasta'
+        mock_subprocess.side_effect = subprocess.CalledProcessError(
+            "returncode", "cmd", "output")
+        
+        from kman_web.tasks import query_d2p2
 
-    #    #result = query_d2p2.delay(filename)
-    #    #result.get()
-    #    #query_d2p2(filename)
-    #    raise RuntimeError 
+        result = query_d2p2.delay(filename)
+        result.get()
         
         
         
