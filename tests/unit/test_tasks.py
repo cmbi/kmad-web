@@ -154,15 +154,45 @@ class TestTasks(object):
         
     @patch('kman_web.tasks.preprocess')    
     @patch('subprocess.call')
-    def test_run_single_predictor(self, mock_subprocess):
+    @patch('kman_web.tasks.open', mock_open(read_data='prediction_out'), create=True)
+    def test_run_single_predictor(self, mock_subprocess, mock_call):
         filename = 'testdata/test.fasta'
-        methods = ['psipred', 'predisorder', 'disopred', 'spined']
-        
-        for pred_name in methods:
+        methods = ['psipred', 'predisorder', 'disopred', 'spine']
+        pred = [0,0,0]
 
+        from kman_web.tasks import run_single_predictor        
+
+        ## check when there is no result from d2p2
+        d2p2_result = [False, []]
+        for pred_name in methods:
+            expected = [pred_name, pred]
+            mock_call.return_value = expected[:]
             
+
+            result = run_single_predictor.delay(d2p2_result, filename, pred_name) 
+            eq_(result.get(), expected)
+
+        ## check when there is result from d2p2
+        d2p2_result = [True, ['D2P2', [0, 0, 0]]]
+        expected = d2p2_result[1]
+
+        result = run_single_predictor.delay(d2p2_result, filename, pred_name) 
+        eq_(result.get(),  expected)
             
-            
+        
+    @patch('subprocess.call') 
+    @raises(RuntimeError)
+    def test_run_single_predictor_subprc_error(self, mock_subprocess):
+        filename = 'testdata/test.fasta'
+        d2p2_result = [False, []]
+        mock_subprocess.side_effect = subprocess.CalledProcessError(
+            "returncode", "cmd", "output")
+        
+        from kman_web.tasks import run_single_predictor
+        
+        result = run_single_predictor.delay(d2p2_result, filename, 'psipred')
+        result.get()
+    
         
         
     

@@ -42,7 +42,6 @@ def postprocess(result, filename, output_type):
 
 @celery_app.task
 def run_single_predictor(d2p2_result, fasta_file, pred_name):
-    out_dir = "kman_web/results"
     _log.debug("Run single predictor")
     if d2p2_result[0]:
         return d2p2_result[1]
@@ -60,21 +59,17 @@ def run_single_predictor(d2p2_result, fasta_file, pred_name):
                     method = SPINE_DIR+"/bin/run_spine-d"
                     args = [method, tmp_path, tmp_name]
                     out_file = SPINE_OUTPUT_DIR+tmp_name+".spd"
-                    #out_file = "test.spd"
                 elif pred_name == "disopred":
                     method = DISOPRED_PATH            
                     args = [DISOPRED_PATH, fasta_file]
                     out_file = disopred_outfilename(fasta_file)
-                    #out_file = "test.diso"
                 elif pred_name == "predisorder":
                     method = PREDISORDER_PATH
                     out_file = predisorder_outfilename(fasta_file)
-                    #out_file = "test.predisorder"
                     args = [method, fasta_file, out_file]
                 elif pred_name == "psipred":
                     method = PSIPRED_PATH
                     out_file = psipred_outfilename(fasta_file)
-                    #out_file = "test.ss2"
                     args = [method, fasta_file]
                 _log.debug("Running command '{}'".format(args))
                 output = subprocess.call(args)
@@ -84,8 +79,7 @@ def run_single_predictor(d2p2_result, fasta_file, pred_name):
         except subprocess.CalledProcessError as e:
             _log.error("Error: {}".format(e.output))
             raise RuntimeError(e.output)
-        finally:
-            return data
+        return data
 
     
 @celery_app.task
