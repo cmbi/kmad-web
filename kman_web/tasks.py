@@ -166,7 +166,9 @@ def align(d2p2, filename):
         fastafile = get_fasta_from_blast(out_blast, filename)     ## fasta filename
 
         ## 7chars ##
+        _log.debug("preconvert")
         toalign = convert_to_7chars(fastafile)          ## .7c filename
+        _log.debug("postconvert")
         codon_length = 7
         ## end of 7 ##
 

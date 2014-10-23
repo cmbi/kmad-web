@@ -1,0 +1,5 @@
+
+
+alignment_7c = ">1\nSAAAAAAEAAAAAAQAAAAAA-AAAAAA-AAAAAA-AAAAAA\n>2\nSAAAAAAEAAAAAAQAAAAAASAAAAAAEAAAAAAQAAAAAA\n"
+alignment_1c = ">1\nSEQ---\n>2\nSEQSEQ"
+alignment_1c_list = [['1', 'SEQ---'], ['2', 'SEQSEQ']]
