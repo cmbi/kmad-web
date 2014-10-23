@@ -20,6 +20,7 @@ _log = logging.getLogger(__name__)
 
 @celery_app.task
 def postprocess(result, filename, output_type):  
+    _log.debug(result)
     ## process result and remove tmp files
     prefix = filename[0:14] 
     if glob.glob('%s*' % prefix):
@@ -31,7 +32,7 @@ def postprocess(result, filename, output_type):
     ## remove duplicates (consequence of each run_single_predictor task passing the D2P2 result)
     methods = set()
     tmp = result[:] 
-    end  = None if output_type == "predict" else -1
+    end  = None if output_type == "predict" else -1 ## if predict then the result is shorter by one element
     for i in tmp[1:end]:
         if i[0] in methods:
             result.remove(i)
@@ -135,7 +136,7 @@ def align(d2p2, filename):
 
 @celery_app.task
 def get_seq(d2p2, fasta_file):
-    return fasta_file.splitlines()[1]
+    return fasta_file.splitlines()[1].encode('ascii', errors='ignore')
     
 
 @celery_app.task
