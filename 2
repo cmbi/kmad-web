@@ -41,11 +41,11 @@ class TestKman(object):
     
         strategy = PredictStrategy('predict')
         result_id = strategy(fasta)
-        #mock_celery.return_value.delay.assert_called_once_with(fasta,
-        #                                                         'predict')
+        print result_id
+        mock_celery.return_value.delay.assert_called_once_with(fasta,
+                                                                 'predict')
          
         #eq_(result_id, '12345')
-        pass
 
     
     

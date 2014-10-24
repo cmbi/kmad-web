@@ -17,3 +17,5 @@ processed_pred_result = [['predisorder', [0,0,0]],
                          ['filtered', [0, 0, 0]]]
 
 seq = 'SEQ'
+fasta = '>1\nSEQ\n'
+
