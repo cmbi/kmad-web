@@ -18,4 +18,5 @@ processed_pred_result = [['predisorder', [0,0,0]],
 
 seq = 'SEQ'
 fasta = '>1\nSEQ\n'
+encoded_seq = '>1\nSAAAAAAEAAAAAAQAAAAAA\n## PROBABILITIES\nmotif index  probability\n'
 

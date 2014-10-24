@@ -1,0 +1,65 @@
+from mock import patch
+
+from testdata.test_variables import *
+
+@patch('kman_web.services.convert.readFASTA')
+@patch('kman_web.services.convert.findPhosphSites')
+@patch('kman_web.services.convert.runNetPhos')
+@patch('kman_web.services.convert.searchELM')
+@patch('kman_web.services.convert.runPfamScan')
+@patch('kman_web.services.convert.open', create=True)
+def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan, 
+                           mock_search_elm, mock_run_netphos,
+                           mock_find_phosph_sites, 
+                           mock_read_fasta):
+
+    filename = 'testdata/test.fasta'
+    expected_outname = 'testdata/test.7c'
+
+    mock_read_fasta.return_value = ['>1', 'SEQ']
+
+    ## check: nothing to encode
+    expected_data = '>1\nSAAAAAAEAAAAAAQAAAAAA\n## PROBABILITIES\nmotif index  probability\n'
+    mock_run_pfam_scan.return_value = [[], []]
+    mock_search_elm.return_value = [[], [], []]
+    mock_run_netphos.return_value = []
+    mock_find_phosph_sites.return_value = [[], [], [], [], [], [], []]
+
+    from kman_web.services.convert import convert_to_7chars
+    
+    convert_to_7chars(filename)
+
+    mock_out_open.assert_called_once_with(expected_outname, 'w')
+    handle = mock_out_open()
+    handle.write.assert_called_once_with(expected_data)
+    
+    ## check: encoded domain
+    mock_run_pfam_scan.return_value = [[[1,2]], [['domain']]]
+    expected_data = '>1\nSAabAAAEAabAAAQAAAAAA\n## PROBABILITIES\nmotif index  probability\n'
+    handle.reset_mock()
+
+    convert_to_7chars(filename)
+    handle.write.assert_called_once_with(expected_data)
+
+    ## check: encoded motif
+    mock_run_pfam_scan.return_value = [[], []]
+    mock_search_elm.return_value = [[[1,2]], ['MOTIF'], [0.9]]
+    expected_data = '>1\nSAAAAabEAAAAabQAAAAAA\n## PROBABILITIES\nmotif index  probability\nab 0.9\n'
+    handle.reset_mock()
+
+    convert_to_7chars(filename)
+    handle.write.assert_called_once_with(expected_data)
+
+    ## check: encoded PTMs 
+    mock_search_elm.return_value = [[], [], []]
+    mock_find_phosph_sites.return_value = [[[1]], [[2]], [[3]], [], [], [], []]
+    expected_data = '>1\nSAAANAAEAAAZAAQAAAFAA\n## PROBABILITIES\nmotif index  probability\n'
+    handle.reset_mock()
+
+    convert_to_7chars(filename)
+    handle.write.assert_called_once_with(expected_data)
+
+    
+
+    
+

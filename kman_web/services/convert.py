@@ -1,10 +1,10 @@
 import logging
+import math
 import os
-import random
 import re
 import string
+import tempfile
 import urllib2
-import math
 
 from itertools import cycle, islice
 from operator import itemgetter
@@ -15,17 +15,18 @@ from kman_web.default_settings import *
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
+def create_numbering():
+    alphabet = list(string.ascii_lowercase) + list(string.ascii_uppercase) + [str(i) for i in range(0,10)]
+    alphabet.remove("A")
+    numbering  = []
+    for i in alphabet:
+    	for j in alphabet:
+    		numbering += [i+j]
+    return numbering
 
-code_table = [["Z","a","b","c"],["V","W","X","Y"],["R","S","T","U"],["J","K","L","M"],["F","G","H","I"],["B","C","D","E"],["N","O","P","Q"]] #code table for PTMs
-slims_all_classes_pre = open(ELM_DB).readlines()
-alphabet = list(string.ascii_lowercase) + list(string.ascii_uppercase) + [str(i) for i in range(0,10)]
-alphabet.remove("A")
-numbering  = []
-for i in alphabet:
-	for j in alphabet:
-		numbering += [i+j]
-
-def readFASTA(fastafileList):
+def readFASTA(fastafilename):
+    with open(fastafilename) as a:
+        fastafileList = a.readlines()
     result = []
     for i,elementI in enumerate(fastafileList):
         if ">" in elementI or ">" in fastafileList[i-1]:
@@ -45,68 +46,70 @@ def processSlimsAllClasses(classes):
 
 
 def getID(sequence):
-    return sequence.split('|')[2].split(' ')[0]
+    if len(sequence.split('|')) >= 3:
+        return sequence.split('|')[2].split(' ')[0]
+    else:
+        return 'UNKNOWN_ID'
 
 
 #    PFAM   #
-def runPfamScan(sequence,identifier):
+def runPfamScan(filename):
     result =[]
     dom = []
-    nameRand = str(random.randrange(0,1000000))
-    tmpSeqFile=open(nameRand+"TMPpfamscan.fasta",'w')
-    tmpSeqFile.write(identifier+"\n"+sequence)
-    tmpSeqFile.close()
-    os.system("/home/joanna/bin/PfamScan/pfam_scan.pl -fasta "+nameRand+"TMPpfamscan.fasta -dir /home/joanna/data/Pfam | grep -v '#' > "+nameRand+"TMPpfamscanResult")
-    os.system("rm "+nameRand+"TMPpfamscan.fasta")
-    pfamscanResult=open(nameRand+"TMPpfamscanResult").readlines()
-    os.system("rm "+nameRand+"TMPpfamscanResult")
+    outname = '{}.pfam'.format(filename.split('.')[0])
+    os.system("/home/joanna/bin/PfamScan/pfam_scan.pl -fasta {} -dir /home/joanna/data/Pfam | grep -v '#' > {}".format(filename, outname))
+
+    with open(outname) as a:
+        pfamscanResult = a.readlines()
+
     for i in pfamscanResult:
        if len(i.split())> 3 :
            result.append([int(i.split()[1]),int(i.split()[2])])
-           dom.append([i.split()[5]+" "+i.split()[6]])
+           dom.append(i.split()[5]+" "+i.split()[6])
+
+    os.system('rm {}'.format(outname))
+
     return [result,dom]
 
 
 #    NETPHOS   #
-def runNetPhos(sequence,identifier):
+def runNetPhos(filename):
     phosphorylations = set([])
-    nameRand = str(random.randrange(0,1000000))
-    netPhosInput = open(nameRand+'TMPnpINPUT.fasta','w')
-    netPhosInput.write(identifier+'\n'+sequence)
-    netPhosInput.close()  
-    os.system('netphos-3.1 '+nameRand+'TMPnpINPUT.fasta > '+nameRand+'TMPnpOUTPUT')
-    netPhosOut = open(nameRand+'TMPnpOUTPUT').readlines()
-    for i,lineI in enumerate(netPhosOut):
+    outname = '{}.np'.format(filename.split('.')[0])
+    os.system('netphos-3.1 {} > {}'.format(filename, outname))
+
+    with open(outname) as a:
+        netPhosOut = a.readlines()
+
+    for lineI in netPhosOut:
         if len(lineI.split())>0 and lineI.split()[-1]=='YES':
             phosphorylations.add(int(lineI.split()[2]))
-    os.system('rm '+nameRand+'TMPnpINPUT.fasta')                             
-    os.system('rm '+nameRand+'TMPnpOUTPUT')                             
+
+    os.system('rm {}'.format(outname))                             
+
     return list(phosphorylations)
 
 
 def get_uniprot_txt(uniprot_id):
-    uniprot_dat = open(UNIPROT_DAT_DIR+uniprot_id+".dat").readlines()
+    with open(UNIPROT_DAT_DIR+uniprot_id+".dat") as a:
+        uniprot_dat = a.read()
+    uniprot_dat = uniprot_dat.splitlines()
     features = []
     for lineI in uniprot_dat:
-        if "FT" == lineI[0:2]:
-            features += lineI
+        if lineI.startswith('FT'):
+            features += [lineI]
     return features
 
 
 #  UNIPROT  #
 def findPhosphSites(uniprotID):
     phosphorylations = [[],[],[],[]] # [exp, by similarity, probable, potential] - and so it goes for the other ptms
-    snips = []
-    Nglycs = [[],[],[],[]]
-    Oglycs = [[],[],[],[]]
-    amids=[[],[],[],[]]
-    hydrox=[[],[],[],[]]
-    meth=[[],[],[],[]]
-    acetyl = [[],[],[],[]]
-    others=[]
-    #req = urllib2.Request('http://www.uniprot.org/uniprot/'+uniprotID+'.gff')
-    #response = urllib2.urlopen(req)
-    #features = response.read().splitlines()
+    Nglycs = [[], [], [], []]
+    Oglycs = [[], [], [], []]
+    amids = [[], [], [], []]
+    hydrox = [[], [], [], []]
+    meth = [[], [], [], []]
+    acetyl = [[], [], [], []]
     features = get_uniprot_txt(uniprotID)
     for i in features:
         ## first check status (exp, by sim, prb or potential)
@@ -127,13 +130,13 @@ def findPhosphSites(uniprotID):
             Oglycs[n].append(int(i.split()[3]))
         elif "Glycosylation" in i and "N-linked" in i:
             Nglycs[n].append(int(i.split()[3]))
-        elif "Modified residue" in i and "acetyl":
+        elif "MOD_RES" in i and "acetyl":
             acetyl[n].append(int(i.split()[3]))
-        elif "Modified residue" in i and "hydroxy" in i:
+        elif "MOD_RES" in i and "hydroxy" in i:
             hydrox[n].append(int(i.split()[3]))
-        elif "Modified residue" in i and "methyl" in i:
+        elif "MOD_RES" in i and "methyl" in i:
             meth[n].append(int(i.split()[3]))
-    return [phosphorylations,snips,Oglycs,Nglycs,amids,hydrox,meth,acetyl,others]
+    return [Oglycs,meth,hydrox,amids,Nglycs,acetyl,phosphorylations]
 
 
 #filterOutOverlapping -> removes overlapping slims (the ones with lower probabilities are removed)
@@ -158,21 +161,14 @@ def filterOutOverlapping(lims, ids, probs):
     return new_lims, new_ids, new_probs
 
 
-#searches for slims, mode = 0 means that it looks for the motif within some limits, mode =1 means that it takes the motif only if sequences are exactly the same
-#mode == 0 checkMotif
-#mode == 1 findSeqID
-def searchELM(uniprotID, sequence, mode):
-    slims_all_classes = processSlimsAllClasses(slims_all_classes_pre)
+def searchELM(uniprotID, sequence, slims_all_classes):
     limits = []
     elms_ids = []
     probabilities = []
-    '''
-    #opener = urllib.FancyURLopener({})
     req = urllib2.Request("http://elm.eu.org/start_search/"+uniprotID+".csv")
     response = urllib2.urlopen(req)
     features = response.read().splitlines()
     write = False
-    #seqID = findSeqID(sequence,features)
     for line in features:
         entry  = line.split()
         prob = 1
@@ -184,7 +180,6 @@ def searchELM(uniprotID, sequence, mode):
                     elms_ids.append(entry[0])
                     probabilities.append(prob)
     limits, elms_ids, probabilities = filterOutOverlapping(limits,elms_ids,probabilities)
-    '''
     return [limits, elms_ids, probabilities]
 
 
@@ -192,37 +187,38 @@ def srepeat(string, n):
    return ''.join(islice(cycle(string), n))
 
 
-def addElementsToTheDictionary(newList,oldDict, dictkind):
+## adds new domains/motifs to the dictionary, value is the encoded index (ab, ac, ...), key is the element's id
+def addElementsToTheDictionary(newList, oldDict, dictkind):
     newDict=oldDict
     dIndexes=[]
-    l=len(oldDict)
-    no_added = 0 # number of elements added to the dictionary - used for indexing of the new element
+    numbering = create_numbering()
     for i,elI in enumerate(newList):
         if len(elI) > 0:
-            elID = elI[0].split('.')[0] if dictkind == "domains" else elI
-            if elID not in newDict.values():
-                no_added += 1
-                index = l + no_added
-                index_encoded = numbering[index]
-                newDict[index_encoded]=elID
+            elID = elI.split('.')[0] if dictkind == "domains" else elI
+            if elID not in newDict.keys():
+                index = len(newDict.keys())
+                encoded_index = numbering[index]
+                newDict[elID] = encoded_index
     return newDict
-
-
-def getIndexes(myDict, myList,mode):
-    result=[]
-    for i in myList:
-        if len(i) >0:
-            elID = i[0].split('.')[0] if mode == "domains" else i
-            if elID in myDict.values():
-                result += [myDict.keys()[myDict.values().index(elID)]]
-            else:
-                print "error: couldnt find motif"
+## creates a list of codes for domains in myList
+def get_codes(myDict, myList, mode):
+    if mode == 'domains':
+        result=[ myDict[i.split('.')[0]] for i in myList ]
+    else:
+        result=[ myDict[i] for i in myList ]
     return result
 
 
 #code: "012345" 0 - aa; 1 - nothing yet; 2 - domain, 3 - phosph; 4,5 - motif
 #argument 'results' -> list([domains,phosphorylations, methods, low complexity regions])
-def sevenCharactersCode(results, myseq, domIndexes, slimIndexes):
+def sevenCharactersCode(results, myseq, domain_codes, slim_codes):
+    code_table = [["Z","a","b","c"], #code table for PTMs
+                  ["V","W","X","Y"],
+                  ["R","S","T","U"],
+                  ["J","K","L","M"],
+                  ["F","G","H","I"],
+                  ["B","C","D","E"],
+                  ["N","O","P","Q"]] 
     newseq = ""
     #first encode sequence with no features
     for i in myseq: newseq+=i+"AAAAAA"
@@ -232,7 +228,7 @@ def sevenCharactersCode(results, myseq, domIndexes, slimIndexes):
     for i,domI in enumerate(results[0]):
         start = domI[0]
         end = domI[1]
-        domainsCode = domIndexes[i]
+        domainsCode = domain_codes[i]
         j = 0 
         k = 0
         while j < end+1 and k < len(newseq):
@@ -243,18 +239,19 @@ def sevenCharactersCode(results, myseq, domIndexes, slimIndexes):
                 j += 1 
             k += 1
     # predicted phosphorylations
-    if results[10]:
+    if results[4]:
         k = 0
         l = 0
-        end = max(results[10])    
+        end = max(results[4])    
         while k < end + 1 and l < len(newseq):
-            if l % 7 == 4 and k in results[10]:
+            if l % 7 == 4 and k in results[4]:
                 newseq[l] = "d"
             if l % 7 == 0 and newseq[l] != "-":
                 k += 1 
             l+=1
     # all annotated PTMs 
-    for i,ptmI in enumerate([results[4],results[5],results[6],results[7],results[8],results[9],results[1]]):
+    print results[3]
+    for i,ptmI in enumerate(results[3]):
         for j, ptmModeJ in enumerate(ptmI):
             if ptmModeJ:
                 k = 0
@@ -268,11 +265,11 @@ def sevenCharactersCode(results, myseq, domIndexes, slimIndexes):
                     l+=1
     ## SLiMs
     ## all the residue from start to end(including the residue on position 'end')  belong the the slim
-    for i,slimI in enumerate(results[2]):
+    for i,slimI in enumerate(results[1]):
         if len(slimI) > 0:
             start = slimI[0] 
             end = slimI[1]
-            slimsCode = slimIndexes[i]
+            slimsCode = slim_codes[i]
             k = 0 
             j = 0
             while j < end + 1 and k < len(newseq):
@@ -282,7 +279,7 @@ def sevenCharactersCode(results, myseq, domIndexes, slimIndexes):
                 elif k % 7 == 0 and newseq[k] != "-":
                     j+=1
                 k+=1
-    for i, lcrI in enumerate(results[3]):
+    for i, lcrI in enumerate(results[2]):
         start  = lcrI[0]
         end = lcrI[1]
         lcr_code = "L"
@@ -297,43 +294,63 @@ def sevenCharactersCode(results, myseq, domIndexes, slimIndexes):
     return ''.join(newseq)
 
 
+## creates a tmp fastafile and returns a path to it
+def tmp_fasta(seq_id, seq):
+    fasta_seq = ">{}\n{}\n".format(seq_id, seq)
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta",delete=False)
+    with tmp_file as f:
+        f.write(fasta_seq)
+    return tmp_file.name
 
+
+def elm_db(filename):
+    with open(filename) as a:
+        slims_all_classes_pre = a.readlines()
+    return processSlimsAllClasses(slims_all_classes_pre)
+    
 #MAIN
 def convert_to_7chars(filename):
-    seqFASTA = readFASTA(open(filename).readlines())
+    slims_all_classes = elm_db(ELM_DB)
+    seqFASTA = readFASTA(filename)
     outname = filename.split(".")[0]+".7c"
-    out=open(outname,"w")
     domainsDictionary=dict()
     motifsDictionary = dict()
     motifProbsDict = dict()
-    newalignment = []
+    newfile = ""
     for i,seqI in enumerate(seqFASTA):
         if '>' not in seqI:
-            #clearseq = removeGaps(seqI)
             seqI = seqI.rstrip("\n")
             seq_id = getID(seqFASTA[i-1]).rstrip('\n')
             header = seqFASTA[i-1].rstrip('\n')
-            [pfam,domains] = runPfamScan(seqI,seqFASTA[i-1])
-            predicted_phosph = runNetPhos(seqI, ">"+seq_id)
-            [phosphorylations,SNPs,Oglycosylations,Nglycosylations,amidations,hydroxylations,methylations,acetylations,otherPTMs] = findPhosphSites(seq_id)
-            [elm,motifs_ids,probs] = searchELM(seq_id,seqI,0)  #elms - slims' coordinates, motifs - ids, probs - probabilities
+            
+            tmp_filename = tmp_fasta(seq_id, seqI)
+            [pfam,domains] = runPfamScan(tmp_filename)
+            predicted_phosph = runNetPhos(tmp_filename)
+
+            os.system('rm {}'.format(tmp_filename))
+
+            uniprot_results = findPhosphSites(seq_id)
+            [elm,motifs_ids,probs] = searchELM(seq_id, seqI, slims_all_classes)  #elms - slims' coordinates, motifs - ids, probs - probabilities
             lc_regions = []
-            domainsDictionary = addElementsToTheDictionary(domains,domainsDictionary,"domains") #only domains from the present in the 1st seq will be distinguishable
+
+            domainsDictionary = addElementsToTheDictionary(domains,domainsDictionary,"domains") 
             motifsDictionary = addElementsToTheDictionary(motifs_ids,motifsDictionary, "slims") #motifs from all sequences are taken into account
-            domainsIndexes = getIndexes(domainsDictionary,domains,"domains")
-            motifsIndexes = getIndexes(motifsDictionary,motifs_ids,"motifs")
-            for i,indI in enumerate(motifsIndexes):
+            domains_codes = get_codes(domainsDictionary,domains,"domains")
+            motifs_codes = get_codes(motifsDictionary,motifs_ids,"motifs")
+            for i,indI in enumerate(motifs_codes):
                 motifProbsDict[indI] = probs[i]
-            resultsList = [pfam,phosphorylations,elm,lc_regions, Oglycosylations, methylations, hydroxylations, amidations, Nglycosylations, acetylations, predicted_phosph]
-            newalignment += [[header,sevenCharactersCode(resultsList,seqI, domainsIndexes, motifsIndexes)]]
-    for i in newalignment:
-        out.write(i[0]+"\n")
-        out.write(i[1]+"\n")
-    
-    out.write("## PROBABILITIES\n")
-    out.write("motif index  probability\n")
+
+            resultsList = [pfam, elm, lc_regions, uniprot_results, predicted_phosph]
+            newfile += '{}\n{}\n'.format(header,sevenCharactersCode(resultsList,seqI, domains_codes, motifs_codes))
+
+    newfile += "## PROBABILITIES\n"
+    newfile += "motif index  probability\n"
     for i in motifProbsDict:
-        out.write(str(i)+" "+str(motifProbsDict[i])+"\n")
+        newfile += str(i)+" "+str(motifProbsDict[i])+"\n"
+
+    out=open(outname,"w")
+    out.write(newfile)
     out.close()
+
     return outname
     

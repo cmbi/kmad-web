@@ -1,6 +1,6 @@
 import subprocess
 
-from mock import call, mock_open, patch
+from mock import mock_open, patch
 from nose.tools import eq_, raises
 
 from testdata.test_variables import *
@@ -91,7 +91,7 @@ class TestTasks(object):
         result = postprocess.delay(func_input, filename, 'predict_and_align')
         eq_(result.get(), expected)
 
-        
+
     def test_get_task(self):
         output_type = 'predict'
         
@@ -100,6 +100,7 @@ class TestTasks(object):
         expected = postprocess
         result = get_task(output_type)
         eq_(result, expected)
+
 
     @raises(ValueError)
     def test_get_value_error(self):
@@ -139,7 +140,6 @@ class TestTasks(object):
         eq_(result[0], True)
 
 
-
     @patch('subprocess.call')
     @raises(RuntimeError)
     def test_query_d2p2_subprc_error(self, mock_subprocess):
@@ -152,6 +152,7 @@ class TestTasks(object):
         result = query_d2p2.delay(filename)
         result.get()
         
+
     @patch('kman_web.tasks.preprocess')    
     @patch('subprocess.call')
     @patch('kman_web.tasks.open', mock_open(read_data='prediction_out'), create=True)

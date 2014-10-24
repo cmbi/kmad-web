@@ -8,6 +8,7 @@ CELERY_QUEUES = (
     Queue('kman_web', Exchange('kman_web'), routing_key='kman_web'),
 )
 CELERY_RESULT_BACKEND = 'redis://localhost/0'
+CELERY_DISABLE_RATE_LIMITS=True
 
 #SPINE_DIR = "/mnt/datas/joanna/disorderPredictionMethods/spine-d/SPINE-D-local/"
 SPINE_DIR = "/home/joanna/software/SPINE-D-local/"
