@@ -1,6 +1,6 @@
 import subprocess
 
-from mock import ANY, call, mock_open, patch
+from mock import call, mock_open, patch
 from nose.tools import eq_, raises
 
 from testdata.test_variables import *

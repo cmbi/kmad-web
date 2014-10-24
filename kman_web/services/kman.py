@@ -8,15 +8,6 @@ from kman_web.services import txtproc
 _log = logging.getLogger(__name__)
 
 
-def getID(seq, tmpname):
-    header = seq.split("\n")[0].split("|")
-    if len(header) > 1:
-        seq_id = header[1]
-    else: 
-        seq_id = (tmpname.split("/")[-1]).split(".")[0]
-    return seq_id
-
-
 class KmanStrategyFactory(object):
     @classmethod
     def create(cls, output_type):
