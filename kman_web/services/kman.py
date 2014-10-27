@@ -60,7 +60,6 @@ class PredictAndAlignStrategy(object):
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
-
         #methods = ["spine", "predisorder", "psipred", "disopred"]
         methods = ["dummy"]
         tasks_to_run = [get_seq.s(fasta_seq)]

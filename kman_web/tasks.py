@@ -23,10 +23,10 @@ def postprocess(result, filename, output_type):
     ## process result and remove tmp files
     prefix = filename[0:14] 
     if glob.glob('%s*' % prefix):
-        os.system('rm %s*' % prefix)    #rm /tmp/tmpXXXXXX*
+        os.system('rm %s*' % prefix)    #  pragma: no cover
     prefix = prefix[5:]
     if glob.glob('%s*' % prefix):
-        os.system('rm %s*' % prefix)    #rm tmpXXXXXX*
+        os.system('rm %s*' % prefix)    #  pragma: no cover
 
     ## If the results are not form the d2p2 database, then process them (find consensus, and filter out short stretches)
     if output_type == 'predict_and_align' and not (len(result) == 3 and result[1][0] == 'D2P2'):
@@ -47,8 +47,8 @@ def run_single_predictor(d2p2_result, fasta_file, pred_name):
         return d2p2_result[1]
     else:
         try:
-            if pred_name == "dummy":
-                sequence = open(fasta_file).readlines()[1:]
+            if pred_name == "dummy":    #  pragma: no cover
+                sequence = open(fasta_file).readlines()[1:]  
                 sequence = [i.rstrip("\n") for i in sequence]
                 sequence = ''.join(sequence)
                 data = ["dummy", [0 for i in sequence]] 
@@ -93,11 +93,6 @@ def align(d2p2, filename):
         subprocess.call(['cp', toalign, 'tau_human_new.7c'])
         codon_length = 7
         ## end of 7 ##
-
-        ## 1char ##
-        #codon_length = 1
-        #toalign = fastafile
-        ## end of one ##
 
         al_outfile = "%s_al" % toalign
         args = ["KMAN","-i",toalign,"-o",toalign,"-g","-5","-e","-1","-c",str(codon_length)]

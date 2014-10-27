@@ -3,6 +3,7 @@ import math
 import os
 import re
 import string
+import subprocess
 import tempfile
 import urllib2
 
@@ -57,17 +58,14 @@ def runPfamScan(filename):
     result =[]
     dom = []
     outname = '{}.pfam'.format(filename.split('.')[0])
-    os.system("/home/joanna/bin/PfamScan/pfam_scan.pl -fasta {} -dir /home/joanna/data/Pfam | grep -v '#' > {}".format(filename, outname))
-
-    with open(outname) as a:
-        pfamscanResult = a.readlines()
+    args = [PFAM_SCAN, '-fasta', filename, '-dir', PFAM_DB]
+    output = subprocess.check_output(args)
+    pfamscanResult = [i for i in output.splitlines() if not i.startswith('#')]
 
     for i in pfamscanResult:
        if len(i.split())> 3 :
            result.append([int(i.split()[1]),int(i.split()[2])])
            dom.append(i.split()[5]+" "+i.split()[6])
-
-    os.system('rm {}'.format(outname))
 
     return [result,dom]
 
@@ -76,16 +74,12 @@ def runPfamScan(filename):
 def runNetPhos(filename):
     phosphorylations = set([])
     outname = '{}.np'.format(filename.split('.')[0])
-    os.system('netphos-3.1 {} > {}'.format(filename, outname))
-
-    with open(outname) as a:
-        netPhosOut = a.readlines()
+    args = ['netphos-3.1', filename]
+    netPhosOut = subprocess.check_output(args).splitlines()
 
     for lineI in netPhosOut:
         if len(lineI.split())>0 and lineI.split()[-1]=='YES':
             phosphorylations.add(int(lineI.split()[2]))
-
-    os.system('rm {}'.format(outname))                             
 
     return list(phosphorylations)
 
@@ -250,7 +244,6 @@ def sevenCharactersCode(results, myseq, domain_codes, slim_codes):
                 k += 1 
             l+=1
     # all annotated PTMs 
-    print results[3]
     for i,ptmI in enumerate(results[3]):
         for j, ptmModeJ in enumerate(ptmI):
             if ptmModeJ:
@@ -326,9 +319,8 @@ def convert_to_7chars(filename):
             tmp_filename = tmp_fasta(seq_id, seqI)
             [pfam,domains] = runPfamScan(tmp_filename)
             predicted_phosph = runNetPhos(tmp_filename)
-
-            os.system('rm {}'.format(tmp_filename))
-
+            if os.path.exists(tmp_filename):
+                os.remove(tmp_filename))
             uniprot_results = findPhosphSites(seq_id)
             [elm,motifs_ids,probs] = searchELM(seq_id, seqI, slims_all_classes)  #elms - slims' coordinates, motifs - ids, probs - probabilities
             lc_regions = []

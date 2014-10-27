@@ -1,0 +1,456 @@
+FT   INIT_MET      1      1       Removed. {ECO:0000269|PubMed:1512244}.
+FT   CHAIN         2    758       Microtubule-associated protein tau.
+FT                                /FTId=PRO_0000072739.
+FT   REPEAT      561    591       Tau/MAP 1.
+FT   REPEAT      592    622       Tau/MAP 2.
+FT   REPEAT      623    653       Tau/MAP 3.
+FT   REPEAT      654    685       Tau/MAP 4.
+FT   SITE         24     24       Not glycated.
+FT   SITE         44     44       Not glycated.
+FT   SITE         67     67       Not glycated.
+FT   SITE        381    381       Not glycated.
+FT   SITE        391    391       Not glycated.
+FT   SITE        392    392       Not glycated.
+FT   SITE        394    394       Not glycated.
+FT   SITE        465    465       Not glycated.
+FT   SITE        497    497       Not glycated.
+FT   SITE        507    507       Not glycated.
+FT   SITE        541    541       Not glycated.
+FT   SITE        557    557       Not glycated.
+FT   SITE        571    571       Not glycated.
+FT   SITE        574    574       Not glycated.
+FT   SITE        584    584       Not glycated.
+FT   SITE        591    591       Not glycated.
+FT   SITE        607    607       Not glycated.
+FT   SITE        611    611       Not glycated.
+FT   SITE        615    615       Not glycated.
+FT   SITE        628    628       Not glycated.
+FT   SITE        634    634       Not glycated.
+FT   SITE        638    638       Not glycated.
+FT   SITE        648    648       Not glycated.
+FT   SITE        657    657       Not glycated.
+FT   SITE        660    660       Not glycated.
+FT   SITE        687    687       Not glycated.
+FT   SITE        692    692       Not glycated.
+FT   SITE        700    700       Not glycated.
+FT   SITE        702    702       Not glycated.
+FT   SITE        712    712       Not glycated.
+FT   SITE        755    755       Not glycated.
+FT   MOD_RES       2      2       N-acetylalanine.
+FT                                {ECO:0000269|PubMed:1512244}.
+FT   MOD_RES      18     18       Phosphotyrosine; by FYN.
+FT                                {ECO:0000269|PubMed:14999081}.
+FT   MOD_RES      46     46       Phosphoserine; by PDPK1.
+FT   MOD_RES      50     50       Phosphothreonine; by PDPK1.
+FT   MOD_RES     214    214       Phosphoserine; by SGK1.
+FT                                {ECO:0000269|PubMed:16982696}.
+FT   MOD_RES     396    396       Phosphoserine; in PHF-tau.
+FT                                {ECO:0000269|PubMed:1899488}.
+FT   MOD_RES     470    470       Phosphothreonine; by PDPK1.
+FT                                {ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     484    484       Deamidated asparagine; in tau and PHF-
+FT                                tau; partial.
+FT   MOD_RES     492    492       Phosphothreonine; by PDPK1.
+FT   MOD_RES     498    498       Phosphothreonine; by PDPK1.
+FT                                {ECO:0000269|PubMed:15546861}.
+FT   MOD_RES     514    514       Phosphotyrosine; by TTBK1.
+FT                                {ECO:0000269|PubMed:16923168}.
+FT   MOD_RES     515    515       Phosphoserine; by PDPK1 and TTBK1.
+FT                                {ECO:0000269|PubMed:16923168}.
+FT   MOD_RES     516    516       Phosphoserine; by PDPK1 and TTBK1.
+FT                                {ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16923168,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     519    519       Phosphoserine; by CK1, PDPK1 and TTBK1.
+FT                                {ECO:0000269|PubMed:14761950,
+FT                                ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16923168,
+FT                                ECO:0000269|PubMed:18220336,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:21327254,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     522    522       Phosphothreonine; by CK1 and PDPK1.
+FT                                {ECO:0000269|PubMed:14761950,
+FT                                ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:19451179}.
+FT   MOD_RES     529    529       Phosphothreonine; by BRSK1, BRSK2, DYRK2
+FT                                and PDPK1. {ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:18599021,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:21985311,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     531    531       Phosphoserine; by PKA.
+FT                                {ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16443603,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     534    534       Phosphothreonine; by PDPK1.
+FT                                {ECO:0000269|PubMed:16443603,
+FT                                ECO:0000269|PubMed:19451179}.
+FT   MOD_RES     548    548       Phosphothreonine; by GSK3-beta and PDPK1.
+FT                                {ECO:0000269|PubMed:14690523,
+FT                                ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16443603}.
+FT   MOD_RES     552    552       Phosphoserine; by PDPK1.
+FT                                {ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16443603,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     554    554       Phosphoserine; by PHK.
+FT                                {ECO:0000269|PubMed:16443603,
+FT                                ECO:0000269|PubMed:8999860}.
+FT   MOD_RES     579    579       Phosphoserine; by MARK1, BRSK1, BRSK2 and
+FT                                PHK. {ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16443603,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:21985311,
+FT                                ECO:0000269|PubMed:7706316,
+FT                                ECO:0000269|PubMed:8999860,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     596    596       Deamidated asparagine; in tau and PHF-
+FT                                tau; partial.
+FT   MOD_RES     602    602       Phosphoserine; by PHK.
+FT                                {ECO:0000269|PubMed:8999860}.
+FT   MOD_RES     606    606       Phosphoserine; by PHK.
+FT                                {ECO:0000269|PubMed:8999860}.
+FT   MOD_RES     610    610       Phosphoserine; by MARK1; in PHF-tau.
+FT                                {ECO:0000269|PubMed:7706316}.
+FT   MOD_RES     622    622       Phosphoserine; by MARK1; in PHF-tau.
+FT                                {ECO:0000269|PubMed:7706316}.
+FT   MOD_RES     641    641       Phosphoserine; by MARK1; in PHF-tau.
+FT                                {ECO:0000269|PubMed:7706316}.
+FT   MOD_RES     669    669       Phosphoserine; by PHK.
+FT                                {ECO:0000269|PubMed:8999860}.
+FT   MOD_RES     673    673       Phosphoserine; by MARK1; in PHF-tau.
+FT                                {ECO:0000269|PubMed:7706316}.
+FT   MOD_RES     713    713       Phosphoserine; by CK1 and PDPK1.
+FT                                {ECO:0000269|PubMed:14761950,
+FT                                ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16443603,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:19690332,
+FT                                ECO:0000269|PubMed:21327254,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     717    717       Phosphoserine; alternate.
+FT                                {ECO:0000269|PubMed:19690332,
+FT                                ECO:0000269|PubMed:21327254}.
+FT   MOD_RES     720    720       Phosphothreonine.
+FT   MOD_RES     721    721       Phosphoserine; by CK1 and PDPK1.
+FT                                {ECO:0000269|PubMed:14761950,
+FT                                ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:19690332,
+FT                                ECO:0000269|PubMed:21327254,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     726    726       Phosphoserine.
+FT                                {ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:19690332}.
+FT   MOD_RES     733    733       Phosphoserine; by CaMK2 and TTBK1.
+FT                                {ECO:0000269|PubMed:16923168}.
+FT   MOD_RES     739    739       Phosphoserine; by PDPK1 and TTBK1.
+FT                                {ECO:0000269|PubMed:16443603,
+FT                                ECO:0000269|PubMed:16923168,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES     744    744       Phosphothreonine; by TTBK1.
+FT                                {ECO:0000269|PubMed:16923168}.
+FT   CARBOHYD     87     87       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    383    383       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    467    467       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    480    480       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    491    491       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    525    525       O-linked (GlcNAc).
+FT                                {ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:21327254}.
+FT   CARBOHYD    542    542       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    551    551       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    555    555       O-linked (GlcNAc).
+FT                                {ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:21327254}.
+FT   CARBOHYD    576    576       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    597    597       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    598    598       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    664    664       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    670    670       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    686    686       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
+FT   CARBOHYD    717    717       O-linked (GlcNAc); alternate.
+FT                                {ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:21327254}.
+FT   DISULFID    608    639       {ECO:0000250}.
+FT   CROSSLNK    571    571       Glycyl lysine isopeptide (Lys-Gly)
+FT                                (interchain with G-Cter in ubiquitin); in
+FT                                PHF-tau. {ECO:0000269|PubMed:15953362,
+FT                                ECO:0000269|PubMed:16443603}.
+FT   CROSSLNK    628    628       Glycyl lysine isopeptide (Lys-Gly)
+FT                                (interchain with G-Cter in ubiquitin); in
+FT                                PHF-tau. {ECO:0000269|PubMed:15953362,
+FT                                ECO:0000269|PubMed:16443603}.
+FT   CROSSLNK    670    670       Glycyl lysine isopeptide (Lys-Gly)
+FT                                (interchain with G-Cter in ubiquitin); in
+FT                                PHF-tau. {ECO:0000269|PubMed:15953362,
+FT                                ECO:0000269|PubMed:16443603}.
+FT   VAR_SEQ       1     44       MAEPRQEFEVMEDHAGTYGLGDRKDQGGYTMHQDQEGDTDA
+FT                                GLK -> MLRALQQRKR (in isoform Tau-A).
+FT                                {ECO:0000303|PubMed:2516729}.
+FT                                /FTId=VSP_003175.
+FT   VAR_SEQ      45     73       Missing (in isoform Tau-A, isoform Tau-D
+FT                                and isoform Fetal-tau).
+FT                                {ECO:0000303|PubMed:15489334,
+FT                                ECO:0000303|PubMed:2498079,
+FT                                ECO:0000303|PubMed:2516729,
+FT                                ECO:0000303|PubMed:3131773,
+FT                                ECO:0000303|Ref.7}.
+FT                                /FTId=VSP_003176.
+FT   VAR_SEQ      74    102       Missing (in isoform Tau-A, isoform Tau-B,
+FT                                isoform Tau-D, isoform Tau-E and isoform
+FT                                Fetal-tau). {ECO:0000303|PubMed:15489334,
+FT                                ECO:0000303|PubMed:2484340,
+FT                                ECO:0000303|PubMed:2498079,
+FT                                ECO:0000303|PubMed:2516729,
+FT                                ECO:0000303|PubMed:3131773,
+FT                                ECO:0000303|Ref.6, ECO:0000303|Ref.7}.
+FT                                /FTId=VSP_003177.
+FT   VAR_SEQ     103    104       Missing (in isoform Tau-A).
+FT                                {ECO:0000303|PubMed:2516729}.
+FT                                /FTId=VSP_003178.
+FT   VAR_SEQ     125    375       Missing (in isoform Tau-A, isoform Tau-B,
+FT                                isoform Tau-C, isoform Tau-D, isoform
+FT                                Tau-E, isoform Tau-F and isoform Fetal-
+FT                                tau). {ECO:0000303|PubMed:15489334,
+FT                                ECO:0000303|PubMed:2484340,
+FT                                ECO:0000303|PubMed:2498079,
+FT                                ECO:0000303|PubMed:2516729,
+FT                                ECO:0000303|PubMed:3131773,
+FT                                ECO:0000303|Ref.6, ECO:0000303|Ref.7}.
+FT                                /FTId=VSP_003179.
+FT   VAR_SEQ     395    460       Missing (in isoform Tau-A, isoform Tau-B,
+FT                                isoform Tau-C, isoform Tau-D, isoform
+FT                                Tau-E, isoform Tau-F and isoform Fetal-
+FT                                tau). {ECO:0000303|PubMed:15489334,
+FT                                ECO:0000303|PubMed:2484340,
+FT                                ECO:0000303|PubMed:2498079,
+FT                                ECO:0000303|PubMed:2516729,
+FT                                ECO:0000303|PubMed:3131773,
+FT                                ECO:0000303|Ref.6, ECO:0000303|Ref.7}.
+FT                                /FTId=VSP_003180.
+FT   VAR_SEQ     502    502       S -> SATKQVQRRPPPAGPRSER (in isoform Tau-
+FT                                G). {ECO:0000305}.
+FT                                /FTId=VSP_026780.
+FT   VAR_SEQ     592    622       Missing (in isoform Tau-A, isoform Tau-B,
+FT                                isoform Tau-C and isoform Fetal-tau).
+FT                                {ECO:0000303|PubMed:15489334,
+FT                                ECO:0000303|PubMed:2484340,
+FT                                ECO:0000303|PubMed:2516729,
+FT                                ECO:0000303|PubMed:3131773,
+FT                                ECO:0000303|Ref.7}.
+FT                                /FTId=VSP_003181.
+FT   VARIANT       5      5       R -> H (in FTD; reduces the ability of
+FT                                tau to promote microtubule assembly and
+FT                                promotes fibril formation in vitro;
+FT                                dbSNP:rs63750959).
+FT                                {ECO:0000269|PubMed:11921059}.
+FT                                /FTId=VAR_019660.
+FT   VARIANT       5      5       R -> L (in PSNP1; delays assembly
+FT                                initiation and lowers the mass of
+FT                                microtubules formed; but the assembly
+FT                                rate is increased compared to normal tau;
+FT                                dbSNP:rs63750959).
+FT                                {ECO:0000269|PubMed:12325083}.
+FT                                /FTId=VAR_019661.
+FT   VARIANT      17     17       T -> M (in dbSNP:rs144611688).
+FT                                {ECO:0000269|PubMed:20020531}.
+FT                                /FTId=VAR_064622.
+FT   VARIANT      30     30       T -> A. {ECO:0000269|PubMed:20020531}.
+FT                                /FTId=VAR_064623.
+FT   VARIANT     285    285       D -> N (risk factor for PSNP1;
+FT                                dbSNP:rs62063786).
+FT                                {ECO:0000269|PubMed:10534245,
+FT                                ECO:0000269|PubMed:9629852}.
+FT                                /FTId=VAR_010340.
+FT   VARIANT     289    289       V -> A (risk factor for PSNP1;
+FT                                dbSNP:rs62063787).
+FT                                {ECO:0000269|PubMed:10534245,
+FT                                ECO:0000269|PubMed:9629852}.
+FT                                /FTId=VAR_010341.
+FT   VARIANT     370    370       R -> W (in dbSNP:rs17651549).
+FT                                /FTId=VAR_056121.
+FT   VARIANT     441    441       Y -> H (in dbSNP:rs2258689).
+FT                                {ECO:0000269|PubMed:1420178,
+FT                                ECO:0000269|PubMed:15365985,
+FT                                ECO:0000269|PubMed:9629852}.
+FT                                /FTId=VAR_010342.
+FT   VARIANT     447    447       S -> P (in dbSNP:rs10445337).
+FT                                {ECO:0000269|PubMed:9629852}.
+FT                                /FTId=VAR_010343.
+FT   VARIANT     574    574       K -> T (in PIDB; reduces the ability to
+FT                                promote microtubule assembly by 70%).
+FT                                {ECO:0000269|PubMed:11089577,
+FT                                ECO:0000269|PubMed:11117542}.
+FT                                /FTId=VAR_010344.
+FT   VARIANT     583    583       L -> V (in FTD; less able to promote
+FT                                microtubule assembly than wild-type tau).
+FT                                {ECO:0000269|PubMed:12509859}.
+FT                                /FTId=VAR_019662.
+FT   VARIANT     589    589       G -> V (in FTD).
+FT                                {ECO:0000269|PubMed:9641683,
+FT                                ECO:0000269|PubMed:9973279}.
+FT                                /FTId=VAR_010345.
+FT   VARIANT     596    596       N -> K (in FTD; with parkinsonism).
+FT                                {ECO:0000269|PubMed:10412802,
+FT                                ECO:0000269|PubMed:10489057,
+FT                                ECO:0000269|PubMed:10802785,
+FT                                ECO:0000269|PubMed:12473774,
+FT                                ECO:0000269|PubMed:9789048}.
+FT                                /FTId=VAR_010346.
+FT   VARIANT     597    597       Missing (in FTD).
+FT                                {ECO:0000269|PubMed:9973279}.
+FT                                /FTId=VAR_010347.
+FT   VARIANT     613    613       N -> H (in FTD; reduced the ability of
+FT                                tau to promote microtubule assembly
+FT                                without having a significant effect on
+FT                                tau filament formation; effects at both
+FT                                the RNA and the protein level).
+FT                                {ECO:0000269|PubMed:11585254}.
+FT                                /FTId=VAR_019663.
+FT   VARIANT     613    613       Missing (in PSNP1/atypical PSNP1;
+FT                                heterozygosity may be a risk factor for
+FT                                both a PSNP1-like syndrome and Parkinson
+FT                                disease; reduced the ability of tau to
+FT                                promote microtubule assembly without
+FT                                having a significant effect on tau
+FT                                filament formation; effects at both the
+FT                                RNA and the protein level).
+FT                                {ECO:0000269|PubMed:11220749,
+FT                                ECO:0000269|PubMed:14991828,
+FT                                ECO:0000269|PubMed:14991829}.
+FT                                /FTId=VAR_019664.
+FT   VARIANT     617    617       V -> I (in dbSNP:rs116733906).
+FT                                {ECO:0000269|PubMed:20020531}.
+FT                                /FTId=VAR_064624.
+FT   VARIANT     618    618       P -> L (in FTD; most common mutation;
+FT                                reduction in the ability to promote
+FT                                microtubule assembly; accelerates
+FT                                aggregation of tau into filaments).
+FT                                {ECO:0000269|PubMed:10214944,
+FT                                ECO:0000269|PubMed:9641683,
+FT                                ECO:0000269|PubMed:9736786,
+FT                                ECO:0000269|PubMed:9789048,
+FT                                ECO:0000269|PubMed:9973279}.
+FT                                /FTId=VAR_010348.
+FT   VARIANT     618    618       P -> S (in FTD and CBD; reduction in the
+FT                                ability to promote microtubule assembly).
+FT                                {ECO:0000269|PubMed:10374757,
+FT                                ECO:0000269|PubMed:10553987,
+FT                                ECO:0000269|PubMed:11071507,
+FT                                ECO:0000269|PubMed:16240366}.
+FT                                /FTId=VAR_010349.
+FT   VARIANT     620    620       G -> V (in PSNP1).
+FT                                {ECO:0000269|PubMed:16157753}.
+FT                                /FTId=VAR_037439.
+FT   VARIANT     622    622       S -> N (in FTD; minimal parkinsonism;
+FT                                very early age of onset).
+FT                                {ECO:0000269|PubMed:10208578}.
+FT                                /FTId=VAR_010350.
+FT   VARIANT     634    634       K -> M (in FTD).
+FT                                {ECO:0000269|PubMed:15883319}.
+FT                                /FTId=VAR_037440.
+FT   VARIANT     637    637       S -> F (in PIDB; markedly reduced ability
+FT                                of tau to promote microtubule assembly).
+FT                                {ECO:0000269|PubMed:11891833}.
+FT                                /FTId=VAR_019665.
+FT   VARIANT     654    654       V -> M (in FTD; ultrastructural and
+FT                                biochemical characteristics
+FT                                indistinguishable from Alzheimer disease;
+FT                                accelerates aggregation of tau into
+FT                                filaments). {ECO:0000269|PubMed:10214944,
+FT                                ECO:0000269|PubMed:9629852}.
+FT                                /FTId=VAR_010351.
+FT   VARIANT     659    659       E -> V (in FTD).
+FT                                {ECO:0000269|PubMed:11117541}.
+FT                                /FTId=VAR_019666.
+FT   VARIANT     669    669       S -> L (in fatal respiratory
+FT                                hypoventilation; unusual apparent
+FT                                autosomal recessive inheritance; reduced
+FT                                binding to microtubules as well as
+FT                                increased fibrillization and
+FT                                aggregation).
+FT                                {ECO:0000269|PubMed:14595660}.
+FT                                /FTId=VAR_019667.
+FT   VARIANT     686    686       K -> I (in PIDB; 90% reduction in the
+FT                                rate of microtubule assembly).
+FT                                {ECO:0000269|PubMed:11601501}.
+FT                                /FTId=VAR_019668.
+FT   VARIANT     706    706       G -> R (in PIDB; in vitro the mutation
+FT                                reduces the ability of tau to promote
+FT                                microtubule assembly by 25 to 30%).
+FT                                {ECO:0000269|PubMed:10604746,
+FT                                ECO:0000269|PubMed:11117542}.
+FT                                /FTId=VAR_010352.
+FT   VARIANT     723    723       R -> W (in FTD/Alzheimer disease;
+FT                                accelerates aggregation of tau into
+FT                                filaments; reduces tau phosphorylation in
+FT                                cells compared to both the wild-type and
+FT                                other mutant forms).
+FT                                {ECO:0000269|PubMed:10214944,
+FT                                ECO:0000269|PubMed:11889249,
+FT                                ECO:0000269|PubMed:14517953,
+FT                                ECO:0000269|PubMed:9641683,
+FT                                ECO:0000269|PubMed:9973279}.
+FT                                /FTId=VAR_010353.
+FT   MUTAGEN     515    515       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     516    516       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     519    519       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     531    531       S->A: No decrease in microtubule-binding
+FT                                and nucleation activity after in vitro
+FT                                phosphorylation of mutant protein.
+FT   MUTAGEN     548    548       T->A: 50% Decrease in microtubule-binding
+FT                                after in vitro phosphorylation of mutant
+FT                                protein.
+FT   MUTAGEN     548    548       T->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     552    552       S->A: 70% decrease in microtubule-binding
+FT                                after in vitro phosphorylation of mutant
+FT                                protein.
+FT   MUTAGEN     552    552       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     579    579       S->A: 8% decrease in microtubule-binding
+FT                                after in vitro phosphorylation of mutant
+FT                                protein.
+FT   MUTAGEN     713    713       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     721    721       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     726    726       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     730    730       S->E: No association with plasma
+FT                                membrane.
+FT   MUTAGEN     739    739       S->E: No association with plasma
+FT                                membrane.
+FT   CONFLICT     48     48       L -> P (in Ref. 6; AAU45390).
+FT                                {ECO:0000305}.
+FT   CONFLICT    414    414       H -> L (in Ref. 5; AAC04277).
+FT                                {ECO:0000305}.
+FT   CONFLICT    557    557       K -> M (in Ref. 12; AAS17881).
+FT                                {ECO:0000305}.
+FT   CONFLICT    591    591       K -> S (in Ref. 12; AAS17881).
+FT                                {ECO:0000305}.
+FT   CONFLICT    617    617       V -> Q (in Ref. 17; AA sequence).
+FT                                {ECO:0000305}.
+FT   CONFLICT    622    622       S -> K (in Ref. 17; AA sequence).
+FT                                {ECO:0000305}.

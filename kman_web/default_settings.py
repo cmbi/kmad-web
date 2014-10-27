@@ -8,8 +8,10 @@ CELERY_QUEUES = (
     Queue('kman_web', Exchange('kman_web'), routing_key='kman_web'),
 )
 CELERY_RESULT_BACKEND = 'redis://localhost/0'
-CELERY_DISABLE_RATE_LIMITS=True
+#CELERY_TASK_SERIALIZER = 'json'
 
+
+## KMAN
 #SPINE_DIR = "/mnt/datas/joanna/disorderPredictionMethods/spine-d/SPINE-D-local/"
 SPINE_DIR = "/home/joanna/software/SPINE-D-local/"
 SPINE_OUTPUT_DIR = SPINE_DIR+"predout/"
@@ -21,6 +23,8 @@ PREDISORDER_PATH = "/home/joanna/software/predisorder1.1/bin/predict_diso.sh"
 PSIPRED_PATH = "/home/joanna/software/psipred/runpsipred"
 SWISSPROT_DB = "/home/joanna/data/uniprot_sprot.fasta"
 ELM_DB = "/home/joanna/skrypty/elm_classes.tsv"
+PFAM_SCAN = "/home/joanna/bin/PfamScan/pfam_scan.pl"
+PFAM_DB = "/home/joanna/data/Pfam"
 
 UNIPROT_FASTA_DIR = "/home/joanna/data/uniprot_fasta/"
 UNIPROT_DAT_DIR = "/home/joanna/data/uniprot_dat/"
