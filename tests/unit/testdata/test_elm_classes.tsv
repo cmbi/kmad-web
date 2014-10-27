@@ -1,0 +1,7 @@
+#ELM_Classes_Download_Version: 1.3
+#ELM_Classes_Download_Date: 2014-05-26 10:20:15.588702
+#Origin: elm.eu.org
+#Type: tsv
+#Num_Classes: 218
+"Accession"	"ELMIdentifier"	"Description"	"Regex"	"Probability"	"#Instances"	"#Instances_in_PDB"
+"TEST_ACC"	"TEST_ID"	"description"	"TESTREGEX"	"0.003564849399"	"39"	"0"
