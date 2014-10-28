@@ -17,7 +17,7 @@ def create_app(settings=None):
     if settings:
         app.config.update(settings)
     else:  # pragma: no cover
-        app.config.from_envvar('FLASK_SITE_SETTINGS')  # pragma: no cover
+        app.config.from_envvar('KMAN_WEB_SETTINGS')  # pragma: no cover
 
     # Set the maximum content length to 150MB. This is to allow large PDB files
     # to be sent in post requests. The largest PDB file found to date is 109MB
