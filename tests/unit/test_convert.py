@@ -179,5 +179,14 @@ def test_elm_db():
     eq_(elm_db(), expected)
 
 
+@patch('kman_web.services.convert.open', mock_open(read_data='>1\nSEQ\nSEQ\n>2\nSEQ\n'), create=True)
+def test_read_fasta():
+    expected = ['>1', 'SEQSEQ', '>2', 'SEQ']
+    from kman_web.services.convert import read_fasta
+
+    eq_(read_fasta('testname'), expected)
+    
+
+
     
 

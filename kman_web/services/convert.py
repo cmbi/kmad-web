@@ -27,13 +27,14 @@ def create_numbering():
 
 def read_fasta(fastafilename):
     with open(fastafilename) as a:
-        fastafileList = a.readlines()
+        fastafile = a.read()
+    fastafile_list = fastafile.splitlines() 
     result = []
-    for i,elementI in enumerate(fastafileList):
-        if ">" in elementI or ">" in fastafileList[i-1]:
-            result += [elementI.rstrip("\n")]
+    for i,elementI in enumerate(fastafile_list):
+        if elementI.startswith('>') or fastafile_list[i-1].startswith('>'):
+            result += [elementI]
         else:
-            result[-1]+=elementI.rstrip("\n")
+            result[-1]+=elementI
     return result
 
 
@@ -105,14 +106,17 @@ def find_phosph_sites(uniprotID):
     features = get_uniprot_txt(uniprotID)
     for i in features:
         ## first check status (exp, by sim, prb or potential)
-        if "By similarity" in i:
-            n = 1
-        elif "Probable" in i:
-            n = 2
-        elif "Potential" in i:
-            n = 3
-        else:
-            n = 0
+        #if "By similarity" in i:
+        #    n = 1
+        #elif "Probable" in i:
+        #    n = 2
+        #elif "Potential" in i:
+        #    n = 3
+        #else:
+        #    n = 0
+
+        ## TODO: get the new levelse of annotation from uniprot
+        n = 0   
         ## check ptm kind and insert site in the results list
         if "Phospho" in i and "MOD_RES" in i:
             phosphorylations[n].append(int(i.split()[3]))
