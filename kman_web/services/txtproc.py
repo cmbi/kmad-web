@@ -49,36 +49,23 @@ def preprocess(pred_out, pred_name):
 def process_fasta(fastafile):
     fasta_list = fastafile.splitlines()
     sequence = ''.join(fasta_list[1:])
-    new_fasta = fasta_list[0]+"\n"+sequence
+    new_fasta = fasta_list[0]+'\n'+sequence
     return new_fasta
 
 
-def lists_to_text(prediction):
-    txt_pred = "# 0 - ordered; 2 - disordered; 1 - no consensus between methods (2:2)\n"
-    header = ["ResNo","AA"]
-    header += [i[0] for i in prediction[1:]]   #ResNo AA pred_name1 pred_name2 ....
-    txt_pred += ' '.join(header)+"\n"
-    for i in range(len(prediction[0])):
-        newline = [i+1, prediction[0][i]]
-        for j in range(1,len(prediction)):
-            newline += [prediction[j][1][i]]
-        newline += ["\n"]
-        newline = [str(j) for j in newline]
-        txt_pred += ' '.join(newline)
-    return txt_pred
-
-
 def find_seqid_blast(filename):
-    blast = open(filename).readlines()
+    with open(filename) as a:
+        blast = a.read()
+    blast = blast.splitlines()
     i = -1 
     reading = True
     found = False
-    seqID = ""
+    seqID = ''
     while reading and i < len(blast):
         i += 1
         if "Query=" in blast[i]:
             if blast[i+2].startswith('Length'):
-                query_length = blast[i+2].split("=")[1]
+                query_length = blast[i+2].split("=")[1] #  pragma: no cover
             else:
                 query_length = blast[i+3].split("=")[1]
             
@@ -91,7 +78,10 @@ def find_seqid_blast(filename):
                 while j < len(blast):
                     if ">" in blast[j]:
                        linelist = blast[j+5].split()
-                       hit_length = blast[j+2].split("=")[1]
+                       if blast[j+1].startswith('Length'):
+                           hit_length = blast[j+1].split("=")[1]    #  pragma: no cover
+                       else:
+                           hit_length = blast[j+2].split("=")[1]
                        #check if identities equals 100% and gaps 0% and length == query_length -> then it is the query sequence, otherwise not found (this was the best hit)
                        if linelist[3] == "(100%)," and linelist[-1] == "(0%)" and query_length == hit_length:   
                             found = True
@@ -101,7 +91,7 @@ def find_seqid_blast(filename):
                     else:
                        j += 1 
             else:
-                reading = False
+                reading = False # pragma: no cover
     return [found, seqID]
 
 
@@ -116,8 +106,6 @@ def process_d2p2(prediction):
             processed += [0]
     return ["D2P2", processed]
             
-    
-    
 
 def process_alignment(data, codon_length):
      data_list = data.splitlines()

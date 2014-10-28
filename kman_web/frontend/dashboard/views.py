@@ -5,7 +5,6 @@ from flask import Blueprint, render_template, request, redirect, url_for, send_f
 
 from kman_web.frontend.dashboard.forms import KmanForm
 from kman_web.services.kman import KmanStrategyFactory
-from kman_web.services.txtproc import lists_to_text
 
 
 _log = logging.getLogger(__name__)
