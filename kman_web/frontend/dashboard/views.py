@@ -4,7 +4,6 @@ import StringIO
 from flask import Blueprint, render_template, request, redirect, url_for, send_file
 
 from kman_web.frontend.dashboard.forms import KmanForm
-from kman_web.services.files import get_calculated_results
 from kman_web.services.kman import KmanStrategyFactory
 from kman_web.services.txtproc import lists_to_text
 
@@ -56,15 +55,6 @@ def output(output_type, celery_id):
                            output_type=output_type,
                            celery_id=celery_id)
 
-@bp.route('/filename', methods=['POST'])
-def retrieve_result():
-    text = str(request.form['fileprefix'])
-    seq, odd = get_results(text)
-    html_out = render_template("output.html", seq=seq, odd=odd) 
-    html_file = open("kman_web/frontend/static/results_html/"+text+".html", 'w')
-    html_file.write(html_out)
-    html_file.close()
-    return html_out
 
 @bp.route('/help', methods=['GET'])
 def help():
@@ -96,9 +86,3 @@ def download_alignment():
                      attachment_filename="kman_alignment.txt",
                      as_attachment=True)
     
-
-@bp.route('/previous_output/<filename>', methods=['GET'])
-def previous_output(filename):
-    data = get_results(filename)
-    raw_data = lists_to_text(data)
-    return render_template("dashboard/previous_output.html", data=data, raw_data=raw_data)

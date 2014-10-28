@@ -4,8 +4,6 @@ from flask_wtf import Form
 from wtforms.fields import SelectField, TextAreaField
 from wtforms.validators import Regexp
 
-from kman_web.services.files import get_calculated_results
-
 
 class KmanForm(Form):
     sequence = TextAreaField(u'sequence')

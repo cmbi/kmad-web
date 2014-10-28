@@ -18,16 +18,16 @@ def is_empty(s1):
         return False
 
 
-def get_calculated_results():
-    output = subprocess.check_output(['ls', 'kman_web/frontend/static/results_html'])
-    file_prefixes = set()
-    for i in output.split("\n"):
-        prefix = ".".join(i.split(".")[:-1])
-        if not is_empty(prefix):
-            file_prefixes.add(prefix)
-    file_prefixes = list(file_prefixes)
-    file_prefixes.sort()
-    return file_prefixes
+#def get_calculated_results():
+#    output = subprocess.check_output(['ls', 'kman_web/frontend/static/results_html'])
+#    file_prefixes = set()
+#    for i in output.split("\n"):
+#        prefix = ".".join(i.split(".")[:-1])
+#        if not is_empty(prefix):
+#            file_prefixes.add(prefix)
+#    file_prefixes = list(file_prefixes)
+#    file_prefixes.sort()
+#    return file_prefixes
 
 
 def get_seq_from_uniprot(uniprot_id):
@@ -49,11 +49,16 @@ def get_seq_from_uniprot(uniprot_id):
 def get_fasta_from_blast(blast_name, query_filename):
     outfile_name = blast_name.split(".")[0]+"_toalign.fasta"
     outfile = open(outfile_name,'w')
-    query_fasta = open(query_filename).readlines()
-    blastfile = open(blast_name).readlines()
+    with open(query_filename) as a:
+        query_fasta = a.read()
+    query_fasta = query_fasta.splitlines()
+    with open(blast_name) as a:
+        blastfile = a.read()
+    blastfile = blastfile.splitlines()
     start_0 = False
     start_1 = False
     count = 0
+    newfasta = ''
     for i in blastfile:
         if "Sequences producing significant alignments" in i:
             start_0 = True
@@ -69,21 +74,18 @@ def get_fasta_from_blast(blast_name, query_filename):
                 uniprot_id = i.split(" ")[2].split("|")[2]
                 sequence = get_seq_from_uniprot(uniprot_id)    
                 count += 1
-                if "\n" in sequence[1]:
-                    _log.debug("There is a newline!")
                 if count == 1:
                     if sequence[1] != query_fasta[1]:
-                        _log.debug("first seq: "+sequence[1])
-                        _log.debug("query_seq: "+query_fasta[1])
-                        outfile.write(query_fasta[0]) 
-                        outfile.write(query_fasta[1]+"\n") 
+                        newfasta += query_fasta[0]
+                        newfasta += query_fasta[1]+'\n'
                 if len(sequence[0]) > 1: 
-                    outfile.write(sequence[0])
-                    outfile.write(sequence[1]+"\n")
+                    newfasta += sequence[0]
+                    newfasta += sequence[1]+'\n'
                 if count % 10 == 0:
                     time.sleep(5)
         elif start_1:
             break
+    outfile.write(newfasta)
     outfile.close()
     return outfile_name
     

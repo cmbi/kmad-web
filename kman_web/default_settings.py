@@ -8,6 +8,7 @@ CELERY_QUEUES = (
     Queue('kman_web', Exchange('kman_web'), routing_key='kman_web'),
 )
 CELERY_RESULT_BACKEND = 'redis://localhost/0'
+
 #CELERY_TASK_SERIALIZER = 'json'
 
 
