@@ -18,22 +18,10 @@ def is_empty(s1):
         return False
 
 
-#def get_calculated_results():
-#    output = subprocess.check_output(['ls', 'kman_web/frontend/static/results_html'])
-#    file_prefixes = set()
-#    for i in output.split("\n"):
-#        prefix = ".".join(i.split(".")[:-1])
-#        if not is_empty(prefix):
-#            file_prefixes.add(prefix)
-#    file_prefixes = list(file_prefixes)
-#    file_prefixes.sort()
-#    return file_prefixes
-
-
 def get_seq_from_uniprot(uniprot_id):
     uniprot = open(UNIPROT_FASTA_DIR + uniprot_id + ".fasta").readlines()
     for i,lineI in enumerate(uniprot):
-        if ">" == lineI[0] and uniprot_id in lineI:
+        if lineI.startswith('>') and uniprot_id in lineI:
             header = lineI
             sequence = uniprot[i+1].rstrip("\n")
             j = i+2
@@ -76,12 +64,12 @@ def get_fasta_from_blast(blast_name, query_filename):
                 count += 1
                 if count == 1:
                     if sequence[1] != query_fasta[1]:
-                        newfasta += query_fasta[0]
+                        newfasta += query_fasta[0]+'\n'
                         newfasta += query_fasta[1]+'\n'
                 if len(sequence[0]) > 1: 
                     newfasta += sequence[0]
                     newfasta += sequence[1]+'\n'
-                if count % 10 == 0:
+                if count % 10 == 0:     #  pragma: no cover
                     time.sleep(5)
         elif start_1:
             break

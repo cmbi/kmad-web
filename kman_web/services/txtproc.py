@@ -77,7 +77,11 @@ def find_seqid_blast(filename):
     while reading and i < len(blast):
         i += 1
         if "Query=" in blast[i]:
-            query_length = blast[i+3].split("=")[1]
+            if blast[i+2].startswith('Length'):
+                query_length = blast[i+2].split("=")[1]
+            else:
+                query_length = blast[i+3].split("=")[1]
+            
         if "Sequences producing significant alignments" in blast[i]:
             i += 2
             e_val = blast[i].split()[-1]

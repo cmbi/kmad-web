@@ -19,4 +19,7 @@ processed_pred_result = [['predisorder', [0,0,0]],
 seq = 'SEQ'
 fasta = '>1\nSEQ\n'
 encoded_seq = '>1\nSAAAAAAEAAAAAAQAAAAAA\n## PROBABILITIES\nmotif index  probability\n'
+ins_human_seq = ['>sp|P01308|INS_HUMAN Insulin OS=Homo sapiens GN=INS PE=1 SV=1\n', 'MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAED'
+                                                                                  +'LQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN']
+
 
