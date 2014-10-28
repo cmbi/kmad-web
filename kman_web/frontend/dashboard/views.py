@@ -30,24 +30,6 @@ def index():
     return render_template('dashboard/index.html', form=form)
 
 
-@bp.route('/out', methods=['POST'])
-def fasta_post():
-    # TODO: Use wtforms
-    text = request.form['fasta']
-    processed_text = str(text)
-    _log.debug("posted")
-    seq, odd, seq_id  = run_predictions(processed_text)
-    ## seq: [[method_name, sequence(string)], ...]
-    ## odd: [[method_name, disorder(list of integers)], ...]
-    
-    html_file = open("kman_web/frontend/static/results_html/"+seq_id+".html", 'w')
-    html_out = render_template("output.html", seq=seq, odd=odd) 
-    html_file.write(html_out)
-    html_file.close()
-    
-    return html_out
-
-
 @bp.route("/output/<output_type>/<celery_id>", methods=['GET'])
 def output(output_type, celery_id):
     return render_template("dashboard/output.html",
