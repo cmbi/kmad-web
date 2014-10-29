@@ -5,7 +5,7 @@ import os
 import subprocess
 import urllib2
 
-from celery import current_app as celery_app, chord
+from celery import current_app as celery_app
 from kman_web.default_settings import *
 
 from kman_web.services.txtproc import preprocess, process_alignment, decode, find_seqid_blast, process_d2p2

@@ -20,7 +20,7 @@ def create_numbering():
     alphabet = list(string.ascii_lowercase) \
         + list(string.ascii_uppercase) \
         + [str(i) for i in range(0, 10)]
-    alphabet.remove("A")
+    alphabet.remove('A')
     numbering = []
     for i in alphabet:
         for j in alphabet:
@@ -211,12 +211,38 @@ def get_codes(myDict, myList, mode):
     return result
 
 
-# code: "012345" 0 - aa; 1 - nothing yet; 2 - domain, 3 - phosph; 4,5 - motif
-# argument 'results' -> list([domains,
-#                             phosphorylations,
-#                             methods,
-#                             low complexity regions])
-def sevenCharactersCode(results, myseq, domain_codes, slim_codes):
+def encode_domains(seq, domains, domain_codes):
+    for i, domI in enumerate(domains):
+        start = domI[0]
+        end = domI[1]
+        domainsCode = domain_codes[i]
+        j = 0
+        k = 0
+        while j < end+1 and k < len(seq):
+            if k % 7 == 2 and j >= start:
+                seq[k] = domainsCode[0]
+                seq[k+1] = domainsCode[1]
+            elif k % 7 == 0 and seq[k] != "-":
+                j += 1
+            k += 1
+    return seq
+
+
+def encode_predicted_phosph(seq, pred_phosph):
+    if pred_phosph:
+        k = 0
+        l = 0
+        end = max(pred_phosph)
+        while k < end + 1 and l < len(seq):
+            if l % 7 == 4 and k in pred_phosph:
+                seq[l] = "d"
+            if l % 7 == 0 and seq[l] != "-":
+                k += 1
+            l += 1
+    return seq
+
+
+def encode_ptms(seq, ptms):
     code_table = [["Z", "a", "b", "c"],  # code table for PTMs
                   ["V", "W", "X", "Y"],
                   ["R", "S", "T", "U"],
@@ -224,79 +250,72 @@ def sevenCharactersCode(results, myseq, domain_codes, slim_codes):
                   ["F", "G", "H", "I"],
                   ["B", "C", "D", "E"],
                   ["N", "O", "P", "Q"]]
-    newseq = ""
-    # first encode sequence with no features
-    for i in myseq:
-        newseq += i + "AAAAAA"
-    # map results onto the sequence
-    # domains
-    newseq = list(newseq)
-    for i, domI in enumerate(results[0]):
-        start = domI[0]
-        end = domI[1]
-        domainsCode = domain_codes[i]
-        j = 0
-        k = 0
-        while j < end+1 and k < len(newseq):
-            if k % 7 == 2 and j >= start:
-                newseq[k] = domainsCode[0]
-                newseq[k+1] = domainsCode[1]
-            elif k % 7 == 0 and newseq[k] != "-":
-                j += 1
-            k += 1
-    # predicted phosphorylations
-    if results[4]:
-        k = 0
-        l = 0
-        end = max(results[4])
-        while k < end + 1 and l < len(newseq):
-            if l % 7 == 4 and k in results[4]:
-                newseq[l] = "d"
-            if l % 7 == 0 and newseq[l] != "-":
-                k += 1
-            l += 1
-    # all annotated PTMs
-    for i, ptmI in enumerate(results[3]):
+    for i, ptmI in enumerate(ptms):
         for j, ptmModeJ in enumerate(ptmI):
             if ptmModeJ:
                 k = 0
                 l = 0
                 end = max(ptmModeJ)
-                while k < end + 1 and l < len(newseq):
+                while k < end + 1 and l < len(seq):
                     if l % 7 == 4 and k in ptmModeJ:
-                        newseq[l] = code_table[i][j]
-                    if l % 7 == 0 and newseq[l] != "-":
+                        seq[l] = code_table[i][j]
+                    if l % 7 == 0 and seq[l] != "-":
                         k += 1
                     l += 1
-    # SLiMs
-    # all the residue from start to end(including the residue on position 'end')
-    # belong to the slim
-    for i, slimI in enumerate(results[1]):
+    return seq
+
+
+def encode_slims(seq, slims, slim_codes):
+    for i, slimI in enumerate(slims):
         if len(slimI) > 0:
             start = slimI[0]
             end = slimI[1]
             slimsCode = slim_codes[i]
             k = 0
             j = 0
-            while j < end + 1 and k < len(newseq):
+            while j < end + 1 and k < len(seq):
                 if k % 7 == 5 and j >= start:
-                    newseq[k] = slimsCode[0]
-                    newseq[k+1] = slimsCode[1]
-                elif k % 7 == 0 and newseq[k] != "-":
+                    seq[k] = slimsCode[0]
+                    seq[k+1] = slimsCode[1]
+                elif k % 7 == 0 and seq[k] != "-":
                     j += 1
                 k += 1
-    for i, lcrI in enumerate(results[2]):   # pragma: no cover
+    return seq
+
+
+def encode_lcrs(seq, lcrs):
+    for i, lcrI in enumerate(lcrs):   # pragma: no cover
         start = lcrI[0]
         end = lcrI[1]
         lcr_code = "L"
         k = 0
         j = 0
-        while j < end + 1 and k < len(newseq):
+        while j < end + 1 and k < len(seq):
             if k % 7 == 1 and j >= start:
-                newseq[k] = lcr_code
-            elif k % 7 == 0 and newseq[k] != "-":
+                seq[k] = lcr_code
+            elif k % 7 == 0 and seq[k] != "-":
                 j += 1
             k += 1
+    return seq
+
+
+# code: "012345" 0 - aa; 1 - nothing yet; 2 - domain, 3 - phosph; 4,5 - motif
+# argument 'results' -> list([domains,
+#                             phosphorylations,
+#                             methods,
+#                             low complexity regions])
+def sevenCharactersCode(results, myseq, domain_codes, slim_codes):
+    newseq = ""
+    # first encode sequence with no features
+    for i in myseq:
+        newseq += i + "AAAAAA"
+    # map results onto the sequence
+    newseq = list(newseq)
+    newseq = encode_domains(newseq, results[0], domain_codes)
+    newseq = encode_predicted_phosph(newseq, results[4])
+    newseq = encode_ptms(newseq, results[3])
+    newseq = encode_slims(newseq, results[1], slim_codes)
+    newseq = encode_lcrs(newseq, results[2])
     return ''.join(newseq)
 
 
