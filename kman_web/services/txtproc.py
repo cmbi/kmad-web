@@ -9,25 +9,30 @@ def preprocess(pred_out, pred_name):
     residue_list = []
     disorder_list = []
     pred_out_list = pred_out.split("\n")
-    symbols = dict({"spine":"D","disopred":"*", "psipred":"C", "predisorder":"D"})
+    symbols = dict({"spine": "D",
+                    "disopred": "*",
+                    "psipred": "C",
+                    "predisorder": "D"})
     disorder_symbol = symbols[pred_name]
-    no = 0   ## disorder (0: structured, 1: maybe, 2: disordered)
+    no = 0   # disorder (0: structured, 1: maybe, 2: disordered)
     yes = 2
     if pred_name == "spine":
         for i, lineI in enumerate(pred_out_list):
             line_list = lineI.split()
-            if len(line_list) > 1:	
-                disorder = no 
+            if len(line_list) > 1:
+                disorder = no
                 if line_list[1] == disorder_symbol:
                     disorder = yes
                 residue_list += [line_list[0]]
                 disorder_list += [disorder]
     elif pred_name == "disopred" or pred_name == "psipred":
-        if pred_name =="disopred": start = 3
-        else: start = 2
+        if pred_name == "disopred":
+            start = 3
+        else:
+            start = 2
         for i, lineI in enumerate(pred_out_list[start:]):
             line_list = lineI.split()
-            if len(line_list) > 2:	
+            if len(line_list) > 2:
                 if line_list[2] == disorder_symbol:
                     disorder = yes
                 else:
@@ -40,8 +45,8 @@ def preprocess(pred_out, pred_name):
                 disorder = yes
             else:
                 disorder = no
-            residue_list+=[pred_out_list[0][i]]
-            disorder_list+=[disorder]
+            residue_list += [pred_out_list[0][i]]
+            disorder_list += [disorder]
     residue_list = ''.join(residue_list)
     return [pred_name, disorder_list]
 
@@ -53,45 +58,50 @@ def process_fasta(fastafile):
     return new_fasta
 
 
+def find_length(lines):
+    length = 0
+    for i in lines:
+        if i.startswith('Length'):
+            length = i.split('=')[1]
+    return length
+
+
 def find_seqid_blast(filename):
     with open(filename) as a:
         blast = a.read()
     blast = blast.splitlines()
-    i = -1 
+    i = -1
     reading = True
     found = False
     seqID = ''
     while reading and i < len(blast):
         i += 1
         if "Query=" in blast[i]:
-            if blast[i+2].startswith('Length'):
-                query_length = blast[i+2].split("=")[1] #  pragma: no cover
-            else:
-                query_length = blast[i+3].split("=")[1]
-            
+            query_length = find_length(blast[i+1:i+6])
         if "Sequences producing significant alignments" in blast[i]:
             i += 2
             e_val = blast[i].split()[-1]
-            seq_id = blast[i].split()[0].split("|")
             if e_val < '1e-5':
                 j = i+1
                 while j < len(blast):
                     if ">" in blast[j]:
-                       linelist = blast[j+5].split()
-                       if blast[j+1].startswith('Length'):
-                           hit_length = blast[j+1].split("=")[1]    #  pragma: no cover
-                       else:
-                           hit_length = blast[j+2].split("=")[1]
-                       #check if identities equals 100% and gaps 0% and length == query_length -> then it is the query sequence, otherwise not found (this was the best hit)
-                       if linelist[3] == "(100%)," and linelist[-1] == "(0%)" and query_length == hit_length:   
+                        linelist = blast[j+5].split()
+                        hit_length = find_length(blast[j+1:j+6])
+                        ''' check if identities equals 100% and gaps 0% and
+                        length == query_length -> then it is the query sequence,
+                        otherwise not found (this was the best hit)
+                        '''
+                        if (linelist[3] == "(100%)," and
+                                linelist[-1] == "(0%)" and
+                                query_length == hit_length):
                             found = True
                             seqID = blast[j].split("|")[1]
-                       reading = False
-                       break
+                        reading = False
+                        break
                     else:
-                       j += 1 
+                        j += 1
             else:
-                reading = False # pragma: no cover
+                reading = False  # pragma: no cover
     return [found, seqID]
 
 
@@ -105,11 +115,16 @@ def process_d2p2(prediction):
         else:
             processed += [0]
     return ["D2P2", processed]
-            
+
 
 def process_alignment(data, codon_length):
-     data_list = data.splitlines()
-     return [[data_list[i].split(" ")[0].lstrip(">"),data_list[i+1][::codon_length]] for i in range(0,len(data_list),2)]
+    data_list = data.splitlines()
+    processed = []
+    for i in range(0, len(data_list), 2):
+        header = data_list[i].split(' ')[0].lstrip('>')
+        sequence = data_list[i+1][::codon_length]
+        processed += [[header, sequence]]
+    return processed
 
 
 def decode(alignment, codon_length):
@@ -121,6 +136,3 @@ def decode(alignment, codon_length):
         else:
             new_data_list += [data_list[i][::codon_length]]
     return '\n'.join(new_data_list)
-
-            
-            
