@@ -1,4 +1,6 @@
+import inspect
 import json
+import re
 
 from mock import patch
 from nose.tools import eq_, ok_, raises
@@ -96,3 +98,47 @@ class TestEndpoints(object):
             {'prediction': ['some_part', 'some_part', 'some_part'],
              'alignment': {'raw': 'raw_al', 'processed': 'proc_al'}})
 
+    @patch('kman_web.tasks.postprocess.AsyncResult')
+    def test_get_kman_status_predict_failed(self, mock_result):
+        mock_result.return_value.failed.return_value = True
+        mock_result.return_value.status = 'FAILED'
+        mock_result.return_value.traceback = 'Error message'
+        rv = self.app.get('/api/status/predict/12345/')
+        eq_(rv.status_code, 200)
+        response = json.loads(rv.data)
+        ok_('status' in response)
+        eq_(response['status'], 'FAILED')
+        ok_('message' in response)
+        eq_(response['message'], 'Error message')
+
+    @patch('kman_web.tasks.postprocess.AsyncResult')
+    def test_get_kman_status_predict_and_align_failed(self, mock_result):
+        mock_result.return_value.failed.return_value = True
+        mock_result.return_value.status = 'FAILED'
+        mock_result.return_value.traceback = 'Error message'
+        rv = self.app.get('/api/status/predict_and_align/12345/')
+        eq_(rv.status_code, 200)
+        response = json.loads(rv.data)
+        ok_('status' in response)
+        eq_(response['status'], 'FAILED')
+        ok_('message' in response)
+        eq_(response['message'], 'Error message')
+
+    def test_api_doc(self):
+        from kman_web.frontend.api import endpoints
+
+        rv = self.app.get('/api/')
+        eq_(rv.status_code, 200)
+
+        excluded_fs = ['api_doc', 'api_example']
+        for f_name, f in inspect.getmembers(endpoints, inspect.isfunction):
+            mod_name = inspect.getmodule(f).__name__
+            if "kman_web.frontend.api.endpoints" in mod_name and \
+               f_name not in excluded_fs:
+                src = inspect.getsourcelines(f)
+                rx = r"@bp\.route\('([\w\/<>]*)', methods=\['([A-Z]*)']\)"
+                m = re.search(rx, src[0][0])
+                url = m.group(1)
+                url = url.replace('>', '&gt;')
+                url = url.replace('<', '&lt;')
+                assert "<samp>/api{}</samp>".format(url) in rv.data

@@ -77,12 +77,16 @@ def create_app(settings=None):
     from kman_web import toolbar
     toolbar.init_app(app)
 
+    # Register jinja2 filters
+    from kman_web.frontend.filters import beautify_docstring
+    app.jinja_env.filters['beautify_docstring'] = beautify_docstring
+
     # Register blueprints
     from kman_web.frontend.api.endpoints import bp as api_bp
     from kman_web.frontend.dashboard.views import bp as dashboard_bp
     app.register_blueprint(api_bp)
     app.register_blueprint(dashboard_bp)
-    
+
     return app
 
 
