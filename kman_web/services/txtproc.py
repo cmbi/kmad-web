@@ -63,8 +63,12 @@ def preprocess(pred_out, pred_name):
 
 def process_fasta(fastafile):
     fasta_list = fastafile.splitlines()
-    sequence = ''.join(fasta_list[1:])
-    new_fasta = fasta_list[0]+'\n'+sequence
+    if fastafile.startswith('>'):
+        sequence = ''.join(fasta_list[1:])
+        new_fasta = fasta_list[0]+'\n'+sequence
+    else:
+        sequence = ''.join(fasta_list)
+        new_fasta = '>fasta_header\n{}'.format(sequence)
     return new_fasta
 
 

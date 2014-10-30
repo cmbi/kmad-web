@@ -87,13 +87,15 @@ def run_netphos(filename):
 
 
 def get_uniprot_txt(uniprot_id):
-    with open(paths.UNIPROT_DAT_DIR+uniprot_id+".dat") as a:
-        uniprot_dat = a.read()
-    uniprot_dat = uniprot_dat.splitlines()
     features = []
-    for lineI in uniprot_dat:
-        if lineI.startswith('FT'):
-            features += [lineI]
+    uni_path = paths.UNIPROT_DAT_DIR + uniprot_id + '.dat'
+    if os.path.exists(uni_path):
+        with open(uni_path) as a:
+            uniprot_dat = a.read()
+        uniprot_dat = uniprot_dat.splitlines()
+        for lineI in uniprot_dat:
+            if lineI.startswith('FT'):
+                features += [lineI]
     return features
 
 
@@ -167,23 +169,23 @@ def search_elm(uniprotID, sequence, slims_all_classes):
     limits = []
     elms_ids = []
     probabilities = []
-    req = urllib2.Request("http://elm.eu.org/start_search/"+uniprotID+".csv")
-    response = urllib2.urlopen(req)
-    features = response.read()
-    features = features.splitlines()
-    for line in features:
-        entry = line.split()
-        prob = 1
-        if entry:
-            if entry[3] == "False":
-                prob = 1 + 1/math.log(slims_all_classes[entry[0]][0], 10)
-                if prob > 0:
-                    limits.append([int(entry[1]), int(entry[2])])
-                    elms_ids.append(entry[0])
-                    probabilities.append(prob)
-    limits, elms_ids, probabilities = filter_out_overlapping(limits,
-                                                             elms_ids,
-                                                             probabilities)
+    # req = urllib2.Request("http://elm.eu.org/start_search/"+uniprotID+".csv")
+    # response = urllib2.urlopen(req)
+    # features = response.read()
+    # features = features.splitlines()
+    # for line in features:
+    #     entry = line.split()
+    #     prob = 1
+    #     if entry:
+    #         if entry[3] == "False":
+    #             prob = 1 + 1/math.log(slims_all_classes[entry[0]][0], 10)
+    #             if prob > 0:
+    #                 limits.append([int(entry[1]), int(entry[2])])
+    #                 elms_ids.append(entry[0])
+    #                 probabilities.append(prob)
+    # limits, elms_ids, probabilities = filter_out_overlapping(limits,
+    #                                                          elms_ids,
+    #                                                          probabilities)
     return [limits, elms_ids, probabilities]
 
 
