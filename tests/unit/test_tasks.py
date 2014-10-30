@@ -1,5 +1,3 @@
-import subprocess
-
 from mock import mock_open, patch
 from nose.tools import eq_, raises
 
@@ -40,23 +38,6 @@ class TestTasks(object):
 
         result = align.delay('d2p2', filename)
         eq_(result.get(), expected)
-
-    @patch('kman_web.tasks.convert_to_7chars')
-    @patch('kman_web.tasks.get_fasta_from_blast')
-    @patch('subprocess.call')
-    @patch('kman_web.tasks.open',
-           mock_open(read_data=test.alignment_7c),
-           create=True)
-    @raises(RuntimeError)
-    def test_align_subprc_error(self, mock_subprocess, mock_call1, mock_call2):
-        mock_call1.return_value = 'testdata/test.blastp'
-        mock_call2.return_value = 'testdata/test.7c'
-        filename = 'testdata/test.fasta'
-        mock_subprocess.side_effect = subprocess.CalledProcessError(
-            "returncode", "cmd", "output")
-        from kman_web.tasks import align
-        result = align.delay('d2p2', filename)
-        result.get()
 
     def test_postprocess(self):
         filename = 'testdata/test.fasta'
@@ -142,18 +123,6 @@ class TestTasks(object):
         result = query_d2p2.delay(filename).get()
         eq_(result[0], True)
 
-    @patch('subprocess.call')
-    @raises(RuntimeError)
-    def test_query_d2p2_subprc_error(self, mock_subprocess):
-        filename = 'testdata/test.fasta'
-        mock_subprocess.side_effect = subprocess.CalledProcessError(
-            "returncode", "cmd", "output")
-
-        from kman_web.tasks import query_d2p2
-
-        result = query_d2p2.delay(filename)
-        result.get()
-
     @patch('kman_web.tasks.preprocess')
     @patch('subprocess.call')
     @patch('kman_web.tasks.open',
@@ -183,16 +152,3 @@ class TestTasks(object):
 
         result = run_single_predictor.delay(d2p2_result, filename, pred_name)
         eq_(result.get(),  expected)
-
-    @patch('subprocess.call')
-    @raises(RuntimeError)
-    def test_run_single_predictor_subprc_error(self, mock_subprocess):
-        filename = 'testdata/test.fasta'
-        d2p2_result = [False, []]
-        mock_subprocess.side_effect = subprocess.CalledProcessError(
-            "returncode", "cmd", "output")
-
-        from kman_web.tasks import run_single_predictor
-
-        result = run_single_predictor.delay(d2p2_result, filename, 'psipred')
-        result.get()

@@ -5,49 +5,59 @@ logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
-def preprocess(pred_out, pred_name):
-    residue_list = []
+def preprocess_spine(pred_out):
     disorder_list = []
-    pred_out_list = pred_out.split("\n")
-    symbols = dict({"spine": "D",
-                    "disopred": "*",
-                    "psipred": "C",
-                    "predisorder": "D"})
-    disorder_symbol = symbols[pred_name]
-    no = 0   # disorder (0: structured, 1: maybe, 2: disordered)
-    yes = 2
-    if pred_name == "spine":
-        for i, lineI in enumerate(pred_out_list):
-            line_list = lineI.split()
-            if len(line_list) > 1:
-                disorder = no
-                if line_list[1] == disorder_symbol:
-                    disorder = yes
-                residue_list += [line_list[0]]
-                disorder_list += [disorder]
-    elif pred_name == "disopred" or pred_name == "psipred":
-        if pred_name == "disopred":
-            start = 3
-        else:
-            start = 2
-        for i, lineI in enumerate(pred_out_list[start:]):
-            line_list = lineI.split()
-            if len(line_list) > 2:
-                if line_list[2] == disorder_symbol:
-                    disorder = yes
-                else:
-                    disorder = no
-                residue_list += [line_list[1]]
-                disorder_list += [disorder]
-    elif pred_name == "predisorder":
-        for i in range(len(pred_out_list[0].rstrip("\n"))):
-            if pred_out_list[1][i] == disorder_symbol:
-                disorder = yes
-            else:
-                disorder = no
-            residue_list += [pred_out_list[0][i]]
+    disorder_symbol = 'D'
+    for i, lineI in enumerate(pred_out):
+        line_list = lineI.split()
+        if len(line_list) > 1:
+            disorder = 0
+            if line_list[1] == disorder_symbol:
+                disorder = 2
             disorder_list += [disorder]
-    residue_list = ''.join(residue_list)
+    return disorder_list
+
+
+def preprocess_disopred_psipred(pred_out, pred_name):
+    disorder_list = []
+    if pred_name == "disopred":
+        start = 3
+        disorder_symbol = '*'
+    else:
+        start = 2
+        disorder_symbol = 'C'
+    for i, lineI in enumerate(pred_out[start:]):
+        line_list = lineI.split()
+        if len(line_list) > 2:
+            if line_list[2] == disorder_symbol:
+                disorder = 2
+            else:
+                disorder = 0
+            disorder_list += [disorder]
+    return disorder_list
+
+
+def preprocess_predisorder(pred_out):
+    disorder_list = []
+    disorder_symbol = 'D'
+    for i in range(len(pred_out[0].rstrip("\n"))):
+        if pred_out[1][i] == disorder_symbol:
+            disorder = 2
+        else:
+            disorder = 0
+        disorder_list += [disorder]
+    return disorder_list
+
+
+def preprocess(pred_out, pred_name):
+    pred_out_list = pred_out.split("\n")
+    # 0 - structured, 2 - disordered
+    if pred_name == "spine":
+        disorder_list = preprocess_spine(pred_out_list)
+    elif pred_name == "disopred" or pred_name == "psipred":
+        disorder_list = preprocess_disopred_psipred(pred_out_list, pred_name)
+    elif pred_name == "predisorder":
+        disorder_list = preprocess_predisorder(pred_out_list)
     return [pred_name, disorder_list]
 
 
