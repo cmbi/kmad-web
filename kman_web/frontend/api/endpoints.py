@@ -66,6 +66,12 @@ def get_kman_result(output_type, id):
                                              'processed': result[-1][1]}}}
     elif output_type == "predict":
         response = {'result': {'prediction': result}}
+    elif output_type == 'align':
+        response = {'result': {'alignment': {'raw': result[-1][0],
+                                             'processed': result[-1][1]}}}
+        #response = {'result': {'alignment': {'raw': 'bla', 'processed': 'bla'}}}
+
+    _log.debug('Final result: {}'.format(response))
     return jsonify(response)
 
 

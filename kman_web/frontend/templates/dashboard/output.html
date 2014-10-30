@@ -69,8 +69,11 @@
 
 {% block js %}
 <script type="text/javascript">
-  if ("{{ output_type }}" == "predict"){
+  if ("{{ output_type }}" == 'predict'){
      document.getElementById('panel2').style.display = 'none';
+  }
+  else if ("{{ output_type }}" == 'align'){
+     document.getElementById('panel1').style.display = 'none';
   }
   $(document).ready(function() {
     var intervalId = setInterval(function(){
@@ -103,21 +106,24 @@
                           .addClass("panel-success");
               $.getJSON(
                   "{{ url_for('kman.get_kman_result', output_type=output_type, id=celery_id) }}",
-                function(data) {
-                    var proseq = new ProteinSequences("canvas", data['result']['prediction']);
-                    proseq.update()
-                    $('#collapseOne').addClass('in');
-                    var raw_data = get_text_data(data['result']['prediction']);
-                    document.getElementById('download_pred_input').value = raw_data;
-                    $('#download_pred_button').removeClass('disabled');
-                    if ("{{ output_type }}" == "predict_and_align"){
-                        var raw_alignment = data['result']['alignment']['raw'];
-                        document.getElementById('download_al_input').value = raw_alignment;
-                        var processed_alignment = data['result']['alignment']['processed'];
-                        var alignment = new SequenceAlignment('alignment_canvas',processed_alignment);
-                        alignment.update();
-                        $('#download_al_button').removeClass('disabled');
-                        $('#collapseTwo').addClass('in');
+                  function(data) {
+                    if ("{{ output_type }}" != 'align'){
+                      var proseq = new ProteinSequences("canvas", data['result']['prediction']);
+                      proseq.update()
+                      $('#collapseOne').addClass('in');
+                      var raw_data = get_text_data(data['result']['prediction']);
+                      document.getElementById('download_pred_input').value = raw_data;
+                      $('#download_pred_button').removeClass('disabled');
+                    }
+                    if ("{{ output_type }}" != 'predict'){
+                      var raw_alignment = data['result']['alignment']['raw'];
+                      document.getElementById('download_al_input').value = raw_alignment;
+                      var processed_alignment = data['result']['alignment']['processed'];
+                      var alignment = new SequenceAlignment('alignment_canvas',processed_alignment);
+                      alignment.update();
+                      console.debug("hejhejehej");
+                      $('#download_al_button').removeClass('disabled');
+                      $('#collapseTwo').addClass('in');
                     }
                 });
             }

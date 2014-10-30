@@ -7,4 +7,6 @@ class KmanForm(Form):
     output_type = SelectField(u'Action', choices=[('predict',
                                                    'predict disorder'),
                                                   ('predict_and_align',
-                                                   'predict and align')])
+                                                   'predict and align'),
+                                                  ('align',
+                                                   'align')])

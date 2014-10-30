@@ -107,20 +107,20 @@ class TestTasks(object):
         mock_call.return_value = [False, '']
         expected = [False, []]
 
-        result = query_d2p2.delay(filename)
+        result = query_d2p2.delay(filename, 'predict')
         eq_(result.get(), expected)
 
         # check: sequence found in swissprot, but not found in d2p2
         mock_call.return_value = [True, 'P01542']
         expected = [False, []]
 
-        result = query_d2p2.delay(filename)
+        result = query_d2p2.delay(filename, 'predict')
         eq_(result.get(), expected)
 
         # check: sequence found in d2p2
         mock_call.return_value = [True, 'P10636']
 
-        result = query_d2p2.delay(filename).get()
+        result = query_d2p2.delay(filename, 'predict').get()
         eq_(result[0], True)
 
     @patch('kman_web.tasks.preprocess')

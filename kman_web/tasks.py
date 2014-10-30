@@ -26,6 +26,7 @@ _log = logging.getLogger(__name__)
 @celery_app.task
 def postprocess(result, filename, output_type):
     # process result and remove tmp files
+    _log.debug("Postprocessing the results")
     prefix = filename[0:14]
     if glob.glob('%s*' % prefix):
         os.system('rm %s*' % prefix)    # pragma: no cover
@@ -49,14 +50,15 @@ def postprocess(result, filename, output_type):
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
+    # else: output_type = 'align' -> then there is no need to change the result
     return result
 
 
 @celery_app.task
-def run_single_predictor(d2p2_result, fasta_file, pred_name):
+def run_single_predictor(prev_result, fasta_file, pred_name):
     _log.debug("Run single predictor")
-    if d2p2_result[0]:
-        return d2p2_result[1]
+    if prev_result[0]:
+        return prev_result[1]
     else:
         if pred_name == "dummy":    # pragma: no cover
             sequence = open(fasta_file).readlines()[1:]
@@ -116,7 +118,7 @@ def get_seq(d2p2, fasta_file):
 
 
 @celery_app.task
-def query_d2p2(filename):
+def query_d2p2(filename, output_type):
     found_it = False
     prediction = []
     out_blast = filename.split(".")[0]+".blastp"
@@ -124,16 +126,17 @@ def query_d2p2(filename):
             "-num_threads", "15", "-db", paths.SWISSPROT_DB,
             "-out", out_blast]
     subprocess.call(args)
-    [found_it, seq_id] = find_seqid_blast(out_blast)
-    if found_it:
-        data = 'seqids=["%s"]' % seq_id
-        request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-        response = json.loads(urllib2.urlopen(request).read())
-        if response[seq_id]:
-            pred_result = response[seq_id][0][2]['disorder']['consensus']
-            prediction = process_d2p2(pred_result)
-        else:
-            found_it = False
+    if output_type != 'align':
+        [found_it, seq_id] = find_seqid_blast(out_blast)
+        if found_it:
+            data = 'seqids=["%s"]' % seq_id
+            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+            response = json.loads(urllib2.urlopen(request).read())
+            if response[seq_id]:
+                pred_result = response[seq_id][0][2]['disorder']['consensus']
+                prediction = process_d2p2(pred_result)
+            else:
+                found_it = False
     return [found_it, prediction]
 
 
@@ -144,7 +147,7 @@ def get_task(output_type):
     If the output_type is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
-    if output_type == 'predict' or output_type == "predict_and_align":
+    if output_type in ['predict', 'predict_and_align', 'align']:
         task = postprocess
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
