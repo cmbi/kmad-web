@@ -13,7 +13,7 @@ ProteinSequences = function(container_id, data) {
   const SEQ_LAYER_OFFSET_X = 50;
   const FONT_FAMILY = "Monospace";
   const FONT_SIZE = 16;
-  const ROW_HEIGHT = 40;
+  const ROW_HEIGHT = 36;
   const ROW_MARGIN_T = 0;
   const ROWS = data.length - 1;
 
@@ -24,12 +24,12 @@ ProteinSequences = function(container_id, data) {
   for (var i = 1; i < data.length; i++){
     this.disorder.push(data[i])
   }
-  var container_height = ROWS * ROW_HEIGHT + 45;
-  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  var container_height = ROWS * ROW_HEIGHT;
+  document.getElementById(container_id).style.height = (container_height + 40).toString() + 'px';
 
   this.stage = new Kinetic.Stage({
     container: container_id,
-    width: 200 + this.disorder[0][1].length*10,
+    width: 150 + this.disorder[0][1].length*10,
     height: ROWS * ROW_HEIGHT + 25
   });
   this.v_header_layer = new Kinetic.Layer();
