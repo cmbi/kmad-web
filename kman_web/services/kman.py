@@ -1,5 +1,4 @@
 import logging
-import os
 import tempfile
 
 
@@ -28,9 +27,8 @@ class PredictStrategy(object):
         from kman_web.tasks import query_d2p2
         from celery import chain, group
         from kman_web.tasks import run_single_predictor, postprocess, get_seq
-        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta",delete=False)
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
-        sequence = fasta_seq.splitlines()[1]
         _log.debug("Created tmp file '{}'".format(tmp_file.name))
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
@@ -38,8 +36,11 @@ class PredictStrategy(object):
 
         methods = ["dummy"]
         tasks_to_run = [get_seq.s(fasta_seq)]
-        tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name) for pred_name in methods] 
-        job = chain(query_d2p2.s(tmp_file.name), group(tasks_to_run), postprocess.s(tmp_file.name, self.output_type))()
+        for pred_name in methods:
+            tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
+        job = chain(query_d2p2.s(tmp_file.name),
+                    group(tasks_to_run),
+                    postprocess.s(tmp_file.name, self.output_type))()
         task_id = job.id
 
         return task_id
@@ -50,21 +51,24 @@ class PredictAndAlignStrategy(object):
         self.output_type = output_type
 
     def __call__(self, fasta_seq):
-        from kman_web.tasks import query_d2p2, align, run_single_predictor, postprocess, get_seq
+        from kman_web.tasks import (query_d2p2, align,
+                                    run_single_predictor, postprocess, get_seq)
         from celery import chain, group
-        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta",delete=False)
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
-        sequence = fasta_seq.splitlines()[1]
         _log.debug("Created tmp file '{}'".format(tmp_file.name))
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
-        #methods = ["spine", "predisorder", "psipred", "disopred"]
+        # methods = ["spine", "predisorder", "psipred", "disopred"]
         methods = ["dummy"]
         tasks_to_run = [get_seq.s(fasta_seq)]
-        tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name) for pred_name in methods] 
+        for pred_name in methods:
+            tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
         tasks_to_run += [align.s(tmp_file.name)]
-        job = chain(query_d2p2.s(tmp_file.name), group(tasks_to_run), postprocess.s(tmp_file.name, self.output_type))()
+        job = chain(query_d2p2.s(tmp_file.name),
+                    group(tasks_to_run),
+                    postprocess.s(tmp_file.name, self.output_type))()
         task_id = job.id
         return task_id

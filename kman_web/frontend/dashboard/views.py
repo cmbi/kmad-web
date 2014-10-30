@@ -1,7 +1,8 @@
 import logging
 import StringIO
 
-from flask import Blueprint, render_template, request, redirect, url_for, send_file
+from flask import (Blueprint, render_template,
+                   request, redirect, url_for, send_file)
 
 from kman_web.frontend.dashboard.forms import KmanForm
 from kman_web.services.kman import KmanStrategyFactory
@@ -15,14 +16,15 @@ bp = Blueprint('dashboard', __name__)
 @bp.route("/", methods=['POST', 'GET'])
 def index():
     form = KmanForm()
-    if form.validate_on_submit() and form.sequence.data and form.output_type.data:
+    if (form.validate_on_submit()
+            and form.sequence.data
+            and form.output_type.data):
         data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
         celery_id = strategy(data)
         _log.info("Job has id '{}'".format(celery_id))
         _log.info("Redirecting to output page")
-        sth ="sth"
         return redirect(url_for('dashboard.output',
                                 output_type=form.output_type.data,
                                 celery_id=celery_id))
@@ -46,6 +48,7 @@ def help():
 def methods():
     return render_template('dashboard/methods.html')
 
+
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
@@ -66,4 +69,3 @@ def download_alignment():
     return send_file(strIO,
                      attachment_filename="kman_alignment.txt",
                      as_attachment=True)
-    
