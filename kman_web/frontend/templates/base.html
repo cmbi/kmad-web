@@ -10,6 +10,7 @@
     <!-- Javascript -->
     <script type="text/javascript" src="{{ url_for('static', filename='libs/jquery/dist/jquery.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='libs/bootstrap/dist/js/bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='libs/bootstrap-tour/build/js/bootstrap-tour.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='libs/kineticjs/kinetic.js') }}"></script>
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/joseq.js') }}"></script>
@@ -18,6 +19,8 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/dist/css/bootstrap-theme.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/dist/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',
+                                            filename='libs/bootstrap-tour/build/css/bootstrap-tour.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block additional_imports %}
     {% endblock %}
@@ -44,7 +47,25 @@
       <li><a href="{{ url_for('dashboard.methods') }}">Methods</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="{{ url_for('dashboard.help') }}">Help</a></li>
+        <!-- <li><a href="{{ url_for('dashboard.help') }}">Help</a></li> -->
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+          Help
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a id="start_tour" href="#">Tour</a>
+            </li>
+            <li>
+              <a href="{{ url_for('dashboard.help') }}">Help page</a>
+            </li>
+          </ul>
+
+        </li>
+        <!--<li>
+            <a id="start_tour" href="#">Help</a>
+        </li> -->
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
