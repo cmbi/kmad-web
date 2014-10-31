@@ -1,8 +1,9 @@
 import inspect
 import logging
 import re
+import StringIO
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, send_file
 from flask.json import jsonify
 
 from kman_web.services.kman import KmanStrategyFactory
@@ -69,14 +70,13 @@ def get_kman_result(output_type, id):
     elif output_type == 'align':
         response = {'result': {'alignment': {'raw': result[-1][0],
                                              'processed': result[-1][1]}}}
-        #response = {'result': {'alignment': {'raw': 'bla', 'processed': 'bla'}}}
 
     _log.debug('Final result: {}'.format(response))
     return jsonify(response)
 
 
 @bp.route('/', methods=['GET'])
-def api_doc():
+def api_docs():
     fs = [create_kman,
           get_kman_status,
           get_kman_result]
@@ -100,3 +100,15 @@ def api_doc():
 @bp.route('/example', methods=['GET'])
 def api_example():  # pragma: no cover
     return render_template('api/example.html')
+
+
+@bp.route('/download_api_example', methods=['GET', 'POST'])
+def download_api_example():
+    with open("kman_web/frontend/static/files/api_example.py") as a:
+            api_example = a.read()
+    strIO = StringIO.StringIO()
+    strIO.write(api_example)
+    strIO.seek(0)
+    return send_file(strIO,
+                     attachment_filename="kman.py",
+                     as_attachment=True)

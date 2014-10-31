@@ -47,7 +47,20 @@
       <li><a href="{{ url_for('dashboard.methods') }}">Methods</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <!-- <li><a href="{{ url_for('dashboard.help') }}">Help</a></li> -->
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+          API
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="{{ url_for('kman.api_docs') }}">API documentation</a>
+            </li>
+            <li>
+              <a href="{{ url_for('kman.api_example') }}">API example</a>
+            </li>
+          </ul>
+        </li>
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
           Help
@@ -61,11 +74,7 @@
               <a href="{{ url_for('dashboard.help') }}">Help page</a>
             </li>
           </ul>
-
         </li>
-        <!--<li>
-            <a id="start_tour" href="#">Help</a>
-        </li> -->
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

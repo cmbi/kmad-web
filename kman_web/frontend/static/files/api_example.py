@@ -1,19 +1,4 @@
-{% extends "base.html" %}
 
-{% block content %}
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <h2>API Example <small>(python)</small></h2>
-    </div>
-  </div>
-<div class="panel-body">
-<p>
-The example performs disorder prediction and alignment of sequence 
-TAU_HUMAN from Uniprot.
-</p>
-<pre>
-<code class="python">
 """
 This example client takes a FASTA sequence, sends it to the service, which
 performs prediction and alignment.
@@ -41,7 +26,7 @@ def kman(sequence_path, kman_url, output_type):
     # request is successful, the id of the job running on the server is
     # returned.
     url_create = '{}api/create/{}/'.format(kman_url,
-                                                  output_type)
+                                           output_type)
     print url_create
     r = requests.post(url_create, data={'data': fasta_content})
     r.raise_for_status()
@@ -84,7 +69,7 @@ def kman(sequence_path, kman_url, output_type):
         # raised and the program exits. If the request is successful, the result
         # is returned.
         url_result = '{}api/result/predict/{}/'.format(kman_url,
-                                                                  job_id)
+                                                       job_id)
         r = requests.get(url_result)
         r.raise_for_status()
         result = json.loads(r.text)['result']
@@ -102,27 +87,3 @@ if __name__ == "__main__":
 
     result = kman(args.sequence_path, args.kman_url, args.output_type)
     print result
-
-</code>
-</pre>
-</div>
-      <div class=panel-footer>
-        <div id="download_api_example">
-            <form action="{{ url_for("kman.download_api_example") }}" method=POST style="clear:both;" >
-             <button type="submit" id="download_al_button" class="btn btn-primary btn-xs" style="float:right;" value="Submit">
-                 <span class="glyphicon glyphicon-save"></span> Download
-             </button>
-            </form>
-            <div class="clearfix"></div>
-        </div>
-      </div>
-</div>
-
-
-
-
-{% endblock %}
-
-{% block js %}
-<script>hljs.initHighlightingOnLoad();</script>
-{% endblock %}
