@@ -1,15 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row">
-    <div class="col-xs-6">
-        <div class="alert alert-danger alert-dismissable" role="alert">
-        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <strong>Oh snap!</strong> I can't help you. Drop by later.
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel_title_text">Help</span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel_body_text">
+      The sequence should be either in FASTA format or a raw protein sequence.
+      In the action field you specify which action do you want to perform.
+      'Submit' button submits the job and redirects to the output page. 
+      You can download both the disorder prediction and the alignment (in FASTA
+      format).
+      <br>
+      In case of any questions don't hesitate to contact us (<a
+        href="mailto:joanna.lange@radboudumc.nl">joanna.lange@radboudumc.nl</a>).
+    </span>
+  </div>
 
-        </div>
-    </div>
-    <div class="col-xs-12">
-    </div>
 </div>
 {% endblock %}
 {% block js %}

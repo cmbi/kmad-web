@@ -24,16 +24,23 @@
         </div>
 <div>
 <div class="row">
-      <div class="col-xs-12">
-        <div id="output_type_div" class="form-group">
+      <div class="col-xs-6">
+        <div id="output_type_div" class="form-group" style="width=100%;
+          height:100%;">
           {{ form.output_type.label }}
           {{ form.output_type(class_='form-control', style="width:300px;") }}
         </div>
       </div>
       <div class="col-xs-6"> 
-        <div id="form_submit_div" class="form-group ">
-            <button type="reset" class="btn btn-default">Clear</button>
+        <br>
+        <div id="form_submit_div" class="form-group " style="float:right;
+          width=100%; height:100%">
+            <!--<button type="submit" name="sequence" class="btn btn-primary"
+              style="float:right;">Submit</button>
+            <button type="reset" class="btn btn-default"
+              style="float:right;">Clear</button> -->
             <button type="submit" name="sequence" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-default">Clear</button>
         </div>
       </div>
 </div>
@@ -42,9 +49,90 @@
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
-function show_sequence_input() {
-    $('#sequence_div').removeClass('hidden');
-}
+  function show_sequence_input() {
+      $('#sequence_div').removeClass('hidden');
+  }
+  function show_tour_data_input(index) {
+      switch (index) {
+      case 3:
+        show_sequence_input();
+        break;
+      }
+  }
+  function show_data_input() {
+      var selected = $('#input_type').children(":selected").attr('value');
+      switch (selected) {
+      case 'sequence':
+        show_sequence_input();
+        break;
+      }
+  }
+
+  $(document).ready( function() {
+    // Setup tour
+    var tour = new Tour({
+      backdrop: true,
+      orphan: true,
+      storage: false,
+      onNext: function (tour) {
+        show_tour_data_input(tour.getCurrentStep() + 1)
+      },
+      onPrev: function (tour) {
+        show_tour_data_input(tour.getCurrentStep() - 1)
+      },
+      onEnd: function (tour) { show_data_input(); },
+      steps: [
+      {
+        element: "",
+        title: "Start Tour",
+        content: "This tour will walk you through the usage of KMAN." +
+                 " Once the tour is complete, you can get started!" +
+                 "<br><br>Click next to begin."
+      },
+      {
+        element: "#output_type_div",
+        title: "Output Type",
+        content: "Select the action to be performed.",
+        placement: "right" 
+      },
+      {
+        element: "#sequence_div",
+        title: "Sequence",
+        placement: "bottom",
+      },
+      {
+        element: "#form_submit_div",
+        title: "Submit",
+        content: "When you're ready, click <code>Submit</code> to send your " +
+                 "request to the server.<br><br>A result page will be shown " +
+                 "with the status of your request, and when completed, the " +
+                 "output will be shown.",
+
+        placement: "left" 
+      }
+    ]});
+    tour.init();
+
+    $('#start_tour').click(function() { tour.restart(); });
+
+    // Show the correct input widget depending on the selected input method.
+    //$('#input_type').change(function() { show_data_input(); });
+
+    // Update the input type selection list to exclude invalid combinations.
+    //$('#output_type').change(update_input_types);
+
+    // Ensure that the correct input field is displayed when the form reloads
+    // due to form errors, page refreshing, or the back button.
+    //$('#input_type').trigger('change');
+
+    // Ensure that the input types listed are correct for the selected output
+    // type.
+    var selected = $('#input_type').children(":selected").attr('value');
+    update_input_types();
+    $('#input_type option[value=' + selected + ']').prop('selected', true);
+  });
+</script>
+
 </script>
 {% endblock %}
 
