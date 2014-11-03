@@ -35,10 +35,6 @@
         <br>
         <div id="form_submit_div" class="form-group " style="float:right;
           width=100%; height:100%">
-            <!--<button type="submit" name="sequence" class="btn btn-primary"
-              style="float:right;">Submit</button>
-            <button type="reset" class="btn btn-default"
-              style="float:right;">Clear</button> -->
             <button type="submit" name="sequence" class="btn btn-primary">Submit</button>
             <button type="reset" class="btn btn-default">Clear</button>
         </div>
@@ -115,20 +111,9 @@
 
     $('#start_tour').click(function() { tour.restart(); });
 
-    // Show the correct input widget depending on the selected input method.
-    //$('#input_type').change(function() { show_data_input(); });
-
-    // Update the input type selection list to exclude invalid combinations.
-    //$('#output_type').change(update_input_types);
-
-    // Ensure that the correct input field is displayed when the form reloads
-    // due to form errors, page refreshing, or the back button.
-    //$('#input_type').trigger('change');
-
     // Ensure that the input types listed are correct for the selected output
     // type.
     var selected = $('#input_type').children(":selected").attr('value');
-    update_input_types();
     $('#input_type option[value=' + selected + ']').prop('selected', true);
   });
 </script>

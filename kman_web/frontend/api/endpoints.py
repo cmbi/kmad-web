@@ -17,7 +17,7 @@ bp = Blueprint('kman', __name__, url_prefix='/api')
 @bp.route('/create/<output_type>/', methods=['POST'])
 def create_kman(output_type):
     """
-    :param output_type: Either 'predict', 'predict_and_align'.
+    :param output_type: Either 'predict', 'predict_and_align' or 'align'.
     :return: The id of the job.
 
     """
@@ -33,7 +33,7 @@ def create_kman(output_type):
 def get_kman_status(output_type, id):
     """
     Get the status of a previous job submission.
-    :param output_type: Either 'predict', 'predict_and_align'.
+    :param output_type: Either 'predict', 'predict_and_align' or 'align'.
     :param id: The id returned by a call to the create method.
     :return: Either PENDING, STARTED, SUCCESS, FAILURE, RETRY, or REVOKED.
     """
@@ -52,7 +52,7 @@ def get_kman_result(output_type, id):
     """
     Get the result of a previous job submission.
 
-    :param output_type: Either 'predict', 'predict_and_align'.
+    :param output_type: Either 'predict', 'predict_and_align' or 'align'.
     :param id: The id returned by a call to the create method.
     :return: The output of the job. If the job status is not SUCCESS, this
              method returns an error.

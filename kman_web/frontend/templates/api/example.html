@@ -16,9 +16,22 @@
 <div class="panel-body">
   <p>
   <span class="panel_body_text">
+    <div class="row">
+    <div class="col-xs-8">
     The example performs disorder prediction and alignment of sequence 
     TAU_HUMAN from Uniprot.
-    <br>
+    </div>
+    <div class="col-xs-4">
+      <div id="download_api_example" style="float:right;">
+        <form action="{{ url_for("kman.download_api_example") }}" method=POST style="clear:both;" >
+         <button type="submit" id="download_al_button" class="btn btn-primary btn-xs" style="float:right;" value="Submit">
+             <span class="glyphicon glyphicon-save"></span> Download
+         </button>
+        </form>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+    </div>
   </span>
 </p>
 <pre>
@@ -115,16 +128,6 @@ if __name__ == "__main__":
 </code>
 </pre>
 </div>
-      <div class=panel-footer>
-        <div id="download_api_example">
-            <form action="{{ url_for("kman.download_api_example") }}" method=POST style="clear:both;" >
-             <button type="submit" id="download_al_button" class="btn btn-primary btn-xs" style="float:right;" value="Submit">
-                 <span class="glyphicon glyphicon-save"></span> Download
-             </button>
-            </form>
-            <div class="clearfix"></div>
-        </div>
-      </div>
 </div>
 
 

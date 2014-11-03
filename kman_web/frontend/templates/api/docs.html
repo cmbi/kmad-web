@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for url, (method, doc) in docs.iteritems()|sort %}
+  <h3><samp>/api{{ url }}</samp> <small>({{ method }})</small></h3>
+  {{ doc|beautify_docstring }}
+  <hr>
+{% endfor %}
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}
