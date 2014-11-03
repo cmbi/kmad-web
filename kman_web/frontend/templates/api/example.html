@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block additional_imports %}
+  <link rel="stylesheet" href="{{ url_for('static',
+  filename='libs/highlightjs-v8.1/styles/default.css')}}">
+	<script type="text/javascript" src="{{ url_for('static',
+    filename='libs/highlightjs-v8.1/highlight.pack.js') }}"></script>
+{% endblock %}
 
 {% block content %}
 <div class="panel panel-default">
@@ -8,9 +14,12 @@
     </div>
   </div>
 <div class="panel-body">
-<p>
-The example performs disorder prediction and alignment of sequence 
-TAU_HUMAN from Uniprot.
+  <p>
+  <span class="panel_body_text">
+    The example performs disorder prediction and alignment of sequence 
+    TAU_HUMAN from Uniprot.
+    <br>
+  </span>
 </p>
 <pre>
 <code class="python">
@@ -124,5 +133,7 @@ if __name__ == "__main__":
 {% endblock %}
 
 {% block js %}
-<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  hljs.initHighlightingOnLoad();
+</script>
 {% endblock %}

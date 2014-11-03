@@ -50,7 +50,8 @@
 .navbar-inverse .navbar-brand:hover span span span {
     color: #D02E8A;
 }
-body {
+code {
+font-size: 10;
 }
 .panel_title_text {
   color: #4C4C4C;
