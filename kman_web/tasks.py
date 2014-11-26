@@ -102,7 +102,7 @@ def align(d2p2, filename):
     codon_length = 7
 
     al_outfile = "%s_al" % toalign
-    args = ["KMAN", "-i", toalign,
+    args = ["kman", "-i", toalign,
             "-o", toalign, "-g", "-5", "-e", "-1", "-c", str(codon_length)]
     subprocess.call(args)
 

@@ -99,46 +99,70 @@ def get_uniprot_txt(uniprot_id):
     return features
 
 
+def get_annotation_level(uni_features):
+    levels_dict = {'269': 0, '314': 0, '353': 0, '315': 0, '316': 0, '270': 0,
+                   '250': 1, '266': 1, '247': 1, '255': 1, '317': 1, '318': 1,
+                   '319': 1, '320': 1, '321': 1, '245': 1,
+                   '304': 2, '303': 2, '305': 2, '307': 2,
+                   '501': 3}
+    i = 0
+    n = 3
+    reading = True
+    while reading and i < len(uni_features):
+        if uni_features[i].startswith("FT          ") or i == 0:
+            if "ECO:0000" in uni_features[i]:
+                start = uni_features[i].index("ECO:0000") + 8
+                eco_code = uni_features[i][start:start+3]
+                n = levels_dict[eco_code]
+                break
+            i += 1
+        else:
+            reading = False
+    return n
+
+
 # UNIPROT
 def find_phosph_sites(uniprotID):
-    # [exp, by similarity, probable, potential]
-    phosphorylations = [[], [], [], []]
-    Nglycs = [[], [], [], []]
-    Oglycs = [[], [], [], []]
-    amids = [[], [], [], []]
-    hydrox = [[], [], [], []]
-    meth = [[], [], [], []]
-    acetyl = [[], [], [], []]
+    ptms_dict = {'phosph': [[], [], [], []],
+                 'Nglycs': [[], [], [], []],
+                 'Oglycs': [[], [], [], []],
+                 'amids': [[], [], [], []],
+                 'hydrox': [[], [], [], []],
+                 'meth': [[], [], [], []],
+                 'acetyl': [[], [], [], []]}
     features = get_uniprot_txt(uniprotID)
-    for i in features:
-        # first check status (exp, by sim, prb or potential)
-        # if "By similarity" in i:
-        #    n = 1
-        # elif "Probable" in i:
-        #    n = 2
-        # elif "Potential" in i:
-        #    n = 3
-        # else:
-        #    n = 0
-
-        # TODO: get the new levelse of annotation from uniprot
-        n = 0
-        # check ptm kind and insert site in the results list
-        if "Phospho" in i and "MOD_RES" in i:
-            phosphorylations[n].append(int(i.split()[3]))
-        elif "amide" in i and "MOD_RES":
-            amids[n].append(int(i.split()[3]))
-        elif "CARBOHYD" in i and "O-linked" in i:
-            Oglycs[n].append(int(i.split()[3]))
-        elif "CARBOHYD" in i and "N-linked" in i:
-            Nglycs[n].append(int(i.split()[3]))
-        elif "MOD_RES" in i and "acetyl" in i:
-            acetyl[n].append(int(i.split()[3]))
-        elif "MOD_RES" in i and "hydroxy" in i:
-            hydrox[n].append(int(i.split()[3]))
-        elif "MOD_RES" in i and "methyl" in i:
-            meth[n].append(int(i.split()[3]))
-    return [Oglycs, meth, hydrox, amids, Nglycs, acetyl, phosphorylations]
+    for i, lineI in enumerate(features):
+        if len(lineI.split()) > 3:
+            # first check status (exp, by sim, prb or potential)
+            ptm_found = True
+            # check ptm kind and insert site in the results list
+            if "Phospho" in lineI and "MOD_RES" in lineI:
+                ptm = 'phosph'
+            elif "amide" in lineI and "MOD_RES":
+                ptm = 'amids'
+            elif "CARBOHYD" in lineI and "O-linked" in lineI:
+                ptm = 'Oglycs'
+            elif "CARBOHYD" in lineI and "N-linked" in lineI:
+                ptm = 'Nglycs'
+            elif "MOD_RES" in lineI and "acetyl" in lineI:
+                ptm = 'acetyl'
+            elif "MOD_RES" in lineI and "hydroxy" in lineI:
+                ptm = 'hydrox'
+            elif "MOD_RES" in lineI and "methyl" in lineI:
+                ptm = 'meth'
+            else:
+                ptm_found = False
+            if ptm_found:
+                if len(features) - i < 10:
+                    end = len(features)
+                else:
+                    end = i+10
+                n = get_annotation_level(features[i:end])
+                position = int(lineI.split()[3])
+                ptms_dict[ptm][n].append(position)
+    return [ptms_dict['Oglycs'], ptms_dict['meth'], ptms_dict['hydrox'],
+            ptms_dict['amids'], ptms_dict['Nglycs'], ptms_dict['acetyl'],
+            ptms_dict['phosph']]
 
 
 # filterOutOverlapping -> removes overlapping slims
