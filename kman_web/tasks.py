@@ -93,7 +93,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 
 
 @celery_app.task
-def align(d2p2, filename):
+def align(d2p2, filename, gap_opening_penalty):
     # blast result file already created in "query_d2p2"
     out_blast = filename.split(".")[0]+".blastp"
     fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
@@ -103,7 +103,8 @@ def align(d2p2, filename):
 
     al_outfile = "%s_al" % toalign
     args = ["kman", "-i", toalign,
-            "-o", toalign, "-g", "-5", "-e", "-1", "-c", str(codon_length)]
+            "-o", toalign, "-g", str(gap_opening_penalty),
+            "-e", "-1", "-c", str(codon_length)]
     subprocess.call(args)
 
     alignment = open(al_outfile).read().encode('ascii', errors='ignore')
