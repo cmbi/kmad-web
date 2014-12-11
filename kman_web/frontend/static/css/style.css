@@ -135,6 +135,10 @@ font-size: 10;
   background-repeat: repeat-x;
 }
 
+.form-control.gap-form {
+  width: 50px;
+}
+
 <<<<<<< HEAD
 
 =======

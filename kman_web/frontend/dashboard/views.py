@@ -18,7 +18,8 @@ def index():
     form = KmanForm()
     if (form.validate_on_submit()
             and form.sequence.data
-            and form.output_type.data):
+            and form.output_type.data
+            and form.gop.data):
         data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
         _log.debug("Using '{}'".format(strategy.__class__.__name__))

@@ -406,7 +406,7 @@ def convert_to_7chars(filename):
                                                              motifs_codes))
 
     newfile += "## PROBABILITIES\n"
-    newfile += "motif index  probability\n"
+    newfile += "motif probability\n"
     for i in motifProbsDict:
         newfile += str(i)+' '+str(motifProbsDict[i])+'\n'
 
