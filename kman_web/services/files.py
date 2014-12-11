@@ -37,6 +37,8 @@ def get_e_val(textline):
 
 # gets fasta sequences from uniprot and writes them to file tmpXXX_toalign.fasta
 # returns name of the file
+# blast name - path to the file with blast results
+# query_filename - path to the file with the original sequence
 def get_fasta_from_blast(blast_name, query_filename):
     outfile_name = blast_name.split(".")[0]+"_toalign.fasta"
     outfile = open(outfile_name, 'w')
