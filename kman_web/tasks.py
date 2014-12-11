@@ -93,7 +93,8 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 
 
 @celery_app.task
-def align(d2p2, filename, gap_opening_penalty):
+def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
+          end_gap_penalty):
     # blast result file already created in "query_d2p2"
     out_blast = filename.split(".")[0]+".blastp"
     fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename

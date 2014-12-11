@@ -10,4 +10,6 @@ class KmanForm(Form):
                                                    'predict and align'),
                                                   ('align',
                                                    'align')])
-    gop = FloatField(u'Gap opening penalty', default=-5)
+    gap_open_p = FloatField(u'Gap opening penalty', default=-5)
+    gap_ext_p = FloatField(u'Gap extension penalty', default=-1)
+    end_gap_p = FloatField(u'End gap penalty', default=-1)

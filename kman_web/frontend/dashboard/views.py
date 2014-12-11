@@ -19,14 +19,17 @@ def index():
     if (form.validate_on_submit()
             and form.sequence.data
             and form.output_type.data
-            and form.gop.data):
+            and form.gap_open_p.data
+            and form.gap_ext_p.data
+            and form.end_gap_p.data):
         data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
         if form.output_type.data == "predict":
             celery_id = strategy(data)
         else:
-            celery_id = strategy(data, form.gop.data)
+            celery_id = strategy(data, form.gap_open_p.data,
+                                 form.gap_ext_p.data, form.end_gap_p.data)
         _log.info("Job has id '{}'".format(celery_id))
         _log.info("Redirecting to output page")
         return redirect(url_for('dashboard.output',
