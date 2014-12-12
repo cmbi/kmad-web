@@ -2,13 +2,19 @@
 
 {% block content %}
 
-{% for url, (method, doc) in docs.iteritems()|sort %}
-  <h3><samp>/api{{ url }}</samp> <small>({{ method }})</small></h3>
-  {{ doc|beautify_docstring }}
-  <hr>
-{% endfor %}
-
+<div class="panel panel-default" style="width=100%" id ="panel0">
+  <div class="panel-body" >
+    <span class="panel_body_text">
+      {% for url, (method, doc) in docs.iteritems()|sort %}
+        <h3><samp>/api{{ url }}</samp> <small>({{ method }})</small></h3>
+        {{ doc|beautify_docstring }}
+        <hr>
+      {% endfor %}
+    </span>
+  </div>
+</div>
 {% endblock %}
+
 
 {% block js %}
 {% endblock %}
