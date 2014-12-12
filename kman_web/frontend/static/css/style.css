@@ -50,12 +50,27 @@
 .navbar-inverse .navbar-brand:hover span span span {
     color: #D02E8A;
 }
+.navbar {
+ min-height: 80px;
+}
+.navbar-brand {
+  height: 80px;
+  padding: 15px 15px;
+  font-size: 48px;
+  line-height: 50px;
+}
+.navbar-nav > li > a {
+  line-height: 50px;
+  font-size: 25px;
+}
+
 code {
 font-size: 10;
 }
 .panel_title_text {
   color: #4C4C4C;
   font-size: 120%;
+  font-weight: bold;
 }
 .panel_body_text {
   color: #4C4C4C;
@@ -135,8 +150,42 @@ font-size: 10;
   background-repeat: repeat-x;
 }
 
+.panel.panel-default.panel-gray {
+  background-color: #F6F6F6;
+  background-image: -webkit-linear-gradient(top, #f6f6f6 0%, #f0f0f0 100%);
+  background-image:      -o-linear-gradient(top, #f6f6f6 0%, #f0f0f0 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f6f6f6), to(#f0f0f0));
+  background-image:         linear-gradient(to bottom, #f6f6f6 0%, #f0f0f0 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff6f6f6', endColorstr='#fff0f0f0', GradientType=0);
+  background-repeat: repeat-x;
+}
+
+
+.panel.panel-default.panel-kman {
+  background-image: -webkit-linear-gradient(top, #c2e1e2 0%, #d6ebec 100%);
+  background-image:      -o-linear-gradient(top, #c2e1e2 0%, #d6ebec 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#c2e1e2), to(#d6ebec));
+  background-image:         linear-gradient(to bottom, #c2e1e2 0%, #d6ebec 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#16c2e1e2', endColorstr='#16d6ebec', GradientType=0);
+  background-repeat: repeat-x;
+}
+.panel.panel-default.panel-kman {
+  background-image: -webkit-linear-gradient(top, #bcd0d1 0%, #d2e0e0 100%);
+  background-image:      -o-linear-gradient(top, #bcd0d1 0%, #d2e0e0 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#bcd0d1), to(#d2e0e0));
+  background-image:         linear-gradient(to bottom, #bcd0d1 0%, #d2e0e0 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#16bcd0d1', endColorstr='#16d2e0e0', GradientType=0);
+  background-repeat: repeat-x;
+}
+
+
+.panel {
+      border: 0;
+}
+
 .form-control.gap-form {
   width: 50px;
+  height: 27px;
 }
 
 <<<<<<< HEAD
