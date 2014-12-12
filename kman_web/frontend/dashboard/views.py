@@ -21,7 +21,10 @@ def index():
             and form.output_type.data
             and form.gap_open_p.data
             and form.gap_ext_p.data
-            and form.end_gap_p.data):
+            and form.end_gap_p.data
+            and form.ptm_score.data
+            and form.domain_score.data
+            and form.motif_score.data):
         data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
@@ -29,7 +32,9 @@ def index():
             celery_id = strategy(data)
         else:
             celery_id = strategy(data, form.gap_open_p.data,
-                                 form.gap_ext_p.data, form.end_gap_p.data)
+                                 form.gap_ext_p.data, form.end_gap_p.data,
+                                 form.ptm_score.data, form.domain_score.data,
+                                 form.motif_score.data)
         _log.info("Job has id '{}'".format(celery_id))
         _log.info("Redirecting to output page")
         return redirect(url_for('dashboard.output',
