@@ -66,6 +66,9 @@ body {
   line-height: 50px;
   font-size: 25px;
 }
+.navbar-nav > li > a:focus {
+  color: #eee;
+}
 
 code {
 font-size: 10;
