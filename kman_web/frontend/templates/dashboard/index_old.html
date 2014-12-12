@@ -8,78 +8,84 @@
 <style>
     .ui-menu { width: 150px; }
 </style>
+<br>
 
 <!-- wtforms -->
 <form method="post" action="{{ url_for('dashboard.index') }}" role="form"
       enctype="multipart/form-data">
 {{ form.hidden_tag() }}
-<div class="panel panel-default panel-kman" style="width=100%" id ="panel0">
-  <div class="panel-title" >
-    <div style="margin:10px;padding-top:20px;">
-      <span
-        class="kman-k">K</span><span class="panel_title_text">nowledge
-        Based </span><span
-        class="kman-m">M</span><span class="panel_title_text">ultiple
-        Sequence </span><span
-        class="kman-a">A</span><span class="panel_title_text">lignment
-        for </span><span
-        class="kman-n">N</span><span class="panel_title_text">atively
-        Unfolded Proteins </span>
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="row">
-      <div id="sequence_div" class="form-group">
-        <div style="margin:10px;">
-           {{ form.sequence(class_='form-control',
-                            placeholder='Enter a protein sequence',
-                            rows="13", style="width: 100%;") }}
+<div class="row">
+        <div class="panel panel-default panel-kman" style="width=100%" id ="panel0">
+          <div class="panel-title" >
+            <div style="margin:10px;">
+            <span
+              class="kman-k">K</span><span class="panel_title_text">nowledge
+              Based </span><span
+              class="kman-m">M</span><span class="panel_title_text">ultiple
+              Sequence </span><span
+              class="kman-a">A</span><span class="panel_title_text">lignment
+              for </span><span
+              class="kman-n">N</span><span class="panel_title_text">atively
+              Unfolded Proteins </span>
+            <br>
+            </div>
+          </div>
+        <div id="sequence_div" class="form-group">
+            <div style="margin:10px;">
+            {{ form.sequence(class_='form-control',
+                     placeholder='Enter a protein sequence',
+                     rows="13", style="width: 100%;") }}
+            </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-<div class="panel panel-default panel-kman" style="width=100%" id ="panel0">
-  <div class="panel-body" >
-    <div class="row">
-      <div id = "gop_div" class="form-group" style="margin:20px;">
-        <div class="col-xs-3">{{ form.gap_open_p.label }}</div>
-        <div class="col-xs-1">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
-        <div class="col-xs-3">{{ form.gap_ext_p.label }}</div>
-        <div class="col-xs-1">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
-        <div class="col-xs-3">{{ form.end_gap_p.label }}</div>
-        <div class="col-xs-1">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
       </div>
-    </div>
-    <div class="row">
-      <div id = "features_div" class="form-group" style="margin:20px;">
-        <div class="col-xs-3">{{ form.ptm_score.label }}</div>
-        <div class="col-xs-1">{{ form.ptm_score(class_='form-control gap-form')}}</div>
-        <div class="col-xs-3">{{ form.domain_score.label }}</div>
-        <div class="col-xs-1">{{ form.domain_score(class_='form-control gap-form')}}</div>
-        <div class="col-xs-3">{{ form.motif_score.label }}</div>
-        <div class="col-xs-1">{{ form.motif_score(class_='form-control gap-form')}}</div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-6">
+      <div class="row">
+        <div class="panel panel-default panel-kman" style="width=100%" id ="panel0">
+          <div class="panel-body" >
+            <tr>
+            <div id = "gop_div" class="form-group">
+            <div class="col-xs-2">
+              {{ form.gap_open_p.label }} 
+            </div>
+            <div class="col-xs-1">
+              {{ form.gap_open_p(class_='form-control gap-form') }}
+            </div>
+            <div class="col-xs-2">
+              {{ form.gap_ext_p.label }} 
+            </div>
+            <div class="col-xs-1">
+              {{ form.gap_ext_p(class_='form-control gap-form') }}
+            </div>
+            <div class="col-xs-2">
+              {{ form.end_gap_p.label }} 
+            </div>
+            <div class="col-xs-1">
+              {{ form.end_gap_p(class_='form-control gap-form') }}
+            </div>
+
+          </div>
+        </div>
+        </tr>
+
+
+<div class="row">
+      <div class="col-xs-3">
         <div id="output_type_div" class="form-group" style="width=100%;
-            height:100%;margin:20px;">
+          height:100%;margin:20px;">
           {{ form.output_type.label }}
           {{ form.output_type(class_='form-control', style="width:300px;") }}
         </div>
       </div>
-      <div class="col-xs-6">
+      <div class="col-xs-9"> 
+        <br>
         <div id="form_submit_div" class="form-group " style="float:right;
-            width=100%; height:100%;margin:30px;padding-top:15px;">
-          <button type="submit" name="sequence" class="btn btn-primary">Submit</button>
-          <button type="reset" class="btn btn-default">Clear</button>
+          width=100%; height:100%;margin:20px;">
+            <button type="submit" name="sequence" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-default">Clear</button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-    
+      </div>
+        </div>
 </form>
 <br>
 {% endblock %}

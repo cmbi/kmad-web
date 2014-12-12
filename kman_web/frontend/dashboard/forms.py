@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms.fields import FloatField, SelectField, TextAreaField
+from wtforms.fields import FloatField, IntegerField, SelectField, TextAreaField
 
 
 class KmanForm(Form):
@@ -10,6 +10,9 @@ class KmanForm(Form):
                                                    'predict and align'),
                                                   ('align',
                                                    'align')])
-    gap_open_p = FloatField(u'Gap opening penalty', default=-5)
-    gap_ext_p = FloatField(u'Gap extension penalty', default=-1)
-    end_gap_p = FloatField(u'End gap penalty', default=-1)
+    gap_open_p = FloatField(u'gap opening penalty', default=-5)
+    gap_ext_p = FloatField(u'gap extension penalty', default=-1)
+    end_gap_p = FloatField(u'end gap penalty', default=-1)
+    ptm_score = IntegerField(u'PTM score', default=10)
+    domain_score = IntegerField(u'domain score', default=3)
+    motif_score = IntegerField(u'motif score', default=3)
