@@ -8,7 +8,7 @@ import urllib2
 from celery import current_app as celery_app
 
 from kman_web import paths
-from kman_web.services.txtproc import (preprocess, process_alignment, decode,
+from kman_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
 from kman_web.services.consensus import (find_consensus_disorder,
                                          filter_out_short_stretches)
@@ -112,8 +112,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
     subprocess.call(args)
 
     alignment = open(al_outfile).read().encode('ascii', errors='ignore')
-    alignment_list = process_alignment(alignment, codon_length)
-    alignment = decode(alignment, codon_length)
+    alignment_list = process_alignment(alignment, 1)
     return [alignment, alignment_list]
 
 
