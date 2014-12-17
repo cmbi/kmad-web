@@ -47,26 +47,33 @@
             ="panel0"> -->
               <span class="panel_body_text">
                 <div class="row">
-                  <div id = "args_div1" class="form-group" style="margin:20px;">
+                  <div id = "gap_open_div" class="form-group"
+                    style="margin:20px;">
                     <div class="col-xs-4">{{ form.gap_open_p.label }}</div>
                     <div class="col-xs-2">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
+                  </div>
+                  <div id = "gap_ext_div" class="form-group" style="margin:20px;">
                     <div class="col-xs-4">{{ form.gap_ext_p.label }}</div>
                     <div class="col-xs-2">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
                   </div>
                 </div>
                 <div class="row">
-                  <div id = "args_div2" class="form-group" style="margin:20px;">
+                  <div id = "end_gap_div" class="form-group" style="margin:20px;">
                     <div class="col-xs-4">{{ form.end_gap_p.label }}</div>
                     <div class="col-xs-2">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
+                  </div>
+                  <div id = "ptm_score_div" class="form-group" style="margin:20px;">
                     <div class="col-xs-4">{{ form.ptm_score.label }}</div>
                     <div class="col-xs-2">{{ form.ptm_score(class_='form-control gap-form')}}</div>
                   </div>
                 </div>
 
                 <div class="row">
-                  <div id = "args_div3" class="form-group" style="margin:20px;">
+                  <div id = "domain_score_div" class="form-group" style="margin:20px;">
                     <div class="col-xs-4">{{ form.domain_score.label }}</div>
                     <div class="col-xs-2">{{ form.domain_score(class_='form-control gap-form')}}</div>
+                  </div>
+                  <div id = "motif_score_div" class="form-group" style="margin:20px;">
                     <div class="col-xs-4">{{ form.motif_score.label }}</div>
                     <div class="col-xs-2">{{ form.motif_score(class_='form-control gap-form')}}</div>
                   </div>
@@ -148,7 +155,51 @@
       {
         element: "#sequence_div",
         title: "Sequence",
-        placement: "bottom",
+        placement: "right"
+      },
+      {
+        element: "#gap_open_div",
+        title: "Gap opening penalty",
+        content: "Set the penalty for opening a gap",
+        placement: "left",
+        onShown: function() {
+        
+        }
+      },
+      {
+        element: "#gap_ext_div",
+        title: "Gap extension penalty",
+        content: "Set the penalty for extending a gap",
+        placement: "left",
+        backdrop: true
+      },
+      {
+        element: "#end_gap_div",
+        title: "End gap penalty",
+        content: "Set the penalty for a gap at the end or beginning of a" +
+                 "sequence",
+        placement: "bottom"
+      },
+      {
+        element: "#ptm_score_div",
+        title: "Posttranslational modification score",
+        content: "Set the additional score for aligning two residues with a" +
+                 "certain PTM assigned to them",
+        placement: "bottom"
+      },
+      {
+        element: "#domain_score_div",
+        title: "Domain score",
+        content: "Set the additional score for aligning two residues with a" +
+                 "certain domain assigned to them",
+        placement: "bottom"
+      },
+      {
+        element: "#motif_score_div",
+        title: "Motif score",
+        content: "Set the additional score for aligning two residues with a" +
+                 "certain motif assigned to them",
+        placement: "bottom"
       },
       {
         element: "#form_submit_div",
