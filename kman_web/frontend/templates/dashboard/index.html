@@ -38,44 +38,66 @@
                     <div style="margin:10px;">
                      {{ form.sequence(class_='form-control',
                                       placeholder='Enter a protein sequence',
-                                      rows="12", style="width: 100%;") }}
+                                      rows="15", style="width: 100%;") }}
                     </div>
                   </div>
                 </div>
         <div class="col-xs-6">
-          <!--<div class="panel panel-default panel-kman" style="width=100%" id
-            ="panel0"> -->
               <span class="panel_body_text">
                 <div class="row">
+                  <div class="col-xs-6">
                   <div id = "gap_open_div" class="form-group"
                     style="margin:20px;">
-                    <div class="col-xs-4">{{ form.gap_open_p.label }}</div>
-                    <div class="col-xs-2">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
+                    <div class="row">
+                    <div class="col-xs-8">{{ form.gap_open_p.label }}</div>
+                    <div class="col-xs-4">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
+                    </div>
                   </div>
-                  <div id = "gap_ext_div" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.gap_ext_p.label }}</div>
-                    <div class="col-xs-2">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
+                  </div>
+                  <div class="col-xs-6">
+                    <div id = "gap_ext_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.gap_ext_p.label }}</div>
+                        <div class="col-xs-4">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div id = "end_gap_div" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.end_gap_p.label }}</div>
-                    <div class="col-xs-2">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
+                  <div class="col-xs-6">
+                    <div id = "end_gap_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.end_gap_p.label }}</div>
+                        <div class="col-xs-4">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div id = "ptm_score_div" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.ptm_score.label }}</div>
-                    <div class="col-xs-2">{{ form.ptm_score(class_='form-control gap-form')}}</div>
+                  <div class="col-xs-6">
+                    <div id = "ptm_score_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.ptm_score.label }}</div>
+                        <div class="col-xs-4">{{ form.ptm_score(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div class="row">
-                  <div id = "domain_score_div" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.domain_score.label }}</div>
-                    <div class="col-xs-2">{{ form.domain_score(class_='form-control gap-form')}}</div>
+                  <div class="col-xs-6">
+                    <div id = "domain_score_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.domain_score.label }}</div>
+                        <div class="col-xs-4">{{ form.domain_score(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div id = "motif_score_div" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.motif_score.label }}</div>
-                    <div class="col-xs-2">{{ form.motif_score(class_='form-control gap-form')}}</div>
+                  <div class="col-xs-6">
+                    <div id = "motif_score_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.motif_score.label }}</div>
+                        <div class="col-xs-4">{{ form.motif_score(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <br>
