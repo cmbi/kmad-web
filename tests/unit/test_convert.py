@@ -28,7 +28,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     # check: nothing to encode
     expected_data = '>1\nSAAAAAAEAAAAAAQAAAAAA\n' \
         + '## PROBABILITIES\n' \
-        + 'motif index  probability\n'
+        + 'motif probability\n'
     mock_run_pfam_scan.return_value = [[], []]
     mock_search_elm.return_value = [[], [], []]
     mock_run_netphos.return_value = []

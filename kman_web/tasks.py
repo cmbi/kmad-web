@@ -100,6 +100,8 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
     fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
 
     toalign = convert_to_7chars(fastafile)  # .7c filename
+    subprocess.call(['cp', toalign, '/home/joanna/cmbi/kman_tests/test_convert/NEW.7c'])
+    subprocess.call(['cp', fastafile, '/home/joanna/cmbi/kman_tests/test_convert/NEW.fasta'])
     codon_length = 7
 
     al_outfile = "%s_al" % toalign
