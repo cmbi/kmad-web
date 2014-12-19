@@ -9,6 +9,7 @@ PREDISORDER_PATH = "/home/joanna/software/predisorder1.1/bin/predict_diso.sh"
 PSIPRED_PATH = "/home/joanna/software/psipred/runpsipred"
 SWISSPROT_DB = "/home/joanna/data/uniprot_sprot.fasta"
 ELM_DB = "/home/joanna/skrypty/elm_classes.tsv"
+ELM_DB_GO = "/home/joanna/skrypty/elm_classes_go_terms.txt"
 PFAM_SCAN = "/home/joanna/bin/PfamScan/pfam_scan.pl"
 PFAM_DB = "/home/joanna/data/Pfam"
 

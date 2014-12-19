@@ -1,7 +1,6 @@
 import logging
 import math
 import os
-import re
 import string
 import subprocess
 import tempfile
@@ -43,10 +42,12 @@ def read_fasta(fastafilename):
 
 def process_slims_all_classes(classes):
     result = dict()
-    for i in classes[6:]:
-        slim_id = re.sub('"', '', i.split('"')[3])
-        slim_probability = float(re.sub('"', '', i.split('"')[9]))
-        result[slim_id] = [slim_probability, i]
+    for i in classes:
+        lineI = i.split()
+        slim_id = lineI[0]
+        slim_probability = float(lineI[1])
+        go_terms = lineI[2:]
+        result[slim_id] = {"prob": slim_probability, "GO": go_terms}
     return result
 
 
@@ -86,8 +87,25 @@ def run_netphos(filename):
     return list(phosphorylations)
 
 
+def check_id(uniprot_id, seq):
+    result = False
+    try:
+        req = urllib2.Request("http://www.uniprot.org/uniprot/"
+                              + uniprot_id + ".fasta")
+        uni_seq = urllib2.urlopen(req).read()
+        uni_seq = ''.join(uni_seq.splitlines()[1:])
+        if uni_seq == seq:
+            result = True
+        else:
+            print "uni_seq: {}\n seq: {}\n".format(uni_seq, seq)
+    except:
+        print "No entry with ID: {}".format(uniprot_id)
+    return result
+
+
 def get_uniprot_txt(uniprot_id):
     features = []
+    go_terms = []
     uni_path = paths.UNIPROT_DAT_DIR + uniprot_id + '.dat'
     if os.path.exists(uni_path):
         with open(uni_path) as a:
@@ -96,7 +114,9 @@ def get_uniprot_txt(uniprot_id):
         for lineI in uniprot_dat:
             if lineI.startswith('FT'):
                 features += [lineI]
-    return features
+            elif lineI.startswith('DR   GO;'):
+                go_terms += [lineI.split(';')[1].split(':')[1]]
+    return {"features": features, "GO": go_terms}
 
 
 def get_annotation_level(uni_features):
@@ -122,7 +142,7 @@ def get_annotation_level(uni_features):
 
 
 # UNIPROT
-def find_phosph_sites(uniprotID):
+def find_phosph_sites(features):
     ptms_dict = {'phosph': [[], [], [], []],
                  'Nglycs': [[], [], [], []],
                  'Oglycs': [[], [], [], []],
@@ -130,7 +150,6 @@ def find_phosph_sites(uniprotID):
                  'hydrox': [[], [], [], []],
                  'meth': [[], [], [], []],
                  'acetyl': [[], [], [], []]}
-    features = get_uniprot_txt(uniprotID)
     for i, lineI in enumerate(features):
         if len(lineI.split()) > 3:
             # first check status (exp, by sim, prb or potential)
@@ -189,27 +208,31 @@ def filter_out_overlapping(lims, ids, probs):
     return new_lims, new_ids, new_probs
 
 
-def search_elm(uniprotID, sequence, slims_all_classes):
+def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
     limits = []
     elms_ids = []
     probabilities = []
-    # req = urllib2.Request("http://elm.eu.org/start_search/"+uniprotID+".csv")
-    # response = urllib2.urlopen(req)
-    # features = response.read()
-    # features = features.splitlines()
-    # for line in features:
-    #     entry = line.split()
-    #     prob = 1
-    #     if entry:
-    #         if entry[3] == "False":
-    #             prob = 1 + 1/math.log(slims_all_classes[entry[0]][0], 10)
-    #             if prob > 0:
-    #                 limits.append([int(entry[1]), int(entry[2])])
-    #                 elms_ids.append(entry[0])
-    #                 probabilities.append(prob)
-    # limits, elms_ids, probabilities = filter_out_overlapping(limits,
-    #                                                          elms_ids,
-    #                                                          probabilities)
+    req = urllib2.Request("http://elm.eu.org/start_search/"+uniprotID+".csv")
+    response = urllib2.urlopen(req)
+    features = response.read()
+    features = features.splitlines()
+    for line in features[1:]:
+        entry = line.split()
+        prob = 1
+        if entry:
+            slim_id = entry[0]
+            slim_go_terms = slims_all_classes[slim_id]["GO"]
+            if set(seq_go_terms).intersection(slim_go_terms):
+                if entry[3] == "False":
+                    prob = 1 + 1/math.log(
+                        slims_all_classes[slim_id]["prob"], 10)
+                    if prob > 0:
+                        limits.append([int(entry[1]), int(entry[2])])
+                        elms_ids.append(entry[0])
+                        probabilities.append(prob)
+    limits, elms_ids, probabilities = filter_out_overlapping(limits,
+                                                             elms_ids,
+                                                             probabilities)
     return [limits, elms_ids, probabilities]
 
 
@@ -355,7 +378,7 @@ def tmp_fasta(seq_id, seq):  # pragma: no cover
 
 
 def elm_db():
-    with open(paths.ELM_DB) as a:
+    with open(paths.ELM_DB_GO) as a:
         slims_all_classes_pre = a.read()
     return process_slims_all_classes(slims_all_classes_pre.splitlines())
 
@@ -380,23 +403,25 @@ def convert_to_7chars(filename):
             predicted_phosph = run_netphos(tmp_filename)
             if os.path.exists(tmp_filename):        # pragma: no cover
                 os.remove(tmp_filename)
-            uniprot_results = find_phosph_sites(seq_id)
-            # elms - slims coordinates, motifs_ids, probs - probabilities
-            [elm, motifs_ids, probs] = search_elm(seq_id, seqI,
-                                                  slims_all_classes)
-            lc_regions = []
+            if check_id(seq_id, seqI):
+                uniprot_txt = get_uniprot_txt(seq_id)
+                uniprot_results = find_phosph_sites(uniprot_txt["features"])
+                # elms - slims coordinates, motifs_ids, probs - probabilities
+                [elm, motifs_ids, probs] = search_elm(seq_id, seqI,
+                                                      slims_all_classes,
+                                                      uniprot_txt["GO"])
+                motifsDictionary = add_elements_to_dict(motifs_ids,
+                                                        motifsDictionary,
+                                                        'slims')
+                motifs_codes = get_codes(motifsDictionary, motifs_ids, 'motifs')
+                for i, indI in enumerate(motifs_codes):
+                    motifProbsDict[indI] = probs[i]
 
+            lc_regions = []
             domainsDictionary = add_elements_to_dict(domains,
                                                      domainsDictionary,
                                                      'domains')
-            motifsDictionary = add_elements_to_dict(motifs_ids,
-                                                    motifsDictionary,
-                                                    'slims')
             domains_codes = get_codes(domainsDictionary, domains, 'domains')
-            motifs_codes = get_codes(motifsDictionary, motifs_ids, 'motifs')
-            for i, indI in enumerate(motifs_codes):
-                motifProbsDict[indI] = probs[i]
-
             resultsList = [pfam, elm, lc_regions,
                            uniprot_results, predicted_phosph]
             newfile += '{}\n{}\n'.format(header,
