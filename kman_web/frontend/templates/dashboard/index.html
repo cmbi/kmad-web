@@ -38,53 +38,87 @@
                     <div style="margin:10px;">
                      {{ form.sequence(class_='form-control',
                                       placeholder='Enter a protein sequence',
-                                      rows="12", style="width: 100%;") }}
+                                      rows="15", style="width: 100%;") }}
                     </div>
                   </div>
                 </div>
         <div class="col-xs-6">
-          <!--<div class="panel panel-default panel-kman" style="width=100%" id
-            ="panel0"> -->
               <span class="panel_body_text">
                 <div class="row">
-                  <div id = "args_div1" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.gap_open_p.label }}</div>
-                    <div class="col-xs-2">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
-                    <div class="col-xs-4">{{ form.gap_ext_p.label }}</div>
-                    <div class="col-xs-2">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
+                  <div class="col-xs-6">
+                  <div id = "gap_open_div" class="form-group"
+                    style="margin:20px;">
+                    <div class="row">
+                    <div class="col-xs-8">{{ form.gap_open_p.label }}</div>
+                    <div class="col-xs-4">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
+                    </div>
+                  </div>
+                  </div>
+                  <div class="col-xs-6">
+                    <div id = "gap_ext_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.gap_ext_p.label }}</div>
+                        <div class="col-xs-4">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div id = "args_div2" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.end_gap_p.label }}</div>
-                    <div class="col-xs-2">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
-                    <div class="col-xs-4">{{ form.ptm_score.label }}</div>
-                    <div class="col-xs-2">{{ form.ptm_score(class_='form-control gap-form')}}</div>
+                  <div class="col-xs-6">
+                    <div id = "end_gap_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.end_gap_p.label }}</div>
+                        <div class="col-xs-4">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-6">
+                    <div id = "ptm_score_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.ptm_score.label }}</div>
+                        <div class="col-xs-4">{{ form.ptm_score(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
                 <div class="row">
-                  <div id = "args_div3" class="form-group" style="margin:20px;">
-                    <div class="col-xs-4">{{ form.domain_score.label }}</div>
-                    <div class="col-xs-2">{{ form.domain_score(class_='form-control gap-form')}}</div>
-                    <div class="col-xs-4">{{ form.motif_score.label }}</div>
-                    <div class="col-xs-2">{{ form.motif_score(class_='form-control gap-form')}}</div>
+                  <div class="col-xs-6">
+                    <div id = "domain_score_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.domain_score.label }}</div>
+                        <div class="col-xs-4">{{ form.domain_score(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xs-6">
+                    <div id = "motif_score_div" class="form-group" style="margin:20px;">
+                      <div class="row">
+                        <div class="col-xs-8">{{ form.motif_score.label }}</div>
+                        <div class="col-xs-4">{{ form.motif_score(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <br>
                 <div class="row">
                   <div class="col-xs-6">
                     <div id="output_type_div" class="form-group" style="width=100%;
-                        height:100%;margin:20px;padding-top:10px;">
-                      {{ form.output_type.label }}
-                      {{ form.output_type(class_='form-control', style="width:300px;") }}
+                      height:100%;margin:20px;padding-top:10px;">
+                      <div id="output_type_inner_div">
+                        {{ form.output_type.label }}
+                        {{ form.output_type(class_='form-control',
+                        style="width:100%;") }}
+                      </div>
                     </div>
                   </div>
                   <div class="col-xs-6">
                     <div id="form_submit_div" class="form-group " style="float:right;
-                        width=100%; height:100%;margin:30px;padding-top:25px;">
-                      <button type="submit" name="sequence" class="btn btn-primary">Submit</button>
-                      <button type="reset" class="btn btn-default">Clear</button>
+                      width=100%; height:100%;margin:30px;padding-top:25px;">
+                      <div id="submit_inner_div">
+                        <button type="submit" name="sequence" class="btn btn-primary">Submit</button>
+                        <button type="reset" class="btn btn-default">Clear</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -140,18 +174,102 @@
                  "<br><br>Click next to begin."
       },
       {
-        element: "#output_type_div",
+        element: "#output_type_inner_div",
         title: "Output Type",
         content: "Select the action to be performed.",
-        placement: "right" 
+        placement: "top",
+        onShown:  function() {
+          document.getElementById("output_type_inner_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("output_type_inner_div").style.background="";
+        }
       },
       {
         element: "#sequence_div",
         title: "Sequence",
-        placement: "bottom",
+        placement: "right"
       },
       {
-        element: "#form_submit_div",
+        element: "#gap_open_div",
+        title: "Gap opening penalty",
+        content: "Set the penalty for opening a gap",
+        placement: "left",
+        onShown:  function() {
+          document.getElementById("gap_open_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("gap_open_div").style.background="";
+        }
+      },
+      {
+        element: "#gap_ext_div",
+        title: "Gap extension penalty",
+        content: "Set the penalty for extending a gap",
+        placement: "left",
+        backdrop: true,
+        onShown:  function() {
+          document.getElementById("gap_ext_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("gap_ext_div").style.background="";
+        }
+      },
+      {
+        element: "#end_gap_div",
+        title: "End gap penalty",
+        content: "Set the penalty for a gap at the end or beginning of a" +
+                 "sequence",
+        placement: "bottom",
+        onShown:  function() {
+          document.getElementById("end_gap_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("end_gap_div").style.background="";
+        }
+
+      },
+      {
+        element: "#ptm_score_div",
+        title: "Posttranslational modification score",
+        content: "Set the additional score for aligning two residues with a" +
+                 "certain PTM assigned to them",
+        placement: "bottom",
+        onShown:  function() {
+          document.getElementById("ptm_score_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("ptm_score_div").style.background="";
+        }
+      },
+      {
+        element: "#domain_score_div",
+        title: "Domain score",
+        content: "Set the additional score for aligning two residues with a" +
+                 "certain domain assigned to them",
+        placement: "bottom",
+        onShown:  function() {
+          document.getElementById("domain_score_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("domain_score_div").style.background="";
+        }
+      },
+      {
+        element: "#motif_score_div",
+        title: "Motif score",
+        content: "Set the additional score for aligning two residues with a" +
+                 "certain motif assigned to them",
+        placement: "bottom",
+        onShown:  function() {
+          document.getElementById("motif_score_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("motif_score_div").style.background="";
+        }
+      },
+      {
+        element: "#submit_inner_div",
         title: "Submit",
         content: "When you're ready, click <code>Submit</code> to send your " +
                  "request to the server.<br><br>A result page will be shown " +
