@@ -29,7 +29,7 @@ class TestDashboard(object):
                            follow_redirects=True)
         eq_(rv.status_code, 200)
         assert 'Job status' in rv.data
-        mock_call1.assert_called_once_with(test_sequence)
+        mock_call1.assert_called_once_with(test_sequence, -5, -1, -1, 10, 3, 3)
 
         rv = self.app.post('/', data={'output_type': 'predict',
                                       'sequence': test_sequence},
