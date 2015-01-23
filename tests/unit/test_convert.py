@@ -6,9 +6,11 @@ from MockResponse import MockResponse
 from testdata import test_variables as test_vars
 
 
+@patch('kman_web.services.convert.check_id')
 @patch('kman_web.services.convert.elm_db')
 @patch('kman_web.services.convert.tmp_fasta')
 @patch('kman_web.services.convert.read_fasta')
+@patch('kman_web.services.convert.get_uniprot_txt')
 @patch('kman_web.services.convert.find_phosph_sites')
 @patch('kman_web.services.convert.run_netphos')
 @patch('kman_web.services.convert.search_elm')
@@ -17,8 +19,9 @@ from testdata import test_variables as test_vars
 def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
                            mock_search_elm, mock_run_netphos,
                            mock_find_phosph_sites,
+                           mock_get_uniprot_txt,
                            mock_read_fasta, mock_tmp_fasta,
-                           mock_elm_db):
+                           mock_elm_db, mock_check_id):
 
     filename = 'testdata/test.fasta'
     expected_outname = 'testdata/test.7c'
@@ -27,14 +30,15 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
 
     # check: nothing to encode
     expected_data = '>1\nSAAAAAAEAAAAAAQAAAAAA\n' \
-        + '## PROBABILITIES\n' \
-        + 'motif probability\n'
+        + '## PROBABILITIES\n'
     mock_run_pfam_scan.return_value = [[], []]
     mock_search_elm.return_value = [[], [], []]
     mock_run_netphos.return_value = []
     mock_find_phosph_sites.return_value = [[], [], [], [], [], [], []]
+    mock_get_uniprot_txt = {"GO": [], "features": []}
     mock_tmp_fasta.return_value = 'tmp_filename'
     mock_elm_db.return_value = 'elm_db'
+    mock_check_id = True
 
     from kman_web.services.convert import convert_to_7chars
 
@@ -47,8 +51,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     # check: encoded domain
     mock_run_pfam_scan.return_value = [[[1, 2]], ['domain']]
     expected_data = '>1\nSAaaAAAEAaaAAAQAAAAAA\n' \
-        + '## PROBABILITIES\n' \
-        + 'motif index  probability\n'
+        + '## PROBABILITIES\n'
     handle.reset_mock()
 
     convert_to_7chars(filename)
@@ -59,7 +62,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     mock_search_elm.return_value = [[[1, 2]], ['MOTIF'], [0.9]]
     expected_data = '>1\nSAAAAaaEAAAAaaQAAAAAA\n' \
         + '## PROBABILITIES\n' \
-        + 'motif index  probability\naa 0.9\n'
+        + 'aa 0.9\n'
     handle.reset_mock()
 
     convert_to_7chars(filename)
@@ -69,8 +72,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     mock_search_elm.return_value = [[], [], []]
     mock_find_phosph_sites.return_value = [[[1]], [[2]], [[3]], [], [], [], []]
     expected_data = '>1\nSAAAZAAEAAAVAAQAAARAA\n' \
-        + '## PROBABILITIES\n' \
-        + 'motif index  probability\n'
+        + '## PROBABILITIES\n'
     handle.reset_mock()
 
     convert_to_7chars(filename)
@@ -80,20 +82,25 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     mock_run_netphos.return_value = [1]
     mock_find_phosph_sites.return_value = [[], [], [], [], [], [], []]
     expected_data = '>1\nSAAAdAAEAAAAAAQAAAAAA\n' \
-        + '## PROBABILITIES\n' \
-        + 'motif index  probability\n'
+        + '## PROBABILITIES\n'
     handle.reset_mock()
 
     convert_to_7chars(filename)
     handle.write.assert_called_once_with(expected_data)
 
 
+@patch('kman_web.services.convert.os.path.exists')
 @patch('kman_web.services.convert.open',
-       mock_open(read_data=open('tests/unit/testdata/TEST.dat').read()),
+       mock_open(read_data=open(
+           'tests/unit/testdata/test_get_uniprot_txt.dat').read()),
        create=True)
-def test_get_uniprot_txt():
-    with open('tests/unit/testdata/features.dat') as a:
-        expected = a.read().splitlines()
+def test_get_uniprot_txt(mock_os_path_exists):
+    # with open('tests/unit/testdata/features.dat') as a:
+    #     expected = a.read().splitlines()
+    mock_os_path_exists = True
+    expected = {"features":
+                ["FT   MOD_RES       2      2       N-acetylalanine."],
+                "GO": ["0030424"]}
 
     from kman_web.services.convert import get_uniprot_txt
     eq_(get_uniprot_txt('test_id'), expected)
@@ -107,19 +114,26 @@ def test_search_elm(mock_request, mock_urlopen):
     mock_urlopen.return_value = MockResponse('')
     expected = [[], [], []]
     slims_classes = dict()
+    seq_go_terms = ["007"]
 
     from kman_web.services.convert import search_elm
 
-    result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes)
+    result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
     eq_(result, expected)
 
     # check: found a motif
-    data = "MOTIF 1 1 False False False\n"
+    data = "description\nMOTIF 1 1 False False False\n"
     mock_urlopen.return_value = MockResponse(data)
-    slims_classes = dict({'MOTIF': [1e-5, ""]})
+    slims_classes = dict({'MOTIF': {"prob": 1e-5, "GO": ["007"]}})
     expected = [[[1, 1]], ['MOTIF'], [0.8]]
 
-    result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes)
+    # check: found a motif but go terms don't overlap
+    data = "description\nMOTIF 1 1 False False False\n"
+    mock_urlopen.return_value = MockResponse(data)
+    slims_classes = dict({'MOTIF': {"prob": 1e-5, "GO": ["008"]}})
+    expected = [[], [], []]
+
+    result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
     eq_(result, expected)
 
 
@@ -137,7 +151,12 @@ def test_filter_out_overlappig():
 
 @patch('kman_web.services.convert.get_uniprot_txt')
 def test_find_phosph_sites(mock_uni_txt):
-    mock_uni_txt.return_value = open('tests/unit/testdata/test_features.dat').readlines()
+    from kman_web.services.convert import get_uniprot_txt
+
+    mock_uni_txt.return_value = {"features": open(
+        'tests/unit/testdata/test_features.dat').readlines(),
+                                 "GO": []}
+    uniprot_txt = get_uniprot_txt('TEST_ID')
     expected = [[[2], [], [], []],
                 [[7], [], [], []],
                 [[6], [], [], []],
@@ -147,7 +166,7 @@ def test_find_phosph_sites(mock_uni_txt):
                 [[3], [], [], []]]
     from kman_web.services.convert import find_phosph_sites
 
-    result = find_phosph_sites('TEST_ID')
+    result = find_phosph_sites(uniprot_txt['features'])
     eq_(result, expected)
 
 
@@ -184,13 +203,13 @@ def test_get_id():
 
 
 @patch('kman_web.services.convert.open',
-       mock_open(read_data=open('tests/unit/testdata/test_elm_classes.tsv').read()),
+       mock_open(read_data=open(
+           'tests/unit/testdata/test_elm_classes_goterms.txt').read()),
        create=True)
 def test_elm_db():
     from kman_web.services.convert import elm_db
-    expected = {'TEST_ID': [0.003564849399,
-                            '"TEST_ACC"\t"TEST_ID"\t"description"\t'
-                            + '"TESTREGEX"\t"0.003564849399"\t"39"\t"0"']}
+    expected = {'TEST_ID': {"prob": 0.003564849399,
+                            "GO": ["007", "008"]}}
 
     eq_(elm_db(), expected)
 

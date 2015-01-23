@@ -26,7 +26,7 @@ class TestTasks(object):
     @patch('kman_web.tasks.get_fasta_from_blast')
     @patch('subprocess.call')
     @patch('kman_web.tasks.open',
-           mock_open(read_data=test.alignment_7c),
+           mock_open(read_data=test.alignment_1c),
            create=True)
     def test_align(self, mock_subprocess, mock_call1, mock_call2):
         filename = 'testdata/test.fasta'
@@ -36,7 +36,7 @@ class TestTasks(object):
 
         from kman_web.tasks import align
 
-        result = align.delay('d2p2', filename)
+        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3)
         eq_(result.get(), expected)
 
     def test_postprocess(self):
