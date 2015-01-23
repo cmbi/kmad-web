@@ -97,9 +97,9 @@ def check_id(uniprot_id, seq):
         if uni_seq == seq:
             result = True
         else:
-            print "uni_seq: {}\n seq: {}\n".format(uni_seq, seq)
+            _log.debug("Different sequences")
     except:
-        print "No entry with ID: {}".format(uniprot_id)
+        _log.info("No entry with ID: {}".format(uniprot_id))
     return result
 
 

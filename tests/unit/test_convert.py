@@ -10,7 +10,6 @@ from testdata import test_variables as test_vars
 @patch('kman_web.services.convert.elm_db')
 @patch('kman_web.services.convert.tmp_fasta')
 @patch('kman_web.services.convert.read_fasta')
-@patch('kman_web.services.convert.get_uniprot_txt')
 @patch('kman_web.services.convert.find_phosph_sites')
 @patch('kman_web.services.convert.run_netphos')
 @patch('kman_web.services.convert.search_elm')
@@ -19,7 +18,6 @@ from testdata import test_variables as test_vars
 def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
                            mock_search_elm, mock_run_netphos,
                            mock_find_phosph_sites,
-                           mock_get_uniprot_txt,
                            mock_read_fasta, mock_tmp_fasta,
                            mock_elm_db, mock_check_id):
 
@@ -35,10 +33,9 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     mock_search_elm.return_value = [[], [], []]
     mock_run_netphos.return_value = []
     mock_find_phosph_sites.return_value = [[], [], [], [], [], [], []]
-    mock_get_uniprot_txt = {"GO": [], "features": []}
     mock_tmp_fasta.return_value = 'tmp_filename'
     mock_elm_db.return_value = 'elm_db'
-    mock_check_id = True
+    mock_check_id.return_value = True
 
     from kman_web.services.convert import convert_to_7chars
 
@@ -88,6 +85,17 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     convert_to_7chars(filename)
     handle.write.assert_called_once_with(expected_data)
 
+    # check: check_id returns False
+    mock_check_id.return_value = False
+    mock_run_netphos.return_value = []
+    mock_find_phosph_sites.return_value = [[[1]], [[2]], [[3]], [], [], [], []]
+    expected_data = '>1\nSAAAAAAEAAAAAAQAAAAAA\n' \
+        + '## PROBABILITIES\n'
+    handle.reset_mock()
+
+    convert_to_7chars(filename)
+    handle.write.assert_called_once_with(expected_data)
+
 
 @patch('kman_web.services.convert.os.path.exists')
 @patch('kman_web.services.convert.open',
@@ -126,6 +134,8 @@ def test_search_elm(mock_request, mock_urlopen):
     mock_urlopen.return_value = MockResponse(data)
     slims_classes = dict({'MOTIF': {"prob": 1e-5, "GO": ["007"]}})
     expected = [[[1, 1]], ['MOTIF'], [0.8]]
+    result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
+    eq_(result, expected)
 
     # check: found a motif but go terms don't overlap
     data = "description\nMOTIF 1 1 False False False\n"
@@ -155,7 +165,7 @@ def test_find_phosph_sites(mock_uni_txt):
 
     mock_uni_txt.return_value = {"features": open(
         'tests/unit/testdata/test_features.dat').readlines(),
-                                 "GO": []}
+        "GO": []}
     uniprot_txt = get_uniprot_txt('TEST_ID')
     expected = [[[2], [], [], []],
                 [[7], [], [], []],
@@ -222,3 +232,39 @@ def test_read_fasta():
     from kman_web.services.convert import read_fasta
 
     eq_(read_fasta('testname'), expected)
+
+
+@patch('urllib2.urlopen')
+@patch('kman_web.services.convert.urllib2.Request')
+def test_check_id(mock_request, mock_urlopen):
+    # check: no motifs found
+    seq = ">1\nSEQ"
+    seq_check = "SEQ"
+    mock_urlopen.return_value = MockResponse(seq)
+
+    from kman_web.services.convert import check_id
+
+    eq_(check_id('test_id', seq_check), True)
+
+    seq = ">1\nSEQ"
+    seq_check = "SEG"
+    eq_(check_id('test_id', seq_check), False)
+    seq = ">1\nSEQ"
+    seq_check = "SEQ"
+
+    import urllib2
+
+    mock_urlopen.return_value = urllib2.URLError
+    eq_(check_id('test_id', seq_check), False)
+
+
+def test_get_annotation_level():
+    from kman_web.services.convert import get_annotation_level
+    data = ['', '', '']
+    eq_(get_annotation_level(data), 3)
+    data = ['FT          ECO:0000269']
+    eq_(get_annotation_level(data), 0)
+    data = ['FT          ECO:0000269', 'FT          ECO:0000307']
+    eq_(get_annotation_level(data), 0)
+    data = ['FT          ECO:0000307']
+    eq_(get_annotation_level(data), 2)
