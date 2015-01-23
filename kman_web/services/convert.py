@@ -107,6 +107,7 @@ def get_uniprot_txt(uniprot_id):
     features = []
     go_terms = []
     uni_path = paths.UNIPROT_DAT_DIR + uniprot_id + '.dat'
+
     if os.path.exists(uni_path):
         with open(uni_path) as a:
             uniprot_dat = a.read()
@@ -222,7 +223,7 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
         if entry:
             slim_id = entry[0]
             slim_go_terms = slims_all_classes[slim_id]["GO"]
-            if set(seq_go_terms).intersection(slim_go_terms):
+            if set(seq_go_terms).intersection(set(slim_go_terms)):
                 if entry[3] == "False":
                     prob = 1 + 1/math.log(
                         slims_all_classes[slim_id]["prob"], 10)
@@ -416,6 +417,10 @@ def convert_to_7chars(filename):
                 motifs_codes = get_codes(motifsDictionary, motifs_ids, 'motifs')
                 for i, indI in enumerate(motifs_codes):
                     motifProbsDict[indI] = probs[i]
+            else:
+                uniprot_results = []
+                elm = []
+                motifs_codes = []
 
             lc_regions = []
             domainsDictionary = add_elements_to_dict(domains,
@@ -431,7 +436,6 @@ def convert_to_7chars(filename):
                                                              motifs_codes))
 
     newfile += "## PROBABILITIES\n"
-    newfile += "motif probability\n"
     for i in motifProbsDict:
         newfile += str(i)+' '+str(motifProbsDict[i])+'\n'
 

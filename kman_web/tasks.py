@@ -110,8 +110,6 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
             "-m", str(motif_score), "-c", str(codon_length)]
     _log.debug("KMAN: {}".format(subprocess.list2cmdline(args)))
     subprocess.call(args)
-    # subprocess.check_call(['cp', toalign+"_al", 'test_check_al'])
-    subprocess.call(['cp', toalign+'_al', 'test_check_al'])
 
     alignment = open(al_outfile).read().encode('ascii', errors='ignore')
     alignment_list = process_alignment(alignment, 1)

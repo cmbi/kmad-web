@@ -1,7 +1,17 @@
-FT   CARBOHYD     1     1       N-linked (GlcNAc...).
-FT   CARBOHYD     2     2       O-linked (GlcNAc...).
-FT   MOD_RES      3     3       Phosphoserine.
-FT   MOD_RES      4     4       Glycine amide.
-FT   MOD_RES      5     5       N-acetylserine.
-FT   MOD_RES      6     6       4-hydroxyproline.
-FT   MOD_RES      7     7       N6,N6,N6-trimethyllysine.
+FT   CARBOHYD     1     1         N-linked (GlcNAc...).
+FT                                {ECO:0000269|PubMed:14999081}.
+FT   CARBOHYD     2     2         O-linked (GlcNAc...).
+FT                                {ECO:0000269|PubMed:14999081}.
+FT   MOD_RES      3     3         Phosphoserine.
+FT                                {ECO:0000269|PubMed:14999081}.
+FT   MOD_RES      4     4         Glycine amide.
+FT                                {ECO:0000269|PubMed:15546861,
+FT                                ECO:0000269|PubMed:16923168,
+FT                                ECO:0000269|PubMed:19451179,
+FT                                ECO:0000269|PubMed:9614189}.
+FT   MOD_RES      5     5         N-acetylserine.
+FT                                {ECO:0000269|PubMed:14999081}.
+FT   MOD_RES      6     6         4-hydroxyproline.
+FT                                {ECO:0000269|PubMed:14999081}.
+FT   MOD_RES      7     7         N6,N6,N6-trimethyllysine.
+FT                                {ECO:0000269|PubMed:14999081}.
