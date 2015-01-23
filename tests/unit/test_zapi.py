@@ -124,13 +124,12 @@ class TestEndpoints(object):
         ok_('message' in response)
         eq_(response['message'], 'Error message')
 
-    def test_api_doc(self):
+    def test_api_docs(self):
         from kman_web.frontend.api import endpoints
 
         rv = self.app.get('/api/')
         eq_(rv.status_code, 200)
-
-        excluded_fs = ['api_doc', 'api_example']
+        excluded_fs = ['api_docs', 'api_example', 'download_api_example']
         for f_name, f in inspect.getmembers(endpoints, inspect.isfunction):
             mod_name = inspect.getmodule(f).__name__
             if "kman_web.frontend.api.endpoints" in mod_name and \
