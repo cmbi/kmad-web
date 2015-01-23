@@ -2,7 +2,7 @@ import inspect
 import json
 import re
 
-from mock import patch
+from mock import patch, mock_open
 from nose.tools import eq_, ok_, raises
 
 from kman_web.factory import create_app
@@ -99,6 +99,17 @@ class TestEndpoints(object):
              'alignment': {'raw': 'raw_al', 'processed': 'proc_al'}})
 
     @patch('kman_web.tasks.postprocess.AsyncResult')
+    def test_get_kman_result_align(self, mock_result):
+        mock_result.return_value.get.return_value = \
+            ['some_part' for i in range(3)] + [['raw_al', 'proc_al']]
+        rv = self.app.get('/api/result/align/12345/')
+        eq_(rv.status_code, 200)
+        response = json.loads(rv.data)
+        ok_('result' in response)
+        eq_(response['result'],
+            {'alignment': {'raw': 'raw_al', 'processed': 'proc_al'}})
+
+    @patch('kman_web.tasks.postprocess.AsyncResult')
     def test_get_kman_status_predict_failed(self, mock_result):
         mock_result.return_value.failed.return_value = True
         mock_result.return_value.status = 'FAILED'
@@ -141,3 +152,12 @@ class TestEndpoints(object):
                 url = url.replace('>', '&gt;')
                 url = url.replace('<', '&lt;')
                 assert "<samp>/api{}</samp>".format(url) in rv.data
+
+    @patch('kman_web.frontend.api.endpoints.open',
+           mock_open(read_data=open(
+               'tests/unit/testdata/test_api_example.py').read()),
+           create=True)
+    def test_download_api_example(self):
+        rv = self.app.get('/api/download_api_example')
+        eq_(rv.status_code, 200)
+        assert "This example client" in rv.data

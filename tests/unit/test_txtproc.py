@@ -19,6 +19,10 @@ def test_process_fasta():
     from kman_web.services.txtproc import process_fasta
 
     result = process_fasta(data)
+
+    data = "SEQ\nSEQ\n"
+    expected = ">fasta_header\nSEQSEQ"
+    result = process_fasta(data)
     eq_(result, expected)
 
 

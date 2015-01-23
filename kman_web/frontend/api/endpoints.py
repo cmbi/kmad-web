@@ -110,5 +110,5 @@ def download_api_example():
     strIO.write(api_example)
     strIO.seek(0)
     return send_file(strIO,
-                     attachment_filename="kman.py",
+                     attachment_filename="kman_api.py",
                      as_attachment=True)
