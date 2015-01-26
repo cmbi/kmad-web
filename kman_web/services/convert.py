@@ -434,12 +434,21 @@ def convert_to_7chars(filename):
                                                              seqI,
                                                              domains_codes,
                                                              motifs_codes))
-
+    # write encoded fasta
     newfile += "## PROBABILITIES\n"
     for i in motifProbsDict:
         newfile += str(i)+' '+str(motifProbsDict[i])+'\n'
 
     out = open(outname, 'w')
+    out.write(newfile)
+    out.close()
+    # write mapping of feature codes to their real names
+    newfile = ''
+    for i in motifsDictionary:
+        newfile += 'motif_{} {}\n'.format(motifsDictionary[i], i)
+    for i in domainsDictionary:
+        newfile += 'domain_{} {}\n'.format(domainsDictionary[i], i)
+    out = open(filename.split('.')[0]+'.map', 'w')
     out.write(newfile)
     out.close()
 
