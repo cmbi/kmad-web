@@ -33,7 +33,8 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     mock_run_netphos.return_value = []
     mock_find_phosph_sites.return_value = [[], [], [], [], [], [], []]
     mock_tmp_fasta.return_value = 'tmp_filename'
-    mock_elm_db.return_value = 'elm_db'
+    mock_elm_db.return_value = {'some_motif': {'GO': [], 'regex': 'KR.',
+                                               'prob': 0.9}}
     mock_check_id.return_value = True
 
     from kman_web.services.convert import convert_to_7chars
@@ -66,7 +67,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
 
     convert_to_7chars(filename)
     # handle.write.assert_called_once_with(expected_data)
-    expected_calls = [call(expected_data), call('motif_aa some_motif\n')]
+    expected_calls = [call(expected_data), call('motif_aa some_motif KR.\n')]
     eq_(expected_calls, handle.write.call_args_list)
 
     # check: encoded PTMs
@@ -229,6 +230,7 @@ def test_get_id():
 def test_elm_db():
     from kman_web.services.convert import elm_db
     expected = {'TEST_ID': {"prob": 0.003564849399,
+                            "regex": "KR.",
                             "GO": ["007", "008"]}}
 
     eq_(elm_db(), expected)

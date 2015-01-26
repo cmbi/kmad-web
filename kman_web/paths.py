@@ -11,6 +11,7 @@ SWISSPROT_DB = "/home/joanna/data/uniprot_sprot.fasta"
 ELM_DB = "/home/joanna/skrypty/elm_classes.tsv"
 ELM_DB_GO = "/home/joanna/skrypty/elm_classes_go_terms.txt"
 ELM_DB_GO_PARENTS_CHILDREN = "/home/joanna/skrypty/elm_classes_go_parents_children.txt"
+ELM_DB_GO_COMPLETE = "/home/joanna/skrypty/elm_classes_complete.txt"
 PFAM_SCAN = "/home/joanna/bin/PfamScan/pfam_scan.pl"
 PFAM_DB = "/home/joanna/data/Pfam"
 

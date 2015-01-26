@@ -45,9 +45,11 @@ def process_slims_all_classes(classes):
     for i in classes:
         lineI = i.split()
         slim_id = lineI[0]
-        slim_probability = float(lineI[1])
-        go_terms = lineI[2:]
-        result[slim_id] = {"prob": slim_probability, "GO": go_terms}
+        slim_regex = lineI[1]
+        slim_probability = float(lineI[2])
+        go_terms = lineI[3:]
+        result[slim_id] = {"prob": slim_probability, "GO": go_terms,
+                           "regex": slim_regex}
     return result
 
 
@@ -379,7 +381,7 @@ def tmp_fasta(seq_id, seq):  # pragma: no cover
 
 
 def elm_db():
-    with open(paths.ELM_DB_GO_PARENTS_CHILDREN) as a:
+    with open(paths.ELM_DB_GO_COMPLETE) as a:
         slims_all_classes_pre = a.read()
     return process_slims_all_classes(slims_all_classes_pre.splitlines())
 
@@ -445,7 +447,8 @@ def convert_to_7chars(filename):
     # write mapping of feature codes to their real names
     newfile = ''
     for i in motifsDictionary:
-        newfile += 'motif_{} {}\n'.format(motifsDictionary[i], i)
+        newfile += 'motif_{} {} {}\n'.format(motifsDictionary[i], i,
+                                            slims_all_classes[i]["regex"])
     for i in domainsDictionary:
         newfile += 'domain_{} {}\n'.format(domainsDictionary[i], i)
     out = open(filename.split('.')[0]+'.map', 'w')
