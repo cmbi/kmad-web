@@ -379,7 +379,7 @@ def tmp_fasta(seq_id, seq):  # pragma: no cover
 
 
 def elm_db():
-    with open(paths.ELM_DB_GO) as a:
+    with open(paths.ELM_DB_GO_PARENTS_CHILDREN) as a:
         slims_all_classes_pre = a.read()
     return process_slims_all_classes(slims_all_classes_pre.splitlines())
 

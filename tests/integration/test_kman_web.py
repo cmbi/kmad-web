@@ -91,6 +91,6 @@ class TestApi(object):
         n = 1
         test_sequences, test_ids = self._get_random_sequences(n)
         _log.info("Testing {} a random sequence: {}".format(n, test_ids))
-        self._test_sequences(['predict', 'predict_and_align'],
+        self._test_sequences(['predict', 'predict_and_align', 'align'],
                              test_sequences,
                              test_ids)

@@ -17,6 +17,17 @@ class TestEndpoints(object):
                                     'WTF_CSRF_ENABLED': False})
         cls.app = cls.flask_app.test_client()
 
+    @patch('kman_web.services.kman.AlignStrategy.__call__')
+    def test_create_kman_align(self, mock_call):
+        mock_call.return_value = 12345
+        rv = self.app.post('/api/create/align/',
+                           data={'data': 'testdata'})
+        eq_(rv.status_code, 202)
+        response = json.loads(rv.data)
+        ok_('id' in response)
+        eq_(response['id'], 12345)
+        mock_call.assert_called_once_with('testdata')
+
     @patch('kman_web.services.kman.PredictStrategy.__call__')
     def test_create_kman_predict(self, mock_call):
         mock_call.return_value = 12345
@@ -43,6 +54,10 @@ class TestEndpoints(object):
         rv = self.app.post('/api/create/predict/')
         eq_(rv.status_code, 400)
 
+    def test_create_kman_align_no_data(self):
+        rv = self.app.post('/api/create/align/')
+        eq_(rv.status_code, 400)
+
     def test_create_kman_predict_and_align_no_data(self):
         rv = self.app.post('/api/create/predict_and_align/')
         eq_(rv.status_code, 400)
@@ -62,6 +77,16 @@ class TestEndpoints(object):
         mock_result.return_value.failed.return_value = False
         mock_result.return_value.status = 'SUCCESS'
         rv = self.app.get('/api/status/predict/12345/')
+        eq_(rv.status_code, 200)
+        response = json.loads(rv.data)
+        ok_('status' in response)
+        eq_(response['status'], 'SUCCESS')
+
+    @patch('kman_web.tasks.postprocess.AsyncResult')
+    def test_get_xssp_status_align(self, mock_result):
+        mock_result.return_value.failed.return_value = False
+        mock_result.return_value.status = 'SUCCESS'
+        rv = self.app.get('/api/status/align/12345/')
         eq_(rv.status_code, 200)
         response = json.loads(rv.data)
         ok_('status' in response)
@@ -115,6 +140,19 @@ class TestEndpoints(object):
         mock_result.return_value.status = 'FAILED'
         mock_result.return_value.traceback = 'Error message'
         rv = self.app.get('/api/status/predict/12345/')
+        eq_(rv.status_code, 200)
+        response = json.loads(rv.data)
+        ok_('status' in response)
+        eq_(response['status'], 'FAILED')
+        ok_('message' in response)
+        eq_(response['message'], 'Error message')
+
+    @patch('kman_web.tasks.postprocess.AsyncResult')
+    def test_get_kman_status_align_failed(self, mock_result):
+        mock_result.return_value.failed.return_value = True
+        mock_result.return_value.status = 'FAILED'
+        mock_result.return_value.traceback = 'Error message'
+        rv = self.app.get('/api/status/align/12345/')
         eq_(rv.status_code, 200)
         response = json.loads(rv.data)
         ok_('status' in response)
