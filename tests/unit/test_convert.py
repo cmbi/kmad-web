@@ -1,4 +1,4 @@
-from mock import patch, mock_open
+from mock import patch, mock_open, call
 
 from nose.tools import eq_
 from MockResponse import MockResponse
@@ -22,7 +22,6 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
                            mock_elm_db, mock_check_id):
 
     filename = 'testdata/test.fasta'
-    expected_outname = 'testdata/test.7c'
 
     mock_read_fasta.return_value = ['>1', 'SEQ']
 
@@ -40,30 +39,35 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     from kman_web.services.convert import convert_to_7chars
 
     convert_to_7chars(filename)
-
-    mock_out_open.assert_called_once_with(expected_outname, 'w')
+    expected_calls = [call('testdata/test.7c', 'w'),
+                      call('testdata/test.map', 'w')]
+    eq_(expected_calls, mock_out_open.call_args_list)
     handle = mock_out_open()
-    handle.write.assert_called_once_with(expected_data)
+    expected_calls = [call(expected_data), call('')]
+    eq_(expected_calls, handle.write.call_args_list)
 
     # check: encoded domain
-    mock_run_pfam_scan.return_value = [[[1, 2]], ['domain']]
+    mock_run_pfam_scan.return_value = [[[1, 2]], ['some_domain']]
     expected_data = '>1\nSAaaAAAEAaaAAAQAAAAAA\n' \
         + '## PROBABILITIES\n'
     handle.reset_mock()
 
     convert_to_7chars(filename)
-    handle.write.assert_called_once_with(expected_data)
+    expected_calls = [call(expected_data), call('domain_aa some_domain\n')]
+    eq_(expected_calls, handle.write.call_args_list)
 
     # check: encoded motif
     mock_run_pfam_scan.return_value = [[], []]
-    mock_search_elm.return_value = [[[1, 2]], ['MOTIF'], [0.9]]
+    mock_search_elm.return_value = [[[1, 2]], ['some_motif'], [0.9]]
     expected_data = '>1\nSAAAAaaEAAAAaaQAAAAAA\n' \
         + '## PROBABILITIES\n' \
         + 'aa 0.9\n'
     handle.reset_mock()
 
     convert_to_7chars(filename)
-    handle.write.assert_called_once_with(expected_data)
+    # handle.write.assert_called_once_with(expected_data)
+    expected_calls = [call(expected_data), call('motif_aa some_motif\n')]
+    eq_(expected_calls, handle.write.call_args_list)
 
     # check: encoded PTMs
     mock_search_elm.return_value = [[], [], []]
@@ -73,7 +77,9 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     handle.reset_mock()
 
     convert_to_7chars(filename)
-    handle.write.assert_called_once_with(expected_data)
+    # handle.write.assert_called_once_with(expected_data)
+    expected_calls = [call(expected_data), call('')]
+    eq_(expected_calls, handle.write.call_args_list)
 
     # check: encoded predicted phosph
     mock_run_netphos.return_value = [1]
@@ -83,7 +89,9 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     handle.reset_mock()
 
     convert_to_7chars(filename)
-    handle.write.assert_called_once_with(expected_data)
+    # handle.write.assert_called_once_with(expected_data)
+    expected_calls = [call(expected_data), call('')]
+    eq_(expected_calls, handle.write.call_args_list)
 
     # check: check_id returns False
     mock_check_id.return_value = False
@@ -94,7 +102,9 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     handle.reset_mock()
 
     convert_to_7chars(filename)
-    handle.write.assert_called_once_with(expected_data)
+    # handle.write.assert_called_once_with(expected_data)
+    expected_calls = [call(expected_data), call('')]
+    eq_(expected_calls, handle.write.call_args_list)
 
 
 @patch('kman_web.services.convert.os.path.exists')
