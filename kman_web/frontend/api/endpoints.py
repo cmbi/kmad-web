@@ -62,14 +62,17 @@ def get_kman_result(output_type, id):
     _log.debug("task is {}".format(task.__name__))
     result = task.AsyncResult(id).get()
     if output_type == "predict_and_align":
+        _log.info(result)
         response = {'result': {'prediction': result[0:-1],
                                'alignment': {'raw': result[-1][0],
-                                             'processed': result[-1][1]}}}
+                                             'processed': result[-1][1],
+                                             'encoded': result[-1][2]}}}
     elif output_type == "predict":
         response = {'result': {'prediction': result}}
     elif output_type == 'align':
         response = {'result': {'alignment': {'raw': result[-1][0],
-                                             'processed': result[-1][1]}}}
+                                             'processed': result[-1][1],
+                                             'encoded': result[-1][2]}}}
 
     _log.debug('Final result: {}'.format(response))
     return jsonify(response)

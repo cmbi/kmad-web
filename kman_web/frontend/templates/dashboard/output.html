@@ -40,9 +40,58 @@
           </h4>
       </div>
       <div id="collapseTwo" class = "panel-collapse collapse">
-          <div class="panel-body">
-            <div id="alignment_canvas" style="overflow:auto; height:auto; width:100%;">
-            </div>
+        <div class="panel-body">
+          <span class="panel_body_text">
+            <strong>coloring mode:&#160;&#160;&#160;&#160;</strong>
+            <button type="submit" id="ptm_mode_button" class="btn btn-regular
+              btn-xs" onclick="changeModeRegular()">
+              <strong>Regular</strong>
+            </button>
+            <button type="submit" id="ptm_mode_button" class="btn btn-ptms
+              btn-xs" onclick="changeModePTMS()">
+              <strong>PTMs</strong>
+            </button>
+            <button type="submit" id="ptm_mode_button" class="btn btn-motifs
+              btn-xs" onclick="changeModeMotifs()">
+              <strong>Motifs</strong>
+            </button>
+            <button type="submit" id="ptm_mode_button" class="btn btn-domains
+              btn-xs" onclick="changeModeDomains()">
+              <strong>Domains</strong>
+            </button>
+          
+          </span>
+          <br>
+          <br>
+            <pre>
+              <div id="alignment_canvas" style="overflow:auto; height:auto; width:100%;">
+              </div>
+              <div id="alignment_canvas_ptms" style="overflow:auto;
+                height:auto; width:100%; display:none;">
+              </div>
+              <div id="alignment_canvas_motifs" style="overflow:auto;
+                height:auto; width:100%; display:none;">
+              </div>
+              <div id="alignment_canvas_domains" style="overflow:auto;
+                height:auto; width:100%; display:none;">
+              </div>
+            </pre>
+          <br>
+          <span class="panel_title_text">Color legend</span>
+          <br>
+          <pre>
+              <div id="legend_canvas" style="overflow:auto; height:auto; width:100%;">
+              </div>
+              <div id="legend_canvas_ptms" style="overflow:auto;
+                height:auto; width:100%; display:none;">
+              </div>
+              <div id="legend_canvas_motifs" style="overflow:auto;
+                height:auto; width:100%; display:none;">
+              </div>
+              <div id="legend_canvas_domains" style="overflow:auto;
+                height:auto; width:100%; display:none;">
+              </div>
+          </pre>
           </div>
       </div>
       <div class=panel-footer>
@@ -57,26 +106,13 @@
         </div>
       </div>
    </div>                
-    <div class="panel panel-default" style="width=100%;" id="panel3">
-      <div class="panel-heading">
-          <h4 class="panel-title">
-              <span class="panel_title_text">Color legend</span>
-              </a>
-          </h4>
-      </div>
-      <div id="collapseThree" class = "panel-collapse collapse">
-        <div class="panel-body">
-          <div id="color_legend" style="overflow:auto; height:auto; width:100%;">
-          </div>
-        </div>
-      </div>
-    </div>
 </div>
 {% endblock %}
 
 
 {% block js %}
 <script type="text/javascript">
+  
   if ("{{ output_type }}" == 'predict'){
      document.getElementById('panel2').style.display = 'none';
      document.getElementById('panel3').style.display = 'none';
@@ -133,11 +169,36 @@
                       $('#download_al_button').removeClass('disabled');
                       $('#collapseTwo').addClass('in');
                       $('#collapseThree').addClass('in');
+                      console.debug("debug check");
                     }
                 });
             }
           }
         )}, 1000);
   });
+  changeModePTMS = function() {
+    document.getElementById('alignment_canvas').style.display = 'none'; 
+    document.getElementById('alignment_canvas_domains').style.display = 'none'; 
+    document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
+    document.getElementById('alignment_canvas_ptms').style.display = ''; 
+  }
+  changeModeRegular = function() {
+    document.getElementById('alignment_canvas').style.display = ''; 
+    document.getElementById('alignment_canvas_domains').style.display = 'none'; 
+    document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
+    document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+  }
+  changeModeDomains = function() {
+    document.getElementById('alignment_canvas').style.display = 'none'; 
+    document.getElementById('alignment_canvas_domains').style.display = ''; 
+    document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
+    document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+  }
+  changeModeMotifs = function() {
+    document.getElementById('alignment_canvas').style.display = 'none'; 
+    document.getElementById('alignment_canvas_domains').style.display = 'none'; 
+    document.getElementById('alignment_canvas_motifs').style.display = ''; 
+    document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+  }
 </script>
 {% endblock %}
