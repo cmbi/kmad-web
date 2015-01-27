@@ -283,33 +283,54 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
   colors = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
             'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF',
             'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  ptm_colors = {"N": "#FF0000", "O": "#FF4000",
+                "P": "#FF8000", "Q": "#FF9800",
+                "d": "#FF9F00", "B": "#0000FF",
+                "C": "#0090FF", "D": "#00A5FF",
+                "E": "#00BAFF", "F": "#078207",
+                "G": "#09B009", "H": "#06D606",
+                "I": "#07F507", "J": "#FAF600",
+                "K": "#EFFC56", "L": "#FAFA87",
+                "M": "#FAFAAF", "R": "#7D4C0B",
+                "S": "#94611E", "T": "#B5003C",
+                "U": "#DBA967", "V": "#601385",
+                "W": "#7F31A3", "X": "#A45EC4",
+                "Y": "#C384E0", "Z": "#F002EC",
+                "a": "#F55FF2", "b": "#F57FF3",
+                "c": "#F2A5F1"}
   this.draw_residue = function(res_num, seq_num, x, y) {
     var r = this.data[seq_num][1].charAt(res_num);
     var r_up = r.toUpperCase(); 
     var letter_col = colors['gray'];
-    if ( r_up == 'C' || r_up == 'M'){
-        letter_col = colors['yellow'];
-    } 
-    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-      letter_col = colors['green'];
+    var ptm_code = this.data[seq_num][1].charAt(res_num + 4);
+    if (ptm_code == 'A') {
+      if ( r_up == 'C' || r_up == 'M'){
+          letter_col = colors['yellow'];
+      } 
+      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
+        letter_col = colors['green'];
+      }
+      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
+        letter_col = colors['blueishgreen'];
+      }
+      else if (r_up == 'H'){
+        letter_col = colors['blue'];
+      }
+      else if (r_up == 'K' || r_up == 'R'){
+        letter_col = colors['purple'];
+      }
+      else if (r_up == 'E' || r_up == 'Q'){
+        letter_col = colors['red'];
+      }
+      else if (r_up == 'N' || r_up == 'D'){
+        letter_col = colors['pink'];
+      }
+      else if (r_up == '-'){
+        letter_col = colors['white'];
+      }
     }
-    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-      letter_col = colors['blueishgreen'];
-    }
-    else if (r_up == 'H'){
-      letter_col = colors['blue'];
-    }
-    else if (r_up == 'K' || r_up == 'R'){
-      letter_col = colors['purple'];
-    }
-    else if (r_up == 'E' || r_up == 'Q'){
-      letter_col = colors['red'];
-    }
-    else if (r_up == 'N' || r_up == 'D'){
-      letter_col = colors['pink'];
-    }
-    else if (r_up == '-'){
-      letter_col = colors['white'];
+    else {
+      letter_col = ptm_colors[ptm_code];
     }
     var res_text = new Kinetic.Text({
       x: x,
