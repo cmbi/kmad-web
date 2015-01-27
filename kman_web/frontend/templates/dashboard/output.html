@@ -83,22 +83,32 @@
                 </div>
               </div>
             </pre>
-          <br>
-          <span class="panel_title_text">Color legend</span>
-          <br>
-          <pre>
-              <div id="legend_canvas" style="overflow:auto; height:auto; width:100%;">
-              </div>
-              <div id="legend_canvas_ptms" style="overflow:auto;
-                height:auto; width:100%; display:none;">
-              </div>
-              <div id="legend_canvas_motifs" style="overflow:auto;
-                height:auto; width:100%; display:none;">
-              </div>
-              <div id="legend_canvas_domains" style="overflow:auto;
-                height:auto; width:100%; display:none;">
-              </div>
-          </pre>
+            <div id="legend_canvases_container" style="display:none;">
+              <br>
+              <span class="panel_title_text">Color legend</span>
+              <br>
+              <pre>
+                <div id="legend_canvases" style="position:relative; height:auto;
+                  width:100%">
+                  <div id="legend_canvas" style="position:absolute; left:0px;
+                    top:0px; overflow:auto; height:auto; width:100%;">
+                  </div>
+                  <div id="legend_canvas_ptms" style="position:absolute;
+                    left:0px; top:0px; overflow:auto;
+                    height:auto; width:100%; display:none;">
+                  </div>
+                  <div id="legend_canvas_motifs" style="position:absolute;
+                    left:0px; top:0px;
+                    overflow:auto;
+                    height:auto; width:100%; display:none;">
+                  </div>
+                  <div id="legend_canvas_domains" style="position:absolute;
+                    left:0px; top:0px; overflow:auto;
+                    height:auto; width:100%; display:none;">
+                  </div>
+                </div>
+              </pre>
+            </div>
           </div>
       </div>
       <div class=panel-footer>
@@ -172,14 +182,21 @@
                       document.getElementById('download_al_input').value = raw_alignment;
                       var processed_alignment = data['result']['alignment']['processed'];
                       var encoded_alignment = data['result']['alignment']['encoded'];
+                      var feature_codemap = data['result']['feature_codemap'];
                       var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
                       alignment.update();
                       var codon_length = 7;
-                      var alignment_ptms = new SequenceAlignmentPTMs('alignment_canvas_ptms', encoded_alignment, codon_length);
+                      var alignment_ptms = new SequenceAlignmentPTMs(
+                        'alignment_canvas_ptms', encoded_alignment,
+                        codon_length);
                       alignment_ptms.update();
-                      var alignment_motifs = new SequenceAlignmentMotifs('alignment_canvas_motifs', encoded_alignment, codon_length);
+                      var alignment_motifs = new SequenceAlignmentMotifs(
+                          'alignment_canvas_motifs', encoded_alignment,
+                          codon_length, feature_codemap['motifs']);
                       alignment_motifs.update();
-                      var alignment_domains = new SequenceAlignmentDomains('alignment_canvas_domains', encoded_alignment, codon_length);
+                      var alignment_domains = new SequenceAlignmentDomains(
+                          'alignment_canvas_domains', encoded_alignment,
+                          codon_length, feature_codemap['domains']);
                       alignment_domains.update();
                       $('#download_al_button').removeClass('disabled');
                       $('#collapseTwo').addClass('in');
@@ -196,6 +213,7 @@
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = ''; 
+    document.getElementById('legend_canvases_container').style.display = ''; 
     $('#ptm_mode_button').addClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
@@ -207,6 +225,7 @@
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('legend_canvases_container').style.display = 'none'; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').addClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
@@ -217,16 +236,19 @@
     document.getElementById('alignment_canvas_domains').style.display = ''; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('legend_canvases_container').style.display = ''; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
     $('#domain_mode_button').addClass('disabled');
+
   }
   changeModeMotifs = function() {
     document.getElementById('alignment_canvas').style.display = 'none'; 
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = ''; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('legend_canvases_container').style.display = ''; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').addClass('disabled');

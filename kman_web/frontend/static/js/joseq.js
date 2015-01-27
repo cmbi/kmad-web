@@ -399,7 +399,7 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
       // Iterate over the residues in the current row. For each residue, draw
       // it with the appropriate accessibility colour, and draw the secondary
       // structure representation.
-      for (var j = 0; j < this.data[i][1].length; j++)
+      for (var j = 0; j < this.data[i][1].length / codon_length; j++)
       {
         var res_text_width = this.draw_residue(j * codon_length, i, x, y);
         x = x + res_text_width;
@@ -418,7 +418,69 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
   }
 }
 
-SequenceAlignmentMotifs = function(container_id, data, codon_length) {
+RGBtoHEX = function(r, g, b) {
+  var hexcode = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1,7);
+  return hexcode;
+}
+HSLtoHEX = function(h, s, l) {
+  var c = (1 - Math.abs(2*l - 1)) *s;
+  var x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  var m = l - c / 2;
+  var r_p;
+  var g_p;
+  var b_p;
+  if (h >= 0 && h < 60 ) {
+    r_p = c;
+    g_p = x;
+    b_p = 0; 
+  }
+  else if (h >= 60 && h < 120 ) {
+    r_p = x;
+    g_p = c;
+    b_p = 0; 
+  }
+  else if (h >= 120 && h < 180 ) {
+    r_p = 0;
+    g_p = c;
+    b_p = x; 
+  }
+  else if (h >= 180 && h < 240 ) {
+    r_p = 0;
+    g_p = x;
+    b_p = c; 
+  }
+  else if (h >= 240 && h < 300 ) {
+    r_p = x;
+    g_p = 0;
+    b_p = c; 
+  }
+  else if (h >= 300 && h < 360 ) {
+    r_p = c;
+    g_p = 0;
+    b_p = x; 
+  }
+  var r = Math.floor(255 * (r_p + m));
+  var g = Math.floor(255 * (g_p + m));
+  var b = Math.floor(255 * (b_p + m));
+  return RGBtoHEX(r, g, b);
+}
+
+ColorRange = function(number) {
+  var norm = 100 / number;
+  result = [];
+  for (var i = 0; i < number; i++) {
+    var hue = Math.floor((100 - i * norm) * 120 / 100);
+    // var saturation = Math.abs(i * norm - 50) / 50;
+    var saturation = 1;
+
+    console.debug(hue, saturation);
+    result.push(HSLtoHEX(hue, saturation, 0.5));
+  }
+  return result;
+}
+
+SequenceAlignmentMotifs = function(container_id, data, codon_length,
+                                   feature_codemap) {
   const MAX_RES_PER_ROW = data[0][1].length / codon_length;
   const SEQ_LAYER_OFFSET_X = 50;
   const FONT_FAMILY = "Monospace";
@@ -428,6 +490,7 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length) {
   const ROWS = data.length;
   
   this.data = data;
+  this.feature_codemap = feature_codemap;
   //var container_height = 40*this.data.length;
   var container_height = ROWS * ROW_HEIGHT + 45;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
@@ -440,33 +503,50 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length) {
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  motif_colors = ColorRange(this.feature_codemap.length);
+  console.debug(motif_colors);
   this.draw_residue = function(res_num, seq_num, x, y) {
+    var motif_code = this.data[seq_num][1].charAt(res_num + 5) + this.data[seq_num][1].charAt(res_num + 6);
+
     var r = this.data[seq_num][1].charAt(res_num);
     var r_up = r.toUpperCase(); 
     var letter_col = colors['gray'];
-    if ( r_up == 'C' || r_up == 'M'){
-        letter_col = colors['yellow'];
-    } 
-    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-      letter_col = colors['green'];
+    if (motif_code == 'AA') {
+      if ( r_up == 'C' || r_up == 'M'){
+          letter_col = colors['yellow'];
+      } 
+      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
+        letter_col = colors['green'];
+      }
+      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
+        letter_col = colors['blueishgreen'];
+      }
+      else if (r_up == 'H'){
+        letter_col = colors['blue'];
+      }
+      else if (r_up == 'K' || r_up == 'R'){
+        letter_col = colors['purple'];
+      }
+      else if (r_up == 'E' || r_up == 'Q'){
+        letter_col = colors['red'];
+      }
+      else if (r_up == 'N' || r_up == 'D'){
+        letter_col = colors['pink'];
+      }
+      else if (r_up == '-'){
+        letter_col = colors['white'];
+      }
     }
-    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-      letter_col = colors['blueishgreen'];
-    }
-    else if (r_up == 'H'){
-      letter_col = colors['blue'];
-    }
-    else if (r_up == 'K' || r_up == 'R'){
-      letter_col = colors['purple'];
-    }
-    else if (r_up == 'E' || r_up == 'Q'){
-      letter_col = colors['red'];
-    }
-    else if (r_up == 'N' || r_up == 'D'){
-      letter_col = colors['pink'];
-    }
-    else if (r_up == '-'){
-      letter_col = colors['white'];
+    else {
+      var feat_number = 0;
+      for (var i = 0; i < feature_codemap.length; i++) {
+        if (feature_codemap[i][0].charAt(6) == motif_code.charAt(0)
+            && feature_codemap[i][0].charAt(7) == motif_code.charAt(1)) {
+          feat_number = i;
+          break;    
+        }
+      }
+      letter_col = motif_colors[i];
     }
     var res_text = new Kinetic.Text({
       x: x,
@@ -535,7 +615,7 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length) {
       // Iterate over the residues in the current row. For each residue, draw
       // it with the appropriate accessibility colour, and draw the secondary
       // structure representation.
-      for (var j = 0; j < this.data[i][1].length; j++)
+      for (var j = 0; j < this.data[i][1].length / codon_length; j++)
       {
         var res_text_width = this.draw_residue(j * codon_length, i, x, y);
         x = x + res_text_width;
@@ -554,7 +634,8 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length) {
   }
 }
 
-SequenceAlignmentDomains = function(container_id, data, codon_length) {
+SequenceAlignmentDomains = function(container_id, data, codon_length,
+                                    feature_codemap, legend_container) {
   const MAX_RES_PER_ROW = data[0][1].length / codon_length;
   const SEQ_LAYER_OFFSET_X = 50;
   const FONT_FAMILY = "Monospace";
@@ -564,6 +645,7 @@ SequenceAlignmentDomains = function(container_id, data, codon_length) {
   const ROWS = data.length;
   
   this.data = data;
+  this.feature_codemap = feature_codemap;
   //var container_height = 40*this.data.length;
   var container_height = ROWS * ROW_HEIGHT + 45;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
@@ -576,34 +658,50 @@ SequenceAlignmentDomains = function(container_id, data, codon_length) {
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  domain_colors = ColorRange(this.feature_codemap.length);
   this.draw_residue = function(res_num, seq_num, x, y) {
+    var domain_code = this.data[seq_num][1].charAt(res_num + 2) + this.data[seq_num][1].charAt(res_num + 3);
     var r = this.data[seq_num][1].charAt(res_num);
     var r_up = r.toUpperCase(); 
     var letter_col = colors['gray'];
-    if ( r_up == 'C' || r_up == 'M'){
-        letter_col = colors['yellow'];
-    } 
-    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-      letter_col = colors['green'];
+    if (domain_code == 'AA') {
+      if ( r_up == 'C' || r_up == 'M'){
+          letter_col = colors['yellow'];
+      } 
+      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
+        letter_col = colors['green'];
+      }
+      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
+        letter_col = colors['blueishgreen'];
+      }
+      else if (r_up == 'H'){
+        letter_col = colors['blue'];
+      }
+      else if (r_up == 'K' || r_up == 'R'){
+        letter_col = colors['purple'];
+      }
+      else if (r_up == 'E' || r_up == 'Q'){
+        letter_col = colors['red'];
+      }
+      else if (r_up == 'N' || r_up == 'D'){
+        letter_col = colors['pink'];
+      }
+      else if (r_up == '-'){
+        letter_col = colors['white'];
+      }
     }
-    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-      letter_col = colors['blueishgreen'];
+    else {
+      var feat_number = 0;
+      for (var i = 0; i < feature_codemap.length; i++) {
+        if (feature_codemap[i][0].charAt(7) == domain_code.charAt(0)
+            && feature_codemap[i][0].charAt(8) == domain_code.charAt(1)) {
+          feat_number = i;
+          break;    
+        }
+      }
+      letter_col = domain_colors[i];
     }
-    else if (r_up == 'H'){
-      letter_col = colors['blue'];
-    }
-    else if (r_up == 'K' || r_up == 'R'){
-      letter_col = colors['purple'];
-    }
-    else if (r_up == 'E' || r_up == 'Q'){
-      letter_col = colors['red'];
-    }
-    else if (r_up == 'N' || r_up == 'D'){
-      letter_col = colors['pink'];
-    }
-    else if (r_up == '-'){
-      letter_col = colors['white'];
-    }
+
     var res_text = new Kinetic.Text({
       x: x,
       y: y,
@@ -671,7 +769,7 @@ SequenceAlignmentDomains = function(container_id, data, codon_length) {
       // Iterate over the residues in the current row. For each residue, draw
       // it with the appropriate accessibility colour, and draw the secondary
       // structure representation.
-      for (var j = 0; j < this.data[i][1].length; j++)
+      for (var j = 0; j < this.data[i][1].length / codon_length; j++)
       {
         var res_text_width = this.draw_residue(j * codon_length, i, x, y);
         x = x + res_text_width;

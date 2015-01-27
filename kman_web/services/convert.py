@@ -448,11 +448,12 @@ def convert_to_7chars(filename):
     newfile = ''
     for i in motifsDictionary:
         newfile += 'motif_{} {} {}\n'.format(motifsDictionary[i], i,
-                                            slims_all_classes[i]["regex"])
+                                             slims_all_classes[i]["regex"])
     for i in domainsDictionary:
         newfile += 'domain_{} {}\n'.format(domainsDictionary[i], i)
     out = open(filename.split('.')[0]+'.map', 'w')
     out.write(newfile)
+    _log.debug("newfile: {}\n".format(newfile))
     out.close()
 
     return outname
