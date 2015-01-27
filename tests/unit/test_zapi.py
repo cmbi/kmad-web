@@ -114,13 +114,14 @@ class TestEndpoints(object):
     @patch('kman_web.tasks.postprocess.AsyncResult')
     def test_get_kman_result_predict_and_align(self, mock_result):
         mock_result.return_value.get.return_value = ['some_part' for i in range(3)]  \
-            + [['raw_al', 'proc_al', 'encoded_al']]
+            + [['raw_al', 'proc_al', 'encoded_al', 'feature_map']]
         rv = self.app.get('/api/result/predict_and_align/12345/')
         eq_(rv.status_code, 200)
         response = json.loads(rv.data)
         ok_('result' in response)
         eq_(response['result'],
-            {'prediction': ['some_part', 'some_part', 'some_part'],
+            {'feature_codemap': 'feature_map',
+             'prediction': ['some_part', 'some_part', 'some_part'],
              'alignment': {'raw': 'raw_al', 'processed': 'proc_al',
                            'encoded': 'encoded_al'}})
 
@@ -128,13 +129,14 @@ class TestEndpoints(object):
     def test_get_kman_result_align(self, mock_result):
         mock_result.return_value.get.return_value = \
             ['some_part' for i in range(3)] + [['raw_al', 'proc_al',
-                                                'encoded_al']]
+                                                'encoded_al', 'feature_map']]
         rv = self.app.get('/api/result/align/12345/')
         eq_(rv.status_code, 200)
         response = json.loads(rv.data)
         ok_('result' in response)
         eq_(response['result'],
-            {'alignment': {'raw': 'raw_al', 'processed': 'proc_al',
+            {'feature_codemap': 'feature_map',
+             'alignment': {'raw': 'raw_al', 'processed': 'proc_al',
                            'encoded': 'encoded_al'}})
 
     @patch('kman_web.tasks.postprocess.AsyncResult')

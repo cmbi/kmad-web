@@ -111,10 +111,13 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
             "-m", str(motif_score), "-c", str(codon_length)]
     _log.debug("KMAN: {}".format(subprocess.list2cmdline(args)))
     subprocess.call(args)
-
+    with open(fastafile.split('.')[0] + '.map') as a:
+        feature_codemap = a.read().splitlines()
     alignment_encoded = open(al_outfile).read().encode('ascii', errors='ignore')
     alignment_processed = process_alignment(alignment_encoded, codon_length)
-    return alignment_processed
+    result = alignment_processed + [feature_codemap]
+    # return alignment_processed
+    return result
 
 
 @celery_app.task
