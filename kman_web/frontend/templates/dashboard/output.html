@@ -64,16 +64,23 @@
           <br>
           <br>
             <pre>
-              <div id="alignment_canvas" style="overflow:auto; height:auto; width:100%;">
-              </div>
-              <div id="alignment_canvas_ptms" style="overflow:auto;
-                height:auto; width:100%; display:none;">
-              </div>
-              <div id="alignment_canvas_motifs" style="overflow:auto;
-                height:auto; width:100%; display:none;">
-              </div>
-              <div id="alignment_canvas_domains" style="overflow:auto;
-                height:auto; width:100%; display:none;">
+              <div id="canvases" style="position:relative; height:auto; width:100%;">
+                <div id="alignment_canvas" style="position:absolute; left:0px;
+                  top:0px; overflow:auto; height:auto; width:100%;">
+                </div>
+                <div id="alignment_canvas_ptms" style="position:absolute;
+                  left:0px; top:0px; overflow:auto;
+                  height:auto; width:100%; display:none;">
+                </div>
+                <div id="alignment_canvas_motifs" style="position:absolute;
+                  left:0px; top:0px;
+                  overflow:auto;
+                  height:auto; width:100%; display:none;">
+                </div>
+                <div id="alignment_canvas_domains" style="position:absolute;
+                  left:0px; top:0px; overflow:auto;
+                  height:auto; width:100%; display:none;">
+                </div>
               </div>
             </pre>
           <br>
@@ -164,8 +171,16 @@
                       var raw_alignment = data['result']['alignment']['raw'];
                       document.getElementById('download_al_input').value = raw_alignment;
                       var processed_alignment = data['result']['alignment']['processed'];
-                      var alignment = new SequenceAlignment('alignment_canvas',processed_alignment);
+                      var encoded_alignment = data['result']['alignment']['encoded'];
+                      var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
                       alignment.update();
+                      var codon_length = 7;
+                      var alignment_ptms = new SequenceAlignmentPTMs('alignment_canvas_ptms', encoded_alignment, codon_length);
+                      alignment_ptms.update();
+                      var alignment_motifs = new SequenceAlignmentMotifs('alignment_canvas_motifs', encoded_alignment, codon_length);
+                      alignment_motifs.update();
+                      var alignment_domains = new SequenceAlignmentDomains('alignment_canvas_domains', encoded_alignment, codon_length);
+                      alignment_domains.update();
                       $('#download_al_button').removeClass('disabled');
                       $('#collapseTwo').addClass('in');
                       $('#collapseThree').addClass('in');

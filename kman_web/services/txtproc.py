@@ -142,6 +142,7 @@ def process_alignment(data, codon_length):
         processed += [[header, sequence]]
         encoded += [[header, data_list[i+1]]]
         processed_text += "{}\n{}\n".format(data_list[i], sequence)
+    _log.info("{}\n{}\n".format(processed, encoded))
     return [processed_text, processed, encoded]
 
 

@@ -137,6 +137,7 @@ SequenceAlignment = function(container_id, data) {
   //var container_height = 40*this.data.length;
   var container_height = ROWS * ROW_HEIGHT + 45;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("canvases").style.height = container_height.toString() + 'px';
   this.stage = new Kinetic.Stage({
     container: container_id,
     height: ROWS * ROW_HEIGHT + 25,
@@ -243,6 +244,415 @@ SequenceAlignment = function(container_id, data) {
       for (var j = 0; j < this.data[i][1].length; j++)
       {
         var res_text_width = this.draw_residue(j, i, x, y);
+        x = x + res_text_width;
+      }
+    }
+
+    this.v_header_layer.width(v_header_width);
+    var v_header_width = this.v_header_layer.getWidth();
+    this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
+
+    this.stage.add(this.v_header_layer);
+    this.stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+SequenceAlignmentPTMs = function(container_id, data, codon_length) {
+  const MAX_RES_PER_ROW = data[0][1].length / codon_length;
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  const ROWS = data.length;
+  
+  this.data = data;
+  //var container_height = 40*this.data.length;
+  var container_height = ROWS * ROW_HEIGHT + 45;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+  this.stage = new Kinetic.Stage({
+    container: container_id,
+    height: ROWS * ROW_HEIGHT + 25,
+    width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  colors = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
+            'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF',
+            'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  this.draw_residue = function(res_num, seq_num, x, y) {
+    var r = this.data[seq_num][1].charAt(res_num);
+    var r_up = r.toUpperCase(); 
+    var letter_col = colors['gray'];
+    if ( r_up == 'C' || r_up == 'M'){
+        letter_col = colors['yellow'];
+    } 
+    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
+      letter_col = colors['green'];
+    }
+    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
+      letter_col = colors['blueishgreen'];
+    }
+    else if (r_up == 'H'){
+      letter_col = colors['blue'];
+    }
+    else if (r_up == 'K' || r_up == 'R'){
+      letter_col = colors['purple'];
+    }
+    else if (r_up == 'E' || r_up == 'Q'){
+      letter_col = colors['red'];
+    }
+    else if (r_up == 'N' || r_up == 'D'){
+      letter_col = colors['pink'];
+    }
+    else if (r_up == '-'){
+      letter_col = colors['white'];
+    }
+    var res_text = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: r,
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+
+    var res_text_w = res_text.getTextWidth();
+    var res_text_h = res_text.getTextHeight();
+    var rect_w = res_text_w + 1;
+    var rect_h = res_text_h;
+    
+    var text_rect = new Kinetic.Shape({
+        x: x-10,
+        y: y,
+        fill: letter_col,
+        drawFunc: function(context) {
+            context.beginPath();
+            context.lineTo(x+rect_w, y);
+            context.lineTo(x+rect_w, y+rect_h);
+            context.lineTo(x, y+rect_h);
+            context.lineTo(x,y);
+            context.closePath();
+            context.fillStrokeShape(this);
+        }
+    });
+
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: res_text_w+1,
+        height: res_text_h,
+        fill: letter_col,
+    });
+    
+    this.seq_layer.add(text_rect);
+    this.seq_layer.add(res_text);
+
+    return res_text_w;
+  }
+  this.draw = function() {
+    var v_header_width = 0;
+    for (var i = 0; i < this.data.length; i++) {
+      var x = 10;
+      var y = 20+(i * ROW_HEIGHT) + ROW_MARGIN_T;
+
+      // Draw the residue number heading
+      var res_num_txt = new Kinetic.Text({
+        x: x,
+        y: y,
+        text: this.data[i][0],       //sequence header
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'gray'
+      });
+      this.v_header_layer.add(res_num_txt);
+      var res_num_txt_w = res_num_txt.getWidth();
+      v_header_width = (
+          res_num_txt_w > v_header_width ? res_num_txt_w : v_header_width);
+
+      // Iterate over the residues in the current row. For each residue, draw
+      // it with the appropriate accessibility colour, and draw the secondary
+      // structure representation.
+      for (var j = 0; j < this.data[i][1].length; j++)
+      {
+        var res_text_width = this.draw_residue(j * codon_length, i, x, y);
+        x = x + res_text_width;
+      }
+    }
+
+    this.v_header_layer.width(v_header_width);
+    var v_header_width = this.v_header_layer.getWidth();
+    this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
+
+    this.stage.add(this.v_header_layer);
+    this.stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+
+SequenceAlignmentMotifs = function(container_id, data, codon_length) {
+  const MAX_RES_PER_ROW = data[0][1].length / codon_length;
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  const ROWS = data.length;
+  
+  this.data = data;
+  //var container_height = 40*this.data.length;
+  var container_height = ROWS * ROW_HEIGHT + 45;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+  this.stage = new Kinetic.Stage({
+    container: container_id,
+    height: ROWS * ROW_HEIGHT + 25,
+    width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  this.draw_residue = function(res_num, seq_num, x, y) {
+    var r = this.data[seq_num][1].charAt(res_num);
+    var r_up = r.toUpperCase(); 
+    var letter_col = colors['gray'];
+    if ( r_up == 'C' || r_up == 'M'){
+        letter_col = colors['yellow'];
+    } 
+    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
+      letter_col = colors['green'];
+    }
+    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
+      letter_col = colors['blueishgreen'];
+    }
+    else if (r_up == 'H'){
+      letter_col = colors['blue'];
+    }
+    else if (r_up == 'K' || r_up == 'R'){
+      letter_col = colors['purple'];
+    }
+    else if (r_up == 'E' || r_up == 'Q'){
+      letter_col = colors['red'];
+    }
+    else if (r_up == 'N' || r_up == 'D'){
+      letter_col = colors['pink'];
+    }
+    else if (r_up == '-'){
+      letter_col = colors['white'];
+    }
+    var res_text = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: r,
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+
+    var res_text_w = res_text.getTextWidth();
+    var res_text_h = res_text.getTextHeight();
+    var rect_w = res_text_w + 1;
+    var rect_h = res_text_h;
+    
+    var text_rect = new Kinetic.Shape({
+        x: x-10,
+        y: y,
+        fill: letter_col,
+        drawFunc: function(context) {
+            context.beginPath();
+            context.lineTo(x+rect_w, y);
+            context.lineTo(x+rect_w, y+rect_h);
+            context.lineTo(x, y+rect_h);
+            context.lineTo(x,y);
+            context.closePath();
+            context.fillStrokeShape(this);
+        }
+    });
+
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: res_text_w+1,
+        height: res_text_h,
+        fill: letter_col,
+    });
+    
+    this.seq_layer.add(text_rect);
+    this.seq_layer.add(res_text);
+
+    return res_text_w;
+  }
+  this.draw = function() {
+    var v_header_width = 0;
+    for (var i = 0; i < this.data.length; i++) {
+      var x = 10;
+      var y = 20+(i * ROW_HEIGHT) + ROW_MARGIN_T;
+
+      // Draw the residue number heading
+      var res_num_txt = new Kinetic.Text({
+        x: x,
+        y: y,
+        text: this.data[i][0],       //sequence header
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'gray'
+      });
+      this.v_header_layer.add(res_num_txt);
+      var res_num_txt_w = res_num_txt.getWidth();
+      v_header_width = (
+          res_num_txt_w > v_header_width ? res_num_txt_w : v_header_width);
+
+      // Iterate over the residues in the current row. For each residue, draw
+      // it with the appropriate accessibility colour, and draw the secondary
+      // structure representation.
+      for (var j = 0; j < this.data[i][1].length; j++)
+      {
+        var res_text_width = this.draw_residue(j * codon_length, i, x, y);
+        x = x + res_text_width;
+      }
+    }
+
+    this.v_header_layer.width(v_header_width);
+    var v_header_width = this.v_header_layer.getWidth();
+    this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
+
+    this.stage.add(this.v_header_layer);
+    this.stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+
+SequenceAlignmentDomains = function(container_id, data, codon_length) {
+  const MAX_RES_PER_ROW = data[0][1].length / codon_length;
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  const ROWS = data.length;
+  
+  this.data = data;
+  //var container_height = 40*this.data.length;
+  var container_height = ROWS * ROW_HEIGHT + 45;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+  this.stage = new Kinetic.Stage({
+    container: container_id,
+    height: ROWS * ROW_HEIGHT + 25,
+    width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  this.draw_residue = function(res_num, seq_num, x, y) {
+    var r = this.data[seq_num][1].charAt(res_num);
+    var r_up = r.toUpperCase(); 
+    var letter_col = colors['gray'];
+    if ( r_up == 'C' || r_up == 'M'){
+        letter_col = colors['yellow'];
+    } 
+    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
+      letter_col = colors['green'];
+    }
+    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
+      letter_col = colors['blueishgreen'];
+    }
+    else if (r_up == 'H'){
+      letter_col = colors['blue'];
+    }
+    else if (r_up == 'K' || r_up == 'R'){
+      letter_col = colors['purple'];
+    }
+    else if (r_up == 'E' || r_up == 'Q'){
+      letter_col = colors['red'];
+    }
+    else if (r_up == 'N' || r_up == 'D'){
+      letter_col = colors['pink'];
+    }
+    else if (r_up == '-'){
+      letter_col = colors['white'];
+    }
+    var res_text = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: r,
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+
+    var res_text_w = res_text.getTextWidth();
+    var res_text_h = res_text.getTextHeight();
+    var rect_w = res_text_w + 1;
+    var rect_h = res_text_h;
+    
+    var text_rect = new Kinetic.Shape({
+        x: x-10,
+        y: y,
+        fill: letter_col,
+        drawFunc: function(context) {
+            context.beginPath();
+            context.lineTo(x+rect_w, y);
+            context.lineTo(x+rect_w, y+rect_h);
+            context.lineTo(x, y+rect_h);
+            context.lineTo(x,y);
+            context.closePath();
+            context.fillStrokeShape(this);
+        }
+    });
+
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: res_text_w+1,
+        height: res_text_h,
+        fill: letter_col,
+    });
+    
+    this.seq_layer.add(text_rect);
+    this.seq_layer.add(res_text);
+
+    return res_text_w;
+  }
+  this.draw = function() {
+    var v_header_width = 0;
+    for (var i = 0; i < this.data.length; i++) {
+      var x = 10;
+      var y = 20+(i * ROW_HEIGHT) + ROW_MARGIN_T;
+
+      // Draw the residue number heading
+      var res_num_txt = new Kinetic.Text({
+        x: x,
+        y: y,
+        text: this.data[i][0],       //sequence header
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'gray'
+      });
+      this.v_header_layer.add(res_num_txt);
+      var res_num_txt_w = res_num_txt.getWidth();
+      v_header_width = (
+          res_num_txt_w > v_header_width ? res_num_txt_w : v_header_width);
+
+      // Iterate over the residues in the current row. For each residue, draw
+      // it with the appropriate accessibility colour, and draw the secondary
+      // structure representation.
+      for (var j = 0; j < this.data[i][1].length; j++)
+      {
+        var res_text_width = this.draw_residue(j * codon_length, i, x, y);
         x = x + res_text_width;
       }
     }

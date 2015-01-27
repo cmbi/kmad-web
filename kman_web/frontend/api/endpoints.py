@@ -73,8 +73,7 @@ def get_kman_result(output_type, id):
         response = {'result': {'alignment': {'raw': result[-1][0],
                                              'processed': result[-1][1],
                                              'encoded': result[-1][2]}}}
-
-    _log.debug('Final result: {}'.format(response))
+    _log.debug("Final result: {}\n".format(response))
     return jsonify(response)
 
 
