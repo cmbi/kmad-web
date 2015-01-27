@@ -43,19 +43,19 @@
         <div class="panel-body">
           <span class="panel_body_text">
             <strong>coloring mode:&#160;&#160;&#160;&#160;</strong>
-            <button type="submit" id="ptm_mode_button" class="btn btn-regular
-              btn-xs" onclick="changeModeRegular()">
+            <button type="submit" id="regular_mode_button" class="btn btn-regular
+              btn-xs disabled" onclick="changeModeRegular()">
               <strong>Regular</strong>
             </button>
             <button type="submit" id="ptm_mode_button" class="btn btn-ptms
               btn-xs" onclick="changeModePTMS()">
               <strong>PTMs</strong>
             </button>
-            <button type="submit" id="ptm_mode_button" class="btn btn-motifs
+            <button type="submit" id="motif_mode_button" class="btn btn-motifs
               btn-xs" onclick="changeModeMotifs()">
               <strong>Motifs</strong>
             </button>
-            <button type="submit" id="ptm_mode_button" class="btn btn-domains
+            <button type="submit" id="domain_mode_button" class="btn btn-domains
               btn-xs" onclick="changeModeDomains()">
               <strong>Domains</strong>
             </button>
@@ -196,24 +196,41 @@
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = ''; 
+    $('#ptm_mode_button').addClass('disabled');
+    $('#regular_mode_button').removeClass('disabled');
+    $('#motif_mode_button').removeClass('disabled');
+    $('#domain_mode_button').removeClass('disabled');
+
   }
   changeModeRegular = function() {
     document.getElementById('alignment_canvas').style.display = ''; 
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    $('#ptm_mode_button').removeClass('disabled');
+    $('#regular_mode_button').addClass('disabled');
+    $('#motif_mode_button').removeClass('disabled');
+    $('#domain_mode_button').removeClass('disabled');
   }
   changeModeDomains = function() {
     document.getElementById('alignment_canvas').style.display = 'none'; 
     document.getElementById('alignment_canvas_domains').style.display = ''; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    $('#ptm_mode_button').removeClass('disabled');
+    $('#regular_mode_button').removeClass('disabled');
+    $('#motif_mode_button').removeClass('disabled');
+    $('#domain_mode_button').addClass('disabled');
   }
   changeModeMotifs = function() {
     document.getElementById('alignment_canvas').style.display = 'none'; 
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = ''; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    $('#ptm_mode_button').removeClass('disabled');
+    $('#regular_mode_button').removeClass('disabled');
+    $('#motif_mode_button').addClass('disabled');
+    $('#domain_mode_button').removeClass('disabled');
   }
 </script>
 {% endblock %}
