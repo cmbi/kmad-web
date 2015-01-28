@@ -27,7 +27,7 @@ ProteinSequences = function(container_id, data) {
   var container_height = ROWS * ROW_HEIGHT;
   document.getElementById(container_id).style.height = (container_height + 40).toString() + 'px';
 
-  this.stage = new Kinetic.Stage({
+  var stage = new Kinetic.Stage({
     container: container_id,
     width: 150 + this.disorder[0][1].length*10,
     height: ROWS * ROW_HEIGHT + 25
@@ -114,8 +114,8 @@ ProteinSequences = function(container_id, data) {
     var v_header_width = this.v_header_layer.getWidth();
     this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
 
-    this.stage.add(this.v_header_layer);
-    this.stage.add(this.seq_layer);
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
   }
 
   // Public methods
@@ -138,11 +138,19 @@ SequenceAlignment = function(container_id, data) {
   var container_height = ROWS * ROW_HEIGHT + 45;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
   document.getElementById("canvases").style.height = container_height.toString() + 'px';
-  this.stage = new Kinetic.Stage({
+  var stage = new Kinetic.Stage({
     container: container_id,
     height: ROWS * ROW_HEIGHT + 25,
     width: 170 + (this.data[0][0].length + this.data[0][1].length)*8
   });
+  document.getElementById('download_canvas_button').addEventListener('click',
+      function() {
+        stage.toDataURL({
+          callback: function(dataUrl) {
+            window.open(dataUrl);
+          }
+        });
+  }, false);
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#CCCCCC','red': '#FF9999','green':'#ADEFAD', 'yellow':'#FFFF75', 'blueishgreen': '#5EDFBF', 'blue':'#91DAFF', 'purple':'#BD9DFF', 'pink':'#FFACD6', 'white':'#FFFFFF'};
@@ -252,8 +260,8 @@ SequenceAlignment = function(container_id, data) {
     var v_header_width = this.v_header_layer.getWidth();
     this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
 
-    this.stage.add(this.v_header_layer);
-    this.stage.add(this.seq_layer);
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
   }
   this.update = function() {
     this.draw();
@@ -273,11 +281,19 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
   var container_height = ROWS * ROW_HEIGHT + 45;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
   document.getElementById("canvases").style.height = container_height.toString() + 'px';
-  this.stage = new Kinetic.Stage({
+  var stage = new Kinetic.Stage({
     container: container_id,
     height: ROWS * ROW_HEIGHT + 25,
     width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
   });
+  document.getElementById('download_ptms_canvas_button').addEventListener('click',
+      function() {
+        stage.toDataURL({
+          callback: function(dataUrl) {
+            window.open(dataUrl);
+          }
+        });
+  }, false);
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
@@ -410,8 +426,8 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
     var v_header_width = this.v_header_layer.getWidth();
     this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
 
-    this.stage.add(this.v_header_layer);
-    this.stage.add(this.seq_layer);
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
   }
   this.update = function() {
     this.draw();
@@ -495,11 +511,19 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length,
   var container_height = ROWS * ROW_HEIGHT + 45;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
   document.getElementById("canvases").style.height = container_height.toString() + 'px';
-  this.stage = new Kinetic.Stage({
+  var stage = new Kinetic.Stage({
     container: container_id,
     height: ROWS * ROW_HEIGHT + 25,
     width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
   });
+  document.getElementById('download_motifs_canvas_button').addEventListener('click',
+      function() {
+        stage.toDataURL({
+          callback: function(dataUrl) {
+            window.open(dataUrl);
+          }
+        });
+  }, false);
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
@@ -626,8 +650,8 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length,
     var v_header_width = this.v_header_layer.getWidth();
     this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
 
-    this.stage.add(this.v_header_layer);
-    this.stage.add(this.seq_layer);
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
   }
   this.update = function() {
     this.draw();
@@ -650,11 +674,19 @@ SequenceAlignmentDomains = function(container_id, data, codon_length,
   var container_height = ROWS * ROW_HEIGHT + 45;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
   document.getElementById("canvases").style.height = container_height.toString() + 'px';
-  this.stage = new Kinetic.Stage({
+  var stage = new Kinetic.Stage({
     container: container_id,
     height: ROWS * ROW_HEIGHT + 25,
     width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
   });
+  document.getElementById('download_domains_canvas_button').addEventListener('click',
+      function() {
+        stage.toDataURL({
+          callback: function(dataUrl) {
+            window.open(dataUrl);
+          }
+        });
+  }, false);
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
@@ -780,8 +812,8 @@ SequenceAlignmentDomains = function(container_id, data, codon_length,
     var v_header_width = this.v_header_layer.getWidth();
     this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
 
-    this.stage.add(this.v_header_layer);
-    this.stage.add(this.seq_layer);
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
   }
   this.update = function() {
     this.draw();

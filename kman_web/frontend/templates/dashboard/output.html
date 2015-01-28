@@ -59,6 +59,22 @@
               btn-xs" onclick="changeModeDomains()">
               <strong>Domains</strong>
             </button>
+            <button type="submit" id="download_canvas_button" class="btn
+              btn-default btn-xs" style="float:right;">
+              <strong>PNG</strong>
+            </button>
+            <button type="submit" id="download_ptms_canvas_button" class="btn
+              btn-default btn-xs" style="float:right;display:none;">
+              <strong>PNG</strong>
+            </button>
+            <button type="submit" id="download_motifs_canvas_button" class="btn
+              btn-default btn-xs" style="float:right;display:none;">
+              <strong>PNG</strong>
+            </button>
+            <button type="submit" id="download_domains_canvas_button" class="btn
+              btn-default btn-xs" style="float:right;display:none;">
+              <strong>PNG</strong>
+            </button>
           
           </span>
           <br>
@@ -190,6 +206,8 @@
                         'alignment_canvas_ptms', encoded_alignment,
                         codon_length);
                       alignment_ptms.update();
+                      var ptms_legend = new PTMsLegend('legend_canvas_ptms');
+                      ptms_legend.update();
                       var alignment_motifs = new SequenceAlignmentMotifs(
                           'alignment_canvas_motifs', encoded_alignment,
                           codon_length, feature_codemap['motifs']);
@@ -213,6 +231,10 @@
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = ''; 
+    document.getElementById('download_canvas_button').style.display = 'none'; 
+    document.getElementById('download_domains_canvas_button').style.display = 'none'; 
+    document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
+    document.getElementById('download_ptms_canvas_button').style.display = ''; 
     document.getElementById('legend_canvases_container').style.display = ''; 
     $('#ptm_mode_button').addClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
@@ -225,6 +247,10 @@
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('download_canvas_button').style.display = ''; 
+    document.getElementById('download_domains_canvas_button').style.display = 'none'; 
+    document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
+    document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
     document.getElementById('legend_canvases_container').style.display = 'none'; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').addClass('disabled');
@@ -236,6 +262,10 @@
     document.getElementById('alignment_canvas_domains').style.display = ''; 
     document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('download_canvas_button').style.display = 'none'; 
+    document.getElementById('download_domains_canvas_button').style.display = ''; 
+    document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
+    document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
     document.getElementById('legend_canvases_container').style.display = ''; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
@@ -248,6 +278,10 @@
     document.getElementById('alignment_canvas_domains').style.display = 'none'; 
     document.getElementById('alignment_canvas_motifs').style.display = ''; 
     document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('download_canvas_button').style.display = 'none'; 
+    document.getElementById('download_domains_canvas_button').style.display = 'none'; 
+    document.getElementById('download_motifs_canvas_button').style.display = ''; 
+    document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
     document.getElementById('legend_canvases_container').style.display = ''; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
