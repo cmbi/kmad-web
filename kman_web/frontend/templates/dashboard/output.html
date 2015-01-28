@@ -208,6 +208,14 @@
                       alignment_ptms.update();
                       var ptms_legend = new PTMsLegend('legend_canvas_ptms');
                       ptms_legend.update();
+                      var motifs_legend = new MotifsLegend(
+                          'legend_canvas_motifs',
+                          feature_codemap['motifs']);
+                      motifs_legend.update();
+                      var domains_legend = new DomainsLegend(
+                          'legend_canvas_domains',
+                          feature_codemap['domains']);
+                      domains_legend.update();
                       var alignment_motifs = new SequenceAlignmentMotifs(
                           'alignment_canvas_motifs', encoded_alignment,
                           codon_length, feature_codemap['motifs']);
@@ -219,7 +227,6 @@
                       $('#download_al_button').removeClass('disabled');
                       $('#collapseTwo').addClass('in');
                       $('#collapseThree').addClass('in');
-                      console.debug("debug check");
                     }
                 });
             }
@@ -236,6 +243,9 @@
     document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
     document.getElementById('download_ptms_canvas_button').style.display = ''; 
     document.getElementById('legend_canvases_container').style.display = ''; 
+    document.getElementById('legend_canvas_ptms').style.display = ''; 
+    document.getElementById('legend_canvas_motifs').style.display = 'none'; 
+    document.getElementById('legend_canvas_domains').style.display = 'none'; 
     $('#ptm_mode_button').addClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
@@ -267,6 +277,9 @@
     document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
     document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
     document.getElementById('legend_canvases_container').style.display = ''; 
+    document.getElementById('legend_canvas_ptms').style.display = 'none'; 
+    document.getElementById('legend_canvas_motifs').style.display = 'none'; 
+    document.getElementById('legend_canvas_domains').style.display = ''; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
@@ -283,6 +296,9 @@
     document.getElementById('download_motifs_canvas_button').style.display = ''; 
     document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
     document.getElementById('legend_canvases_container').style.display = ''; 
+    document.getElementById('legend_canvas_ptms').style.display = 'none'; 
+    document.getElementById('legend_canvas_motifs').style.display = ''; 
+    document.getElementById('legend_canvas_domains').style.display = 'none'; 
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').addClass('disabled');

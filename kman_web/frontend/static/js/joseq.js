@@ -197,21 +197,6 @@ SequenceAlignment = function(container_id, data) {
     var rect_w = res_text_w + 1;
     var rect_h = res_text_h;
     
-    var text_rect = new Kinetic.Shape({
-        x: x-10,
-        y: y,
-        fill: letter_col,
-        drawFunc: function(context) {
-            context.beginPath();
-            context.lineTo(x+rect_w, y);
-            context.lineTo(x+rect_w, y+rect_h);
-            context.lineTo(x, y+rect_h);
-            context.lineTo(x,y);
-            context.closePath();
-            context.fillStrokeShape(this);
-        }
-    });
-
     var text_rect = new Kinetic.Rect({
         x: x-0.25,
         y: y,
@@ -308,7 +293,7 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
                 "I": "#07F507", "J": "#FAF600",
                 "K": "#EFFC56", "L": "#FAFA87",
                 "M": "#FAFAAF", "R": "#7D4C0B",
-                "S": "#94611E", "T": "#B5003C",
+                "S": "#94611E", "T": "#B5803C",
                 "U": "#DBA967", "V": "#601385",
                 "W": "#7F31A3", "X": "#A45EC4",
                 "Y": "#C384E0", "Z": "#F002EC",
@@ -363,21 +348,6 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
     var rect_w = res_text_w + 1;
     var rect_h = res_text_h;
     
-    var text_rect = new Kinetic.Shape({
-        x: x-10,
-        y: y,
-        fill: letter_col,
-        drawFunc: function(context) {
-            context.beginPath();
-            context.lineTo(x+rect_w, y);
-            context.lineTo(x+rect_w, y+rect_h);
-            context.lineTo(x, y+rect_h);
-            context.lineTo(x,y);
-            context.closePath();
-            context.fillStrokeShape(this);
-        }
-    });
-
     var text_rect = new Kinetic.Rect({
         x: x-0.25,
         y: y,
@@ -489,7 +459,6 @@ ColorRange = function(number) {
     // var saturation = Math.abs(i * norm - 50) / 50;
     var saturation = 1;
 
-    console.debug(hue, saturation);
     result.push(HSLtoHEX(hue, saturation, 0.5));
   }
   return result;
@@ -528,7 +497,6 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length,
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
   motif_colors = ColorRange(this.feature_codemap.length);
-  console.debug(motif_colors);
   this.draw_residue = function(res_num, seq_num, x, y) {
     var motif_code = this.data[seq_num][1].charAt(res_num + 5) + this.data[seq_num][1].charAt(res_num + 6);
 
@@ -587,21 +555,6 @@ SequenceAlignmentMotifs = function(container_id, data, codon_length,
     var rect_w = res_text_w + 1;
     var rect_h = res_text_h;
     
-    var text_rect = new Kinetic.Shape({
-        x: x-10,
-        y: y,
-        fill: letter_col,
-        drawFunc: function(context) {
-            context.beginPath();
-            context.lineTo(x+rect_w, y);
-            context.lineTo(x+rect_w, y+rect_h);
-            context.lineTo(x, y+rect_h);
-            context.lineTo(x,y);
-            context.closePath();
-            context.fillStrokeShape(this);
-        }
-    });
-
     var text_rect = new Kinetic.Rect({
         x: x-0.25,
         y: y,
@@ -749,21 +702,6 @@ SequenceAlignmentDomains = function(container_id, data, codon_length,
     var rect_w = res_text_w + 1;
     var rect_h = res_text_h;
     
-    var text_rect = new Kinetic.Shape({
-        x: x-10,
-        y: y,
-        fill: letter_col,
-        drawFunc: function(context) {
-            context.beginPath();
-            context.lineTo(x+rect_w, y);
-            context.lineTo(x+rect_w, y+rect_h);
-            context.lineTo(x, y+rect_h);
-            context.lineTo(x,y);
-            context.closePath();
-            context.fillStrokeShape(this);
-        }
-    });
-
     var text_rect = new Kinetic.Rect({
         x: x-0.25,
         y: y,
@@ -812,6 +750,294 @@ SequenceAlignmentDomains = function(container_id, data, codon_length,
     var v_header_width = this.v_header_layer.getWidth();
     this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
 
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+PTMsLegend = function(container_id) {
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  
+  //var container_height = 40*this.data.length;
+  var container_height = 200;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    height: 185,
+    width: 400 
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  colors = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
+            'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF',
+            'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  ptm_colors = {"N": "#FF0000", "O": "#FF4000",
+                "P": "#FF8000", "Q": "#FF9800",
+                "d": "#FF9F00", "B": "#0000FF",
+                "C": "#0090FF", "D": "#00A5FF",
+                "E": "#00BAFF", "F": "#078207",
+                "G": "#09B009", "H": "#06D606",
+                "I": "#07F507", "J": "#FAF600",
+                "K": "#EFFC56", "L": "#FAFA87",
+                "M": "#FAFAAF", "R": "#7D4C0B",
+                "S": "#94611E", "T": "#B5803C",
+                "U": "#DBA967", "V": "#601385",
+                "W": "#7F31A3", "X": "#A45EC4",
+                "Y": "#C384E0", "Z": "#F002EC",
+                "a": "#F55FF2", "b": "#F57FF3",
+                "c": "#F2A5F1"}
+  this.draw_residue = function(res_char, ptm_code, x, y) {
+    var letter_col = ptm_colors[ptm_code];
+    var rect_w = 10;
+    var rect_h = 15;
+
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: rect_w,
+        height: rect_h,
+        fill: letter_col,
+    });
+    
+    this.seq_layer.add(text_rect);
+  }
+  this.draw = function() {
+    var x = 10;
+    var y = 20;
+    this.draw_residue(' ', 'N', x, y);
+    this.draw_residue(' ', 'O', x + 10, y);
+    this.draw_residue(' ', 'P', x + 20, y);
+    this.draw_residue(' ', 'Q', x + 30, y);
+    this.draw_residue(' ', 'd', x + 40, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "phosphorylated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    y = y + 30; 
+    this.draw_residue(' ', 'B', x, y);
+    this.draw_residue(' ', 'C', x + 10, y);
+    this.draw_residue(' ', 'D', x + 20, y);
+    this.draw_residue(' ', 'E', x + 30, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "acetylated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    y = y + 30; 
+    this.draw_residue(' ', 'F', x, y);
+    this.draw_residue(' ', 'G', x + 10, y);
+    this.draw_residue(' ', 'H', x + 20, y);
+    this.draw_residue(' ', 'I', x + 30, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "N-glycosylated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    y = y + 30; 
+    this.draw_residue(' ', 'J', x, y);
+    this.draw_residue(' ', 'K', x + 10, y);
+    this.draw_residue(' ', 'L', x + 20, y);
+    this.draw_residue(' ', 'M', x + 30, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "amidated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    y = y + 30; 
+    this.draw_residue(' ', 'R', x, y);
+    this.draw_residue(' ', 'S', x + 10, y);
+    this.draw_residue(' ', 'T', x + 20, y);
+    this.draw_residue(' ', 'U', x + 30, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "hydroxylated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    y = y + 30; 
+    this.draw_residue(' ', 'V', x, y);
+    this.draw_residue(' ', 'W', x + 10, y);
+    this.draw_residue(' ', 'X', x + 20, y);
+    this.draw_residue(' ', 'Y', x + 30, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "methylated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    y = y + 30; 
+    this.draw_residue(' ', 'Z', x, y);
+    this.draw_residue(' ', 'a', x + 10, y);
+    this.draw_residue(' ', 'b', x + 20, y);
+    this.draw_residue(' ', 'c', x + 30, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "O-glycosylated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+MotifsLegend = function(container_id, motifs) {
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  
+  //var container_height = 40*this.data.length;
+  var container_height = 200;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    height: 185,
+    width: 400 
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  var motif_colors = ColorRange(motifs.length);
+  this.draw_residue = function(res_string, motif_index, x, y) {
+    var letter_col = motif_colors[motif_index];
+    var rect_w = 30;
+    var rect_h = 15;
+    
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: rect_w,
+        height: rect_h,
+        fill: letter_col,
+    });
+    
+    this.seq_layer.add(text_rect);
+  }
+  this.draw = function() {
+    var x = 10;
+    var y = 20;
+    for (var i = 0; i < motifs.length; i++) {
+      if (i % 7 == 0) {
+        x = x + 60;
+      }
+      this.draw_residue('   ', i, x, y);
+      var res_text = new Kinetic.Text({
+        x: x + 80,
+        y: y,
+        text: motifs[i][1],
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'black'
+      });
+      this.seq_layer.add(res_text);
+      y = y + 30;
+    }
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+DomainsLegend = function(container_id, domains) {
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  
+  //var container_height = 40*this.data.length;
+  var container_height = 200;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    height: 185,
+    width: 400 
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  var domain_colors = ColorRange(domains.length);
+  this.draw_residue = function(res_string, domain_index, x, y) {
+    var letter_col = domain_colors[domain_index];
+    var rect_w = 30;
+    var rect_h = 15;
+    
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: rect_w,
+        height: rect_h,
+        fill: letter_col,
+    });
+    
+    this.seq_layer.add(text_rect);
+  }
+  this.draw = function() {
+    var x = 10;
+    var y = 20;
+    for (var i = 0; i < domains.length; i++) {
+      if (i % 7 == 0) {
+        x = x + 60;
+      }
+      this.draw_residue('   ', i, x, y);
+      var res_text = new Kinetic.Text({
+        x: x + 80,
+        y: y,
+        text: domains[i][1],
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'black'
+      });
+      this.seq_layer.add(res_text);
+      y = y + 30;
+    }
     stage.add(this.v_header_layer);
     stage.add(this.seq_layer);
   }
