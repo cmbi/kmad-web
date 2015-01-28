@@ -25,14 +25,12 @@ class TestTasks(object):
     @patch('kman_web.tasks.convert_to_7chars')
     @patch('kman_web.tasks.get_fasta_from_blast')
     @patch('subprocess.call')
-    @patch('kman_web.tasks.open',
-           mock_open(read_data=test.alignment_1c),
-           create=True)
     def test_align(self, mock_subprocess, mock_call1, mock_call2):
-        filename = 'testdata/test.fasta'
-        mock_call1.return_value = 'testdata/test.blastp'
-        mock_call2.return_value = 'testdata/test.7c'
-        expected = [test.alignment_1c, test.alignment_1c_list]
+        filename = 'tests/unit/testdata/test.fasta'
+        mock_call1.return_value = 'tests/unit/testdata/test.blastp'
+        mock_call2.return_value = 'tests/unit/testdata/test.7c'
+        expected = [test.alignment_1c, test.alignment_1c_list,
+                    test.alignment_7c_list, {"domains": [], "motifs": []}]
 
         from kman_web.tasks import align
 

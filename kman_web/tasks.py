@@ -107,13 +107,22 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
             "-o", toalign, "-g", str(gap_opening_penalty),
             "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
             "-p", str(ptm_score), "-d", str(domain_score),
+            "--out-encoded",
             "-m", str(motif_score), "-c", str(codon_length)]
     _log.debug("KMAN: {}".format(subprocess.list2cmdline(args)))
     subprocess.call(args)
 
-    alignment = open(al_outfile).read().encode('ascii', errors='ignore')
-    alignment_list = process_alignment(alignment, 1)
-    return [alignment, alignment_list]
+    with open(fastafile.split('.')[0] + '.map') as a:
+        # feature_codemap = [i.split() for i in a.read().splitlines()]
+        feature_codemap = a.read().splitlines()
+    motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
+    domains = [i.split() for i in feature_codemap if i.startswith('domain')]
+    feature_codemap = {'motifs': motifs, 'domains': domains}
+
+    alignment_encoded = open(al_outfile).read().encode('ascii', errors='ignore')
+    alignment_processed = process_alignment(alignment_encoded, codon_length)
+    result = alignment_processed + [feature_codemap]
+    return result
 
 
 @celery_app.task

@@ -67,7 +67,7 @@ def get_fasta_from_blast(blast_name, query_filename):
                 if count == 1 and sequence[1] != query_fasta[1]:
                         newfasta += query_fasta[0]+'\n'
                         newfasta += query_fasta[1]+'\n'
-                elif count >= 75:   # pragma: no cover
+                elif count >= 35:   # pragma: no cover
                     _log.debug('Limit of sequences number reached')
                     break
                 elif count % 10 == 0:     # pragma: no cover

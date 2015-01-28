@@ -94,14 +94,15 @@ def check_id(uniprot_id, seq):
     try:
         req = urllib2.Request("http://www.uniprot.org/uniprot/"
                               + uniprot_id + ".fasta")
+    except:
+        _log.info("No entry with ID: {}".format(uniprot_id))
+    else:
         uni_seq = urllib2.urlopen(req).read()
         uni_seq = ''.join(uni_seq.splitlines()[1:])
         if uni_seq == seq:
             result = True
         else:
             _log.debug("Different sequences")
-    except:
-        _log.info("No entry with ID: {}".format(uniprot_id))
     return result
 
 
@@ -448,11 +449,12 @@ def convert_to_7chars(filename):
     newfile = ''
     for i in motifsDictionary:
         newfile += 'motif_{} {} {}\n'.format(motifsDictionary[i], i,
-                                            slims_all_classes[i]["regex"])
+                                             slims_all_classes[i]["regex"])
     for i in domainsDictionary:
         newfile += 'domain_{} {}\n'.format(domainsDictionary[i], i)
     out = open(filename.split('.')[0]+'.map', 'w')
     out.write(newfile)
+    _log.debug("newfile: {}\n".format(newfile))
     out.close()
 
     return outname

@@ -1,6 +1,6 @@
 from mock import patch, mock_open, call
 
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 from MockResponse import MockResponse
 
 from testdata import test_variables as test_vars
@@ -266,8 +266,16 @@ def test_check_id(mock_request, mock_urlopen):
 
     import urllib2
 
-    mock_urlopen.return_value = urllib2.URLError
+    mock_urlopen.return_value = urllib2.Request("balbla")
     eq_(check_id('test_id', seq_check), False)
+
+
+def test_check_id_without_mocks():
+    from kman_web.services.convert import check_id
+    ok_(check_id('CRAM_CRAAB',
+                 'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'))
+    ok_(not check_id('CRAM_CRAAB',
+                     'PSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'))
 
 
 def test_get_annotation_level():

@@ -134,11 +134,16 @@ def process_d2p2(prediction):
 def process_alignment(data, codon_length):
     data_list = data.splitlines()
     processed = []
+    processed_text = ""
+    encoded = []
     for i in range(0, len(data_list), 2):
         header = data_list[i].split(' ')[0].lstrip('>')
         sequence = data_list[i+1][::codon_length]
         processed += [[header, sequence]]
-    return processed
+        encoded += [[header, data_list[i+1]]]
+        processed_text += "{}\n{}\n".format(data_list[i], sequence)
+    _log.info("{}\n{}\n".format(processed, encoded))
+    return [processed_text, processed, encoded]
 
 
 def decode(alignment, codon_length):
