@@ -30,7 +30,7 @@ class TestTasks(object):
         mock_call1.return_value = 'tests/unit/testdata/test.blastp'
         mock_call2.return_value = 'tests/unit/testdata/test.7c'
         expected = [test.alignment_1c, test.alignment_1c_list,
-                    test.alignment_7c_list, []]
+                    test.alignment_7c_list, {"domains": [], "motifs": []}]
 
         from kman_web.tasks import align
 

@@ -94,14 +94,15 @@ def check_id(uniprot_id, seq):
     try:
         req = urllib2.Request("http://www.uniprot.org/uniprot/"
                               + uniprot_id + ".fasta")
+    except:
+        _log.info("No entry with ID: {}".format(uniprot_id))
+    else:
         uni_seq = urllib2.urlopen(req).read()
         uni_seq = ''.join(uni_seq.splitlines()[1:])
         if uni_seq == seq:
             result = True
         else:
             _log.debug("Different sequences")
-    except:
-        _log.info("No entry with ID: {}".format(uniprot_id))
     return result
 
 

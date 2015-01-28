@@ -929,15 +929,16 @@ MotifsLegend = function(container_id, motifs) {
   const FONT_SIZE = 15;
   const ROW_HEIGHT = 15;
   const ROW_MARGIN_T = 0;
+  console.debug(motifs.length);
   
   //var container_height = 40*this.data.length;
-  var container_height = 200;
+  var container_height = 210;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
   document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
   var stage = new Kinetic.Stage({
     container: container_id,
-    height: 185,
-    width: 400 
+    height: container_height - 15,
+    width: 260 * (1 + Math.floor(motifs.length / 6))
   });
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
@@ -961,9 +962,11 @@ MotifsLegend = function(container_id, motifs) {
     var x = 10;
     var y = 20;
     for (var i = 0; i < motifs.length; i++) {
-      if (i % 7 == 0) {
-        x = x + 60;
+      if (i % 6 == 0 && i != 0) {
+        x = x + 260;
+        y = 20;
       }
+      console.debug(x);
       this.draw_residue('   ', i, x, y);
       var res_text = new Kinetic.Text({
         x: x + 80,
@@ -992,13 +995,13 @@ DomainsLegend = function(container_id, domains) {
   const ROW_MARGIN_T = 0;
   
   //var container_height = 40*this.data.length;
-  var container_height = 200;
+  var container_height = 210;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
   document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
   var stage = new Kinetic.Stage({
     container: container_id,
-    height: 185,
-    width: 400 
+    height: container_height - 15,
+    width: 260 * (1 + Math.floor(domains.length / 6))
   });
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
@@ -1022,8 +1025,9 @@ DomainsLegend = function(container_id, domains) {
     var x = 10;
     var y = 20;
     for (var i = 0; i < domains.length; i++) {
-      if (i % 7 == 0) {
-        x = x + 60;
+      if (i % 6 == 0 && i != 0) {
+        x = x + 260;
+        y = 20;
       }
       this.draw_residue('   ', i, x, y);
       var res_text = new Kinetic.Text({
