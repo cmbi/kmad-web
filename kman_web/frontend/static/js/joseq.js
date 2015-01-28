@@ -996,6 +996,7 @@ DomainsLegend = function(container_id, domains) {
   
   //var container_height = 40*this.data.length;
   var container_height = 210;
+  this.domains = domains;
   document.getElementById(container_id).style.height = container_height.toString() + 'px';
   document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
   var stage = new Kinetic.Stage({

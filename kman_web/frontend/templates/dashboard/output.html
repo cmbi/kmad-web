@@ -43,22 +43,24 @@
         <div class="panel-body">
           <span class="panel_body_text">
             <strong>coloring mode:&#160;&#160;&#160;&#160;</strong>
-            <button type="submit" id="regular_mode_button" class="btn btn-regular
-              btn-xs disabled" onclick="changeModeRegular()">
-              <strong>Regular</strong>
-            </button>
-            <button type="submit" id="ptm_mode_button" class="btn btn-ptms
-              btn-xs" onclick="changeModePTMS()">
-              <strong>PTMs</strong>
-            </button>
-            <button type="submit" id="motif_mode_button" class="btn btn-motifs
-              btn-xs" onclick="changeModeMotifs()">
-              <strong>Motifs</strong>
-            </button>
-            <button type="submit" id="domain_mode_button" class="btn btn-domains
-              btn-xs" onclick="changeModeDomains()">
-              <strong>Domains</strong>
-            </button>
+            <div class="btn-group" data-toggle="buttons">
+              <button type="submit" id="regular_mode_button" class="btn btn-regular
+                btn-s disabled" onclick="changeModeRegular()">
+                <strong>Regular</strong>
+              </button>
+              <button type="submit" id="ptm_mode_button" class="btn btn-ptms
+                btn-s" onclick="changeModePTMS()">
+                <strong>PTMs</strong>
+              </button>
+              <button type="submit" id="motif_mode_button" class="btn btn-motifs
+                btn-s" onclick="changeModeMotifs()">
+                <strong>Motifs</strong>
+              </button>
+              <button type="submit" id="domain_mode_button" class="btn btn-domains
+                btn-s" onclick="changeModeDomains()">
+                <strong>Domains</strong>
+              </button>
+            </div>
             <button type="submit" id="download_canvas_button" class="btn
               btn-default btn-xs" style="float:right;">
               <strong>PNG</strong>
@@ -249,7 +251,9 @@
     $('#ptm_mode_button').addClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
-    $('#domain_mode_button').removeClass('disabled');
+    $('#domain_mode_button').removeClass('active');
+    $('#regular_mode_button').removeClass('active');
+    $('#motif_mode_button').removeClass('active');
 
   }
   changeModeRegular = function() {
@@ -262,10 +266,13 @@
     document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
     document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
     document.getElementById('legend_canvases_container').style.display = 'none'; 
-    $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').addClass('disabled');
+    $('#ptm_mode_button').removeClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
     $('#domain_mode_button').removeClass('disabled');
+    $('#ptm_mode_button').removeClass('active');
+    $('#motif_mode_button').removeClass('active');
+    $('#domain_mode_button').removeClass('active');
   }
   changeModeDomains = function() {
     document.getElementById('alignment_canvas').style.display = 'none'; 
@@ -284,6 +291,9 @@
     $('#regular_mode_button').removeClass('disabled');
     $('#motif_mode_button').removeClass('disabled');
     $('#domain_mode_button').addClass('disabled');
+    $('#ptm_mode_button').removeClass('active');
+    $('#regular_mode_button').removeClass('active');
+    $('#motif_mode_button').removeClass('active');
 
   }
   changeModeMotifs = function() {
@@ -299,10 +309,13 @@
     document.getElementById('legend_canvas_ptms').style.display = 'none'; 
     document.getElementById('legend_canvas_motifs').style.display = ''; 
     document.getElementById('legend_canvas_domains').style.display = 'none'; 
+    $('#motif_mode_button').addClass('disabled');
     $('#ptm_mode_button').removeClass('disabled');
     $('#regular_mode_button').removeClass('disabled');
-    $('#motif_mode_button').addClass('disabled');
     $('#domain_mode_button').removeClass('disabled');
+    $('#ptm_mode_button').removeClass('active');
+    $('#regular_mode_button').removeClass('active');
+    $('#domain_mode_button').removeClass('active');
   }
 </script>
 {% endblock %}
