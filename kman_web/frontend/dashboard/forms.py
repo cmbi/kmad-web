@@ -4,12 +4,12 @@ from wtforms.fields import FloatField, IntegerField, SelectField, TextAreaField
 
 class KmanForm(Form):
     sequence = TextAreaField(u'sequence')
-    output_type = SelectField(u'Action', choices=[('predict',
-                                                   'predict disorder'),
+    output_type = SelectField(u'Action', choices=[('align',
+                                                   'align'),
                                                   ('predict_and_align',
                                                    'predict and align'),
-                                                  ('align',
-                                                   'align')])
+                                                  ('predict',
+                                                   'predict disorder')])
     gap_open_p = FloatField(u'gap opening penalty', default=-5)
     gap_ext_p = FloatField(u'gap extension penalty', default=-1)
     end_gap_p = FloatField(u'end gap penalty', default=-1)
