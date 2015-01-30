@@ -51,7 +51,7 @@ Session.vim
 celerybeat-schedule
 
 # bower
-kman_web/frontend/static/libs
+# kman_web/frontend/static/libs
 
 #redis
 dump.rdb
