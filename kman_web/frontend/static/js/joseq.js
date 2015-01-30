@@ -464,299 +464,6 @@ ColorRange = function(number) {
   return result;
 }
 
-SequenceAlignmentMotifs = function(container_id, data, codon_length,
-                                   feature_codemap) {
-  const MAX_RES_PER_ROW = data[0][1].length / codon_length;
-  const SEQ_LAYER_OFFSET_X = 50;
-  const FONT_FAMILY = "Monospace";
-  const FONT_SIZE = 15;
-  const ROW_HEIGHT = 15;
-  const ROW_MARGIN_T = 0;
-  const ROWS = data.length;
-  
-  this.data = data;
-  this.feature_codemap = feature_codemap;
-  //var container_height = 40*this.data.length;
-  var container_height = ROWS * ROW_HEIGHT + 45;
-  document.getElementById(container_id).style.height = container_height.toString() + 'px';
-  document.getElementById("canvases").style.height = container_height.toString() + 'px';
-  var stage = new Kinetic.Stage({
-    container: container_id,
-    height: ROWS * ROW_HEIGHT + 25,
-    width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
-  });
-  document.getElementById('download_motifs_canvas_button').addEventListener('click',
-      function() {
-        stage.toDataURL({
-          callback: function(dataUrl) {
-            window.open(dataUrl);
-          }
-        });
-  }, false);
-  this.v_header_layer = new Kinetic.Layer();
-  this.seq_layer = new Kinetic.Layer();
-  colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
-  motif_colors = ColorRange(this.feature_codemap.length);
-  this.draw_residue = function(res_num, seq_num, x, y) {
-    var motif_code = this.data[seq_num][1].charAt(res_num + 5) + this.data[seq_num][1].charAt(res_num + 6);
-
-    var r = this.data[seq_num][1].charAt(res_num);
-    var r_up = r.toUpperCase(); 
-    var letter_col = colors['gray'];
-    if (motif_code == 'AA') {
-      if ( r_up == 'C' || r_up == 'M'){
-          letter_col = colors['yellow'];
-      } 
-      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-        letter_col = colors['green'];
-      }
-      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-        letter_col = colors['blueishgreen'];
-      }
-      else if (r_up == 'H'){
-        letter_col = colors['blue'];
-      }
-      else if (r_up == 'K' || r_up == 'R'){
-        letter_col = colors['purple'];
-      }
-      else if (r_up == 'E' || r_up == 'Q'){
-        letter_col = colors['red'];
-      }
-      else if (r_up == 'N' || r_up == 'D'){
-        letter_col = colors['pink'];
-      }
-      else if (r_up == '-'){
-        letter_col = colors['white'];
-      }
-    }
-    else {
-      var feat_number = 0;
-      for (var i = 0; i < feature_codemap.length; i++) {
-        if (feature_codemap[i][0].charAt(6) == motif_code.charAt(0)
-            && feature_codemap[i][0].charAt(7) == motif_code.charAt(1)) {
-          feat_number = i;
-          break;    
-        }
-      }
-      letter_col = motif_colors[i];
-    }
-    var res_text = new Kinetic.Text({
-      x: x,
-      y: y,
-      text: r,
-      fontSize: FONT_SIZE,
-      fontStyle: 'bold',
-      fontFamily: FONT_FAMILY,
-      fill: 'black'
-    });
-
-    var res_text_w = res_text.getTextWidth();
-    var res_text_h = res_text.getTextHeight();
-    var rect_w = res_text_w + 1;
-    var rect_h = res_text_h;
-    
-    var text_rect = new Kinetic.Rect({
-        x: x-0.25,
-        y: y,
-        width: res_text_w+1,
-        height: res_text_h,
-        fill: letter_col,
-    });
-    
-    this.seq_layer.add(text_rect);
-    this.seq_layer.add(res_text);
-
-    return res_text_w;
-  }
-  this.draw = function() {
-    var v_header_width = 0;
-    for (var i = 0; i < this.data.length; i++) {
-      var x = 10;
-      var y = 20+(i * ROW_HEIGHT) + ROW_MARGIN_T;
-
-      // Draw the residue number heading
-      var res_num_txt = new Kinetic.Text({
-        x: x,
-        y: y,
-        text: this.data[i][0],       //sequence header
-        fontSize: FONT_SIZE,
-        fontStyle: 'bold',
-        fontFamily: FONT_FAMILY,
-        fill: 'gray'
-      });
-      this.v_header_layer.add(res_num_txt);
-      var res_num_txt_w = res_num_txt.getWidth();
-      v_header_width = (
-          res_num_txt_w > v_header_width ? res_num_txt_w : v_header_width);
-
-      // Iterate over the residues in the current row. For each residue, draw
-      // it with the appropriate accessibility colour, and draw the secondary
-      // structure representation.
-      for (var j = 0; j < this.data[i][1].length / codon_length; j++)
-      {
-        var res_text_width = this.draw_residue(j * codon_length, i, x, y);
-        x = x + res_text_width;
-      }
-    }
-
-    this.v_header_layer.width(v_header_width);
-    var v_header_width = this.v_header_layer.getWidth();
-    this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
-
-    stage.add(this.v_header_layer);
-    stage.add(this.seq_layer);
-  }
-  this.update = function() {
-    this.draw();
-  }
-}
-
-SequenceAlignmentDomains = function(container_id, data, codon_length,
-                                    feature_codemap, legend_container) {
-  const MAX_RES_PER_ROW = data[0][1].length / codon_length;
-  const SEQ_LAYER_OFFSET_X = 50;
-  const FONT_FAMILY = "Monospace";
-  const FONT_SIZE = 15;
-  const ROW_HEIGHT = 15;
-  const ROW_MARGIN_T = 0;
-  const ROWS = data.length;
-  
-  this.data = data;
-  this.feature_codemap = feature_codemap;
-  //var container_height = 40*this.data.length;
-  var container_height = ROWS * ROW_HEIGHT + 45;
-  document.getElementById(container_id).style.height = container_height.toString() + 'px';
-  document.getElementById("canvases").style.height = container_height.toString() + 'px';
-  var stage = new Kinetic.Stage({
-    container: container_id,
-    height: ROWS * ROW_HEIGHT + 25,
-    width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
-  });
-  document.getElementById('download_domains_canvas_button').addEventListener('click',
-      function() {
-        stage.toDataURL({
-          callback: function(dataUrl) {
-            window.open(dataUrl);
-          }
-        });
-  }, false);
-  this.v_header_layer = new Kinetic.Layer();
-  this.seq_layer = new Kinetic.Layer();
-  colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
-  domain_colors = ColorRange(this.feature_codemap.length);
-  this.draw_residue = function(res_num, seq_num, x, y) {
-    var domain_code = this.data[seq_num][1].charAt(res_num + 2) + this.data[seq_num][1].charAt(res_num + 3);
-    var r = this.data[seq_num][1].charAt(res_num);
-    var r_up = r.toUpperCase(); 
-    var letter_col = colors['gray'];
-    if (domain_code == 'AA') {
-      if ( r_up == 'C' || r_up == 'M'){
-          letter_col = colors['yellow'];
-      } 
-      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-        letter_col = colors['green'];
-      }
-      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-        letter_col = colors['blueishgreen'];
-      }
-      else if (r_up == 'H'){
-        letter_col = colors['blue'];
-      }
-      else if (r_up == 'K' || r_up == 'R'){
-        letter_col = colors['purple'];
-      }
-      else if (r_up == 'E' || r_up == 'Q'){
-        letter_col = colors['red'];
-      }
-      else if (r_up == 'N' || r_up == 'D'){
-        letter_col = colors['pink'];
-      }
-      else if (r_up == '-'){
-        letter_col = colors['white'];
-      }
-    }
-    else {
-      var feat_number = 0;
-      for (var i = 0; i < feature_codemap.length; i++) {
-        if (feature_codemap[i][0].charAt(7) == domain_code.charAt(0)
-            && feature_codemap[i][0].charAt(8) == domain_code.charAt(1)) {
-          feat_number = i;
-          break;    
-        }
-      }
-      letter_col = domain_colors[i];
-    }
-
-    var res_text = new Kinetic.Text({
-      x: x,
-      y: y,
-      text: r,
-      fontSize: FONT_SIZE,
-      fontStyle: 'bold',
-      fontFamily: FONT_FAMILY,
-      fill: 'black'
-    });
-
-    var res_text_w = res_text.getTextWidth();
-    var res_text_h = res_text.getTextHeight();
-    var rect_w = res_text_w + 1;
-    var rect_h = res_text_h;
-    
-    var text_rect = new Kinetic.Rect({
-        x: x-0.25,
-        y: y,
-        width: res_text_w+1,
-        height: res_text_h,
-        fill: letter_col,
-    });
-    
-    this.seq_layer.add(text_rect);
-    this.seq_layer.add(res_text);
-
-    return res_text_w;
-  }
-  this.draw = function() {
-    var v_header_width = 0;
-    for (var i = 0; i < this.data.length; i++) {
-      var x = 10;
-      var y = 20+(i * ROW_HEIGHT) + ROW_MARGIN_T;
-
-      // Draw the residue number heading
-      var res_num_txt = new Kinetic.Text({
-        x: x,
-        y: y,
-        text: this.data[i][0],       //sequence header
-        fontSize: FONT_SIZE,
-        fontStyle: 'bold',
-        fontFamily: FONT_FAMILY,
-        fill: 'gray'
-      });
-      this.v_header_layer.add(res_num_txt);
-      var res_num_txt_w = res_num_txt.getWidth();
-      v_header_width = (
-          res_num_txt_w > v_header_width ? res_num_txt_w : v_header_width);
-
-      // Iterate over the residues in the current row. For each residue, draw
-      // it with the appropriate accessibility colour, and draw the secondary
-      // structure representation.
-      for (var j = 0; j < this.data[i][1].length / codon_length; j++)
-      {
-        var res_text_width = this.draw_residue(j * codon_length, i, x, y);
-        x = x + res_text_width;
-      }
-    }
-
-    this.v_header_layer.width(v_header_width);
-    var v_header_width = this.v_header_layer.getWidth();
-    this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
-
-    stage.add(this.v_header_layer);
-    stage.add(this.seq_layer);
-  }
-  this.update = function() {
-    this.draw();
-  }
-}
 PTMsLegend = function(container_id) {
   const SEQ_LAYER_OFFSET_X = 50;
   const FONT_FAMILY = "Monospace";
@@ -929,7 +636,6 @@ MotifsLegend = function(container_id, motifs) {
   const FONT_SIZE = 15;
   const ROW_HEIGHT = 15;
   const ROW_MARGIN_T = 0;
-  console.debug(motifs.length);
   
   //var container_height = 40*this.data.length;
   var container_height = 210;
@@ -966,7 +672,6 @@ MotifsLegend = function(container_id, motifs) {
         x = x + 260;
         y = 20;
       }
-      console.debug(x);
       this.draw_residue('   ', i, x, y);
       var res_text = new Kinetic.Text({
         x: x + 80,
@@ -1043,6 +748,235 @@ DomainsLegend = function(container_id, domains) {
       this.seq_layer.add(res_text);
       y = y + 30;
     }
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+SequenceAlignmentFeatures = function(container_id, data, codon_length,
+                                     feature_codemap,
+                                     feature_type) {
+  const MAX_RES_PER_ROW = data[0][1].length / codon_length;
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  const ROWS = data.length;
+  
+  this.data = data;
+  this.feature_codemap = feature_codemap;
+  //var container_height = 40*this.data.length;
+  var container_height = ROWS * ROW_HEIGHT + 75;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    height: ROWS * ROW_HEIGHT + 55,
+    width: 170 + (this.data[0][0].length + this.data[0][1].length / codon_length)*8
+  });
+  document.getElementById('download_'+feature_type+'_canvas_button').addEventListener('click',
+      function() {
+        stage.toDataURL({
+          callback: function(dataUrl) {
+            window.open(dataUrl);
+          }
+        });
+  }, false);
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  feature_colors = ColorRange(this.feature_codemap.length);
+  this.draw_tooltip = function(x, y, message) {
+    // The stage is a little higher than it needs to be so that the tooltip on
+    // the last row is visible. Ideally we should change the direction of the
+    // tooltip.
+    tooltip = new Kinetic.Label({
+      x: x,
+      y: y,
+      opacity: 0.75
+    });
+    tooltip_tag = new Kinetic.Tag({
+      fill: 'gray',
+      pointerDirection: 'up',
+      pointerWidth: 10,
+      pointerHeight: 10,
+      lineJoin: 'round',
+      shadowColor: 'black',
+      shadowBlur: 3,
+      shadowOffset: {x:2, y:2},
+      shadowOpacity: 0.5
+    });
+    tooltip_text = new Kinetic.Text({
+      text: message,
+      fontFamily: FONT_FAMILY,
+      fontSize: FONT_SIZE,
+      padding: 5,
+      fill: 'white'
+    });
+    tooltip.add(tooltip_tag);
+    tooltip.add(tooltip_text);
+    this.seq_layer.add(tooltip);
+    this.seq_layer.draw();
+    return tooltip;
+  }
+
+  this.register_tooltip = function(src, x, y, message) {
+    var seq = this;
+    var tooltip;
+    var url = 'http://elm.eu.org/elmPages/'+message+'.html';
+    if (feature_type == 'domains') {
+      url = 'http://pfam.xfam.org/family/' + message;
+    }
+    // src.on('click', function(){
+    //   window.open(url)
+    // });
+    var left_button_clicked = false;
+    src.on('mousedown', function(e) {
+      if (e.evt.buttons == 1 ) {
+        left_button_clicked = true;
+      }
+    });
+    src.on('click', function(e) {
+      if (left_button_clicked) {
+        window.open(url);
+        left_button_clciked = false;
+      }
+    });
+    src.on('mouseenter', function() {
+      tooltip = seq.draw_tooltip(x, y, message);
+    });
+    src.on('mouseleave', function() {
+      tooltip.destroy();
+      seq.seq_layer.draw();
+    });
+  }
+  this.draw_residue = function(res_num, seq_num, x, y) {
+    var index_add = 0;
+    if (feature_type == 'motifs') {
+      index_add = 3;
+    }
+    var feature_code = this.data[seq_num][1].charAt(res_num + 2 + index_add) + this.data[seq_num][1].charAt(res_num + 3 + index_add);
+    var r = this.data[seq_num][1].charAt(res_num);
+    var r_up = r.toUpperCase(); 
+    var letter_col = colors['gray'];
+    var is_feature = false;
+    if (feature_code == 'AA') {
+      if ( r_up == 'C' || r_up == 'M'){
+          letter_col = colors['yellow'];
+      } 
+      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
+        letter_col = colors['green'];
+      }
+      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
+        letter_col = colors['blueishgreen'];
+      }
+      else if (r_up == 'H'){
+        letter_col = colors['blue'];
+      }
+      else if (r_up == 'K' || r_up == 'R'){
+        letter_col = colors['purple'];
+      }
+      else if (r_up == 'E' || r_up == 'Q'){
+        letter_col = colors['red'];
+      }
+      else if (r_up == 'N' || r_up == 'D'){
+        letter_col = colors['pink'];
+      }
+      else if (r_up == '-'){
+        letter_col = colors['white'];
+      }
+    }
+    else {
+      var feat_number = 0;
+      var char_index = 6;
+      if (feature_type == 'domains') {
+        char_index = 7;
+      }
+      for (var i = 0; i < feature_codemap.length; i++) {
+        if (feature_codemap[i][0].charAt(char_index) == feature_code.charAt(0)
+            && feature_codemap[i][0].charAt(char_index + 1) == feature_code.charAt(1)) {
+          feat_number = i;
+          break;    
+        }
+      }
+      is_feature = true;
+      letter_col = feature_colors[i];
+    }
+
+    var res_text = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: r,
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+
+    if (is_feature) {
+      this.register_tooltip(
+        res_text,
+        x,
+        y + 10,
+        feature_codemap[feat_number][1]);
+    }
+    
+
+    var res_text_w = res_text.getTextWidth();
+    var res_text_h = res_text.getTextHeight();
+    var rect_w = res_text_w + 1;
+    var rect_h = res_text_h;
+    
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: res_text_w+1,
+        height: res_text_h,
+        fill: letter_col,
+    });
+    this.seq_layer.add(text_rect);
+    this.seq_layer.add(res_text);
+
+    return res_text_w;
+  }
+  this.draw = function() {
+    var v_header_width = 0;
+    for (var i = 0; i < this.data.length; i++) {
+      var x = 10;
+      var y = 20+(i * ROW_HEIGHT) + ROW_MARGIN_T;
+
+      // Draw the residue number heading
+      var res_num_txt = new Kinetic.Text({
+        x: x,
+        y: y,
+        text: this.data[i][0],       //sequence header
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'gray'
+      });
+      this.v_header_layer.add(res_num_txt);
+      var res_num_txt_w = res_num_txt.getWidth();
+      v_header_width = (
+          res_num_txt_w > v_header_width ? res_num_txt_w : v_header_width);
+
+      // Iterate over the residues in the current row. For each residue, draw
+      // it with the appropriate accessibility colour, and draw the secondary
+      // structure representation.
+      for (var j = 0; j < this.data[i][1].length / codon_length; j++)
+      {
+        var res_text_width = this.draw_residue(j * codon_length, i, x, y);
+        x = x + res_text_width;
+      }
+    }
+
+    this.v_header_layer.width(v_header_width);
+    var v_header_width = this.v_header_layer.getWidth();
+    this.seq_layer.x(v_header_width + SEQ_LAYER_OFFSET_X);
+
     stage.add(this.v_header_layer);
     stage.add(this.seq_layer);
   }

@@ -218,13 +218,13 @@
                           'legend_canvas_domains',
                           feature_codemap['domains']);
                       domains_legend.update();
-                      var alignment_motifs = new SequenceAlignmentMotifs(
+                      var alignment_motifs = new SequenceAlignmentFeatures(
                           'alignment_canvas_motifs', encoded_alignment,
-                          codon_length, feature_codemap['motifs']);
+                          codon_length, feature_codemap['motifs'], 'motifs');
                       alignment_motifs.update();
-                      var alignment_domains = new SequenceAlignmentDomains(
+                      var alignment_domains = new SequenceAlignmentFeatures(
                           'alignment_canvas_domains', encoded_alignment,
-                          codon_length, feature_codemap['domains']);
+                          codon_length, feature_codemap['domains'], 'domains');
                       alignment_domains.update();
                       $('#download_al_button').removeClass('disabled');
                       $('#collapseTwo').addClass('in');
