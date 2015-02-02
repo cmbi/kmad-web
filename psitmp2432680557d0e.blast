@@ -1,0 +1,179 @@
+BLASTP 2.2.25 [Feb-01-2011]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+
+Reference for compositional score matrix adjustment: Altschul, Stephen F., 
+John C. Wootton, E. Michael Gertz, Richa Agarwala, Aleksandr Morgulis,
+Alejandro A. Schaffer, and Yi-Kuo Yu (2005) "Protein database searches
+using compositionally adjusted substitution matrices", FEBS J. 272:5101-5109.
+
+
+Reference for composition-based statistics starting in round 2:
+Schaffer, Alejandro A., L. Aravind, Thomas L. Madden,
+Sergei Shavirin, John L. Spouge, Yuri I. Wolf,  
+Eugene V. Koonin, and Stephen F. Altschul (2001), 
+"Improving the accuracy of PSI-BLAST protein database searches with 
+composition-based statistics and other refinements",  Nucleic Acids Res. 29:2994-3005.
+
+Query= sp|P01542|CRAM_CRAAB Crambin OS=Crambe hispanica subsp.
+abyssinica GN=THI2 PE=1 SV=2
+         (46 letters)
+
+Database: All non-redundant GenBank CDS
+translations+PDB+SwissProt+PIR+PRF excluding environmental samples
+from WGS projects 
+           49,814,966 sequences; 17,878,177,349 total letters
+
+Searching..................................................done
+
+
+Results from round 1
+
+
+                                                                 Score    E
+Sequences producing significant alignments:                      (bits) Value
+
+sp|P01542.2|CRAM_CRAAB RecName: Full=Crambin [Crambe hispanica s...    93   3e-17
+pdb|1CRN|A Chain A, Water Structure Of A Hydrophobic Protein At ...    92   7e-17
+pdb|3UE7|B Chain B, X-Ray Crystal Structure Of A Novel Topologic...    91   2e-16
+pdb|1AB1|A Chain A, Si Form Crambin                                    90   4e-16
+pdb|1CXR|A Chain A, Automated 2d Noesy Assignment And Structure ...    89   1e-15
+pir||S52550 thionin variant Thi2Ca6 - Abyssinian crambe                85   9e-15
+pdb|1EJG|A Chain A, Crambin At Ultra-high Resolution: Valence El...    84   2e-14
+pdb|1CBN|A Chain A, Atomic Resolution (0.83 Angstroms) Crystal S...    84   2e-14
+gb|AAB33006.1| crambin precursor=thionin variant Thi2Ca5 [Crambe...    79   7e-13
+pir||S52548 thionin variant Thi2Ca4 - Abyssinian crambe                77   3e-12
+gb|AAB33009.1| crambin precursor=thionin variant Thi2Ca10 [Cramb...    56   6e-06
+emb|CAA57353.1| Thionin class 1 [Tulipa gesneriana]                    54   2e-05
+gb|AAB33010.1| crambin precursor=thionin variant Thi2Ca11 [Cramb...    54   3e-05
+sp|P01541.1|THN_DENCL RecName: Full=Denclatoxin-B                      54   3e-05
+gb|KFK42265.1| hypothetical protein AALP_AA2G233200 [Arabis alpina]    53   4e-05
+dbj|BAB93112.1| leaf thionin Asthi1 [Avena sativa]                     52   7e-05
+prf||2007441A viscotoxin                                               51   2e-04
+sp|P01538.2|THN3_VISAL RecName: Full=Viscotoxin-A3; Contains: Re...    51   2e-04
+ref|XP_006284738.1| hypothetical protein CARUB_v10006002mg [Caps...    51   2e-04
+gb|AAB21529.1| thionin [Hordeum jubatum, Peptide, 137 aa] >gi|24...    50   3e-04
+ref|XP_006284512.1| hypothetical protein CARUB_v10005712mg [Caps...    50   3e-04
+pdb|1ED0|A Chain A, Nmr Structural Determination Of Viscotoxin A...    50   3e-04
+ref|XP_006292033.1| hypothetical protein CARUB_v10018222mg [Caps...    50   4e-04
+dbj|BAB93113.1| leaf thionin Asthi2 [Avena sativa]                     50   4e-04
+ref|XP_006298802.1| hypothetical protein CARUB_v10014906mg [Caps...    49   6e-04
+gb|AAB29759.1| viscotoxin A3=thionin precursor {clone Thi2Va1.2}...    49   8e-04
+sp|P59358.1|THNB_PHOLI RecName: Full=Ligatoxin-B                       48   0.001
+ref|XP_006296672.1| hypothetical protein CARUB_v10016370mg [Caps...    48   0.001
+ref|XP_006298803.1| hypothetical protein CARUB_v10014907mg [Caps...    48   0.001
+dbj|BAB93114.1| leaf thionin Asthi3 [Avena sativa]                     48   0.001
+gb|AAB29761.1| thionin precursor {clone Thi1Va12} [Viscum album=...    48   0.002
+ref|XP_006295221.1| hypothetical protein CARUB_v10024304mg [Caps...    47   0.003
+ref|XP_006292031.1| hypothetical protein CARUB_v10018220mg [Caps...    47   0.003
+pdb|3C8P|A Chain A, X-Ray Structure Of Viscotoxin A1 From Viscum...    47   0.003
+sp|P08943.2|THNB_VISAL RecName: Full=Viscotoxin-B; Contains: Rec...    47   0.003
+gb|AAB33005.1| crambin precursor=thionin variant Thi2Ca3 [Crambe...    47   0.003
+gb|AAB33004.1| crambin precursor=thionin variant Thi2Ca2 [Crambe...    47   0.004
+pdb|1JMP|A Chain A, Solution Structure Of The Viscotoxin B             47   0.004
+sp|P01540.1|THNA_PHOLI RecName: Full=Ligatoxin-A                       47   0.004
+pdb|2V9B|A Chain A, X-Ray Structure Of Viscotoxin B2 From Viscum...    47   0.004
+ref|XP_006298795.1| hypothetical protein CARUB_v10014899mg [Caps...    47   0.005
+pdb|1JMN|A Chain A, Solution Structure Of The Viscotoxin A2            46   0.006
+sp|P07504.1|THN_PYRPU RecName: Full=Thionin                            45   0.009
+sp|P83554.1|THNC_VISAL RecName: Full=Viscotoxin-C1 >gi|29726978|...    45   0.010
+pir||VTVAA3 viscotoxin A3 - European mistletoe                         45   0.010
+ref|XP_004973361.1| PREDICTED: thionin-like [Setaria italica]          45   0.012
+dbj|BAB93116.1| thionin Asthi5 [Avena sativa]                          45   0.014
+gb|KFK42264.1| hypothetical protein AALP_AA2G233000 [Arabis alpina]    45   0.015
+gb|KFK42266.1| hypothetical protein AALP_AA2G233300 [Arabis alpina]    44   0.022
+ref|XP_006284739.1| hypothetical protein CARUB_v10006003mg [Caps...    44   0.023
+ref|XP_004973362.1| PREDICTED: thionin BTH7-like [Setaria italic...    44   0.026
+ref|XP_006304794.1| hypothetical protein CARUB_v10012371mg [Caps...    44   0.028
+gb|ABA87107.1| thionin [Salvia miltiorrhiza]                           44   0.030
+ref|XP_006284725.1| hypothetical protein CARUB_v10005988mg [Caps...    44   0.035
+emb|CAA57352.1| Thionin class 1 [Tulipa gesneriana]                    44   0.035
+emb|CAA57351.1| Thionin class 1 [Tulipa gesneriana]                    44   0.035
+ref|XP_004973359.1| PREDICTED: thionin-like [Setaria italica] >g...    44   0.039
+ref|XP_006284801.1| hypothetical protein CARUB_v10006071mg [Caps...    43   0.043
+ref|XP_006298799.1| hypothetical protein CARUB_v10014903mg [Caps...    43   0.049
+gb|AAB33011.1| crambin precursor=thionin variant Thi2Ca12 [Cramb...    43   0.049
+emb|CDY36284.1| BnaA01g31340D [Brassica napus]                         43   0.055
+sp|P09617.2|THN5_HORVU RecName: Full=Leaf-specific thionin; Cont...    43   0.055
+gb|ACJ68108.1| thionin precursor [Brassica napus]                      43   0.056
+dbj|BAJ99294.1| predicted protein [Hordeum vulgare subsp. vulgar...    43   0.058
+sp|Q9SBK8.1|THN_BRARP RecName: Full=Thionin; Contains: RecName: ...    43   0.058
+ref|XP_006288874.1| hypothetical protein CARUB_v10002233mg [Caps...    43   0.058
+sp|Q42838.1|THN7_HORVU RecName: Full=Thionin BTH7; Contains: Rec...    43   0.059
+dbj|BAJ90360.1| predicted protein [Hordeum vulgare subsp. vulgare]     43   0.059
+ref|XP_009134335.1| PREDICTED: thionin [Brassica rapa]                 43   0.060
+gb|ACM48347.1| lemma thionin [Hordeum vulgare subsp. vulgare]          43   0.068
+dbj|BAJ89098.1| predicted protein [Hordeum vulgare subsp. vulgare]     42   0.073
+emb|CAA57350.1| thionin class 1 [Tulipa gesneriana]                    42   0.084
+ref|XP_003557597.1| PREDICTED: thionin BTH7-like [Brachypodium d...    42   0.085
+ref|XP_003557593.1| PREDICTED: thionin BTH7-like [Brachypodium d...    42   0.087
+sp|P32880.1|THN2_VISAL RecName: Full=Viscotoxin-A2 [Viscum album]      41   0.19 
+ref|XP_003557586.1| PREDICTED: probable leaf thionin-like [Brach...    41   0.21 
+ref|XP_003561421.1| PREDICTED: leaf-specific thionin BTH6-like [...    41   0.22 
+ref|XP_003557588.1| PREDICTED: thionin BTH7-like [Brachypodium d...    41   0.22 
+ref|XP_003557589.1| PREDICTED: thionin BTH7-like [Brachypodium d...    41   0.24 
+sp|Q8H0Q5.1|THNX_HORVU RecName: Full=Probable leaf thionin; Cont...    41   0.25 
+gb|KFK23311.1| hypothetical protein AALP_AAs68437U000100 [Arabis...    40   0.34 
+emb|CAA57354.1| Thionin class 4 [Tulipa gesneriana]                    40   0.36 
+sp|P01539.1|THN_PHOTO RecName: Full=Phoratoxin [Phoradendron tom...    40   0.37 
+dbj|BAB93115.1| thionin Asthi4 [Avena sativa]                          40   0.43 
+ref|XP_006300571.1| hypothetical protein CARUB_v10021136mg [Caps...    40   0.49 
+ref|XP_006300570.1| hypothetical protein CARUB_v10021135mg [Caps...    40   0.49 
+gb|AAB33008.1| crambin precursor=thionin variant Thi2Ca9 [Crambe...    39   0.64 
+ref|XP_006284744.1| hypothetical protein CARUB_v10006008mg [Caps...    39   0.74 
+gb|KFK42665.1| hypothetical protein AALP_AA1G023900 [Arabis alpina]    39   0.85 
+ref|XP_002883873.1| hypothetical protein ARALYDRAFT_899723 [Arab...    39   0.93 
+gb|AAB21531.1| thionin [Hordeum vulgare=barley, ssp. vulgare, le...    39   1.0  
+sp|P01537.1|THN1_VISAL RecName: Full=Viscotoxin-1-PS                   39   1.0  
+sp|P09618.3|THN6_HORVU RecName: Full=Leaf-specific thionin BTH6;...    39   1.1  
+prf||1408170A leaf specific thionin                                    39   1.1  
+ref|XP_003557590.1| PREDICTED: thionin BTH7-like [Brachypodium d...    39   1.2  
+ref|XP_006282873.1| hypothetical protein CARUB_v10006928mg [Caps...    38   1.6  
+gb|ACL11901.1| beta purothionin [Triticum monococcum subsp. aegi...    38   1.8  
+ref|NP_001057732.1| Os06g0512700 [Oryza sativa Japonica Group] >...    38   1.8  
+gb|ACH63221.1| thionin precursor [Rheum australe]                      38   1.9  
+gb|EEE65796.1| hypothetical protein OsJ_21502 [Oryza sativa Japo...    38   1.9  
+gb|EAZ01136.1| hypothetical protein OsI_23165 [Oryza sativa Indi...    38   1.9  
+ref|NP_001174816.1| Os06g0513781 [Oryza sativa Japonica Group] >...    38   2.0  
+gb|EAZ01134.1| hypothetical protein OsI_23164 [Oryza sativa Indi...    38   2.0  
+ref|NP_001057734.1| Os06g0514800 [Oryza sativa Japonica Group] >...    38   2.1  
+ref|XP_003557587.1| PREDICTED: thionin BTH7-like [Brachypodium d...    37   2.2  
+ref|NP_001057733.1| Os06g0514100 [Oryza sativa Japonica Group] >...    37   2.2  
+ref|XP_003581709.1| PREDICTED: LOW QUALITY PROTEIN: leaf-specifi...    37   2.4  
+gb|EEE65795.1| hypothetical protein OsJ_21501 [Oryza sativa Japo...    37   2.4  
+prf||0807220A avenothionin alpha                                       37   3.3  
+gb|ABJ15789.1| putative thionin precursor [Knorringia sibirica]        37   3.3  
+ref|XP_006282755.1| hypothetical protein CARUB_v10006000mg [Caps...    37   3.6  
+ref|XP_006284837.1| hypothetical protein CARUB_v10006117mg, part...    37   3.8  
+prf||1404366A leaf specific thionin                                    37   3.8  
+ref|XP_006285197.1| hypothetical protein CARUB_v10006551mg [Caps...    37   4.1  
+emb|CDY12662.1| BnaA02g13300D [Brassica napus]                         37   4.2  
+sp|P08772.2|THN3_HORVU RecName: Full=Leaf-specific thionin DB4; ...    37   4.2  
+ref|NP_001174819.1| Os06g0515301 [Oryza sativa Japonica Group] >...    37   4.6  
+prf||0807220B avenothionin beta                                        36   5.0  
+gb|EEC80717.1| hypothetical protein OsI_23169 [Oryza sativa Indi...    36   5.4  
+gb|ACL11896.1| beta purothionin [Triticum monococcum subsp. aegi...    36   6.4  
+gb|EAZ01130.1| hypothetical protein OsI_23158 [Oryza sativa Indi...    36   6.5  
+dbj|BAD62228.1| putative thionin Osthi1 [Oryza sativa Japonica G...    36   6.7  
+gb|ACL11894.1| beta purothionin [Triticum monococcum subsp. aegi...    36   6.8  
+emb|CAA65312.1| beta purothionin [Triticum aestivum]                   36   7.3  
+gb|KFK42276.1| hypothetical protein AALP_AA2G234900, partial [Ar...    36   7.4  
+gb|ACL11922.1| beta purothionin [Triticum urartu]                      36   7.6  
+gb|ACL11920.1| beta purothionin [Triticum urartu]                      36   7.6  
+gb|ACL11908.1| beta purothionin [Triticum monococcum subsp. aegi...    36   7.8  
+pdb|1BHP|A Chain A, Structure Of Beta-Purothionin At Room Temper...    36   8.1  
+sp|P01543.2|THNB_WHEAT RecName: Full=Purothionin A-1; AltName: F...    36   8.1  
+gb|ACL11926.1| beta purothionin [Triticum urartu]                      36   8.2  
+gb|ACL11893.1| beta purothionin [Triticum monococcum subsp. aegi...    36   8.2  
+gb|EMS60935.1| Purothionin A-1 [Triticum urartu]                       36   8.3  
+gb|ACL11906.1| beta purothionin [Triticum monococcum subsp. aegi...    36   8.3  
+gb|ACL11917.1| beta purothionin [Triticum monococcum subsp. mono...    35   8.5  
+emb|CAA65316.1| purothionin [Secale cereale]                           35   9.3  
+gb|ACL11925.1| beta purothionin [Triticum urartu]                      35   9.6  
+
+Searching................................................

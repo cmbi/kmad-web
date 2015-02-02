@@ -1,5 +1,6 @@
 from flask_wtf import Form
-from wtforms.fields import FloatField, IntegerField, SelectField, TextAreaField
+from wtforms.fields import (FloatField, IntegerField, SelectField,
+                            TextAreaField, SelectMultipleField)
 
 
 class KmanForm(Form):
@@ -16,3 +17,8 @@ class KmanForm(Form):
     ptm_score = IntegerField(u'PTM score', default=10)
     domain_score = IntegerField(u'domain score', default=3)
     motif_score = IntegerField(u'motif score', default=3)
+
+    prediction_method = SelectMultipleField(u'Choose prediction methods to run in case there is no prediction in the D2P2 database',
+                                            choices=['a', 'b', 'c'])
+
+

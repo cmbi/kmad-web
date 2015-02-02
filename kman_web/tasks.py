@@ -37,7 +37,7 @@ def postprocess(result, filename, output_type):
     # If the results are not form the d2p2 database, then process them
     # (find consensus, and filter out short stretches)
     if (output_type == 'predict_and_align'
-            and not (len(result) == 3 and result[1][0] == 'D2P2')):
+            and not result[1][0] == 'D2P2'):
         # first element is the sequence, last element is the alignement
         consensus = find_consensus_disorder(result[1:-1])
         result = result[:-1] + [consensus] + [result[-1]]
@@ -46,10 +46,14 @@ def postprocess(result, filename, output_type):
             + [filter_out_short_stretches(consensus[1])] \
             + [result[-1]]
     elif (output_type == 'predict'
-          and not (len(result) == 2 and result[1][0] == 'D2P2')):
+          and not result[1][0] == 'D2P2'):
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
+    elif output_type == 'predict_and_align':
+        result = [result[0]] + result[-2:]
+    elif output_type == 'predict':
+        result = result[:2]
     # else: output_type = 'align' -> then there is no need to change the result
     return result
 
