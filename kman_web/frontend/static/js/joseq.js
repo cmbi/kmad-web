@@ -903,14 +903,17 @@ SequenceAlignmentFeatures = function(container_id, data, codon_length,
     //   window.open(url)
     // });
     var left_button_clicked = false;
+    console.debug('blaaaa');
     src.on('mousedown', function(e) {
-      if (e.evt.buttons == 1 ) {
+      console.debug('czesc');
+      if (e.evt.buttons == 1 || e.evt.keyCode == 0) {
         left_button_clicked = true;
       }
     });
     src.on('click', function(e) {
       if (left_button_clicked) {
         window.open(url);
+        console.debug('hej');
         left_button_clciked = false;
       }
     });
