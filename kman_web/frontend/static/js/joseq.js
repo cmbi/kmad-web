@@ -15,7 +15,7 @@ ProteinSequences = function(container_id, data) {
   const FONT_SIZE = 16;
   const ROW_HEIGHT = 36;
   const ROW_MARGIN_T = 0;
-  const ROWS = data.length - 1;
+  const ROWS = data.length;
 
 
   // Attributes
@@ -27,7 +27,7 @@ ProteinSequences = function(container_id, data) {
   console.debug(this.seq);
   console.debug(this.disorder);
   var container_height = ROWS * ROW_HEIGHT;
-  document.getElementById(container_id).style.height = (container_height + 40).toString() + 'px';
+  document.getElementById(container_id).style.height = (container_height + 60).toString() + 'px';
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -74,11 +74,78 @@ ProteinSequences = function(container_id, data) {
   this.draw = function() {
     //var rows = Math.ceil(seq.length / MAX_RES_PER_ROW);
     var v_header_width = 0;
+    var x = 10;
+    var y = 20 + ROW_MARGIN_T; 
+    var res_num_leg = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: 'A',
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'red'
+    });
+    x += res_num_leg.getTextWidth();
+    this.v_header_layer.add(res_num_leg);
+    res_num_leg = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: ' - disordered  ',
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'gray'
+    });
+    x += res_num_leg.getTextWidth();
+    this.v_header_layer.add(res_num_leg);
+    res_num_leg = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: 'A',
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'orange'
+    });
+    x += res_num_leg.getTextWidth();
+    this.v_header_layer.add(res_num_leg);
+    res_num_leg = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: ' - ambiguous disorder prediction  ',
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'gray'
+    });
+    x += res_num_leg.getTextWidth();
+    this.v_header_layer.add(res_num_leg);
+    res_num_leg = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: 'A',
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'green'
+    });
+    x += res_num_leg.getTextWidth();
+    this.v_header_layer.add(res_num_leg);
+    res_num_leg = new Kinetic.Text({
+      x: x,
+      y: y,
+      text: ' - structured ',
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'gray'
+    });
+    this.v_header_layer.add(res_num_leg);
     for (var i = 0; i < this.disorder.length; i++) {
       //var x = 0;
       //var y = (i * ROW_HEIGHT) + ROW_MARGIN_T;
-      var x = 10;
-      var y = 20+(i * ROW_HEIGHT) + ROW_MARGIN_T;
+      x = 10;
+      y = 20 + ((i + 1) * ROW_HEIGHT) + ROW_MARGIN_T;
 
       // Draw the residue number heading
       var res_num_txt = new Kinetic.Text({
