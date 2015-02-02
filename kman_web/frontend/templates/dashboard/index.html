@@ -43,64 +43,77 @@
                   </div>
                 </div>
         <div class="col-xs-6">
-              <span class="panel_body_text">
-                <div class="row">
-                  <div class="col-xs-6">
-                  <div id = "gap_open_div" class="form-group"
-                    style="margin:20px;">
-                    <div class="row">
-                    <div class="col-xs-8">{{ form.gap_open_p.label }}</div>
-                    <div class="col-xs-4">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
-                    </div>
-                  </div>
-                  </div>
-                  <div class="col-xs-6">
-                    <div id = "gap_ext_div" class="form-group" style="margin:20px;">
+          <span class="panel_body_text">
+                <div id="alignment_options_div">
+                  <div class="row">
+                    <div class="col-xs-6">
+                    <div id = "gap_open_div" class="form-group"
+                      style="margin:20px;">
                       <div class="row">
-                        <div class="col-xs-8">{{ form.gap_ext_p.label }}</div>
-                        <div class="col-xs-4">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
+                      <div class="col-xs-8">{{ form.gap_open_p.label }}</div>
+                      <div class="col-xs-4">{{ form.gap_open_p(class_='form-control gap-form')}}</div>
+                      </div>
+                    </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div id = "gap_ext_div" class="form-group" style="margin:20px;">
+                        <div class="row">
+                          <div class="col-xs-8">{{ form.gap_ext_p.label }}</div>
+                          <div class="col-xs-4">{{ form.gap_ext_p(class_='form-control gap-form')}}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col-xs-6">
-                    <div id = "end_gap_div" class="form-group" style="margin:20px;">
-                      <div class="row">
-                        <div class="col-xs-8">{{ form.end_gap_p.label }}</div>
-                        <div class="col-xs-4">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div id = "end_gap_div" class="form-group" style="margin:20px;">
+                        <div class="row">
+                          <div class="col-xs-8">{{ form.end_gap_p.label }}</div>
+                          <div class="col-xs-4">{{ form.end_gap_p(class_='form-control gap-form')}}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-6">
+                      <div id = "ptm_score_div" class="form-group" style="margin:20px;">
+                        <div class="row">
+                          <div class="col-xs-8">{{ form.ptm_score.label }}</div>
+                          <div class="col-xs-4">{{ form.ptm_score(class_='form-control gap-form')}}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="col-xs-6">
-                    <div id = "ptm_score_div" class="form-group" style="margin:20px;">
-                      <div class="row">
-                        <div class="col-xs-8">{{ form.ptm_score.label }}</div>
-                        <div class="col-xs-4">{{ form.ptm_score(class_='form-control gap-form')}}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <div class="row">
-                  <div class="col-xs-6">
-                    <div id = "domain_score_div" class="form-group" style="margin:20px;">
-                      <div class="row">
-                        <div class="col-xs-8">{{ form.domain_score.label }}</div>
-                        <div class="col-xs-4">{{ form.domain_score(class_='form-control gap-form')}}</div>
+                  <div class="row">
+                    <div class="col-xs-6">
+                      <div id = "domain_score_div" class="form-group" style="margin:20px;">
+                        <div class="row">
+                          <div class="col-xs-8">{{ form.domain_score.label }}</div>
+                          <div class="col-xs-4">{{ form.domain_score(class_='form-control gap-form')}}</div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="col-xs-6">
-                    <div id = "motif_score_div" class="form-group" style="margin:20px;">
-                      <div class="row">
-                        <div class="col-xs-8">{{ form.motif_score.label }}</div>
-                        <div class="col-xs-4">{{ form.motif_score(class_='form-control gap-form')}}</div>
+                    <div class="col-xs-6">
+                      <div id = "motif_score_div" class="form-group" style="margin:20px;">
+                        <div class="row">
+                          <div class="col-xs-8">{{ form.motif_score.label }}</div>
+                          <div class="col-xs-4">{{ form.motif_score(class_='form-control gap-form')}}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <br>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <div id="prediction_method_div" class="form-group" style="width=100%;
+                      height:100%;margin:20px;padding-top:10px;">
+                      <div id="prediction_method_inner_div">
+                        {{ form.prediction_method.label }}
+                        {{ form.prediction_method }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-xs-6">
                     <div id="output_type_div" class="form-group" style="width=100%;
@@ -135,6 +148,32 @@
 <script type="text/javascript">
   function show_sequence_input() {
       $('#sequence_div').removeClass('hidden');
+  }
+  function show_forms_predict() {
+    $('#prediction_method_div').removeClass('hidden');
+    $('#alignment_options_div').addClass('hidden');
+  }
+  function show_forms_panda() {
+    $('#prediction_method_div').removeClass('hidden');
+    $('#alignment_options_div').removeClass('hidden');
+  }
+  function show_forms_align() {
+    $('#prediction_method_div').addClass('hidden');
+    $('#alignment_options_div').removeClass('hidden');
+  }
+  function show_forms() {
+    var selected = $('#output_type').children(":selected").attr('value');
+      switch (selected) {
+      case 'align':
+        show_forms_align();
+        break;
+      case 'predict_and_align':
+        show_forms_panda();
+        break;
+      case 'predict':
+        show_forms_predict();
+        break;
+      }
   }
   function show_tour_data_input(index) {
       switch (index) {
@@ -285,8 +324,10 @@
 
     // Ensure that the input types listed are correct for the selected output
     // type.
-    var selected = $('#input_type').children(":selected").attr('value');
-    $('#input_type option[value=' + selected + ']').prop('selected', true);
+    var selected = $('#output_type').children(":selected").attr('value');
+    $('#output_type option[value=' + selected + ']').prop('selected', true);
+    show_forms();
+    $('#output_type').change(function() { show_forms(); });
   });
 </script>
 

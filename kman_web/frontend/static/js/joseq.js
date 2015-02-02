@@ -24,6 +24,8 @@ ProteinSequences = function(container_id, data) {
   for (var i = 1; i < data.length; i++){
     this.disorder.push(data[i])
   }
+  console.debug(this.seq);
+  console.debug(this.disorder);
   var container_height = ROWS * ROW_HEIGHT;
   document.getElementById(container_id).style.height = (container_height + 40).toString() + 'px';
 

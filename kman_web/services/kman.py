@@ -25,7 +25,7 @@ class PredictStrategy(object):
     def __init__(self, output_type):
         self.output_type = output_type
 
-    def __call__(self, fasta_seq):
+    def __call__(self, fasta_seq, prediction_methods):
         from kman_web.tasks import query_d2p2
         from celery import chain, group
         from kman_web.tasks import run_single_predictor, postprocess, get_seq
@@ -36,7 +36,8 @@ class PredictStrategy(object):
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
-        methods = ["spine", "predisorder", "psipred", "disopred"]
+        # methods = ["spine", "predisorder", "psipred", "disopred"]
+        methods = prediction_methods
         tasks_to_run = [get_seq.s(fasta_seq)]
         for pred_name in methods:
             tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
@@ -53,7 +54,8 @@ class PredictAndAlignStrategy(object):
         self.output_type = output_type
 
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
-                 end_gap_penalty, ptm_score, domain_score, motif_score):
+                 end_gap_penalty, ptm_score, domain_score, motif_score,
+                 prediction_methods):
         from kman_web.tasks import (query_d2p2, align,
                                     run_single_predictor, postprocess, get_seq)
         from celery import chain, group

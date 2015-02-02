@@ -150,7 +150,6 @@
   
   if ("{{ output_type }}" == 'predict'){
      document.getElementById('panel2').style.display = 'none';
-     document.getElementById('panel3').style.display = 'none';
   }
   else if ("{{ output_type }}" == 'align'){
      document.getElementById('panel1').style.display = 'none';
@@ -160,7 +159,7 @@
         $.getJSON(
           "{{ url_for('kman.get_kman_status', output_type=output_type, id=celery_id) }}",
           function(data) {
-            $('#status').text(data['status']);
+          $('#status').text(data['status']);
 
             if (data['status'] == 'PENDING') {
               $('#status').removeClass("label-default")
