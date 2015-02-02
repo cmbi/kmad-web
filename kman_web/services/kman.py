@@ -36,7 +36,8 @@ class PredictStrategy(object):
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
-        methods = ["spine", "predisorder", "psipred", "disopred"]
+        # methods = ["spine", "predisorder", "psipred", "disopred"]
+        methods = prediction_methods
         tasks_to_run = [get_seq.s(fasta_seq)]
         for pred_name in methods:
             tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
