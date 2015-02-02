@@ -385,6 +385,13 @@ fieldset[disabled] .btn-regular.active {
   height: 27px;
 }
 
+#prediction_method_div ul {
+  list-style-type: none;
+   columns: 2;
+   -webkit-columns: 2;
+   -moz-columns: 2;
+}
+
 <<<<<<< HEAD
 
 =======
