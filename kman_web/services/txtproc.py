@@ -79,7 +79,6 @@ def find_length(lines):
             length = i.split('=')[1]
     return length
 
-
 def find_seqid_blast(filename):
     with open(filename) as a:
         blast = a.read()
@@ -94,12 +93,14 @@ def find_seqid_blast(filename):
             query_length = find_length(blast[i+1:i+6])
         if "Sequences producing significant alignments" in blast[i]:
             i += 2
-            e_val = blast[i].split()[-1]
-            if e_val < '1e-5':
+            e_val = float(blast[i].split()[-1])
+            if e_val < float(1e-5):
                 j = i+1
                 while j < len(blast):
                     if ">" in blast[j]:
-                        linelist = blast[j+5].split()
+                        linelist = blast[j + 5].split()
+                        if linelist[0] == 'Score':
+                            linelist = blast[j + 6].split()
                         hit_length = find_length(blast[j+1:j+6])
                         ''' check if identities equals 100% and gaps 0% and
                         length == query_length -> then it is the query sequence,
