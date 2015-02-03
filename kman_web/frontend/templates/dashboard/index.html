@@ -10,6 +10,12 @@
 </style>
 
 <!-- wtforms -->
+<div class="alert alert-warning alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert"
+      aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>Warning!</strong> Better check yourself, you're not looking too
+      good.
+</div>
 <form method="post" action="{{ url_for('dashboard.index') }}" role="form"
       enctype="multipart/form-data">
       {{ form.hidden_tag() }}
@@ -191,6 +197,10 @@
       }
   }
 
+  function show_prediction_alert() {
+    console.debug('executed the function');
+  }
+
   $(document).ready( function() {
     // Setup tour
     var tour = new Tour({
@@ -328,6 +338,11 @@
     $('#output_type option[value=' + selected + ']').prop('selected', true);
     show_forms();
     $('#output_type').change(function() { show_forms(); });
+    $('#prediction_method').change(function() { show_prediction_alert(); });
+    console.debug('#output_type');
+    console.debug('#prediction_method');
+    console.debug($('#output_type').children(":selected").attr('value'));
+    console.debug($('#prediction_method').children());
   });
 </script>
 

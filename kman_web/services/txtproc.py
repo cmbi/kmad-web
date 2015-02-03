@@ -49,8 +49,20 @@ def preprocess_predisorder(pred_out):
     return disorder_list
 
 
+def preprocess_globplot(outlist):
+    seqlength = len(''.join(outlist[1:]))
+    dis_regions = [i.split('-') for i in outlist[0].split(':')[-1].split(', ')]
+    disorder_list = [0 for i in xrange(seqlength)]
+    for i in dis_regions:
+        start = int(i[0]) - 1
+        end = int(i[1])
+        for j in xrange(start, end):
+            disorder_list[j] = 2
+    return disorder_list
+
+
 def preprocess(pred_out, pred_name):
-    pred_out_list = pred_out.split("\n")
+    pred_out_list = pred_out.splitlines()
     # 0 - structured, 2 - disordered
     if pred_name == "spine":
         disorder_list = preprocess_spine(pred_out_list)
@@ -58,6 +70,8 @@ def preprocess(pred_out, pred_name):
         disorder_list = preprocess_disopred_psipred(pred_out_list, pred_name)
     elif pred_name == "predisorder":
         disorder_list = preprocess_predisorder(pred_out_list)
+    elif pred_name == "globplot":
+        disorder_list = preprocess_globplot(pred_out_list)
     return [pred_name, disorder_list]
 
 

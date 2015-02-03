@@ -128,7 +128,7 @@ class TestTasks(object):
            create=True)
     def test_run_single_predictor(self, mock_subprocess, mock_call):
         filename = 'testdata/test.fasta'
-        methods = ['psipred', 'predisorder', 'disopred', 'spine']
+        methods = ['psipred', 'predisorder', 'disopred', 'spine', 'globplot']
         pred = [0, 0, 0]
 
         from kman_web.tasks import run_single_predictor
