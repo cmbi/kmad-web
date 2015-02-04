@@ -10,11 +10,12 @@
 </style>
 
 <!-- wtforms -->
-<div class="alert alert-warning alert-dismissible" role="alert">
+<div id='prediction_alert' class="alert alert-warning alert-dismissible" role="alert"
+  style="display:none;">
     <button type="button" class="close" data-dismiss="alert"
       aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <strong>Warning!</strong> Better check yourself, you're not looking too
-      good.
+    <strong>Warning!</strong> For a fast disorder prediction we recommend 
+    using only the <strong>GlobPlot</strong> method.
 </div>
 <form method="post" action="{{ url_for('dashboard.index') }}" role="form"
       enctype="multipart/form-data">
@@ -198,7 +199,9 @@
   }
 
   function show_prediction_alert() {
-    console.debug('executed the function');
+    if (document.getElementById('prediction_alert')){
+      document.getElementById("prediction_alert").style.display = '';
+    }
   }
 
   $(document).ready( function() {
@@ -338,11 +341,11 @@
     $('#output_type option[value=' + selected + ']').prop('selected', true);
     show_forms();
     $('#output_type').change(function() { show_forms(); });
-    $('#prediction_method').change(function() { show_prediction_alert(); });
-    console.debug('#output_type');
-    console.debug('#prediction_method');
-    console.debug($('#output_type').children(":selected").attr('value'));
-    console.debug($('#prediction_method').children());
+    $('#prediction_method-1').change( function() {show_prediction_alert(); });
+    $('#prediction_method-2').change( function() {show_prediction_alert(); });
+    $('#prediction_method-3').change( function() {show_prediction_alert(); });
+    $('#prediction_method-4').change( function() {show_prediction_alert(); });
+
   });
 </script>
 
