@@ -52,6 +52,11 @@ def test_preprocess():
     expected = ['predisorder', [2, 2, 0]]
     result = preprocess(data, 'predisorder')
     eq_(result, expected)
+    # check globplot
+    data = ">ts|000000|TEST_PROT|GlobDoms:|Disorder:1-3, 5-6\nSEQSEQSEQ\nSEQ"
+    expected = ['globplot', [2, 2, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0]]
+    result = preprocess(data, 'globplot')
+    eq_(result, expected)
 
 
 @patch('kman_web.services.txtproc.open', create=True)

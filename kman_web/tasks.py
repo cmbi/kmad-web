@@ -93,10 +93,17 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 out_file = fasta_file + ".gplot"
                 args = [method, '10', '8', '75', '8', '8',
                         fasta_file, '>', out_file]
-            _log.debug("Running command '{}'".format(args))
-            subprocess.call(args)
-            with open(out_file) as f:
-                data = f.read()
+            _log.debug("Running command '{}'".format(
+                subprocess.list2cmdline(args)))
+            try:
+                if pred_name == 'globplot':
+                    data = subprocess.check_output(args)
+                else:
+                    subprocess.call(args)
+                    with open(out_file) as f:
+                        data = f.read()
+            except subprocess.CalledProcessError as e:
+                _log.error("Error: {}".format(e.output))
             data = preprocess(data, pred_name)
         return data
 

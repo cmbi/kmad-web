@@ -30,6 +30,7 @@ def index():
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
         if form.output_type.data == "predict":
             celery_id = strategy(data, form.prediction_method.data)
+            _log.debug(form.prediction_method.data)
         elif form.output_type.data == 'align':
             celery_id = strategy(data, form.gap_open_p.data,
                                  form.gap_ext_p.data, form.end_gap_p.data,

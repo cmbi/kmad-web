@@ -51,11 +51,12 @@ class KmanForm(Form):
 
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
-        choices=[('disopred', 'DISOPRED'),
+        choices=[('globplot', 'GlobPlot'),
+                 ('disopred', 'DISOPRED'),
                  ('spine', 'SPINE-D'),
                  ('psipred', 'PSIPRED'),
                  ('predisorder', 'PreDisorder')],
-        default=['disopred', 'spine', 'psipred', 'predisorder'],
+        default=['globplot'],
         option_widget=widgets.CheckboxInput(),
         widget=MyListWidget(
             html_tag='collist',
