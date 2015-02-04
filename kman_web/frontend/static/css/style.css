@@ -54,17 +54,18 @@ body {
     color: #D02E8A;
 }
 .navbar {
- min-height: 80px;
+ min-height: 60px;
 }
 .navbar-brand {
-  height: 80px;
-  padding: 15px 15px;
-  font-size: 300%;
-  line-height: 50px;
+  height: 60px;
+  padding-top: 15;
+  padding-bottom: 15;
+  font-size: 250%;
+  line-height: 35px;
 }
 .navbar-nav > li > a {
-  line-height: 50px;
-  font-size: 175%;
+  line-height: 35px;
+  font-size: 150%;
 }
 .navbar-nav > li > a:focus {
   color: #eee;
