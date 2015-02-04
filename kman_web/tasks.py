@@ -102,8 +102,10 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                     subprocess.call(args)
                     with open(out_file) as f:
                         data = f.read()
-            except subprocess.CalledProcessError as e:
+            except (subprocess.CalledProcessError, OSError) as e:
                 _log.error("Error: {}".format(e.output))
+                _log.debug("Ran command: {}".format(
+                    subprocess.list2cmdline(args)))
             data = preprocess(data, pred_name)
         return data
 
@@ -152,9 +154,12 @@ def query_d2p2(filename, output_type):
     prediction = []
     out_blast = filename.split(".")[0]+".blastp"
     args = ["blastp", "-query", filename, "-evalue", "1e-5",
-            "-num_threads", "15", "-db", paths.SWISSPROT_DB,
+            "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
             "-out", out_blast]
-    subprocess.call(args)
+    try:
+        subprocess.call(args)
+    except subprocess.CalledProcessError as e:
+        _log.error("Error: {}".format(e.output))
     if output_type != 'align':
         [found_it, seq_id] = find_seqid_blast(out_blast)
         if found_it:

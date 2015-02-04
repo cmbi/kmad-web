@@ -64,14 +64,14 @@ def get_id(sequence):
 def run_pfam_scan(filename):
     result = []
     dom = []
-    args = [paths.PFAM_SCAN, '-fasta', filename, '-dir', paths.PFAM_DB]
-    output = subprocess.check_output(args)
-    pfamscanResult = [i for i in output.splitlines() if not i.startswith('#')]
+    # args = [paths.PFAM_SCAN, '-fasta', filename, '-dir', paths.PFAM_DB]
+    # output = subprocess.check_output(args)
+    # pfamscanResult = [i for i in output.splitlines() if not i.startswith('#')]
 
-    for i in pfamscanResult:
-        if len(i.split()) > 3:
-            result.append([int(i.split()[1]), int(i.split()[2])])
-            dom.append(i.split()[5]+" "+i.split()[6])
+    # for i in pfamscanResult:
+    #     if len(i.split()) > 3:
+    #         result.append([int(i.split()[1]), int(i.split()[2])])
+    #         dom.append(i.split()[5]+" "+i.split()[6])
 
     return [result, dom]
 
@@ -116,7 +116,7 @@ def get_uniprot_txt(uniprot_id):
     #         uniprot_dat = a.read().splitlines()
 
     req = urllib2.Request("http://www.uniprot.org/uniprot/"
-                          + uniprot_id + ".fasta")
+                          + uniprot_id + ".txt")
     uniprot_dat = urllib2.urlopen(req).read().splitlines()
     if True:
         for lineI in uniprot_dat:
@@ -124,6 +124,7 @@ def get_uniprot_txt(uniprot_id):
                 features += [lineI]
             elif lineI.startswith('DR   GO;'):
                 go_terms += [lineI.split(';')[1].split(':')[1]]
+    _log.debug("goterms\n{}\nfeatures\n{}\n".format(go_terms, features))
     return {"features": features, "GO": go_terms}
 
 
@@ -386,7 +387,7 @@ def tmp_fasta(seq_id, seq):  # pragma: no cover
 
 
 def elm_db():
-    with open(paths.ELM_DB_GO_COMPLETE) as a:
+    with open(paths.ELM_DB_GO_COMPLETE_MAC) as a:
         slims_all_classes_pre = a.read()
     return process_slims_all_classes(slims_all_classes_pre.splitlines())
 
@@ -458,7 +459,6 @@ def convert_to_7chars(filename):
         newfile += 'domain_{} {}\n'.format(domainsDictionary[i], i)
     out = open(filename.split('.')[0]+'.map', 'w')
     out.write(newfile)
-    _log.debug("newfile: {}\n".format(newfile))
     out.close()
 
     return outname
