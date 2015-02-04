@@ -6,6 +6,8 @@ from MockResponse import MockResponse
 from testdata import test_variables as test_vars
 
 
+@patch('urllib2.urlopen')
+@patch('kman_web.services.convert.urllib2.Request')
 @patch('kman_web.services.convert.check_id')
 @patch('kman_web.services.convert.elm_db')
 @patch('kman_web.services.convert.tmp_fasta')
@@ -19,7 +21,10 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
                            mock_search_elm, mock_run_netphos,
                            mock_find_phosph_sites,
                            mock_read_fasta, mock_tmp_fasta,
-                           mock_elm_db, mock_check_id):
+                           mock_elm_db, mock_check_id,
+                           mock_urlopen, mock_request):
+
+    mock_urlopen.return_value = MockResponse('')
 
     filename = 'testdata/test.fasta'
 
@@ -108,15 +113,19 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     eq_(expected_calls, handle.write.call_args_list)
 
 
+@patch('urllib2.urlopen')
+@patch('kman_web.services.convert.urllib2.Request')
 @patch('kman_web.services.convert.os.path.exists')
 @patch('kman_web.services.convert.open',
        mock_open(read_data=open(
            'tests/unit/testdata/test_get_uniprot_txt.dat').read()),
        create=True)
-def test_get_uniprot_txt(mock_os_path_exists):
+def test_get_uniprot_txt(mock_os_path_exists, mock_urlopen, mock_request):
+    mock_request.return_value = MockResponse(
+        open('tests/unit/testdata/test_get_uniprot_txt.dat').read())
     # with open('tests/unit/testdata/features.dat') as a:
     #     expected = a.read().splitlines()
-    mock_os_path_exists = True
+    mock_os_path_exists.return_value = True
     expected = {"features":
                 ["FT   MOD_RES       2      2       N-acetylalanine."],
                 "GO": ["0030424"]}

@@ -1,5 +1,6 @@
 import logging
 import time
+import urllib2
 
 from kman_web import paths
 
@@ -15,7 +16,10 @@ def is_empty(s1):
 
 
 def get_seq_from_uniprot(uniprot_id):
-    uniprot = open(paths.UNIPROT_FASTA_DIR + uniprot_id + ".fasta").readlines()
+    # uniprot = open(paths.UNIPROT_FASTA_DIR + uniprot_id + ".fasta").readlines()
+    req = urllib2.Request("http://www.uniprot.org/uniprot/"
+                          + uniprot_id + ".fasta")
+    uniprot = urllib2.urlopen(req).readlines()
     for i, lineI in enumerate(uniprot):
         if lineI.startswith('>') and uniprot_id in lineI:
             header = lineI
