@@ -514,12 +514,17 @@ HSLtoHEX = function(h, s, l) {
 ColorRange = function(number) {
   var norm = 100 / number;
   result = [];
+  var frequency = Math.PI*2 / number;
   for (var i = 0; i < number; i++) {
-    var hue = Math.floor((100 - i * norm) * 120 / 100);
-    // var saturation = Math.abs(i * norm - 50) / 50;
-    var saturation = 1;
+    // var hue = Math.floor((100 - i * norm) * 120 / 100);
+    // // var saturation = Math.abs(i * norm - 50) / 50;
+    // var saturation = 1;
+    // result.push(HSLtoHEX(hue, saturation, 0.5));
+    var r = Math.sin(frequency*i + 0) * 127 + 128;
+    var g = Math.sin(frequency*i + 2) * 127 + 128;
+    var b = Math.sin(frequency*i + 4) * 127 + 128;
+    result.push(RGBtoHEX(r, g, b));
 
-    result.push(HSLtoHEX(hue, saturation, 0.5));
   }
   return result;
 }
