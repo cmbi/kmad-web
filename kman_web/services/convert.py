@@ -144,7 +144,6 @@ def get_uniprot_txt(uniprot_id):
                 features += [lineI]
             elif lineI.startswith('DR   GO;'):
                 go_terms += [lineI.split(';')[1].split(':')[1]]
-    _log.debug("goterms\n{}\nfeatures\n{}\n".format(go_terms, features))
     return {"features": features, "GO": go_terms}
 
 

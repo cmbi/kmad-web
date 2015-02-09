@@ -18,6 +18,8 @@ from kman_web.services.files import (get_fasta_from_blast,
                                      predisorder_outfilename,
                                      psipred_outfilename)
 
+from kman_web.services.globplot_wsdl import run_globplot
+
 
 logging.basicConfig()
 _log = logging.getLogger(__name__)
@@ -88,16 +90,15 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 method = paths.PSIPRED_PATH
                 out_file = psipred_outfilename(fasta_file)
                 args = [method, fasta_file]
-            elif pred_name == 'globplot':
-                method = paths.GLOBPLOT_PATH
-                out_file = fasta_file + ".gplot"
-                args = [method, '10', '8', '75', '8', '8',
-                        fasta_file, '>', out_file]
-            _log.debug("Running command '{}'".format(
-                subprocess.list2cmdline(args)))
+            # elif pred_name == 'globplot':
+            #     method = paths.GLOBPLOT_PATH
+            #     out_file = fasta_file + ".gplot"
+            #     args = [method, '10', '8', '75', '8', '8',
+            #             fasta_file, '>', out_file]
             try:
                 if pred_name == 'globplot':
-                    data = subprocess.check_output(args)
+                    data = run_globplot(fasta_file)
+                    # data = subprocess.check_output(args)
                 else:
                     subprocess.call(args)
                     with open(out_file) as f:
