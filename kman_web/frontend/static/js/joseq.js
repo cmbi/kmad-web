@@ -226,34 +226,23 @@ SequenceAlignment = function(container_id, data) {
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#CCCCCC','red': '#FF9999','green':'#ADEFAD', 'yellow':'#FFFF75', 'blueishgreen': '#5EDFBF', 'blue':'#91DAFF', 'purple':'#BD9DFF', 'pink':'#FFACD6', 'white':'#FFFFFF'};
+  color_to_hex = {'gray':'#CCCCCC', 'red': '#FF9999', 'green':'#ADEFAD',
+                  'yellow':'#FFFF75', 'blueishgreen': '#5EDFBF', 'blue':'#91DAFF',
+                  'purple':'#BD9DFF', 'pink':'#FFACD6', 'white':'#FFFFFF'};
+  aa_to_color = {'C': 'yellow', 'M': 'yellow',
+                 'V': 'green', 'A': 'green', 'I': 'green', 'L': 'green', 
+                 'F': 'green',
+                 'S': 'blueishgreen', 'T': 'blueishgreen', 'Y': 'blueishgreen',
+                 'H': 'blue',
+                 'K': 'purple', 'R': 'purple',
+                 'E': 'red', 'Q': 'red',
+                 'N': 'pink', 'D': 'pink',
+                 'G': 'gray', 'P': 'gray', 'W': 'gray',
+                 '-': 'white'};
   this.draw_residue = function(res_num, seq_num, x, y) {
     var r = this.data[seq_num][1].charAt(res_num);
     var r_up = r.toUpperCase(); 
-    var letter_col = colors['gray'];
-    if ( r_up == 'C' || r_up == 'M'){
-        letter_col = colors['yellow'];
-    } 
-    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-      letter_col = colors['green'];
-    }
-    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-      letter_col = colors['blueishgreen'];
-    }
-    else if (r_up == 'H'){
-      letter_col = colors['blue'];
-    }
-    else if (r_up == 'K' || r_up == 'R'){
-      letter_col = colors['purple'];
-    }
-    else if (r_up == 'E' || r_up == 'Q'){
-      letter_col = colors['red'];
-    }
-    else if (r_up == 'N' || r_up == 'D'){
-      letter_col = colors['pink'];
-    }
-    else if (r_up == '-'){
-      letter_col = colors['white'];
-    }
+    var letter_col = color_to_hex[aa_to_color[r_up]]
     var res_text = new Kinetic.Text({
       x: x,
       y: y,

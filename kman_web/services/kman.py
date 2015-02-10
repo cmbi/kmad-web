@@ -36,10 +36,8 @@ class PredictStrategy(object):
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
-        # methods = ["spine", "predisorder", "psipred", "disopred"]
-        methods = prediction_methods
         tasks_to_run = [get_seq.s(fasta_seq)]
-        for pred_name in methods:
+        for pred_name in prediction_methods:
             tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
         job = chain(query_d2p2.s(tmp_file.name, self.output_type),
                     group(tasks_to_run),
@@ -62,13 +60,13 @@ class PredictAndAlignStrategy(object):
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
         _log.debug("Created tmp file '{}'".format(tmp_file.name))
+        _log.debug("Chosen prediction method(s): {}".format(prediction_methods))
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
-        methods = ["spine", "predisorder", "psipred", "disopred"]
         tasks_to_run = [get_seq.s(fasta_seq)]
-        for pred_name in methods:
+        for pred_name in prediction_methods:
             tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
         tasks_to_run += [align.s(tmp_file.name, gap_opening_penalty,
                                  gap_extension_penalty, end_gap_penalty,
