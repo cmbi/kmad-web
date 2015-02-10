@@ -123,12 +123,43 @@
                 </div>
                 <div class="row">
                   <div class="col-xs-6">
+                    <div id="form_usr_feat_div" class="form-group " style="float:right;
+                      width=100%; height:100%;margin:30px;padding-top:25px;">
+                      <div id="usr_feat_inner_div">
+                        {{ form.usr_features.label }}: {{ form.usr_features }}
+                        <div data-toggle="fieldset" id="feat-fieldset">
+                                      {{ form.usr_features.label }} <button
+                                        type="button"
+                                        data-toggle="fieldset-add-row"
+                                        data-target="#feat-fieldset">+</button>
+                          <table>
+                            <tr>
+                              <th> Name </th>
+                              <th> Number </th>
+                              <th></th>
+                            </tr>
+                            {% for feat in form.usr_features %}
+                              <tr data-toggle="fieldset-entry">
+                                <td>{{ feat.name }}</td>
+                                <td>{{ feat.number }}</td>
+                                <td><button type="button"
+                                    data-toggle="fieldset-remove-row"
+                                    id="feat-{{loop.index0}}-remove">-</button></td>
+                              </tr>
+                              {% endfor %}
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
+                </div>
+                <div class="row">
+                  <div class="col-xs-6">
                     <div id="output_type_div" class="form-group" style="width=100%;
                       height:100%;margin:20px;padding-top:10px;">
                       <div id="output_type_inner_div">
                         {{ form.output_type.label }}
-                        {{ form.output_type(class_='form-control',
-                        style="width:100%;") }}
+                        {{ form.output_type }}
                       </div>
                     </div>
                   </div>

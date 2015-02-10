@@ -212,11 +212,14 @@ def test_run_netphos(mock_subprocess):
     eq_(result, expected)
 
 
-@patch('subprocess.check_output')
-def test_run_pfam_scan(mock_subprocess):
-    mock_subprocess.return_value = open('tests/unit/testdata/test.pfam').read()
+@patch('kman_web.services.convert.open',
+       mock_open(read_data=open(
+           'tests/unit/testdata/TAU_HUMAN.fasta').read()),
+       create=True)
+def test_run_pfam_scan():
     from kman_web.services.convert import run_pfam_scan
-    expected = [[[1, 2]], ['TEST_ACC TEST_NAME']]
+    expected = [[[560, 591], [592, 622], [623, 653], [654, 685]],
+                ['PF00418.14', 'PF00418.14', 'PF00418.14', 'PF00418.14']]
 
     result = run_pfam_scan('test')
     eq_(result, expected)
@@ -285,6 +288,7 @@ def test_check_id_without_mocks():
                  'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'))
     ok_(not check_id('CRAM_CRAAB',
                      'PSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'))
+    ok_(not check_id('DUMMY_ID', 'SEQ'))
 
 
 def test_get_annotation_level():

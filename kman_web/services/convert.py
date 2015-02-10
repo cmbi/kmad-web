@@ -78,7 +78,7 @@ def run_pfam_scan(filename):
     count = 0
     finished = False
     while count < 20 and not finished:
-        time.sleep(8)
+        time.sleep(6)
         try:
             request = urllib2.Request(result_url)
             result = urllib2.urlopen(request).read()
@@ -111,13 +111,13 @@ def run_netphos(filename):
 
 def check_id(uniprot_id, seq):
     result = False
+    req = urllib2.Request("http://www.uniprot.org/uniprot/"
+                          + uniprot_id + ".fasta")
     try:
-        req = urllib2.Request("http://www.uniprot.org/uniprot/"
-                              + uniprot_id + ".fasta")
-    except:
+        uni_seq = urllib2.urlopen(req).read()
+    except urllib2.HTTPError:
         _log.info("No entry with ID: {}".format(uniprot_id))
     else:
-        uni_seq = urllib2.urlopen(req).read()
         uni_seq = ''.join(uni_seq.splitlines()[1:])
         if uni_seq == seq:
             result = True

@@ -39,7 +39,6 @@ class UsrFeatForm(Form):
     name = TextField(u'Group name', [validators.length(max=10)])
     number = IntegerField(u'Some number')
 
-
 class KmanForm(Form):
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',
