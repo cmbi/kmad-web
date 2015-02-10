@@ -1,7 +1,8 @@
 from flask_wtf import Form
-from wtforms import widgets
+from wtforms import widgets, validators
 from wtforms.fields import (FloatField, IntegerField, SelectField,
-                            TextAreaField, SelectMultipleField)
+                            TextAreaField, SelectMultipleField,
+                            FieldList, FormField, TextField)
 from wtforms.widgets import html_params, HTMLString
 
 
@@ -34,6 +35,11 @@ class MyListWidget(object):
         return HTMLString(u''.join(html))
 
 
+class UsrFeatForm(Form):
+    name = TextField(u'Group name', [validators.length(max=10)])
+    number = IntegerField(u'Some number')
+
+
 class KmanForm(Form):
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',
@@ -61,3 +67,5 @@ class KmanForm(Form):
         widget=MyListWidget(
             html_tag='collist',
             prefix_label=False))
+
+    usr_features = FieldList(FormField(UsrFeatForm))
