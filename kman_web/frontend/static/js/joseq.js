@@ -226,34 +226,23 @@ SequenceAlignment = function(container_id, data) {
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
   colors = {'gray':'#CCCCCC','red': '#FF9999','green':'#ADEFAD', 'yellow':'#FFFF75', 'blueishgreen': '#5EDFBF', 'blue':'#91DAFF', 'purple':'#BD9DFF', 'pink':'#FFACD6', 'white':'#FFFFFF'};
+  color_to_hex = {'gray':'#CCCCCC', 'red': '#FF9999', 'green':'#ADEFAD',
+                  'yellow':'#FFFF75', 'blueishgreen': '#5EDFBF', 'blue':'#91DAFF',
+                  'purple':'#BD9DFF', 'pink':'#FFACD6', 'white':'#FFFFFF'};
+  aa_to_color = {'C': 'yellow', 'M': 'yellow',
+                 'V': 'green', 'A': 'green', 'I': 'green', 'L': 'green', 
+                 'F': 'green',
+                 'S': 'blueishgreen', 'T': 'blueishgreen', 'Y': 'blueishgreen',
+                 'H': 'blue',
+                 'K': 'purple', 'R': 'purple',
+                 'E': 'red', 'Q': 'red',
+                 'N': 'pink', 'D': 'pink',
+                 'G': 'gray', 'P': 'gray', 'W': 'gray',
+                 '-': 'white'};
   this.draw_residue = function(res_num, seq_num, x, y) {
     var r = this.data[seq_num][1].charAt(res_num);
     var r_up = r.toUpperCase(); 
-    var letter_col = colors['gray'];
-    if ( r_up == 'C' || r_up == 'M'){
-        letter_col = colors['yellow'];
-    } 
-    else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-      letter_col = colors['green'];
-    }
-    else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-      letter_col = colors['blueishgreen'];
-    }
-    else if (r_up == 'H'){
-      letter_col = colors['blue'];
-    }
-    else if (r_up == 'K' || r_up == 'R'){
-      letter_col = colors['purple'];
-    }
-    else if (r_up == 'E' || r_up == 'Q'){
-      letter_col = colors['red'];
-    }
-    else if (r_up == 'N' || r_up == 'D'){
-      letter_col = colors['pink'];
-    }
-    else if (r_up == '-'){
-      letter_col = colors['white'];
-    }
+    var letter_col = color_to_hex[aa_to_color[r_up]]
     var res_text = new Kinetic.Text({
       x: x,
       y: y,
@@ -353,9 +342,20 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
   }, false);
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
-  colors = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
-            'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF',
-            'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  color_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
+                  'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF',
+                  'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+
+  aa_to_color = {'C': 'yellow', 'M': 'yellow',
+                 'V': 'green', 'A': 'green', 'I': 'green', 'L': 'green', 
+                 'F': 'green',
+                 'S': 'blueishgreen', 'T': 'blueishgreen', 'Y': 'blueishgreen',
+                 'H': 'blue',
+                 'K': 'purple', 'R': 'purple',
+                 'E': 'red', 'Q': 'red',
+                 'N': 'pink', 'D': 'pink',
+                 'G': 'gray', 'P': 'gray', 'W': 'gray',
+                 '-': 'white'};
   ptm_colors = {"N": "#FF0000", "O": "#FF4000",
                 "P": "#FF8000", "Q": "#FF9800",
                 "d": "#FF9F00", "B": "#0000FF",
@@ -377,30 +377,7 @@ SequenceAlignmentPTMs = function(container_id, data, codon_length) {
     var letter_col = colors['gray'];
     var ptm_code = this.data[seq_num][1].charAt(res_num + 4);
     if (ptm_code == 'A') {
-      if ( r_up == 'C' || r_up == 'M'){
-          letter_col = colors['yellow'];
-      } 
-      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-        letter_col = colors['green'];
-      }
-      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-        letter_col = colors['blueishgreen'];
-      }
-      else if (r_up == 'H'){
-        letter_col = colors['blue'];
-      }
-      else if (r_up == 'K' || r_up == 'R'){
-        letter_col = colors['purple'];
-      }
-      else if (r_up == 'E' || r_up == 'Q'){
-        letter_col = colors['red'];
-      }
-      else if (r_up == 'N' || r_up == 'D'){
-        letter_col = colors['pink'];
-      }
-      else if (r_up == '-'){
-        letter_col = colors['white'];
-      }
+      letter_col = color_to_hex[aa_to_color[r_up]];
     }
     else {
       letter_col = ptm_colors[ptm_code];
@@ -526,12 +503,17 @@ HSLtoHEX = function(h, s, l) {
 ColorRange = function(number) {
   var norm = 100 / number;
   result = [];
+  var frequency = Math.PI*2 / number;
   for (var i = 0; i < number; i++) {
-    var hue = Math.floor((100 - i * norm) * 120 / 100);
-    // var saturation = Math.abs(i * norm - 50) / 50;
-    var saturation = 1;
+    // var hue = Math.floor((100 - i * norm) * 120 / 100);
+    // // var saturation = Math.abs(i * norm - 50) / 50;
+    // var saturation = 1;
+    // result.push(HSLtoHEX(hue, saturation, 0.5));
+    var r = Math.sin(frequency*i + 0) * 127 + 128;
+    var g = Math.sin(frequency*i + 2) * 127 + 128;
+    var b = Math.sin(frequency*i + 4) * 127 + 128;
+    result.push(RGBtoHEX(r, g, b));
 
-    result.push(HSLtoHEX(hue, saturation, 0.5));
   }
   return result;
 }
@@ -859,12 +841,22 @@ SequenceAlignmentFeatures = function(container_id, data, codon_length,
   }, false);
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
-  colors = {'gray':'#D9D9D9','red': '#FFBDBD','green':'#CCF0CC', 'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0', 'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6', 'white':'#FFFFFF'};
+  aa_to_color = {'C': 'yellow', 'M': 'yellow',
+                 'V': 'green', 'A': 'green', 'I': 'green', 'L': 'green', 
+                 'F': 'green',
+                 'S': 'blueishgreen', 'T': 'blueishgreen', 'Y': 'blueishgreen',
+                 'H': 'blue',
+                 'K': 'purple', 'R': 'purple',
+                 'E': 'red', 'Q': 'red',
+                 'N': 'pink', 'D': 'pink',
+                 'G': 'gray', 'P': 'gray', 'W': 'gray',
+                 '-': 'white'};
+  color_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
+                  'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
+                  'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
+                  'white':'#FFFFFF'};
   feature_colors = ColorRange(this.feature_codemap.length);
   this.draw_tooltip = function(x, y, message) {
-    // The stage is a little higher than it needs to be so that the tooltip on
-    // the last row is visible. Ideally we should change the direction of the
-    // tooltip.
     tooltip = new Kinetic.Label({
       x: x,
       y: y,
@@ -933,30 +925,7 @@ SequenceAlignmentFeatures = function(container_id, data, codon_length,
     var letter_col = colors['gray'];
     var is_feature = false;
     if (feature_code == 'AA') {
-      if ( r_up == 'C' || r_up == 'M'){
-          letter_col = colors['yellow'];
-      } 
-      else if (r_up == 'V' || r_up == 'A' || r_up == 'I' || r_up == 'L' || r_up == 'F') {
-        letter_col = colors['green'];
-      }
-      else if (r_up == 'S' || r_up == 'T' || r_up == 'Y'){
-        letter_col = colors['blueishgreen'];
-      }
-      else if (r_up == 'H'){
-        letter_col = colors['blue'];
-      }
-      else if (r_up == 'K' || r_up == 'R'){
-        letter_col = colors['purple'];
-      }
-      else if (r_up == 'E' || r_up == 'Q'){
-        letter_col = colors['red'];
-      }
-      else if (r_up == 'N' || r_up == 'D'){
-        letter_col = colors['pink'];
-      }
-      else if (r_up == '-'){
-        letter_col = colors['white'];
-      }
+      letter_col = color_to_hex[aa_to_color[r_up]]
     }
     else {
       var feat_number = 0;

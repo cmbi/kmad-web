@@ -18,6 +18,8 @@ from kman_web.services.files import (get_fasta_from_blast,
                                      predisorder_outfilename,
                                      psipred_outfilename)
 
+from kman_web.services.globplot_wsdl import run_globplot
+
 
 logging.basicConfig()
 _log = logging.getLogger(__name__)
@@ -34,10 +36,11 @@ def postprocess(result, filename, output_type):
     if glob.glob('%s*' % prefix):
         os.system('rm %s*' % prefix)    # pragma: no cover
 
-    # If the results are not form the d2p2 database, then process them
+    # If the results are not from the d2p2 database and from more than one
+    # method, then process them
     # (find consensus, and filter out short stretches)
     if (output_type == 'predict_and_align'
-            and not result[1][0] == 'D2P2'):
+            and (len(result) > 3 and not result[1][0] == 'D2P2')):
         # first element is the sequence, last element is the alignement
         consensus = find_consensus_disorder(result[1:-1])
         result = result[:-1] + [consensus] + [result[-1]]
@@ -46,7 +49,7 @@ def postprocess(result, filename, output_type):
             + [filter_out_short_stretches(consensus[1])] \
             + [result[-1]]
     elif (output_type == 'predict'
-          and not result[1][0] == 'D2P2'):
+          and (len(result) > 2 and not result[1][0] == 'D2P2')):
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
@@ -89,21 +92,22 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 out_file = psipred_outfilename(fasta_file)
                 args = [method, fasta_file]
             elif pred_name == 'globplot':
-                method = paths.GLOBPLOT_PATH
+                method = paths.GLOBPLOT_PATH_MAC
                 out_file = fasta_file + ".gplot"
                 args = [method, '10', '8', '75', '8', '8',
                         fasta_file, '>', out_file]
-            _log.debug("Running command '{}'".format(
-                subprocess.list2cmdline(args)))
             try:
                 if pred_name == 'globplot':
+                    # data = run_globplot(fasta_file)
                     data = subprocess.check_output(args)
                 else:
                     subprocess.call(args)
                     with open(out_file) as f:
                         data = f.read()
-            except subprocess.CalledProcessError as e:
-                _log.error("Error: {}".format(e.output))
+            except (subprocess.CalledProcessError, OSError) as e:
+                _log.error("Error: {}".format(e))
+                _log.debug("Ran command: {}".format(
+                    subprocess.list2cmdline(args)))
             data = preprocess(data, pred_name)
         return data
 
@@ -152,9 +156,12 @@ def query_d2p2(filename, output_type):
     prediction = []
     out_blast = filename.split(".")[0]+".blastp"
     args = ["blastp", "-query", filename, "-evalue", "1e-5",
-            "-num_threads", "15", "-db", paths.SWISSPROT_DB,
+            "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
             "-out", out_blast]
-    subprocess.call(args)
+    try:
+        subprocess.call(args)
+    except subprocess.CalledProcessError as e:
+        _log.error("Error: {}".format(e.output))
     if output_type != 'align':
         [found_it, seq_id] = find_seqid_blast(out_blast)
         if found_it:

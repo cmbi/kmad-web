@@ -4,9 +4,12 @@ import os
 import string
 import subprocess
 import tempfile
+import time
+import urllib
 import urllib2
 
 from operator import itemgetter
+import xml.etree.ElementTree as ET
 
 from kman_web import paths
 
@@ -62,18 +65,35 @@ def get_id(sequence):
 
 # PFAM
 def run_pfam_scan(filename):
-    result = []
-    dom = []
-    args = [paths.PFAM_SCAN, '-fasta', filename, '-dir', paths.PFAM_DB]
-    output = subprocess.check_output(args)
-    pfamscanResult = [i for i in output.splitlines() if not i.startswith('#')]
+    domain_coords = []
+    domain_accessions = []
+    with open(filename) as a:
+        fastafile = a.read()
+    values = {'seq': fastafile, 'output': 'xml'}
+    data = urllib.urlencode(values)
+    request = urllib2.Request('http://pfam.xfam.org/search/sequence', data)
+    reply = urllib2.urlopen(request).read()
+    tree = ET.fromstring(reply)
+    result_url = tree[0][1].text
+    count = 0
+    finished = False
+    while count < 20 and not finished:
+        time.sleep(8)
+        try:
+            request = urllib2.Request(result_url)
+            result = urllib2.urlopen(request).read()
+            root = ET.fromstring(result)
+            for child in root[0][0][0][0]:
+                for g in child:
+                    domain_accessions += [child.attrib['accession']]
+                    domain_coords += [[int(g.attrib['start']),
+                                       int(g.attrib['end'])]]
+            finished = True
+        except ET.ParseError:
+            _log.debug("The result is not yet there")
+        count += 1
 
-    for i in pfamscanResult:
-        if len(i.split()) > 3:
-            result.append([int(i.split()[1]), int(i.split()[2])])
-            dom.append(i.split()[5]+" "+i.split()[6])
-
-    return [result, dom]
+    return [domain_coords, domain_accessions]
 
 
 # NETPHOS
@@ -116,7 +136,7 @@ def get_uniprot_txt(uniprot_id):
     #         uniprot_dat = a.read().splitlines()
 
     req = urllib2.Request("http://www.uniprot.org/uniprot/"
-                          + uniprot_id + ".fasta")
+                          + uniprot_id + ".txt")
     uniprot_dat = urllib2.urlopen(req).read().splitlines()
     if True:
         for lineI in uniprot_dat:
@@ -386,7 +406,7 @@ def tmp_fasta(seq_id, seq):  # pragma: no cover
 
 
 def elm_db():
-    with open(paths.ELM_DB_GO_COMPLETE) as a:
+    with open(paths.ELM_DB_GO_COMPLETE_MAC) as a:
         slims_all_classes_pre = a.read()
     return process_slims_all_classes(slims_all_classes_pre.splitlines())
 
@@ -458,7 +478,6 @@ def convert_to_7chars(filename):
         newfile += 'domain_{} {}\n'.format(domainsDictionary[i], i)
     out = open(filename.split('.')[0]+'.map', 'w')
     out.write(newfile)
-    _log.debug("newfile: {}\n".format(newfile))
     out.close()
 
     return outname
