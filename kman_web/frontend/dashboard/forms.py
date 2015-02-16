@@ -2,7 +2,7 @@ from flask_wtf import Form
 from wtforms import widgets, validators
 from wtforms.fields import (FloatField, IntegerField, SelectField,
                             TextAreaField, SelectMultipleField,
-                            FieldList, FormField, TextField)
+                            FieldList, FormField, TextField, SubmitField)
 from wtforms.widgets import html_params, HTMLString
 
 
@@ -35,9 +35,10 @@ class MyListWidget(object):
         return HTMLString(u''.join(html))
 
 
-class UsrFeatForm(Form):
-    name = TextField(u'Group name', [validators.length(max=10)])
+class UsrFeatureEntryForm(Form):
+    featname = TextField(u'Group name', [validators.length(max=10)])
     number = IntegerField(u'Some number')
+
 
 class KmanForm(Form):
     sequence = TextAreaField(u'sequence')
@@ -66,5 +67,10 @@ class KmanForm(Form):
         widget=MyListWidget(
             html_tag='collist',
             prefix_label=False))
-
-    usr_features = FieldList(FormField(UsrFeatForm))
+    add_feature = SubmitField()
+    remove_feature = SubmitField()
+    usr_features = FieldList(FormField(UsrFeatureEntryForm))
+    # feat1 = UsrFeatEntry('bla', 1)
+    # feat2 = UsrFeatEntry('blee', 2)
+    # u_feat = UsrFeatures('u_feat', [feat1, feat2])
+    # usr_features = UsrFeatureForm(obj=u_feat)
