@@ -1,3 +1,5 @@
+import logging
+
 from flask_wtf import Form
 from wtforms import widgets, validators
 from wtforms.fields import (FloatField, IntegerField, SelectField,
@@ -5,6 +7,8 @@ from wtforms.fields import (FloatField, IntegerField, SelectField,
                             FieldList, FormField, TextField, SubmitField)
 from wtforms.widgets import html_params, HTMLString
 
+logging.basicConfig()
+_log = logging.getLogger(__name__)
 
 class MyListWidget(object):
     """
@@ -36,8 +40,21 @@ class MyListWidget(object):
 
 
 class UsrFeatureEntryForm(Form):
-    featname = TextField(u'Group name', [validators.length(max=10)])
-    number = IntegerField(u'Some number')
+    def validate_positions(form, field):
+        data_list = field.data.replace(' ', '').split(',')
+        for i in data_list:
+            i_list = i.split('-')
+            non_int = not all(e.isdigit() and int(e) > 0 for e in i_list)
+            if non_int or len(i_list) not in [1, 2]:
+                _log.debug("item: {}".format(i_list))
+                raise validators.ValidationError('Feature positions need to be listed in a \
+                                                  comma separated format, e.g. \
+                                                  "1, 2, 15-20" would indicate positions 1, \
+                                                  2, and all positions from 15 to 20')
+    featname = TextField(u'Feature name', [validators.length(max=10)])
+    add_score = IntegerField(u'Add score', [validators.Optional()])
+    sequence_number = IntegerField(u'Sequence number', [validators.Optional()])
+    positions = TextField(u'Feature positions')
 
 
 class KmanForm(Form):
@@ -71,3 +88,5 @@ class KmanForm(Form):
     remove_feature = SubmitField()
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")
+
+    submit_job = SubmitField("Submit")

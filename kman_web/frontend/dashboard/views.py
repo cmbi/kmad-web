@@ -16,9 +16,7 @@ bp = Blueprint('dashboard', __name__)
 @bp.route("/", methods=['POST', 'GET'])
 def index():
     form = KmanForm()
-    if len(form.usr_features.data) == 0:
-        form.usr_features.append_entry()
-    if (form.validate_on_submit()
+    if (form.submit_job.data and form.validate_on_submit()
             and form.sequence.data
             and form.output_type.data
             and form.gap_open_p.data
