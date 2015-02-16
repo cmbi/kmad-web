@@ -69,8 +69,5 @@ class KmanForm(Form):
             prefix_label=False))
     add_feature = SubmitField()
     remove_feature = SubmitField()
-    usr_features = FieldList(FormField(UsrFeatureEntryForm))
-    # feat1 = UsrFeatEntry('bla', 1)
-    # feat2 = UsrFeatEntry('blee', 2)
-    # u_feat = UsrFeatures('u_feat', [feat1, feat2])
-    # usr_features = UsrFeatureForm(obj=u_feat)
+    usr_features = FieldList(FormField(UsrFeatureEntryForm),
+                             label="User defined features")

@@ -249,15 +249,18 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
         prob = 1
         if entry:
             slim_id = entry[0]
-            slim_go_terms = slims_all_classes[slim_id]["GO"]
-            if set(seq_go_terms).intersection(set(slim_go_terms)):
-                if entry[3] == "False":
-                    prob = 1 + 1/math.log(
-                        slims_all_classes[slim_id]["prob"], 10)
-                    if prob > 0:
-                        limits.append([int(entry[1]), int(entry[2])])
-                        elms_ids.append(entry[0])
-                        probabilities.append(prob)
+            try:
+                slim_go_terms = slims_all_classes[slim_id]["GO"]
+                if set(seq_go_terms).intersection(set(slim_go_terms)):
+                    if entry[3] == "False":
+                        prob = 1 + 1/math.log(
+                            slims_all_classes[slim_id]["prob"], 10)
+                        if prob > 0:
+                            limits.append([int(entry[1]), int(entry[2])])
+                            elms_ids.append(entry[0])
+                            probabilities.append(prob)
+            except KeyError:
+                _log.debug("Didn't find motif: {}".format(slim_id))
     limits, elms_ids, probabilities = filter_out_overlapping(limits,
                                                              elms_ids,
                                                              probabilities)

@@ -108,6 +108,41 @@
                       </div>
                     </div>
                   </div>
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <div id="form_usr_feat_div" class="form-group "
+                        style="float:left;
+                        width=100%; height:100%;margin:30px;padding-top:25px;">
+                        <div id="usr_feat_inner_div">
+                          {{ form.usr_features.label }}: {{form.add_feature}}
+                          <table>
+                            {% if form.usr_features.data | length > 0 %}
+                              <tr>
+                                <div id="usr_feat_header">
+                                  <th> Name </th>
+                                  <th>&nbsp</th>
+                                  <th> Number </th>
+                                  <th></th>
+                                </div>
+                              </tr>
+                            {% endif %}
+                            {% for feat in form.usr_features %}
+                              <tr>
+                                <td> {{ feat.featname }} </td>
+                                <td>&nbsp</td>
+                                <td> {{ feat.number }} </td>
+                                <td> {{ form.remove_feature }} </td>
+                              </tr>
+                              <tr>
+                                <td>&nbsp</td>
+                              </tr>
+                              {% endfor %}
+
+                            </table>
+                        </div>
+                      </div>
+                    </div> 
+                  </div>
                 </div>
                 <br>
                 <div class="row">
@@ -122,35 +157,9 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-12">
-                    <div id="form_usr_feat_div" class="form-group " style="float:right;
-                      width=100%; height:100%;margin:30px;padding-top:25px;">
-                      <div id="usr_feat_inner_div">
-                        {{ form.usr_features.label }}: {{form.add_feature}}
-                          <table>
-                            <tr>
-                              <th> Name </th>
-                              <th> Number </th>
-                              <th></th>
-                            </tr>
-                            {% for feat in form.usr_features %}
-                            <tr>
-                                  <td> {{ feat.featname }} </td>
-                                  <td> {{ feat.number }} </td>
-                                  <td> {{ form.remove_feature }} </td>
-                                </tr>
-                            {% endfor %}
-
-                          </table>
-                      </div>
-                    </div>
-                  </div> 
-                </div>
-                {{ form.csrf_token }}
-                <div class="row">
                   <div class="col-xs-6">
                     <div id="output_type_div" class="form-group" style="width=100%;
-                      height:100%;margin:20px;padding-top:10px;">
+                      height:100%;margin:20px;padding-top:15px;">
                       <div id="output_type_inner_div">
                         {{ form.output_type.label }}
                         {{ form.output_type }}
@@ -159,7 +168,7 @@
                   </div>
                   <div class="col-xs-6">
                     <div id="form_submit_div" class="form-group " style="float:right;
-                      width=100%; height:100%;margin:30px;padding-top:25px;">
+                      width=100%; height:100%;margin:20px;padding-top:10px;">
                       <div id="submit_inner_div">
                         <button type="submit" name="sequence" class="btn btn-primary">Submit</button>
                         <button type="reset" class="btn btn-default">Clear</button>
