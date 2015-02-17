@@ -148,7 +148,7 @@
                                   indicate positions 1, 2, and all positions
                                   from 15 to 20")}} </td>
                                 <td>&nbsp</td>
-                                <td> {{ feat.positions(pattern="(([0-9]((,)[ ]?)?)|([0-9][ ]?-[ ]?[0-9])){1,}", placeholder="e.g. '1,2,7-9'", class="form-control") }} </td>
+                                <td> {{ feat.positions(pattern="(([0-9]((,)[ ]?)?)|([0-9][ ]?-[ ]?[0-9]((,)[ ]?)?)){1,}", placeholder="e.g. '1,2,7-9'", class="form-control") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{ form.remove_feature(value='X',
                                   class="btn btn-danger") }} </td>
@@ -161,7 +161,7 @@
 
                             </table>
                           {{form.add_feature(class="btn btn-success",
-                          value="Add feature")}}
+                          value="Add a feature")}}
                         </div>
                       </div>
                     </div> 
