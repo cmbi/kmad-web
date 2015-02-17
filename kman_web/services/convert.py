@@ -78,7 +78,7 @@ def run_pfam_scan(filename):
     count = 0
     finished = False
     while count < 20 and not finished:
-        time.sleep(8)
+        time.sleep(6)
         try:
             request = urllib2.Request(result_url)
             result = urllib2.urlopen(request).read()
@@ -111,13 +111,13 @@ def run_netphos(filename):
 
 def check_id(uniprot_id, seq):
     result = False
+    req = urllib2.Request("http://www.uniprot.org/uniprot/"
+                          + uniprot_id + ".fasta")
     try:
-        req = urllib2.Request("http://www.uniprot.org/uniprot/"
-                              + uniprot_id + ".fasta")
-    except:
+        uni_seq = urllib2.urlopen(req).read()
+    except urllib2.HTTPError:
         _log.info("No entry with ID: {}".format(uniprot_id))
     else:
-        uni_seq = urllib2.urlopen(req).read()
         uni_seq = ''.join(uni_seq.splitlines()[1:])
         if uni_seq == seq:
             result = True
@@ -249,15 +249,18 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
         prob = 1
         if entry:
             slim_id = entry[0]
-            slim_go_terms = slims_all_classes[slim_id]["GO"]
-            if set(seq_go_terms).intersection(set(slim_go_terms)):
-                if entry[3] == "False":
-                    prob = 1 + 1/math.log(
-                        slims_all_classes[slim_id]["prob"], 10)
-                    if prob > 0:
-                        limits.append([int(entry[1]), int(entry[2])])
-                        elms_ids.append(entry[0])
-                        probabilities.append(prob)
+            try:
+                slim_go_terms = slims_all_classes[slim_id]["GO"]
+                if set(seq_go_terms).intersection(set(slim_go_terms)):
+                    if entry[3] == "False":
+                        prob = 1 + 1/math.log(
+                            slims_all_classes[slim_id]["prob"], 10)
+                        if prob > 0:
+                            limits.append([int(entry[1]), int(entry[2])])
+                            elms_ids.append(entry[0])
+                            probabilities.append(prob)
+            except KeyError:
+                _log.debug("Didn't find motif: {}".format(slim_id))
     limits, elms_ids, probabilities = filter_out_overlapping(limits,
                                                              elms_ids,
                                                              probabilities)
