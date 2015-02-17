@@ -173,11 +173,14 @@ def decode(alignment, codon_length):
 
 def check_if_multi(fasta_seq):
     count = 0
+    reading = True
     i = 0
     fasta_list = fasta_seq.splitlines()
-    while count < 2 and i < len(fasta_list):
-        if fasta_seq[i].startswith('>'):
+    while reading and i < len(fasta_list):
+        if fasta_list[i].startswith('>'):
             count += 1
+        if count > 1:
+            reading = False
         i += 1
     if count > 1:
         return True
