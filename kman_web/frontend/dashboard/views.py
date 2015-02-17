@@ -28,6 +28,7 @@ def index():
         _log.debug("validation")
         data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
+        print "Strategy: {}".format(strategy)
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
         if form.output_type.data == "predict":
             celery_id = strategy(data, form.prediction_method.data)
@@ -39,6 +40,7 @@ def index():
                                  form.motif_score.data)
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
         else:
+            print "Strategy: {}".format(strategy)
             celery_id = strategy(data, form.gap_open_p.data,
                                  form.gap_ext_p.data, form.end_gap_p.data,
                                  form.ptm_score.data, form.domain_score.data,

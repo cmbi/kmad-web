@@ -25,7 +25,8 @@ class TestDashboard(object):
         mock_call2.return_value = 12345
         test_sequence = '>testseq\nSEQ\n'
         rv = self.app.post('/', data={'output_type': 'predict_and_align',
-                                      'sequence': test_sequence},
+                                      'sequence': test_sequence,
+                                      'submit_job': 'Submit'},
                            follow_redirects=True)
         eq_(rv.status_code, 200)
         assert 'Job status' in rv.data
@@ -33,7 +34,8 @@ class TestDashboard(object):
                                            3, 3, [])
 
         rv = self.app.post('/', data={'output_type': 'predict',
-                                      'sequence': test_sequence},
+                                      'sequence': test_sequence,
+                                      'submit_job': 'Submit'},
                            follow_redirects=True)
         eq_(rv.status_code, 200)
         assert 'Job status' in rv.data

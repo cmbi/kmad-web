@@ -34,7 +34,7 @@ class TestTasks(object):
 
         from kman_web.tasks import align
 
-        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3)
+        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False)
         eq_(result.get(), expected)
 
     def test_postprocess(self):
@@ -103,22 +103,22 @@ class TestTasks(object):
 
         # check: sequence not found in swissprot
         mock_call.return_value = [False, '']
-        expected = [False, []]
+        expected = [False, [], filename]
 
-        result = query_d2p2.delay(filename, 'predict')
+        result = query_d2p2.delay(filename, 'predict', False)
         eq_(result.get(), expected)
 
         # check: sequence found in swissprot, but not found in d2p2
         mock_call.return_value = [True, 'P01542']
-        expected = [False, []]
+        expected = [False, [], filename]
 
-        result = query_d2p2.delay(filename, 'predict')
+        result = query_d2p2.delay(filename, 'predict', False)
         eq_(result.get(), expected)
 
         # check: sequence found in d2p2
         mock_call.return_value = [True, 'P10636']
 
-        result = query_d2p2.delay(filename, 'predict').get()
+        result = query_d2p2.delay(filename, 'predict', False).get()
         eq_(result[0], True)
 
     @patch('kman_web.tasks.preprocess')
@@ -143,12 +143,13 @@ class TestTasks(object):
 
             result = run_single_predictor.delay(d2p2_result,
                                                 filename,
-                                                pred_name)
+                                                pred_name, False)
             eq_(result.get(), expected)
 
         # check when there is result from d2p2
         d2p2_result = [True, ['D2P2', [0, 0, 0]]]
         expected = d2p2_result[1]
 
-        result = run_single_predictor.delay(d2p2_result, filename, pred_name)
+        result = run_single_predictor.delay(d2p2_result, filename, pred_name,
+                                            False)
         eq_(result.get(),  expected)

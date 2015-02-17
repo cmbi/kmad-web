@@ -16,7 +16,7 @@ from kman_web.services.convert import convert_to_7chars
 from kman_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
-                                     psipred_outfilename)
+                                     psipred_outfilename, write_single_fasta)
 
 
 logging.basicConfig()
@@ -64,6 +64,8 @@ def run_single_predictor(prev_result, fasta_file, pred_name, multi_seq_input):
     _log.debug("Run single predictor")
     if prev_result[0]:
         return prev_result[1]
+    if multi_seq_input:
+        fasta_file = prev_result[2]
     else:
         if pred_name == "dummy":    # pragma: no cover
             sequence = open(fasta_file).readlines()[1:]
@@ -115,9 +117,11 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
           multi_seq_input):
     # blast result file already created in "query_d2p2"
-    out_blast = filename.split(".")[0]+".blastp"
-    fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
-
+    if not multi_seq_input:
+        out_blast = filename.split(".")[0]+".blastp"
+        fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
+    else:
+        fastafile = filename
     toalign = convert_to_7chars(fastafile)  # .7c filename
     codon_length = 7
 
@@ -153,26 +157,29 @@ def get_seq(d2p2, fasta_file):
 def query_d2p2(filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
-    out_blast = filename.split(".")[0]+".blastp"
-    args = ["blastp", "-query", filename, "-evalue", "1e-5",
-            "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
-            "-out", out_blast]
-    try:
-        subprocess.call(args)
-    except subprocess.CalledProcessError as e:
-        _log.error("Error: {}".format(e.output))
-    if output_type != 'align':
-        [found_it, seq_id] = find_seqid_blast(out_blast)
-        if found_it:
-            data = 'seqids=["%s"]' % seq_id
-            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-            response = json.loads(urllib2.urlopen(request).read())
-            if response[seq_id]:
-                pred_result = response[seq_id][0][2]['disorder']['consensus']
-                prediction = process_d2p2(pred_result)
-            else:
-                found_it = False
-    return [found_it, prediction]
+    if not (multi_seq_input and output_type == 'align'):
+        if multi_seq_input:
+            filename = write_single_fasta(filename)
+        out_blast = filename.split(".")[0]+".blastp"
+        args = ["blastp", "-query", filename, "-evalue", "1e-5",
+                "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
+                "-out", out_blast]
+        try:
+            subprocess.call(args)
+        except subprocess.CalledProcessError as e:
+            _log.error("Error: {}".format(e.output))
+        if output_type != 'align':
+            [found_it, seq_id] = find_seqid_blast(out_blast)
+            if found_it:
+                data = 'seqids=["%s"]' % seq_id
+                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+                response = json.loads(urllib2.urlopen(request).read())
+                if response[seq_id]:
+                    pred_result = response[seq_id][0][2]['disorder']['consensus']
+                    prediction = process_d2p2(pred_result)
+                else:
+                    found_it = False
+    return [found_it, prediction, filename]
 
 
 def get_task(output_type):

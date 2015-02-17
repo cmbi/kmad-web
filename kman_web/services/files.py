@@ -1,4 +1,5 @@
 import logging
+import tempfile
 import time
 import urllib2
 
@@ -96,3 +97,22 @@ def psipred_outfilename(fasta_file):
 
 def predisorder_outfilename(fasta_file):
     return '.'.join(fasta_file.split('.')[:-1])+".predisorder"
+
+
+def write_single_fasta(fasta_filename):
+    with open(fasta_filename) as a:
+        infile = a.readlines()
+    newfile_list = infile[0]
+    reading = True
+    i = 1
+    while reading and i < len(infile):
+        if infile[i].startswith('>'):
+            reading = False
+        else:
+            newfile_list += [infile[i]]
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    _log.debug("Created tmp file '{}'".format(tmp_file.name))
+    with tmp_file as f:
+        _log.debug("Writing data to '{}'".format(tmp_file.name))
+        f.write(''.join(newfile_list))
+    return tmp_file.name
