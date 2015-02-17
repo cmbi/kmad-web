@@ -1,0 +1,9 @@
+9c9
+< from Bio import Fasta
+---
+> from Bio import SeqIO
+173,174c173
+<     parser = Fasta.RecordParser()
+<     iterator = Fasta.Iterator(db,parser)
+---
+>     iterator = SeqIO.parse(file, "fasta")
