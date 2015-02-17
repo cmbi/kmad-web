@@ -18,8 +18,6 @@ from kman_web.services.files import (get_fasta_from_blast,
                                      predisorder_outfilename,
                                      psipred_outfilename)
 
-from kman_web.services.globplot_wsdl import run_globplot
-
 
 logging.basicConfig()
 _log = logging.getLogger(__name__)
@@ -62,7 +60,7 @@ def postprocess(result, filename, output_type):
 
 
 @celery_app.task
-def run_single_predictor(prev_result, fasta_file, pred_name):
+def run_single_predictor(prev_result, fasta_file, pred_name, multi_seq_input):
     _log.debug("Run single predictor")
     if prev_result[0]:
         return prev_result[1]
@@ -114,7 +112,8 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 
 @celery_app.task
 def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
-          end_gap_penalty, ptm_score, domain_score, motif_score):
+          end_gap_penalty, ptm_score, domain_score, motif_score,
+          multi_seq_input):
     # blast result file already created in "query_d2p2"
     out_blast = filename.split(".")[0]+".blastp"
     fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
@@ -151,7 +150,7 @@ def get_seq(d2p2, fasta_file):
 
 
 @celery_app.task
-def query_d2p2(filename, output_type):
+def query_d2p2(filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
     out_blast = filename.split(".")[0]+".blastp"

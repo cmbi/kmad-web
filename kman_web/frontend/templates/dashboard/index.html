@@ -134,10 +134,14 @@
                             {% endif %}
                             {% for feat in form.usr_features %}
                               <tr>
-                                <td> {{ feat.featname(maxlength=10, class="form-control") }} </td>
+                                <td> {{ feat.featname(maxlength=10,
+                                   class="form-control",
+                                   placeholder="Feature name",
+                                   pattern="^[a-zA-Z0-9]{1,}$") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{
-                                  feat.add_score(pattern="[-+]?[0-9]*\.?[0-9]+", placeholder="Float", class="form-control") }} </td>
+                                  feat.add_score(pattern="[-+]?[0-9]*\.?[0-9]+",
+                                  placeholder="Real number", class="form-control") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{ feat.sequence_number(pattern="^\d+$",
                                   type="text", placeholder="Integer",

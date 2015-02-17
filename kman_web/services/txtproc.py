@@ -169,3 +169,17 @@ def decode(alignment, codon_length):
         else:
             new_data_list += [data_list[i][::codon_length]]
     return '\n'.join(new_data_list)
+
+
+def check_if_multi(fasta_seq):
+    count = 0
+    i = 0
+    fasta_list = fasta_seq.splitlines()
+    while count < 2 and i < len(fasta_list):
+        if fasta_seq[i].startswith('>'):
+            count += 1
+        i += 1
+    if count > 1:
+        return True
+    else:
+        return False
