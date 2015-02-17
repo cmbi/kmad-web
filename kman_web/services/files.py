@@ -102,7 +102,7 @@ def predisorder_outfilename(fasta_file):
 def write_single_fasta(fasta_filename):
     with open(fasta_filename) as a:
         infile = a.readlines()
-    newfile_list = infile[0]
+    newfile_list = [infile[0]]
     reading = True
     i = 1
     while reading and i < len(infile):
@@ -110,6 +110,7 @@ def write_single_fasta(fasta_filename):
             reading = False
         else:
             newfile_list += [infile[i]]
+        i += 1
     tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
     _log.debug("Created tmp file '{}'".format(tmp_file.name))
     with tmp_file as f:
