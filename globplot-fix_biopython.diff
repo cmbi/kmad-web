@@ -2,8 +2,26 @@
 < from Bio import Fasta
 ---
 > from Bio import SeqIO
+102c102
+<     SG_bin = 'PATH/GlobPipe-2.2/sav_gol -V0 '
+---
+>     SG_bin = 'sav_gol -V0 '
 173,174c173
 <     parser = Fasta.RecordParser()
 <     iterator = Fasta.Iterator(db,parser)
 ---
 >     iterator = SeqIO.parse(file, "fasta")
+179c178
+<             seq = upper(cur_record.sequence)
+---
+>             seq = upper(cur_record.seq)
+206c205
+<             sys.stdout.write('>'+cur_record.title+coordstrDOM+coordstrDIS+'\n')
+---
+>             sys.stdout.write('>'+cur_record.id+coordstrDOM+coordstrDIS+'\n')
+209c208,210
+<         except AttributeError:
+---
+>         except StopIteration:
+>             break
+>         except AttributeError, e:
