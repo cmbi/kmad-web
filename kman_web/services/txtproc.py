@@ -196,3 +196,39 @@ def check_if_multi(fasta_seq):
         return True
     else:
         return False
+
+
+def parse_positions(pos):
+    poslist = pos.replace(' ', '').split(',')
+    parsed = []
+    for i in poslist:
+        if i.isdigit():
+            parsed += [i]
+        elif len(i.split('-')) == 2:
+            parsed += [str(j) for j in xrange(int(i.split('-')[0]),
+                                              int(i.split('-')[1]) + 1)]
+    return parsed
+
+
+def parse_features(usr_features):
+    outtext = "feature_settings = \n \
+               {\n \
+                usr_features = ( \n"
+    feat_dict = {}
+    for i in usr_features:
+        i_positions = parse_positions(i['positions'])
+        if i['featname'] not in feat_dict.keys():
+            feat_dict[i['featname']] = {'name': i['featname'],
+                                        'add_score': i['add_score'],
+                                        'positions': [{'seq':
+                                                       i['sequence_number'],
+                                                       'pos':
+                                                       i_positions
+                                                       }]
+                                        }
+
+        else:
+            feat_dict[i['featname']]['positions'] += [{'seq':
+                                                       i['sequence_number'],
+                                                       'pos': i_positions}]
+    return outtext

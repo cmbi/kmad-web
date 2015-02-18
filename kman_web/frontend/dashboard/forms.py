@@ -75,9 +75,10 @@ class KmanForm(Form):
                 raise validators.ValidationError('Sequence should be at least \
                                                   10 amino acids long')
         while reading and i < len(seq_list):
-            if (not (seq_list[i].startswith('>') and i < len(seq_list) - 1
-                     and seq_list[i + 1].isalpha())
-                    and not seq_list[i].isalpha()):
+            if (seq_list[i] and not (seq_list[i].startswith('>')
+                                     and i < len(seq_list) - 1
+                                     and seq_list[i + 1].isalpha())
+                            and not seq_list[i].isalpha()):
                 raise validators.ValidationError('Sequence should be either in \
                                                   FASTA format or simply a \
                                                   sequence of one-letter amino \

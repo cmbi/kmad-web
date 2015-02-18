@@ -61,7 +61,7 @@ class PredictAndAlignStrategy(object):
 
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
-                 prediction_methods, multi_seq_input):
+                 prediction_methods, multi_seq_input, usr_features):
         from kman_web.tasks import (query_d2p2, align,
                                     run_single_predictor, postprocess, get_seq)
         from celery import chain, group
@@ -72,6 +72,8 @@ class PredictAndAlignStrategy(object):
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
+
+        conffilename = files.write_conf_file(usr_features)
 
         align_fasta_filename = tmp_file.name
         if multi_seq_input:
@@ -102,7 +104,7 @@ class AlignStrategy(object):
 
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
-                 multi_seq_input):
+                 multi_seq_input, usr_features):
         from kman_web.tasks import (query_d2p2, align,
                                     postprocess, get_seq)
         from celery import chain, group
@@ -112,6 +114,8 @@ class AlignStrategy(object):
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
+
+        conffilename = files.write_conf_file(usr_features)
 
         align_fasta_filename = tmp_file.name
         if multi_seq_input:
