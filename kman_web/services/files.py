@@ -1,4 +1,6 @@
+import glob
 import logging
+import os
 import tempfile
 import time
 import urllib2
@@ -116,3 +118,12 @@ def write_single_fasta(fasta_seq):
         _log.debug("Writing data to '{}'".format(tmp_file.name))
         f.write('\n'.join(newfile_list))
     return tmp_file.name
+
+
+def remove_files(filename):
+    prefix = filename[0:14]
+    if glob.glob('%s*' % prefix):
+        os.system('rm %s*' % prefix)    # pragma: no cover
+    prefix = prefix[5:]
+    if glob.glob('%s*' % prefix):
+        os.system('rm %s*' % prefix)    # pragma: no cover

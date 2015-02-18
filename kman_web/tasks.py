@@ -1,13 +1,12 @@
-import glob
 import json
 import logging
-import os
 import subprocess
 import urllib2
 
 from celery import current_app as celery_app
 
 from kman_web import paths
+from kman_web.services import files
 from kman_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
 from kman_web.services.consensus import (find_consensus_disorder,
@@ -16,7 +15,7 @@ from kman_web.services.convert import convert_to_7chars
 from kman_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
-                                     psipred_outfilename, write_single_fasta)
+                                     psipred_outfilename)
 
 
 logging.basicConfig()
@@ -24,15 +23,11 @@ _log = logging.getLogger(__name__)
 
 
 @celery_app.task
-def postprocess(result, filename, output_type):
+def postprocess(result, single_filename, multi_filename, output_type):
     # process result and remove tmp files
     _log.debug("Postprocessing the results")
-    prefix = filename[0:14]
-    if glob.glob('%s*' % prefix):
-        os.system('rm %s*' % prefix)    # pragma: no cover
-    prefix = prefix[5:]
-    if glob.glob('%s*' % prefix):
-        os.system('rm %s*' % prefix)    # pragma: no cover
+    files.remove_files(single_filename)
+    files.remove_files(multi_filename)
 
     # If the results are not from the d2p2 database and from more than one
     # method, then process them
@@ -156,25 +151,27 @@ def get_seq(d2p2, fasta_file):
 def query_d2p2(filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
-    out_blast = filename.split(".")[0]+".blastp"
-    args = ["blastp", "-query", filename, "-evalue", "1e-5",
-            "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
-            "-out", out_blast]
-    try:
-        subprocess.call(args)
-    except subprocess.CalledProcessError as e:
-        _log.error("Error: {}".format(e.output))
-    if output_type != 'align':
-        [found_it, seq_id] = find_seqid_blast(out_blast)
-        if found_it:
-            data = 'seqids=["%s"]' % seq_id
-            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-            response = json.loads(urllib2.urlopen(request).read())
-            if response[seq_id]:
-                pred_result = response[seq_id][0][2]['disorder']['consensus']
-                prediction = process_d2p2(pred_result)
-            else:
-                found_it = False
+    if not (multi_seq_input and output_type == 'align'):
+        out_blast = filename.split(".")[0]+".blastp"
+        args = ["blastp", "-query", filename, "-evalue", "1e-5",
+                "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
+                "-out", out_blast]
+        try:
+            subprocess.call(args)
+        except subprocess.CalledProcessError as e:
+            _log.error("Error: {}".format(e.output))
+        if output_type != 'align':
+            [found_it, seq_id] = find_seqid_blast(out_blast)
+            if found_it:
+                data = 'seqids=["%s"]' % seq_id
+                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+                response = json.loads(urllib2.urlopen(request).read())
+                if response[seq_id]:
+                    pred_result = \
+                        response[seq_id][0][2]['disorder']['consensus']
+                    prediction = process_d2p2(pred_result)
+                else:
+                    found_it = False
     return [found_it, prediction]
 
 

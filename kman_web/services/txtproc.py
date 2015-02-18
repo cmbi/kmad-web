@@ -77,12 +77,22 @@ def preprocess(pred_out, pred_name):
 
 def process_fasta(fastafile):
     fasta_list = fastafile.splitlines()
+    new_list = []
     if fastafile.startswith('>'):
-        sequence = ''.join(fasta_list[1:])
-        new_fasta = fasta_list[0]+'\n'+sequence
+        for i in fasta_list:
+            if i.startswith('>'):
+                new_list += [i + '\n']
+            else:
+                new_list[-1] += i
+        new_fasta = '\n'.join(new_list)
     else:
-        sequence = ''.join(fasta_list)
-        new_fasta = '>fasta_header\n{}'.format(sequence)
+        new_fasta = '>fasta_header\n{}'.format(''.join(fasta_list))
+    # if fastafile.startswith('>'):
+    #     sequence = ''.join(fasta_list[1:])
+    #     new_fasta = fasta_list[0]+'\n'+sequence
+    # else:
+    #     sequence = ''.join(fasta_list)
+    #     new_fasta = '>fasta_header\n{}'.format(sequence)
     return new_fasta
 
 

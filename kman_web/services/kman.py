@@ -48,7 +48,8 @@ class PredictStrategy(object):
         job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                  multi_seq_input),
                     group(tasks_to_run),
-                    postprocess.s(single_fasta_filename, self.output_type))()
+                    postprocess.s(single_fasta_filename, align_fasta_filename,
+                                  self.output_type))()
         task_id = job.id
 
         return task_id
@@ -89,7 +90,8 @@ class PredictAndAlignStrategy(object):
         job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                  multi_seq_input),
                     group(tasks_to_run),
-                    postprocess.s(tmp_file.name, self.output_type))()
+                    postprocess.s(single_fasta_filename, align_fasta_filename,
+                                  self.output_type))()
         task_id = job.id
         return task_id
 
@@ -113,7 +115,7 @@ class AlignStrategy(object):
 
         align_fasta_filename = tmp_file.name
         if multi_seq_input:
-            single_fasta_filename = txtproc.write_single_fasta(fasta_seq)
+            single_fasta_filename = files.write_single_fasta(fasta_seq)
         else:
             single_fasta_filename = tmp_file.name
 
@@ -125,6 +127,7 @@ class AlignStrategy(object):
         job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                  multi_seq_input),
                     group(tasks_to_run),
-                    postprocess.s(tmp_file.name, self.output_type))()
+                    postprocess.s(single_fasta_filename, align_fasta_filename,
+                                  self.output_type))()
         task_id = job.id
         return task_id
