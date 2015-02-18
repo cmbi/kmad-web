@@ -1,5 +1,5 @@
 from mock import patch
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 
 
 def test_decode():
@@ -75,3 +75,12 @@ def test_find_seqid_blast(mock_open):
     expected = [False, '']
     result = find_seqid_blast('testname')
     eq_(expected, result)
+
+
+def test_check_if_multi():
+    from kman_web.services.txtproc import check_if_multi
+
+    testfasta = '>1\nSEQSEQ\nSEQ'
+    ok_(not check_if_multi(testfasta))
+    testfasta = '>1\nSEQSEQ\nSEQ\n>2\nSESESEQ\n'
+    ok_(check_if_multi(testfasta))

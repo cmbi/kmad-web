@@ -77,12 +77,22 @@ def preprocess(pred_out, pred_name):
 
 def process_fasta(fastafile):
     fasta_list = fastafile.splitlines()
+    new_list = []
     if fastafile.startswith('>'):
-        sequence = ''.join(fasta_list[1:])
-        new_fasta = fasta_list[0]+'\n'+sequence
+        for i in fasta_list:
+            if i.startswith('>'):
+                new_list += [i + '\n']
+            else:
+                new_list[-1] += i
+        new_fasta = '\n'.join(new_list)
     else:
-        sequence = ''.join(fasta_list)
-        new_fasta = '>fasta_header\n{}'.format(sequence)
+        new_fasta = '>fasta_header\n{}'.format(''.join(fasta_list))
+    # if fastafile.startswith('>'):
+    #     sequence = ''.join(fasta_list[1:])
+    #     new_fasta = fasta_list[0]+'\n'+sequence
+    # else:
+    #     sequence = ''.join(fasta_list)
+    #     new_fasta = '>fasta_header\n{}'.format(sequence)
     return new_fasta
 
 
@@ -169,3 +179,20 @@ def decode(alignment, codon_length):
         else:
             new_data_list += [data_list[i][::codon_length]]
     return '\n'.join(new_data_list)
+
+
+def check_if_multi(fasta_seq):
+    count = 0
+    reading = True
+    i = 0
+    fasta_list = fasta_seq.splitlines()
+    while reading and i < len(fasta_list):
+        if fasta_list[i].startswith('>'):
+            count += 1
+        if count > 1:
+            reading = False
+        i += 1
+    if count > 1:
+        return True
+    else:
+        return False

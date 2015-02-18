@@ -65,7 +65,9 @@ def kman(sequence_path, kman_url, output_type):
     url_create = '{}api/create/{}/'.format(kman_url,
                                                   output_type)
     print url_create
-    r = requests.post(url_create, data={'data': fasta_content})
+    r = requests.post(url_create, data={'output_type': output_type,
+                                        'sequence': fasta_content,
+                                        'submit_job': 'Submit'})
     r.raise_for_status()
 
     job_id = json.loads(r.text)['id']

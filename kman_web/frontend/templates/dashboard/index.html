@@ -40,14 +40,15 @@
               </div>
             </div>
             <div class="panel-body">
-              <div class="row">
+              <div class="row" style='height:100%;'>
                 <div class="col-xs-6">
                   <div id="sequence_div" class="form-group">
                     <div style="margin:10px;">
-                     {{ form.sequence(class_='form-control',
-                                      placeholder='Enter a protein sequence',
-                                      rows="15") }}
+                      {{ form.sequence(class="form-control",
+                                       placeholder='Enter a protein sequence',
+                                       style="height:450px;resize:none;") }}
                     </div>
+                    <div class="help-block with-errors"></div>
                   </div>
                 </div>
         <div class="col-xs-6">
@@ -134,10 +135,14 @@
                             {% endif %}
                             {% for feat in form.usr_features %}
                               <tr>
-                                <td> {{ feat.featname(maxlength=10, class="form-control") }} </td>
+                                <td> {{ feat.featname(maxlength=10,
+                                   class="form-control",
+                                   placeholder="Feature name",
+                                   pattern="^[a-zA-Z0-9]{1,}$") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{
-                                  feat.add_score(pattern="[-+]?[0-9]*\.?[0-9]+", placeholder="Float", class="form-control") }} </td>
+                                  feat.add_score(pattern="[-+]?[0-9]*\.?[0-9]+",
+                                  placeholder="Real number", class="form-control") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{ feat.sequence_number(pattern="^\d+$",
                                   type="text", placeholder="Integer",
@@ -148,7 +153,9 @@
                                   indicate positions 1, 2, and all positions
                                   from 15 to 20")}} </td>
                                 <td>&nbsp</td>
-                                <td> {{ feat.positions(pattern="(([0-9]((,)[ ]?)?)|([0-9][ ]?-[ ]?[0-9]((,)[ ]?)?)){1,}", placeholder="e.g. '1,2,7-9'", class="form-control") }} </td>
+                                <td> {{ feat.positions(pattern="[
+                                  ]?(([0-9]((,)[ ]?)?)|([0-9][ ]?-[
+                                  ]?[0-9]((,)[ ]?)?)){1,}(([ ]){1,})?", placeholder="e.g. '1,2,7-9'", class="form-control") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{ form.remove_feature(value='X',
                                   class="btn btn-danger") }} </td>

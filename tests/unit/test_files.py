@@ -1,3 +1,4 @@
+import os
 from mock import patch
 from nose.tools import eq_, ok_
 
@@ -46,3 +47,15 @@ def test_get_seq_from_uniprot():
     expected = test_vars.ins_human_seq
     result = get_seq_from_uniprot('INS_HUMAN')
     eq_(expected, result)
+
+
+def test_write_single_fasta():
+    from kman_web.services.files import write_single_fasta
+
+    expected = '>1\nSEQ\nSEQ'
+    fasta_input = '>1\nSEQ\nSEQ\n>2\nSEQSEQ\n>3\nSEQ\n'
+    outname = write_single_fasta(fasta_input)
+    with open(outname) as a:
+        outfile = a.read()
+    eq_(expected, outfile)
+    os.remove(outname)

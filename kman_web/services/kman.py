@@ -2,7 +2,7 @@ import logging
 import tempfile
 
 
-from kman_web.services import txtproc
+from kman_web.services import txtproc, files
 
 
 _log = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class PredictStrategy(object):
     def __init__(self, output_type):
         self.output_type = output_type
 
-    def __call__(self, fasta_seq, prediction_methods):
+    def __call__(self, fasta_seq, prediction_methods, multi_seq_input):
         from kman_web.tasks import query_d2p2
         from celery import chain, group
         from kman_web.tasks import run_single_predictor, postprocess, get_seq
@@ -36,12 +36,20 @@ class PredictStrategy(object):
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
+        align_fasta_filename = tmp_file.name
+        if multi_seq_input:
+            single_fasta_filename = files.write_single_fasta(fasta_seq)
+        else:
+            single_fasta_filename = tmp_file.name
         tasks_to_run = [get_seq.s(fasta_seq)]
         for pred_name in prediction_methods:
-            tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
-        job = chain(query_d2p2.s(tmp_file.name, self.output_type),
+            tasks_to_run += [run_single_predictor.s(single_fasta_filename,
+                                                    pred_name)]
+        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                 multi_seq_input),
                     group(tasks_to_run),
-                    postprocess.s(tmp_file.name, self.output_type))()
+                    postprocess.s(single_fasta_filename, align_fasta_filename,
+                                  self.output_type))()
         task_id = job.id
 
         return task_id
@@ -53,7 +61,7 @@ class PredictAndAlignStrategy(object):
 
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
-                 prediction_methods):
+                 prediction_methods, multi_seq_input):
         from kman_web.tasks import (query_d2p2, align,
                                     run_single_predictor, postprocess, get_seq)
         from celery import chain, group
@@ -65,15 +73,25 @@ class PredictAndAlignStrategy(object):
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
+        align_fasta_filename = tmp_file.name
+        if multi_seq_input:
+            single_fasta_filename = files.write_single_fasta(fasta_seq)
+        else:
+            single_fasta_filename = tmp_file.name
+
         tasks_to_run = [get_seq.s(fasta_seq)]
         for pred_name in prediction_methods:
-            tasks_to_run += [run_single_predictor.s(tmp_file.name, pred_name)]
-        tasks_to_run += [align.s(tmp_file.name, gap_opening_penalty,
+            tasks_to_run += [run_single_predictor.s(single_fasta_filename,
+                                                    pred_name)]
+        tasks_to_run += [align.s(align_fasta_filename, gap_opening_penalty,
                                  gap_extension_penalty, end_gap_penalty,
-                                 ptm_score, domain_score, motif_score)]
-        job = chain(query_d2p2.s(tmp_file.name, self.output_type),
+                                 ptm_score, domain_score, motif_score,
+                                 multi_seq_input)]
+        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                 multi_seq_input),
                     group(tasks_to_run),
-                    postprocess.s(tmp_file.name, self.output_type))()
+                    postprocess.s(single_fasta_filename, align_fasta_filename,
+                                  self.output_type))()
         task_id = job.id
         return task_id
 
@@ -83,7 +101,8 @@ class AlignStrategy(object):
         self.output_type = output_type
 
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
-                 end_gap_penalty, ptm_score, domain_score, motif_score):
+                 end_gap_penalty, ptm_score, domain_score, motif_score,
+                 multi_seq_input):
         from kman_web.tasks import (query_d2p2, align,
                                     postprocess, get_seq)
         from celery import chain, group
@@ -94,12 +113,21 @@ class AlignStrategy(object):
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
 
+        align_fasta_filename = tmp_file.name
+        if multi_seq_input:
+            single_fasta_filename = files.write_single_fasta(fasta_seq)
+        else:
+            single_fasta_filename = tmp_file.name
+
         tasks_to_run = [get_seq.s(fasta_seq),
-                        align.s(tmp_file.name, gap_opening_penalty,
+                        align.s(align_fasta_filename, gap_opening_penalty,
                                 gap_extension_penalty, end_gap_penalty,
-                                ptm_score, domain_score, motif_score)]
-        job = chain(query_d2p2.s(tmp_file.name, self.output_type),
+                                ptm_score, domain_score, motif_score,
+                                multi_seq_input)]
+        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                 multi_seq_input),
                     group(tasks_to_run),
-                    postprocess.s(tmp_file.name, self.output_type))()
+                    postprocess.s(single_fasta_filename, align_fasta_filename,
+                                  self.output_type))()
         task_id = job.id
         return task_id

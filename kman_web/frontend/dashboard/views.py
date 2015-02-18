@@ -6,6 +6,7 @@ from flask import (Blueprint, render_template,
 
 from kman_web.frontend.dashboard.forms import KmanForm
 from kman_web.services.kman import KmanStrategyFactory
+from kman_web.services import txtproc
 
 
 _log = logging.getLogger(__name__)
@@ -26,24 +27,26 @@ def index():
             and form.domain_score.data
             and form.motif_score.data):
         _log.debug("validation")
-        data = form.sequence.data.encode('ascii', errors='ignore')
+        seq_data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
+        multi_seq_input = txtproc.check_if_multi(seq_data)  # bool
         if form.output_type.data == "predict":
-            celery_id = strategy(data, form.prediction_method.data)
+            celery_id = strategy(seq_data, form.prediction_method.data,
+                                 multi_seq_input)
             _log.debug(form.prediction_method.data)
         elif form.output_type.data == 'align':
-            celery_id = strategy(data, form.gap_open_p.data,
+            celery_id = strategy(seq_data, form.gap_open_p.data,
                                  form.gap_ext_p.data, form.end_gap_p.data,
                                  form.ptm_score.data, form.domain_score.data,
-                                 form.motif_score.data)
+                                 form.motif_score.data, multi_seq_input)
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
         else:
-            celery_id = strategy(data, form.gap_open_p.data,
+            celery_id = strategy(seq_data, form.gap_open_p.data,
                                  form.gap_ext_p.data, form.end_gap_p.data,
                                  form.ptm_score.data, form.domain_score.data,
                                  form.motif_score.data,
-                                 form.prediction_method.data)
+                                 form.prediction_method.data, multi_seq_input)
         _log.info("Job has id '{}'".format(celery_id))
         _log.info("Redirecting to output page")
         return redirect(url_for('dashboard.output',

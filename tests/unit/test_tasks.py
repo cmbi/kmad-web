@@ -34,7 +34,7 @@ class TestTasks(object):
 
         from kman_web.tasks import align
 
-        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3)
+        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False)
         eq_(result.get(), expected)
 
     def test_postprocess(self):
@@ -46,14 +46,14 @@ class TestTasks(object):
         func_input = [test.seq, test.d2p2_result]
         expected = func_input[:]
 
-        result = postprocess.delay(func_input, filename, 'predict')
+        result = postprocess.delay(func_input, filename, filename, 'predict')
         eq_(result.get(), expected)
 
         # check predictors' result and output type 'predict'
         func_input = [test.seq] + test.pred_result
         expected = [test.seq] + test.processed_pred_result
 
-        result = postprocess.delay(func_input, filename, 'predict')
+        result = postprocess.delay(func_input, filename, filename, 'predict')
         eq_(result.get(), expected)
 
         # check d2p2 results and output type 'predict_and_align'
@@ -62,7 +62,8 @@ class TestTasks(object):
             + [[test.alignment_1c, test.alignment_1c_list]]
         expected = func_input[:]
 
-        result = postprocess.delay(func_input, filename, 'predict_and_align')
+        result = postprocess.delay(func_input, filename, filename,
+                                   'predict_and_align')
         eq_(result.get(), expected)
 
         # check predictors' results and output type 'predict_and_align'
@@ -73,7 +74,8 @@ class TestTasks(object):
             + test.processed_pred_result \
             + [[test.alignment_1c, test.alignment_1c_list]]
 
-        result = postprocess.delay(func_input, filename, 'predict_and_align')
+        result = postprocess.delay(func_input, filename, filename,
+                                   'predict_and_align')
         eq_(result.get(), expected)
 
     def test_get_task(self):
@@ -105,20 +107,20 @@ class TestTasks(object):
         mock_call.return_value = [False, '']
         expected = [False, []]
 
-        result = query_d2p2.delay(filename, 'predict')
+        result = query_d2p2.delay(filename, 'predict', False)
         eq_(result.get(), expected)
 
         # check: sequence found in swissprot, but not found in d2p2
         mock_call.return_value = [True, 'P01542']
         expected = [False, []]
 
-        result = query_d2p2.delay(filename, 'predict')
+        result = query_d2p2.delay(filename, 'predict', False)
         eq_(result.get(), expected)
 
         # check: sequence found in d2p2
         mock_call.return_value = [True, 'P10636']
 
-        result = query_d2p2.delay(filename, 'predict').get()
+        result = query_d2p2.delay(filename, 'predict', False).get()
         eq_(result[0], True)
 
     @patch('kman_web.tasks.preprocess')
