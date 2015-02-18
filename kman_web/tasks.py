@@ -60,12 +60,10 @@ def postprocess(result, filename, output_type):
 
 
 @celery_app.task
-def run_single_predictor(prev_result, fasta_file, pred_name, multi_seq_input):
+def run_single_predictor(prev_result, fasta_file, pred_name):
     _log.debug("Run single predictor")
     if prev_result[0]:
         return prev_result[1]
-    if multi_seq_input:
-        fasta_file = prev_result[2]
     else:
         if pred_name == "dummy":    # pragma: no cover
             sequence = open(fasta_file).readlines()[1:]
@@ -154,32 +152,29 @@ def get_seq(d2p2, fasta_file):
 
 
 @celery_app.task
-def query_d2p2(filename, output_type, multi_seq_input):
+def query_d2p2(filename, output_type):
     found_it = False
     prediction = []
-    if not (multi_seq_input and output_type == 'align'):
-        if multi_seq_input:
-            filename = write_single_fasta(filename)
-        out_blast = filename.split(".")[0]+".blastp"
-        args = ["blastp", "-query", filename, "-evalue", "1e-5",
-                "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
-                "-out", out_blast]
-        try:
-            subprocess.call(args)
-        except subprocess.CalledProcessError as e:
-            _log.error("Error: {}".format(e.output))
-        if output_type != 'align':
-            [found_it, seq_id] = find_seqid_blast(out_blast)
-            if found_it:
-                data = 'seqids=["%s"]' % seq_id
-                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-                response = json.loads(urllib2.urlopen(request).read())
-                if response[seq_id]:
-                    pred_result = response[seq_id][0][2]['disorder']['consensus']
-                    prediction = process_d2p2(pred_result)
-                else:
-                    found_it = False
-    return [found_it, prediction, filename]
+    out_blast = filename.split(".")[0]+".blastp"
+    args = ["blastp", "-query", filename, "-evalue", "1e-5",
+            "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
+            "-out", out_blast]
+    try:
+        subprocess.call(args)
+    except subprocess.CalledProcessError as e:
+        _log.error("Error: {}".format(e.output))
+    if output_type != 'align':
+        [found_it, seq_id] = find_seqid_blast(out_blast)
+        if found_it:
+            data = 'seqids=["%s"]' % seq_id
+            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+            response = json.loads(urllib2.urlopen(request).read())
+            if response[seq_id]:
+                pred_result = response[seq_id][0][2]['disorder']['consensus']
+                prediction = process_d2p2(pred_result)
+            else:
+                found_it = False
+    return [found_it, prediction]
 
 
 def get_task(output_type):
