@@ -106,7 +106,8 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 _log.error("Error: {}".format(e))
                 _log.debug("Ran command: {}".format(
                     subprocess.list2cmdline(args)))
-            data = preprocess(data, pred_name)
+            finally:
+                data = preprocess(data, pred_name)
         return data
 
 
@@ -152,7 +153,7 @@ def get_seq(d2p2, fasta_file):
 
 
 @celery_app.task
-def query_d2p2(filename, output_type):
+def query_d2p2(filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
     out_blast = filename.split(".")[0]+".blastp"

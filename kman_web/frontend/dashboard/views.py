@@ -32,7 +32,8 @@ def index():
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
         multi_seq_input = txtproc.check_if_multi(seq_data)  # bool
         if form.output_type.data == "predict":
-            celery_id = strategy(seq_data, form.prediction_method.data)
+            celery_id = strategy(seq_data, form.prediction_method.data,
+                                 multi_seq_input)
             _log.debug(form.prediction_method.data)
         elif form.output_type.data == 'align':
             celery_id = strategy(seq_data, form.gap_open_p.data,

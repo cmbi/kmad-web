@@ -1,4 +1,5 @@
 import logging
+import re
 
 from flask_wtf import Form
 from wtforms import widgets, validators
@@ -62,24 +63,10 @@ class KmanForm(Form):
         reading = True
         i = 0
         seq_list = field.data.splitlines()
-        if field.data.count('>') < 2:
-            if field.data.startswith('>'):
-                length = len(''.join(seq_list[1:]))
-            else:
-                length = len(''.join(seq_list))
-            if length < 10:
-                raise validators.ValidationError('Sequence should be at least \
-                                                  10 amino acids long')
-        while reading and i < len(seq_list):
-            if (not (seq_list[i].startswith('>') and i < len(seq_list) - 1
-                     and seq_list[i + 1].isalpha())
-                    and not seq_list[i].isalpha()):
-                raise validators.ValidationError('Sequence should be either in \
-                                                  FASTA format or simply a \
-                                                  sequence of one-letter amino \
-                                                  acid codes')
-                reading = False
-            i += 1
+        while reading:
+            if not seq_list[i].startswith('>')
+        if :
+            raise validators.ValidationError('chicken')
 
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',

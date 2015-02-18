@@ -50,11 +50,11 @@ def test_get_seq_from_uniprot():
 
 
 def test_write_single_fasta():
-    filename = 'tests/unit/testdata/test_multifasta.fasta'
     from kman_web.services.files import write_single_fasta
 
-    expected = '>1\nSEQ\nSEQ\n'
-    outname = write_single_fasta(filename)
+    expected = '>1\nSEQ\nSEQ'
+    fasta_input = '>1\nSEQ\nSEQ\n>2\nSEQSEQ\n>3\nSEQ\n'
+    outname = write_single_fasta(fasta_input)
     with open(outname) as a:
         outfile = a.read()
     eq_(expected, outfile)

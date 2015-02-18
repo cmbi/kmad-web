@@ -99,21 +99,20 @@ def predisorder_outfilename(fasta_file):
     return '.'.join(fasta_file.split('.')[:-1])+".predisorder"
 
 
-def write_single_fasta(fasta_filename):
-    with open(fasta_filename) as a:
-        infile = a.readlines()
-    newfile_list = [infile[0]]
+def write_single_fasta(fasta_seq):
+    fasta_list = fasta_seq.splitlines()
+    newfile_list = [fasta_list[0]]
     reading = True
     i = 1
-    while reading and i < len(infile):
-        if infile[i].startswith('>'):
+    while reading and i < len(fasta_list):
+        if fasta_list[i].startswith('>'):
             reading = False
         else:
-            newfile_list += [infile[i]]
+            newfile_list += [fasta_list[i]]
         i += 1
     tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
     _log.debug("Created tmp file '{}'".format(tmp_file.name))
     with tmp_file as f:
         _log.debug("Writing data to '{}'".format(tmp_file.name))
-        f.write(''.join(newfile_list))
+        f.write('\n'.join(newfile_list))
     return tmp_file.name
