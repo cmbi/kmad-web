@@ -226,9 +226,23 @@ def parse_features(usr_features):
                                                        i_positions
                                                        }]
                                         }
-
         else:
             feat_dict[i['featname']]['positions'] += [{'seq':
                                                        i['sequence_number'],
                                                        'pos': i_positions}]
+    for i in feat_dict.keys():
+        outtext += '{ name = {};\n'.format(i)
+        outtext += '  tag = "";\n'
+        outtext += '  add_score = {};\n'.format(feat_dict[i]['add_score'])
+        outtext += '  subtract_score = "";\n'
+        outtext += '  add_features = ({});\n'.format(i)
+        outtext += '  add_tags = ();\n'
+        outtext += '  add_exceptions = ();\n'
+        outtext += '  subtract_features = ();\n'
+        outtext += '  subtract_tags = ();\n'
+        outtext += '  subtract_exceptions = ();\n'
+        outtext += '  positions = ( '
+        for j in feat_dict[i]['positions']:
+            outtext += '{ seq = {}; pos = ({}); }'.format(j['seq'],
+                                                          ', '.join(j['pos']))
     return outtext

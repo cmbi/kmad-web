@@ -121,7 +121,155 @@
         motifs (SLiMs) from <strong>ELM</strong>, and functional domains
         predicted by <strong>Pfam</strong>.
         </p>
+        <p>
+        KMAD algorithm is a progressive iterative alignment, based on the
+        MaxHom algorithm. Pairiwise alignments follow the Gotoh algorithm with
+        a modified scoring function shown in Figure 1.
         <br>
+        <br>
+        <div class="row">
+          <div class="col-xs-12">
+            <figure>
+              <img src="{{ url_for('static',
+                filename='files/formula_scoring_function_gimp.png') }}"
+                style="width:50%;">
+              <figcaption><strong>Figure 1.</strong>
+		            KMAD scoring function;
+                <i>i</i> and <i>j</i> represent positions in the profile and in the sequence,
+                respectively; <i>profile<sub>i</sub></i> is a vector that contains the
+                frequencies of the 20 amino acid types <i>m</i> at position
+                <i>i</i> in the
+                alignment. <i>D</i> is the 20&times;20 substitution matrix.
+                The residue score is the convolution of the
+                profile vector for <i>i</i> and the <i>D</i> column for <i>j</i>. In the first iteration
+                all profile values are zero or one, according to the first
+                sequence. <i>&omega;<sub>t</sub></i>
+                are weights for the three feature types <i>f<sub>t</sub></i>
+                (<i>&omega;<sub>f<sub>t</sub></sub></i> weights optionally can be
+                set by the user). <i>U<sub>f,i</sub></i> values for PTMs and SLiMs are determined from the
+                conservation of that feature at <i>i</i>. <i>U<sub>f,i</sub></i> values for domains are the
+                conservation of the domain at position <i>i</i> minus the conservation of all
+                other domains at that position. The terms <i>R</i> relate to the perceived
+                reliability (<i>PR</i>) of the feature; experimentally determined PTMs, for
+                example, weigh three times higher than predicted ones.
+                <i>R<sub>f,i,j</sub></i> is the
+                product of the average <i>PR</i> of the feature <i>f</i> at position
+                <i>i</i> in the profile and
+                the <i>PR</i> of this feature at position <i>j</i> in the sequence. The metascore for
+                <i>j</i> is the weighted sum over all scores for its features.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+        <br>
+        <strong>Perceived reliability (<i>PR</i>)</strong>
+        <dl style="margin-left: 2.5em; padding-left: 0;">
+          <dt>PTMs</dt>
+          <dd>- perceived reliability of a PTM depends on the type of its
+          annotation source. All predicted phosphorylations get a <i>PR</i>
+          value of 0.3. For annotations from Swissprot we determine the
+          <i>PR</i> value based on its ECO code
+          (Evidence Codes Ontology), representing source of the data.
+          The possible values are: 1, 0.9, 0.8, 0.7.
+          The <i>PR</i> values were chosen arbitrarily for the lack of any
+          other method to quantify the annotation's quality.
+          The ECO codes related to each value are as follows:
+          <dl style="margin-left: 2.5em; padding-left: 0;">
+            <dt>1.0 - Experimental evidence codes</dt>
+            <dd>
+            <ul>
+              <li>0000269, EXP - experimental evidence used in manual
+              assertion</li>
+              <li>0000314, IDA - direct assay evidence used in manual
+              assertion</li>
+              <li>0000353, IPI - physical interaction evidence used in manual
+              assertion</li>
+              <li>0000315, IMP - mutant phenotype evidence used in manual
+              assertion</li>
+              <li>0000316, IGI - genetic interaction evidence used in manual
+              assertion</li>
+              <li>0000270, IEP - restriction landmark genome scanning evidence
+              used in manual assertion</li>
+            </dd>
+            <dt>0.9 - Computational analysis evidence codes</dt>
+            <ul>
+              <li>0000250, ISS - sequence similarity evidence used in manual
+              assertion</li>
+              <li>0000266, ISO - sequence orthology evidence used in manual
+              assertion</li>
+              <li>0000247, ISA - sequence alignment evidence used in manual
+              assertion</li>
+              <li>0000255, ISM - match to sequence model evidence used in
+              manual assertion</li>
+              <li>0000317, IGC - genomic context evidence used in manual
+              assertion</li>
+              <li>0000318, IBA - biological aspect of ancestor evidence used in
+              manual assertion</li>
+              <li>0000319, IBD - biological aspect of descendant evidence used
+              in manual assertion</li>
+              <li>0000320, IKR - phylogenetic determination of loss of key
+              residues evidence used in manual assertion</li>
+              <li>0000321, IRD - rapid divergence from ancestral sequence
+              evidence used in manual assertion</li>
+              <li>0000245, RCA - computational combinatorial evidence used in
+              manual assertion</li>
+            </ul>
+            <dd></dd>
+            <dt>0.8 - Author Statement evidence codes and Curatorial Statement
+            evidence codes</dt>
+            <dd>
+            <ul>
+              <li>0000304, TAS - traceable author statement used in manual
+              assertion</li>
+              <li>0000303, NAS - non-traceable author statement used in manual
+              assertion</li>
+              <li>0000305, IC - curator inference used in manual assertion</li>
+              <li>0000307, ND - no biological data found used in manual
+              assertion</li>
+            </ul>
+            </dd>
+            <dt>0.7 - Automatically assigned evidence code</dt>
+            <dd>
+            <ul>
+              <li>0000501, IEA - evidence used in automatic assertion</li>
+            </ul>
+            </dd>
+          </dl>
+          </dd>
+          <dt>motifs</dt>
+          <dd>- The motif's <i>PR</i> value is determined based on its
+          'probability' <i>P</i> assigned by ELM in form of an E-value.
+          Motifs with <i>P</i> > 0.1 are discarded and in case of overlapping
+          motifs only the one with higher <i>P</i> is kept.
+          <i>PR</i> value calculation is based on formula
+          <i>PR</i> = 1 + 1/<i>log<sub>10</sub></i>(<i>P</i>).
+          Therefore the limit of <i>PR</i> is 1 as <i>P</i> tends to 0.
+          </dd>
+          <dt>domains</dt>
+          <dd>- All domains have PR equal to 1.
+          The reason behind this is that their length is enough to compensate
+          for the lack of the <i>PR</i> factor.
+          If the prediction reliability of a certain domain is low, then when
+          aligning two domains of this kind the overall score for the domains
+          will be anyway significantly lower because of the more frequent
+          mismatches.
+          </dd>
+        </dl>
+        </p>
+        <p>
+        <strong>&omega;<sub>f<sub>t</sub></sub> weights</strong>
+        <br>
+        The default values of the &omega;<sub>f<sub>t</sub></sub> weights are
+        10, 4, 4 for PTMs, motifs, ad domains, respectively. Small changes of
+        these values do not seem to have a significant effect on the
+        alignments. We advise keeping the scores for domains and motifs lower
+        than for PTMs as they consist of at least several residues - the score
+        will be added for each two matching residues. Setting too high values
+        might result in forcing alignment of subsequences that should not be
+        aligned with each other.
+        </p>
+        <br>
+        <strong>References</strong>
         <p>
         <strong>ELM</strong>
         <br>
