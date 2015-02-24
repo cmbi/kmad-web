@@ -1,4 +1,6 @@
+from celery.schedules import crontab
 from kombu import Exchange, Queue
+
 
 # Celery
 CELERY_BROKER_URL = 'amqp://guest@localhost'
@@ -10,6 +12,13 @@ CELERY_QUEUES = (
 CELERY_RESULT_BACKEND = 'redis://localhost/0'
 
 #CELERY_TASK_SERIALIZER = 'json'
+CELERYBEAT_SCHEDULE = {
+    # Every day at midnight
+    'update_elm': {
+        'task': 'hope.tasks.update_elm',
+        'schedule': crontab(hour=0, minute=0)
+    },
+}
 
 
 ## KMAN

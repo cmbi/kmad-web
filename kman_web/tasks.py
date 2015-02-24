@@ -1,6 +1,7 @@
 import json
 import logging
 import subprocess
+import re
 import urllib2
 
 from celery import current_app as celery_app
@@ -16,6 +17,7 @@ from kman_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
                                      psipred_outfilename)
+from kman_web.services import update_elm as elm
 
 
 logging.basicConfig()
@@ -173,6 +175,28 @@ def query_d2p2(filename, output_type, multi_seq_input):
                 else:
                     found_it = False
     return [found_it, prediction]
+
+
+@celery_app.task
+def update_elm():
+    elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
+    go_url = "http://geneontology.org/ontology/go-basic.obo"
+    elm_list = elm.get_data_from_url(elm_url)
+    go_terms_list = elm.get_data_from_url(go_url)
+    outtext = ""
+    go_families = dict()
+    for i in elm_list[6:]:
+        lineI = re.split('\t|"', i)
+        elm_id = lineI[4]
+        pattern = lineI[10]
+        prob = lineI[13]
+        motif_go_terms = elm.get_motif_go_terms(elm_id)
+        go_terms_extended = elm.extend_go_terms(go_terms_list, motif_go_terms,
+                                                go_families)
+        outtext += "{} {} {} {}\n".format(elm_id, pattern,
+                                          prob, ' '.join(go_terms_extended))
+    out = open('static/dbs/elm_classes_complete.txt', 'w')
+    out.write(outtext)
 
 
 def get_task(output_type):

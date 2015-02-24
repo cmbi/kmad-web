@@ -103,6 +103,7 @@ def find_length(lines):
             length = i.split('=')[1]
     return length
 
+
 def find_seqid_blast(filename):
     with open(filename) as a:
         blast = a.read()
@@ -211,9 +212,9 @@ def parse_positions(pos):
 
 
 def parse_features(usr_features):
-    outtext = "feature_settings = \n \
-               {\n \
-                usr_features = ( \n"
+    outtext = 'feature_settings = \n' \
+              + '  {\n' \
+              + '  usr_features = ( \n'
     feat_dict = {}
     for i in usr_features:
         i_positions = parse_positions(i['positions'])
@@ -231,18 +232,20 @@ def parse_features(usr_features):
                                                        i['sequence_number'],
                                                        'pos': i_positions}]
     for i in feat_dict.keys():
-        outtext += '{ name = {};\n'.format(i)
-        outtext += '  tag = "";\n'
-        outtext += '  add_score = {};\n'.format(feat_dict[i]['add_score'])
-        outtext += '  subtract_score = "";\n'
-        outtext += '  add_features = ({});\n'.format(i)
-        outtext += '  add_tags = ();\n'
-        outtext += '  add_exceptions = ();\n'
-        outtext += '  subtract_features = ();\n'
-        outtext += '  subtract_tags = ();\n'
-        outtext += '  subtract_exceptions = ();\n'
-        outtext += '  positions = ( '
+        outtext += '{{    name = "{}";\n'.format(i) \
+                   + '    tag = "";\n' \
+                   + '    add_score = {};\n'.format(feat_dict[i]['add_score']) \
+                   + '    subtract_score = "";\n' \
+                   + '    add_features = ("{}");\n'.format(i) \
+                   + '    add_tags = ();\n' \
+                   + '    add_exceptions = ();\n' \
+                   + '    subtract_features = ();\n' \
+                   + '    subtract_tags = ();\n' \
+                   + '    subtract_exceptions = ();\n' \
+                   + '    positions = ( '
         for j in feat_dict[i]['positions']:
-            outtext += '{ seq = {}; pos = ({}); }'.format(j['seq'],
-                                                          ', '.join(j['pos']))
+            outtext += '{{ seq = {}; pos = ({}); }'.format(j['seq'],
+                                                           ', '.join(j['pos']))
+        outtext += '}\n'
+    outtext += ');\n};\n'
     return outtext
