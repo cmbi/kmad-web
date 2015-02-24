@@ -16,7 +16,8 @@ CELERYBEAT_SCHEDULE = {
     # Every day at midnight
     'update_elm': {
         'task': 'hope.tasks.update_elm',
-        'schedule': crontab(hour=0, minute=0)
+        'schedule': crontab(hour=0, minute=0),
+        'args': ('kman_web/frontend/static/dbs/elm_complete.txt')
     },
 }
 

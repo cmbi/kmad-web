@@ -117,9 +117,24 @@
         The tool incorporates information from databases and predictions about
         functional sites to perform a Multiple Sequence Alignment (MSA).
         The information includes phosphorylations predicted by <strong>NetPhos</strong>, annotated
-        posttranslational modifications (PTMs) from <strong>Uniprot</strong>, short linear
+        posttranslational modifications (PTMs) from <strong>Swissprot</strong>, short linear
         motifs (SLiMs) from <strong>ELM</strong>, and functional domains
         predicted by <strong>Pfam</strong>.
+
+        The posttranslational modifications used by KMAD are, the most abundant
+        ones, that is:
+        <ul>
+          <li>phosphorylations</li>
+          <li>N-linked glycosylations</li>
+          <li>O-linked glycosylations</li>
+          <li>methylations</li>
+          <li>amidations</li>
+          <li>acetylations</li>
+        </ul>
+        Motifs predicted by ELM are filtered by their GO
+        terms. Motif's list of GO terms is extended by each GO term's parents
+        and all of its descendants. If there is no overlap between sequence GO
+        terms and the extended motif GO terms then the motif is discarded.
         </p>
         <p>
         KMAD algorithm is a progressive iterative alignment, based on the

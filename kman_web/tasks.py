@@ -178,7 +178,7 @@ def query_d2p2(filename, output_type, multi_seq_input):
 
 
 @celery_app.task
-def update_elm():
+def update_elm(output_filename):
     elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
     go_url = "http://geneontology.org/ontology/go-basic.obo"
     elm_list = elm.get_data_from_url(elm_url)
@@ -195,8 +195,9 @@ def update_elm():
                                                 go_families)
         outtext += "{} {} {} {}\n".format(elm_id, pattern,
                                           prob, ' '.join(go_terms_extended))
-    out = open('static/dbs/elm_classes_complete.txt', 'w')
+    out = open(output_filename, 'w')
     out.write(outtext)
+    out.close()
 
 
 def get_task(output_type):

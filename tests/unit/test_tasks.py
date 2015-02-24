@@ -1,5 +1,5 @@
 from mock import mock_open, patch
-from nose.tools import eq_, raises
+from nose.tools import eq_, ok_, raises
 
 from testdata import test_variables as test
 from kman_web.factory import create_app, create_celery_app
@@ -154,3 +154,19 @@ class TestTasks(object):
 
         result = run_single_predictor.delay(d2p2_result, filename, pred_name)
         eq_(result.get(),  expected)
+
+    @patch('kman_web.services.files.open', create=True)
+    def test_update_elm(self, mock_open):
+        from kman_web.tasks import update_elm
+
+        update_elm('tests/unit/testdata/elm_complete_test.txt')
+        handle = mock_open()
+        handle.write.assert_called_once()
+        result = handle.write.call_args
+        ok_(len(result) > 0)
+        first_line = result.splitlines()[0].split()
+        ok_(len(first_line) >= 3)
+        ok_(first_line[2].isdigit())
+        if len(first_line) > 3:
+            for i in first_line[3:]:
+                ok_(i.isalnum() and i.isdigit())

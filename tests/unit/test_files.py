@@ -23,6 +23,7 @@ def test_get_fasta_from_blast(mock_open, test_get_seq):
     get_fasta_from_blast('blastname', 'fastaname')
     handle = mock_open()
     handle.write.assert_called_once_with(expected_data)
+    print handle.write.call_args
 
     # check: query sequence different than teh first blast hit
     reads = ['>testseq0\nSEQSEQ\n', test_blast]
