@@ -91,20 +91,24 @@ def test_parse_features():
 
     text_features = [{'featname': 'feat1', 'add_score': 2,
                       'sequence_number': '2', 'positions': '7,6,8-9'}]
-    expected = feature_settings = '{\n'
-                                  + '       usr_features = (\n'
-                                  + '           { name = "feat1";\n'
-                                  + '              tag = "";\n'
-                                  + '              add_score = 2;\n'
-                                  + '              subtract_score = "";\n'
-                                  + '              add_features = ("feat1");\n'
-                                  + '              add_tags = ();\n'
-                                  + '              add_exceptions = ();\n'
-                                  + '              subtract_features = ();\n'
-                                  + '              subtract_tags = ();\n'
-                                  + '              subtract_exceptions = ();\n'
-                                  + '              positions = ( { seq = 2; pos = (7, 6, 8, 9); }\n'
-                                  + '                           );\n'
-                                  + '       };\n'
-    eq_(parse_features(text_features))
-
+    expected = 'feature_settings = \n  {\n' \
+               + '  usr_features = ( \n' \
+               + '{    name = "feat1";\n' \
+               + '    tag = "";\n' \
+               + '    add_score = 2;\n' \
+               + '    subtract_score = "";\n' \
+               + '    add_features = ("feat1");\n' \
+               + '    add_tags = ();\n' \
+               + '    add_exceptions = ();\n' \
+               + '    subtract_features = ();\n' \
+               + '    subtract_tags = ();\n' \
+               + '    subtract_exceptions = ();\n' \
+               + '    positions = ( { seq = 2; pos = (7, 6, 8, 9); }\n' \
+               + ');\n' \
+               + ' }\n' \
+               + ');\n' \
+               + '};\n'
+    expected_list = expected.splitlines()
+    result_list = parse_features(text_features).splitlines()
+    for i in range(len(expected_list)):
+        eq_(expected_list[i], result_list[i])

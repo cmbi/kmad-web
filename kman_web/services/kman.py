@@ -37,6 +37,7 @@ class PredictStrategy(object):
             f.write(fasta_seq)
 
         align_fasta_filename = tmp_file.name
+        conffilename = ""
         if multi_seq_input:
             single_fasta_filename = files.write_single_fasta(fasta_seq)
         else:
@@ -49,7 +50,7 @@ class PredictStrategy(object):
                                  multi_seq_input),
                     group(tasks_to_run),
                     postprocess.s(single_fasta_filename, align_fasta_filename,
-                                  self.output_type))()
+                                  conffilename, self.output_type))()
         task_id = job.id
 
         return task_id
@@ -72,8 +73,10 @@ class PredictAndAlignStrategy(object):
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
-
-        conffilename = files.write_conf_file(usr_features)
+        if usr_features:
+            conffilename = files.write_conf_file(usr_features)
+        else:
+            conffilename = ""
 
         align_fasta_filename = tmp_file.name
         if multi_seq_input:
@@ -93,7 +96,7 @@ class PredictAndAlignStrategy(object):
                                  multi_seq_input),
                     group(tasks_to_run),
                     postprocess.s(single_fasta_filename, align_fasta_filename,
-                                  self.output_type))()
+                                  conffilename, self.output_type))()
         task_id = job.id
         return task_id
 
@@ -114,8 +117,10 @@ class AlignStrategy(object):
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
-
-        conffilename = files.write_conf_file(usr_features)
+        if usr_features:
+            conffilename = files.write_conf_file(usr_features)
+        else:
+            conffilename = ""
 
         align_fasta_filename = tmp_file.name
         if multi_seq_input:
@@ -132,6 +137,6 @@ class AlignStrategy(object):
                                  multi_seq_input),
                     group(tasks_to_run),
                     postprocess.s(single_fasta_filename, align_fasta_filename,
-                                  self.output_type))()
+                                  conffilename, self.output_type))()
         task_id = job.id
         return task_id

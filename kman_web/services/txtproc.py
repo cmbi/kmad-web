@@ -244,8 +244,9 @@ def parse_features(usr_features):
                    + '    subtract_exceptions = ();\n' \
                    + '    positions = ( '
         for j in feat_dict[i]['positions']:
-            outtext += '{{ seq = {}; pos = ({}); }'.format(j['seq'],
-                                                           ', '.join(j['pos']))
-        outtext += '}\n'
+            outtext += '{{ seq = {}; pos = ({}); }}\n'.format(j['seq'],
+                                                              ', '.join(j['pos']))
+
+        outtext += ');\n}\n'
     outtext += ');\n};\n'
     return outtext

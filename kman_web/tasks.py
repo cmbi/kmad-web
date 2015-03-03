@@ -25,11 +25,14 @@ _log = logging.getLogger(__name__)
 
 
 @celery_app.task
-def postprocess(result, single_filename, multi_filename, output_type):
+def postprocess(result, single_filename, multi_filename, conffilename,
+                output_type):
     # process result and remove tmp files
     _log.debug("Postprocessing the results")
     files.remove_files(single_filename)
     files.remove_files(multi_filename)
+    if conffilename:
+        files.remove_files(conffilename)
 
     # If the results are not from the d2p2 database and from more than one
     # method, then process them
