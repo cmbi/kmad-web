@@ -1,3 +1,5 @@
+import os
+
 from mock import mock_open, patch
 from nose.tools import eq_, ok_, raises
 
@@ -155,18 +157,25 @@ class TestTasks(object):
         result = run_single_predictor.delay(d2p2_result, filename, pred_name)
         eq_(result.get(),  expected)
 
-    @patch('kman_web.services.files.open', create=True)
-    def test_update_elm(self, mock_open):
-        from kman_web.tasks import update_elm
+    def test_update_elm(self):
+        filename = 'tests/unit/testdata/elm_complete_test.txt'
+        if os.path.isfile(filename):
+            os.remove(filename)
 
-        update_elm('tests/unit/testdata/elm_complete_test.txt')
-        handle = mock_open()
-        handle.write.assert_called_once()
-        result = handle.write.call_args
+        from kman_web.tasks import update_elmdb
+        update_elmdb.delay(filename)
+
+        ok_(os.path.isfile(filename))
+        with open(filename) as a:
+            result = a.read().splitlines()
+
         ok_(len(result) > 0)
-        first_line = result.splitlines()[0].split()
+        # first_line = result.splitlines()[0].split()
+        first_line = result[0].split()
+        print 'first line: ' + first_line
         ok_(len(first_line) >= 3)
         ok_(first_line[2].isdigit())
         if len(first_line) > 3:
             for i in first_line[3:]:
                 ok_(i.isalnum() and i.isdigit())
+        # os.remove(filename)

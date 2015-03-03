@@ -52,6 +52,7 @@ celerybeat-schedule
 
 # bower
 kman_web/frontend/static/libs
+node_modules/
 
 #redis
 dump.rdb

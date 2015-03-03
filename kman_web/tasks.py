@@ -178,7 +178,8 @@ def query_d2p2(filename, output_type, multi_seq_input):
 
 
 @celery_app.task
-def update_elm(output_filename):
+def update_elmdb(output_filename):
+    _log.info("Running elm update")
     elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
     go_url = "http://geneontology.org/ontology/go-basic.obo"
     elm_list = elm.get_data_from_url(elm_url)
@@ -197,6 +198,7 @@ def update_elm(output_filename):
                                           prob, ' '.join(go_terms_extended))
     out = open(output_filename, 'w')
     out.write(outtext)
+    _log.debug("Finished updating elm")
     out.close()
 
 

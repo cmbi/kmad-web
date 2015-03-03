@@ -14,10 +14,10 @@ CELERY_RESULT_BACKEND = 'redis://localhost/0'
 #CELERY_TASK_SERIALIZER = 'json'
 CELERYBEAT_SCHEDULE = {
     # Every day at midnight
-    'update_elm': {
-        'task': 'hope.tasks.update_elm',
-        'schedule': crontab(hour=0, minute=0),
-        'args': ('kman_web/frontend/static/dbs/elm_complete.txt')
+    'update_elmdb': {
+        'task': 'kman_web.tasks.update_elmdb',
+        'schedule': crontab(hour=0,minute=0),
+        'args': ('kman_web/frontend/static/dbs/elm_complete.txt',)
     },
 }
 
