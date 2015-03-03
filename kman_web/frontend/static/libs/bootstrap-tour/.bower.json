@@ -1,6 +1,6 @@
 {
   "name": "bootstrap-tour",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "main": [
     "./build/js/bootstrap-tour.js",
     "./build/js/bootstrap-tour-standalone.js",
@@ -18,14 +18,14 @@
     "blueimp-md5": "~1.1.0"
   },
   "homepage": "https://github.com/sorich87/bootstrap-tour",
-  "_release": "0.10.1",
+  "_release": "0.10.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.10.1",
-    "commit": "8b29b65f41f09ead6d7841c4c97f5cc68a68da3d"
+    "tag": "v0.10.2",
+    "commit": "755fced5098ad420cc378a894f9a3ded6623f03b"
   },
   "_source": "git://github.com/sorich87/bootstrap-tour.git",
-  "_target": "~0.10.1",
+  "_target": "~0.10.2",
   "_originalSource": "bootstrap-tour",
   "_direct": true
 }

@@ -27,6 +27,5 @@
   },
   "_source": "git://github.com/ericdrowell/KineticJS.git",
   "_target": "~5.1.0",
-  "_originalSource": "kineticjs",
-  "_direct": true
+  "_originalSource": "kineticjs"
 }
