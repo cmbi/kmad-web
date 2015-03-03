@@ -161,7 +161,7 @@ def query_d2p2(filename, output_type, multi_seq_input):
     if not (multi_seq_input and output_type == 'align'):
         out_blast = filename.split(".")[0]+".blastp"
         args = ["blastp", "-query", filename, "-evalue", "1e-5",
-                "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
+                "-num_threads", "15", "-db", paths.SWISSPROT_DB,
                 "-out", out_blast]
         try:
             subprocess.call(args)

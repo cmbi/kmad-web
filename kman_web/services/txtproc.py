@@ -244,9 +244,13 @@ def parse_features(usr_features):
                    + '    subtract_exceptions = ();\n' \
                    + '    positions = ( '
         for j in feat_dict[i]['positions']:
-            outtext += '{{ seq = {}; pos = ({}); }}\n'.format(j['seq'],
-                                                              ', '.join(j['pos']))
-
+            outtext += '{{ seq = {}; pos = ({}); }}'.format(j['seq'],
+                                                            ', '.join(j['pos']))
+            if j != feat_dict[i]['positions'][-1]:
+                outtext += ','
+                _log.debug("Added a coma")
+            _log.debug("New stuff")
+            outtext += '\n'
         outtext += ');\n}\n'
     outtext += ');\n};\n'
     return outtext
