@@ -1,6 +1,7 @@
 import json
 import logging
 import subprocess
+import re
 import urllib2
 
 from celery import current_app as celery_app
@@ -16,6 +17,7 @@ from kman_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
                                      psipred_outfilename)
+from kman_web.services import update_elm as elm
 
 
 logging.basicConfig()
@@ -23,11 +25,14 @@ _log = logging.getLogger(__name__)
 
 
 @celery_app.task
-def postprocess(result, single_filename, multi_filename, output_type):
+def postprocess(result, single_filename, multi_filename, conffilename,
+                output_type):
     # process result and remove tmp files
     _log.debug("Postprocessing the results")
     files.remove_files(single_filename)
     files.remove_files(multi_filename)
+    if conffilename:
+        files.remove_files(conffilename)
 
     # If the results are not from the d2p2 database and from more than one
     # method, then process them
@@ -109,7 +114,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 @celery_app.task
 def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
-          multi_seq_input):
+          multi_seq_input, conffilename):
     # blast result file already created in "query_d2p2"
     if not multi_seq_input:
         out_blast = filename.split(".")[0]+".blastp"
@@ -126,7 +131,9 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
             "-p", str(ptm_score), "-d", str(domain_score),
             "--out-encoded",
             "-m", str(motif_score), "-c", str(codon_length)]
-    _log.debug("KMAN: {}".format(subprocess.list2cmdline(args)))
+    if conffilename:
+        args.extend(["--conf", conffilename])
+    _log.debug("Running KMAN: {}".format(subprocess.list2cmdline(args)))
     subprocess.call(args)
 
     with open(fastafile.split('.')[0] + '.map') as a:
@@ -154,7 +161,7 @@ def query_d2p2(filename, output_type, multi_seq_input):
     if not (multi_seq_input and output_type == 'align'):
         out_blast = filename.split(".")[0]+".blastp"
         args = ["blastp", "-query", filename, "-evalue", "1e-5",
-                "-num_threads", "15", "-db", paths.SWISSPROT_DB_MAC,
+                "-num_threads", "15", "-db", paths.SWISSPROT_DB,
                 "-out", out_blast]
         try:
             subprocess.call(args)
@@ -173,6 +180,31 @@ def query_d2p2(filename, output_type, multi_seq_input):
                 else:
                     found_it = False
     return [found_it, prediction]
+
+
+@celery_app.task
+def update_elmdb(output_filename):
+    _log.info("Running elm update")
+    elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
+    go_url = "http://geneontology.org/ontology/go-basic.obo"
+    elm_list = elm.get_data_from_url(elm_url)
+    go_terms_list = elm.get_data_from_url(go_url)
+    outtext = ""
+    go_families = dict()
+    for i in elm_list[6:]:
+        lineI = re.split('\t|"', i)
+        elm_id = lineI[4]
+        pattern = lineI[10]
+        prob = lineI[13]
+        motif_go_terms = elm.get_motif_go_terms(elm_id)
+        go_terms_extended = elm.extend_go_terms(go_terms_list, motif_go_terms,
+                                                go_families)
+        outtext += "{} {} {} {}\n".format(elm_id, pattern,
+                                          prob, ' '.join(go_terms_extended))
+    out = open(output_filename, 'w')
+    out.write(outtext)
+    _log.debug("Finished updating elm")
+    out.close()
 
 
 def get_task(output_type):

@@ -34,7 +34,7 @@ class TestTasks(object):
 
         from kman_web.tasks import align
 
-        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False)
+        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False, "")
         eq_(result.get(), expected)
 
     def test_postprocess(self):
@@ -46,14 +46,16 @@ class TestTasks(object):
         func_input = [test.seq, test.d2p2_result]
         expected = func_input[:]
 
-        result = postprocess.delay(func_input, filename, filename, 'predict')
+        result = postprocess.delay(func_input, filename, filename, '',
+                                   'predict')
         eq_(result.get(), expected)
 
         # check predictors' result and output type 'predict'
         func_input = [test.seq] + test.pred_result
         expected = [test.seq] + test.processed_pred_result
 
-        result = postprocess.delay(func_input, filename, filename, 'predict')
+        result = postprocess.delay(func_input, filename, filename, '',
+                                   'predict')
         eq_(result.get(), expected)
 
         # check d2p2 results and output type 'predict_and_align'
@@ -62,7 +64,7 @@ class TestTasks(object):
             + [[test.alignment_1c, test.alignment_1c_list]]
         expected = func_input[:]
 
-        result = postprocess.delay(func_input, filename, filename,
+        result = postprocess.delay(func_input, filename, filename, '',
                                    'predict_and_align')
         eq_(result.get(), expected)
 
@@ -74,7 +76,7 @@ class TestTasks(object):
             + test.processed_pred_result \
             + [[test.alignment_1c, test.alignment_1c_list]]
 
-        result = postprocess.delay(func_input, filename, filename,
+        result = postprocess.delay(func_input, filename, filename, '',
                                    'predict_and_align')
         eq_(result.get(), expected)
 
@@ -154,3 +156,26 @@ class TestTasks(object):
 
         result = run_single_predictor.delay(d2p2_result, filename, pred_name)
         eq_(result.get(),  expected)
+
+    # def test_update_elm(self):
+    #     filename = 'tests/unit/testdata/elm_complete_test.txt'
+    #     if os.path.isfile(filename):
+    #         os.remove(filename)
+
+    #     from kman_web.tasks import update_elmdb
+    #     update_elmdb.delay(filename)
+
+    #     ok_(os.path.isfile(filename))
+    #     with open(filename) as a:
+    #         result = a.read().splitlines()
+
+    #     ok_(len(result) > 0)
+    #     # first_line = result.splitlines()[0].split()
+    #     first_line = result[0].split()
+    #     print 'first line: ' + first_line
+    #     ok_(len(first_line) >= 3)
+    #     ok_(first_line[2].isdigit())
+    #     if len(first_line) > 3:
+    #         for i in first_line[3:]:
+    #             ok_(i.isalnum() and i.isdigit())
+    #     # os.remove(filename)

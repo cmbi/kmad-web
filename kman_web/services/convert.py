@@ -73,33 +73,38 @@ def run_pfam_scan(filename):
     data = urllib.urlencode(values)
     request = urllib2.Request('http://pfam.xfam.org/search/sequence', data)
     reply = urllib2.urlopen(request).read()
-    tree = ET.fromstring(reply)
-    result_url = tree[0][1].text
-    count = 0
-    finished = False
-    while count < 20 and not finished:
-        time.sleep(6)
-        try:
-            request = urllib2.Request(result_url)
-            result = urllib2.urlopen(request).read()
-            root = ET.fromstring(result)
-            for child in root[0][0][0][0]:
-                for g in child:
-                    domain_accessions += [child.attrib['accession']]
-                    domain_coords += [[int(g.attrib['start']),
-                                       int(g.attrib['end'])]]
-            finished = True
-        except ET.ParseError:
-            _log.debug("The result is not yet there")
-        count += 1
-
+    pfam_server_error = False
+    try:
+        tree = ET.fromstring(reply)
+    except ET.ParseError:
+        pfam_server_error = True
+    if not pfam_server_error:
+        result_url = tree[0][1].text
+        count = 0
+        finished = False
+        while count < 20 and not finished:
+            time.sleep(6)
+            try:
+                request = urllib2.Request(result_url)
+                result = urllib2.urlopen(request).read()
+                root = ET.fromstring(result)
+                if len(root[0]):
+                    for child in root[0][0][0][0]:
+                        for g in child:
+                            domain_accessions += [child.attrib['accession']]
+                            domain_coords += [[int(g.attrib['start']),
+                                               int(g.attrib['end'])]]
+                finished = True
+            except ET.ParseError:
+                _log.debug("The result is not yet there")
+            count += 1
     return [domain_coords, domain_accessions]
 
 
 # NETPHOS
 def run_netphos(filename):
     phosphorylations = set([])
-    args = ['netphos-3.1', filename]
+    args = ['netphos', filename]
     netPhosOut = subprocess.check_output(args).splitlines()
 
     for lineI in netPhosOut:
@@ -409,7 +414,7 @@ def tmp_fasta(seq_id, seq):  # pragma: no cover
 
 
 def elm_db():
-    with open(paths.ELM_DB_GO_COMPLETE_MAC) as a:
+    with open(paths.ELM_DB_GO_COMPLETE) as a:
         slims_all_classes_pre = a.read()
     return process_slims_all_classes(slims_all_classes_pre.splitlines())
 

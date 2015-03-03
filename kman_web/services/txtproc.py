@@ -103,6 +103,7 @@ def find_length(lines):
             length = i.split('=')[1]
     return length
 
+
 def find_seqid_blast(filename):
     with open(filename) as a:
         blast = a.read()
@@ -196,3 +197,60 @@ def check_if_multi(fasta_seq):
         return True
     else:
         return False
+
+
+def parse_positions(pos):
+    poslist = pos.replace(' ', '').split(',')
+    parsed = []
+    for i in poslist:
+        if i.isdigit():
+            parsed += [i]
+        elif len(i.split('-')) == 2:
+            parsed += [str(j) for j in xrange(int(i.split('-')[0]),
+                                              int(i.split('-')[1]) + 1)]
+    return parsed
+
+
+def parse_features(usr_features):
+    outtext = 'feature_settings = \n' \
+              + '  {\n' \
+              + '  usr_features = ( \n'
+    feat_dict = {}
+    for i in usr_features:
+        i_positions = parse_positions(i['positions'])
+        if i['featname'] not in feat_dict.keys():
+            feat_dict[i['featname']] = {'name': i['featname'],
+                                        'add_score': i['add_score'],
+                                        'positions': [{'seq':
+                                                       i['sequence_number'],
+                                                       'pos':
+                                                       i_positions
+                                                       }]
+                                        }
+        else:
+            feat_dict[i['featname']]['positions'] += [{'seq':
+                                                       i['sequence_number'],
+                                                       'pos': i_positions}]
+    for i in feat_dict.keys():
+        outtext += '{{    name = "{}";\n'.format(i) \
+                   + '    tag = "";\n' \
+                   + '    add_score = {};\n'.format(feat_dict[i]['add_score']) \
+                   + '    subtract_score = "";\n' \
+                   + '    add_features = ("{}");\n'.format(i) \
+                   + '    add_tags = ();\n' \
+                   + '    add_exceptions = ();\n' \
+                   + '    subtract_features = ();\n' \
+                   + '    subtract_tags = ();\n' \
+                   + '    subtract_exceptions = ();\n' \
+                   + '    positions = ( '
+        for j in feat_dict[i]['positions']:
+            outtext += '{{ seq = {}; pos = ({}); }}'.format(j['seq'],
+                                                            ', '.join(j['pos']))
+            if j != feat_dict[i]['positions'][-1]:
+                outtext += ','
+                _log.debug("Added a coma")
+            _log.debug("New stuff")
+            outtext += '\n'
+        outtext += ');\n}\n'
+    outtext += ');\n};\n'
+    return outtext
