@@ -105,7 +105,7 @@ def test_parse_features():
                + '    subtract_exceptions = ();\n' \
                + '    positions = ( { seq = 2; pos = (7, 6, 8, 9); }\n' \
                + ');\n' \
-               + ' }\n' \
+               + '}\n' \
                + ');\n' \
                + '};\n'
     expected_list = expected.splitlines()

@@ -91,7 +91,7 @@ class PredictAndAlignStrategy(object):
         tasks_to_run += [align.s(align_fasta_filename, gap_opening_penalty,
                                  gap_extension_penalty, end_gap_penalty,
                                  ptm_score, domain_score, motif_score,
-                                 multi_seq_input)]
+                                 multi_seq_input, conffilename)]
         job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                  multi_seq_input),
                     group(tasks_to_run),
@@ -132,7 +132,7 @@ class AlignStrategy(object):
                         align.s(align_fasta_filename, gap_opening_penalty,
                                 gap_extension_penalty, end_gap_penalty,
                                 ptm_score, domain_score, motif_score,
-                                multi_seq_input)]
+                                multi_seq_input, conffilename)]
         job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                  multi_seq_input),
                     group(tasks_to_run),

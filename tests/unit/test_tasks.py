@@ -1,7 +1,5 @@
-import os
-
 from mock import mock_open, patch
-from nose.tools import eq_, ok_, raises
+from nose.tools import eq_, raises
 
 from testdata import test_variables as test
 from kman_web.factory import create_app, create_celery_app
@@ -36,7 +34,7 @@ class TestTasks(object):
 
         from kman_web.tasks import align
 
-        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False)
+        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False, "")
         eq_(result.get(), expected)
 
     def test_postprocess(self):
