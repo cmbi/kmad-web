@@ -1,7 +1,11 @@
+import glob
 import logging
+import os
+import tempfile
 import time
+import urllib2
 
-from kman_web import paths
+from kman_web.services import txtproc
 
 
 _log = logging.getLogger(__name__)
@@ -15,7 +19,11 @@ def is_empty(s1):
 
 
 def get_seq_from_uniprot(uniprot_id):
-    uniprot = open(paths.UNIPROT_FASTA_DIR + uniprot_id + ".fasta").readlines()
+    # uniprot = open(paths.UNIPROT_FASTA_DIR
+    #                + uniprot_id + ".fasta").readlines()
+    req = urllib2.Request("http://www.uniprot.org/uniprot/"
+                          + uniprot_id + ".fasta")
+    uniprot = urllib2.urlopen(req).readlines()
     for i, lineI in enumerate(uniprot):
         if lineI.startswith('>') and uniprot_id in lineI:
             header = lineI
@@ -92,3 +100,41 @@ def psipred_outfilename(fasta_file):
 
 def predisorder_outfilename(fasta_file):
     return '.'.join(fasta_file.split('.')[:-1])+".predisorder"
+
+
+def write_single_fasta(fasta_seq):
+    fasta_list = fasta_seq.splitlines()
+    newfile_list = [fasta_list[0]]
+    reading = True
+    i = 1
+    while reading and i < len(fasta_list):
+        if fasta_list[i].startswith('>'):
+            reading = False
+        else:
+            newfile_list += [fasta_list[i]]
+        i += 1
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    _log.debug("Created tmp file '{}'".format(tmp_file.name))
+    with tmp_file as f:
+        _log.debug("Writing data to '{}'".format(tmp_file.name))
+        f.write('\n'.join(newfile_list))
+    return tmp_file.name
+
+
+def remove_files(filename):
+    prefix = filename[0:14]
+    if glob.glob('%s*' % prefix):
+        os.system('rm %s*' % prefix)    # pragma: no cover
+    prefix = prefix[5:]
+    if glob.glob('%s*' % prefix):
+        os.system('rm %s*' % prefix)    # pragma: no cover
+
+
+def write_conf_file(usr_features):
+    parsed_features = txtproc.parse_features(usr_features)
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".cfg", delete=False)
+    _log.debug("Created tmp file '{}'".format(tmp_file.name))
+    with tmp_file as f:
+        _log.debug("Writing data to '{}'".format(tmp_file.name))
+        f.write(parsed_features)
+    return tmp_file.name

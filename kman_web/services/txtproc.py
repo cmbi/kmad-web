@@ -77,12 +77,22 @@ def preprocess(pred_out, pred_name):
 
 def process_fasta(fastafile):
     fasta_list = fastafile.splitlines()
+    new_list = []
     if fastafile.startswith('>'):
-        sequence = ''.join(fasta_list[1:])
-        new_fasta = fasta_list[0]+'\n'+sequence
+        for i in fasta_list:
+            if i.startswith('>'):
+                new_list += [i + '\n']
+            else:
+                new_list[-1] += i
+        new_fasta = '\n'.join(new_list)
     else:
-        sequence = ''.join(fasta_list)
-        new_fasta = '>fasta_header\n{}'.format(sequence)
+        new_fasta = '>fasta_header\n{}'.format(''.join(fasta_list))
+    # if fastafile.startswith('>'):
+    #     sequence = ''.join(fasta_list[1:])
+    #     new_fasta = fasta_list[0]+'\n'+sequence
+    # else:
+    #     sequence = ''.join(fasta_list)
+    #     new_fasta = '>fasta_header\n{}'.format(sequence)
     return new_fasta
 
 
@@ -92,6 +102,7 @@ def find_length(lines):
         if i.startswith('Length'):
             length = i.split('=')[1]
     return length
+
 
 def find_seqid_blast(filename):
     with open(filename) as a:
@@ -157,7 +168,6 @@ def process_alignment(data, codon_length):
         processed += [[header, sequence]]
         encoded += [[header, data_list[i+1]]]
         processed_text += "{}\n{}\n".format(data_list[i], sequence)
-    _log.info("{}\n{}\n".format(processed, encoded))
     return [processed_text, processed, encoded]
 
 
@@ -170,3 +180,77 @@ def decode(alignment, codon_length):
         else:
             new_data_list += [data_list[i][::codon_length]]
     return '\n'.join(new_data_list)
+
+
+def check_if_multi(fasta_seq):
+    count = 0
+    reading = True
+    i = 0
+    fasta_list = fasta_seq.splitlines()
+    while reading and i < len(fasta_list):
+        if fasta_list[i].startswith('>'):
+            count += 1
+        if count > 1:
+            reading = False
+        i += 1
+    if count > 1:
+        return True
+    else:
+        return False
+
+
+def parse_positions(pos):
+    poslist = pos.replace(' ', '').split(',')
+    parsed = []
+    for i in poslist:
+        if i.isdigit():
+            parsed += [i]
+        elif len(i.split('-')) == 2:
+            parsed += [str(j) for j in xrange(int(i.split('-')[0]),
+                                              int(i.split('-')[1]) + 1)]
+    return parsed
+
+
+def parse_features(usr_features):
+    outtext = 'feature_settings = \n' \
+              + '  {\n' \
+              + '  usr_features = ( \n'
+    feat_dict = {}
+    for i in usr_features:
+        i_positions = parse_positions(i['positions'])
+        if i['featname'] not in feat_dict.keys():
+            feat_dict[i['featname']] = {'name': i['featname'],
+                                        'add_score': i['add_score'],
+                                        'positions': [{'seq':
+                                                       i['sequence_number'],
+                                                       'pos':
+                                                       i_positions
+                                                       }]
+                                        }
+        else:
+            feat_dict[i['featname']]['positions'] += [{'seq':
+                                                       i['sequence_number'],
+                                                       'pos': i_positions}]
+    for i in feat_dict.keys():
+        outtext += '{{    name = "{}";\n'.format(i) \
+                   + '    tag = "";\n' \
+                   + '    add_score = {};\n'.format(feat_dict[i]['add_score']) \
+                   + '    subtract_score = "";\n' \
+                   + '    add_features = ("{}");\n'.format(i) \
+                   + '    add_tags = ();\n' \
+                   + '    add_exceptions = ();\n' \
+                   + '    subtract_features = ();\n' \
+                   + '    subtract_tags = ();\n' \
+                   + '    subtract_exceptions = ();\n' \
+                   + '    positions = ( '
+        for j in feat_dict[i]['positions']:
+            outtext += '{{ seq = {}; pos = ({}); }}'.format(j['seq'],
+                                                            ', '.join(j['pos']))
+            if j != feat_dict[i]['positions'][-1]:
+                outtext += ','
+                _log.debug("Added a coma")
+            _log.debug("New stuff")
+            outtext += '\n'
+        outtext += ');\n}\n'
+    outtext += ');\n};\n'
+    return outtext

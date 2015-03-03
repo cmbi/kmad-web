@@ -1,5 +1,5 @@
 from mock import patch
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 
 
 def test_decode():
@@ -75,3 +75,40 @@ def test_find_seqid_blast(mock_open):
     expected = [False, '']
     result = find_seqid_blast('testname')
     eq_(expected, result)
+
+
+def test_check_if_multi():
+    from kman_web.services.txtproc import check_if_multi
+
+    testfasta = '>1\nSEQSEQ\nSEQ'
+    ok_(not check_if_multi(testfasta))
+    testfasta = '>1\nSEQSEQ\nSEQ\n>2\nSESESEQ\n'
+    ok_(check_if_multi(testfasta))
+
+
+def test_parse_features():
+    from kman_web.services.txtproc import parse_features
+
+    text_features = [{'featname': 'feat1', 'add_score': 2,
+                      'sequence_number': '2', 'positions': '7,6,8-9'}]
+    expected = 'feature_settings = \n  {\n' \
+               + '  usr_features = ( \n' \
+               + '{    name = "feat1";\n' \
+               + '    tag = "";\n' \
+               + '    add_score = 2;\n' \
+               + '    subtract_score = "";\n' \
+               + '    add_features = ("feat1");\n' \
+               + '    add_tags = ();\n' \
+               + '    add_exceptions = ();\n' \
+               + '    subtract_features = ();\n' \
+               + '    subtract_tags = ();\n' \
+               + '    subtract_exceptions = ();\n' \
+               + '    positions = ( { seq = 2; pos = (7, 6, 8, 9); }\n' \
+               + ');\n' \
+               + '}\n' \
+               + ');\n' \
+               + '};\n'
+    expected_list = expected.splitlines()
+    result_list = parse_features(text_features).splitlines()
+    for i in range(len(expected_list)):
+        eq_(expected_list[i], result_list[i])

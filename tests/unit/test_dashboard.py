@@ -23,21 +23,23 @@ class TestDashboard(object):
     def test_index_post_predict(self, mock_call1, mock_call2):
         mock_call1.return_value = 12345
         mock_call2.return_value = 12345
-        test_sequence = '>testseq\nSEQ\n'
+        test_sequence = '>testseq\nSEQSEQSEQSEQ\n'
         rv = self.app.post('/', data={'output_type': 'predict_and_align',
-                                      'sequence': test_sequence},
+                                      'sequence': test_sequence,
+                                      'submit_job': 'Submit'},
                            follow_redirects=True)
         eq_(rv.status_code, 200)
         assert 'Job status' in rv.data
         mock_call1.assert_called_once_with(test_sequence, -5, -1, -1, 10,
-                                           3, 3, [])
+                                           3, 3, [], False, [])
 
         rv = self.app.post('/', data={'output_type': 'predict',
-                                      'sequence': test_sequence},
+                                      'sequence': test_sequence,
+                                      'submit_job': 'Submit'},
                            follow_redirects=True)
         eq_(rv.status_code, 200)
         assert 'Job status' in rv.data
-        mock_call2.assert_called_once_with(test_sequence, [])
+        mock_call2.assert_called_once_with(test_sequence, [], False)
 
     def test_methods(self):
         rv = self.app.get('/methods',

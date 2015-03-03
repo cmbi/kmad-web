@@ -1,9 +1,14 @@
+import logging
+
 from flask_wtf import Form
-from wtforms import widgets
+from wtforms import widgets, validators
 from wtforms.fields import (FloatField, IntegerField, SelectField,
-                            TextAreaField, SelectMultipleField)
+                            TextAreaField, SelectMultipleField,
+                            FieldList, FormField, TextField, SubmitField)
 from wtforms.widgets import html_params, HTMLString
 
+logging.basicConfig()
+_log = logging.getLogger(__name__)
 
 class MyListWidget(object):
     """
@@ -34,7 +39,53 @@ class MyListWidget(object):
         return HTMLString(u''.join(html))
 
 
+class UsrFeatureEntryForm(Form):
+    def validate_positions(form, field):
+        if field.data:
+            data_list = field.data.replace(' ', '').split(',')
+            for i in data_list:
+                i_list = i.split('-')
+                non_int = not all(e.isdigit() and int(e) > 0 for e in i_list)
+                if non_int or len(i_list) not in [1, 2]:
+                    _log.debug("item: {}".format(i_list))
+                    raise validators.ValidationError('Feature positions need \
+                                                      to be listed in a comma \
+                                                      separated format, e.g. \
+                                                      "1, 2, 15-20" would \
+                                                      indicate positions 1, \
+                                                      2, and all positions \
+                                                      from 15 to 20')
+    featname = TextField(u'Feature name', [validators.length(max=10)])
+    add_score = IntegerField(u'Add score', [validators.Optional()])
+    sequence_number = IntegerField(u'Sequence number', [validators.Optional()])
+    positions = TextField(u'Feature positions')
+
+
 class KmanForm(Form):
+    def validate_sequence(form, field):
+        reading = True
+        i = 0
+        seq_list = field.data.splitlines()
+        if field.data.count('>') < 2:
+            if field.data.startswith('>'):
+                length = len(''.join(seq_list[1:]))
+            else:
+                length = len(''.join(seq_list))
+            if length < 10:
+                raise validators.ValidationError('Sequence should be at least \
+                                                  10 amino acids long')
+        while reading and i < len(seq_list):
+            if (seq_list[i] and not (seq_list[i].startswith('>')
+                                     and i < len(seq_list) - 1
+                                     and seq_list[i + 1].isalpha())
+                            and not seq_list[i].isalpha()):
+                raise validators.ValidationError('Sequence should be either in \
+                                                  FASTA format or simply a \
+                                                  sequence of one-letter amino \
+                                                  acid codes')
+                reading = False
+            i += 1
+
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',
                                                    'align'),
@@ -61,3 +112,9 @@ class KmanForm(Form):
         widget=MyListWidget(
             html_tag='collist',
             prefix_label=False))
+    add_feature = SubmitField()
+    remove_feature = SubmitField()
+    usr_features = FieldList(FormField(UsrFeatureEntryForm),
+                             label="User defined features")
+
+    submit_job = SubmitField("Submit")

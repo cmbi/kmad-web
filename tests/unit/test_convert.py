@@ -6,6 +6,8 @@ from MockResponse import MockResponse
 from testdata import test_variables as test_vars
 
 
+@patch('urllib2.urlopen')
+@patch('kman_web.services.convert.urllib2.Request')
 @patch('kman_web.services.convert.check_id')
 @patch('kman_web.services.convert.elm_db')
 @patch('kman_web.services.convert.tmp_fasta')
@@ -19,7 +21,10 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
                            mock_search_elm, mock_run_netphos,
                            mock_find_phosph_sites,
                            mock_read_fasta, mock_tmp_fasta,
-                           mock_elm_db, mock_check_id):
+                           mock_elm_db, mock_check_id,
+                           mock_urlopen, mock_request):
+
+    mock_urlopen.return_value = MockResponse('')
 
     filename = 'testdata/test.fasta'
 
@@ -108,15 +113,19 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     eq_(expected_calls, handle.write.call_args_list)
 
 
+@patch('urllib2.urlopen')
+@patch('kman_web.services.convert.urllib2.Request')
 @patch('kman_web.services.convert.os.path.exists')
 @patch('kman_web.services.convert.open',
        mock_open(read_data=open(
            'tests/unit/testdata/test_get_uniprot_txt.dat').read()),
        create=True)
-def test_get_uniprot_txt(mock_os_path_exists):
+def test_get_uniprot_txt(mock_os_path_exists, mock_urlopen, mock_request):
+    mock_request.return_value = MockResponse(
+        open('tests/unit/testdata/test_get_uniprot_txt.dat').read())
     # with open('tests/unit/testdata/features.dat') as a:
     #     expected = a.read().splitlines()
-    mock_os_path_exists = True
+    mock_os_path_exists.return_value = True
     expected = {"features":
                 ["FT   MOD_RES       2      2       N-acetylalanine."],
                 "GO": ["0030424"]}
@@ -203,11 +212,14 @@ def test_run_netphos(mock_subprocess):
     eq_(result, expected)
 
 
-@patch('subprocess.check_output')
-def test_run_pfam_scan(mock_subprocess):
-    mock_subprocess.return_value = open('tests/unit/testdata/test.pfam').read()
+@patch('kman_web.services.convert.open',
+       mock_open(read_data=open(
+           'tests/unit/testdata/TAU_HUMAN.fasta').read()),
+       create=True)
+def test_run_pfam_scan():
     from kman_web.services.convert import run_pfam_scan
-    expected = [[[1, 2]], ['TEST_ACC TEST_NAME']]
+    expected = [[[560, 591], [592, 622], [623, 653], [654, 685]],
+                ['PF00418.14', 'PF00418.14', 'PF00418.14', 'PF00418.14']]
 
     result = run_pfam_scan('test')
     eq_(result, expected)
@@ -276,6 +288,7 @@ def test_check_id_without_mocks():
                  'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'))
     ok_(not check_id('CRAM_CRAAB',
                      'PSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'))
+    ok_(not check_id('DUMMY_ID', 'SEQ'))
 
 
 def test_get_annotation_level():

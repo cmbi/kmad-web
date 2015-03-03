@@ -4,9 +4,12 @@ import os
 import string
 import subprocess
 import tempfile
+import time
+import urllib
 import urllib2
 
 from operator import itemgetter
+import xml.etree.ElementTree as ET
 
 from kman_web import paths
 
@@ -62,24 +65,46 @@ def get_id(sequence):
 
 # PFAM
 def run_pfam_scan(filename):
-    result = []
-    dom = []
-    args = [paths.PFAM_SCAN, '-fasta', filename, '-dir', paths.PFAM_DB]
-    output = subprocess.check_output(args)
-    pfamscanResult = [i for i in output.splitlines() if not i.startswith('#')]
-
-    for i in pfamscanResult:
-        if len(i.split()) > 3:
-            result.append([int(i.split()[1]), int(i.split()[2])])
-            dom.append(i.split()[5]+" "+i.split()[6])
-
-    return [result, dom]
+    domain_coords = []
+    domain_accessions = []
+    with open(filename) as a:
+        fastafile = a.read()
+    values = {'seq': fastafile, 'output': 'xml'}
+    data = urllib.urlencode(values)
+    request = urllib2.Request('http://pfam.xfam.org/search/sequence', data)
+    reply = urllib2.urlopen(request).read()
+    pfam_server_error = False
+    try:
+        tree = ET.fromstring(reply)
+    except ET.ParseError:
+        pfam_server_error = True
+    if not pfam_server_error:
+        result_url = tree[0][1].text
+        count = 0
+        finished = False
+        while count < 20 and not finished:
+            time.sleep(6)
+            try:
+                request = urllib2.Request(result_url)
+                result = urllib2.urlopen(request).read()
+                root = ET.fromstring(result)
+                if len(root[0]):
+                    for child in root[0][0][0][0]:
+                        for g in child:
+                            domain_accessions += [child.attrib['accession']]
+                            domain_coords += [[int(g.attrib['start']),
+                                               int(g.attrib['end'])]]
+                finished = True
+            except ET.ParseError:
+                _log.debug("The result is not yet there")
+            count += 1
+    return [domain_coords, domain_accessions]
 
 
 # NETPHOS
 def run_netphos(filename):
     phosphorylations = set([])
-    args = ['netphos-3.1', filename]
+    args = ['netphos', filename]
     netPhosOut = subprocess.check_output(args).splitlines()
 
     for lineI in netPhosOut:
@@ -91,13 +116,13 @@ def run_netphos(filename):
 
 def check_id(uniprot_id, seq):
     result = False
+    req = urllib2.Request("http://www.uniprot.org/uniprot/"
+                          + uniprot_id + ".fasta")
     try:
-        req = urllib2.Request("http://www.uniprot.org/uniprot/"
-                              + uniprot_id + ".fasta")
-    except:
+        uni_seq = urllib2.urlopen(req).read()
+    except urllib2.HTTPError:
         _log.info("No entry with ID: {}".format(uniprot_id))
     else:
-        uni_seq = urllib2.urlopen(req).read()
         uni_seq = ''.join(uni_seq.splitlines()[1:])
         if uni_seq == seq:
             result = True
@@ -109,12 +134,16 @@ def check_id(uniprot_id, seq):
 def get_uniprot_txt(uniprot_id):
     features = []
     go_terms = []
-    uni_path = paths.UNIPROT_DAT_DIR + uniprot_id + '.dat'
+    # uni_path = paths.UNIPROT_DAT_DIR + uniprot_id + '.dat'
 
-    if os.path.exists(uni_path):
-        with open(uni_path) as a:
-            uniprot_dat = a.read()
-        uniprot_dat = uniprot_dat.splitlines()
+    # if os.path.exists(uni_path):
+    #     with open(uni_path) as a:
+    #         uniprot_dat = a.read().splitlines()
+
+    req = urllib2.Request("http://www.uniprot.org/uniprot/"
+                          + uniprot_id + ".txt")
+    uniprot_dat = urllib2.urlopen(req).read().splitlines()
+    if True:
         for lineI in uniprot_dat:
             if lineI.startswith('FT'):
                 features += [lineI]
@@ -225,15 +254,18 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
         prob = 1
         if entry:
             slim_id = entry[0]
-            slim_go_terms = slims_all_classes[slim_id]["GO"]
-            if set(seq_go_terms).intersection(set(slim_go_terms)):
-                if entry[3] == "False":
-                    prob = 1 + 1/math.log(
-                        slims_all_classes[slim_id]["prob"], 10)
-                    if prob > 0:
-                        limits.append([int(entry[1]), int(entry[2])])
-                        elms_ids.append(entry[0])
-                        probabilities.append(prob)
+            try:
+                slim_go_terms = slims_all_classes[slim_id]["GO"]
+                if set(seq_go_terms).intersection(set(slim_go_terms)):
+                    if entry[3] == "False":
+                        prob = 1 + 1/math.log(
+                            slims_all_classes[slim_id]["prob"], 10)
+                        if prob > 0:
+                            limits.append([int(entry[1]), int(entry[2])])
+                            elms_ids.append(entry[0])
+                            probabilities.append(prob)
+            except KeyError:
+                _log.debug("Didn't find motif: {}".format(slim_id))
     limits, elms_ids, probabilities = filter_out_overlapping(limits,
                                                              elms_ids,
                                                              probabilities)
@@ -454,7 +486,6 @@ def convert_to_7chars(filename):
         newfile += 'domain_{} {}\n'.format(domainsDictionary[i], i)
     out = open(filename.split('.')[0]+'.map', 'w')
     out.write(newfile)
-    _log.debug("newfile: {}\n".format(newfile))
     out.close()
 
     return outname

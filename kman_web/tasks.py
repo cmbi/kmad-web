@@ -1,13 +1,13 @@
-import glob
 import json
 import logging
-import os
 import subprocess
+import re
 import urllib2
 
 from celery import current_app as celery_app
 
 from kman_web import paths
+from kman_web.services import files
 from kman_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
 from kman_web.services.consensus import (find_consensus_disorder,
@@ -17,6 +17,7 @@ from kman_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
                                      psipred_outfilename)
+from kman_web.services import update_elm as elm
 
 
 logging.basicConfig()
@@ -24,20 +25,20 @@ _log = logging.getLogger(__name__)
 
 
 @celery_app.task
-def postprocess(result, filename, output_type):
+def postprocess(result, single_filename, multi_filename, conffilename,
+                output_type):
     # process result and remove tmp files
     _log.debug("Postprocessing the results")
-    prefix = filename[0:14]
-    if glob.glob('%s*' % prefix):
-        os.system('rm %s*' % prefix)    # pragma: no cover
-    prefix = prefix[5:]
-    if glob.glob('%s*' % prefix):
-        os.system('rm %s*' % prefix)    # pragma: no cover
+    files.remove_files(single_filename)
+    files.remove_files(multi_filename)
+    if conffilename:
+        files.remove_files(conffilename)
 
-    # If the results are not form the d2p2 database, then process them
+    # If the results are not from the d2p2 database and from more than one
+    # method, then process them
     # (find consensus, and filter out short stretches)
     if (output_type == 'predict_and_align'
-            and not result[1][0] == 'D2P2'):
+            and (len(result) > 3 and not result[1][0] == 'D2P2')):
         # first element is the sequence, last element is the alignement
         consensus = find_consensus_disorder(result[1:-1])
         result = result[:-1] + [consensus] + [result[-1]]
@@ -46,7 +47,7 @@ def postprocess(result, filename, output_type):
             + [filter_out_short_stretches(consensus[1])] \
             + [result[-1]]
     elif (output_type == 'predict'
-          and not result[1][0] == 'D2P2'):
+          and (len(result) > 2 and not result[1][0] == 'D2P2')):
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
@@ -89,32 +90,37 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 out_file = psipred_outfilename(fasta_file)
                 args = [method, fasta_file]
             elif pred_name == 'globplot':
-                method = paths.GLOBPLOT_PATH
+                method = paths.GLOBPLOT_PATH_MAC
                 out_file = fasta_file + ".gplot"
                 args = [method, '10', '8', '75', '8', '8',
                         fasta_file, '>', out_file]
-            _log.debug("Running command '{}'".format(
-                subprocess.list2cmdline(args)))
             try:
                 if pred_name == 'globplot':
+                    # data = run_globplot(fasta_file)
                     data = subprocess.check_output(args)
                 else:
                     subprocess.call(args)
                     with open(out_file) as f:
                         data = f.read()
-            except subprocess.CalledProcessError as e:
-                _log.error("Error: {}".format(e.output))
-            data = preprocess(data, pred_name)
+            except (subprocess.CalledProcessError, OSError) as e:
+                _log.error("Error: {}".format(e))
+                _log.debug("Ran command: {}".format(
+                    subprocess.list2cmdline(args)))
+            finally:
+                data = preprocess(data, pred_name)
         return data
 
 
 @celery_app.task
 def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
-          end_gap_penalty, ptm_score, domain_score, motif_score):
+          end_gap_penalty, ptm_score, domain_score, motif_score,
+          multi_seq_input, conffilename):
     # blast result file already created in "query_d2p2"
-    out_blast = filename.split(".")[0]+".blastp"
-    fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
-
+    if not multi_seq_input:
+        out_blast = filename.split(".")[0]+".blastp"
+        fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
+    else:
+        fastafile = filename
     toalign = convert_to_7chars(fastafile)  # .7c filename
     codon_length = 7
 
@@ -125,7 +131,9 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
             "-p", str(ptm_score), "-d", str(domain_score),
             "--out-encoded",
             "-m", str(motif_score), "-c", str(codon_length)]
-    _log.debug("KMAN: {}".format(subprocess.list2cmdline(args)))
+    if conffilename:
+        args.extend(["--conf", conffilename])
+    _log.debug("Running KMAN: {}".format(subprocess.list2cmdline(args)))
     subprocess.call(args)
 
     with open(fastafile.split('.')[0] + '.map') as a:
@@ -147,26 +155,56 @@ def get_seq(d2p2, fasta_file):
 
 
 @celery_app.task
-def query_d2p2(filename, output_type):
+def query_d2p2(filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
-    out_blast = filename.split(".")[0]+".blastp"
-    args = ["blastp", "-query", filename, "-evalue", "1e-5",
-            "-num_threads", "15", "-db", paths.SWISSPROT_DB,
-            "-out", out_blast]
-    subprocess.call(args)
-    if output_type != 'align':
-        [found_it, seq_id] = find_seqid_blast(out_blast)
-        if found_it:
-            data = 'seqids=["%s"]' % seq_id
-            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-            response = json.loads(urllib2.urlopen(request).read())
-            if response[seq_id]:
-                pred_result = response[seq_id][0][2]['disorder']['consensus']
-                prediction = process_d2p2(pred_result)
-            else:
-                found_it = False
+    if not (multi_seq_input and output_type == 'align'):
+        out_blast = filename.split(".")[0]+".blastp"
+        args = ["blastp", "-query", filename, "-evalue", "1e-5",
+                "-num_threads", "15", "-db", paths.SWISSPROT_DB,
+                "-out", out_blast]
+        try:
+            subprocess.call(args)
+        except subprocess.CalledProcessError as e:
+            _log.error("Error: {}".format(e.output))
+        if output_type != 'align':
+            [found_it, seq_id] = find_seqid_blast(out_blast)
+            if found_it:
+                data = 'seqids=["%s"]' % seq_id
+                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+                response = json.loads(urllib2.urlopen(request).read())
+                if response[seq_id]:
+                    pred_result = \
+                        response[seq_id][0][2]['disorder']['consensus']
+                    prediction = process_d2p2(pred_result)
+                else:
+                    found_it = False
     return [found_it, prediction]
+
+
+@celery_app.task
+def update_elmdb(output_filename):
+    _log.info("Running elm update")
+    elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
+    go_url = "http://geneontology.org/ontology/go-basic.obo"
+    elm_list = elm.get_data_from_url(elm_url)
+    go_terms_list = elm.get_data_from_url(go_url)
+    outtext = ""
+    go_families = dict()
+    for i in elm_list[6:]:
+        lineI = re.split('\t|"', i)
+        elm_id = lineI[4]
+        pattern = lineI[10]
+        prob = lineI[13]
+        motif_go_terms = elm.get_motif_go_terms(elm_id)
+        go_terms_extended = elm.extend_go_terms(go_terms_list, motif_go_terms,
+                                                go_families)
+        outtext += "{} {} {} {}\n".format(elm_id, pattern,
+                                          prob, ' '.join(go_terms_extended))
+    out = open(output_filename, 'w')
+    out.write(outtext)
+    _log.debug("Finished updating elm")
+    out.close()
 
 
 def get_task(output_type):
