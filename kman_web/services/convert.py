@@ -109,17 +109,14 @@ def check_id(uniprot_id, seq):
 def get_uniprot_txt(uniprot_id):
     features = []
     go_terms = []
-    uni_path = paths.UNIPROT_DAT_DIR + uniprot_id + '.dat'
-
-    if os.path.exists(uni_path):
-        with open(uni_path) as a:
-            uniprot_dat = a.read()
-        uniprot_dat = uniprot_dat.splitlines()
-        for lineI in uniprot_dat:
-            if lineI.startswith('FT'):
-                features += [lineI]
-            elif lineI.startswith('DR   GO;'):
-                go_terms += [lineI.split(';')[1].split(':')[1]]
+    req = urllib2.Request("http://www.uniprot.org/uniprot/{}.txt".format(
+        uniprot_id))
+    uniprot_dat = urllib2.urlopen(req).read().splitlines()
+    for lineI in uniprot_dat:
+        if lineI.startswith('FT'):
+            features += [lineI]
+        elif lineI.startswith('DR   GO;'):
+            go_terms += [lineI.split(';')[1].split(':')[1]]
     return {"features": features, "GO": go_terms}
 
 
