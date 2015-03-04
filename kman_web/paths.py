@@ -4,7 +4,7 @@ DISOPRED_PATH ="/usr/local/src/disopred/run_disopred"
 PREDISORDER_PATH = "/usr/local/src/predisorder/bin/predict_diso.sh"
 GLOBPLOT_PATH  = "GlobPipe.py"
 PSIPRED_PATH = "/usr/local/src/psipred/runpsipred"
-SWISSPROT_DB = "/home/joanna/data/uniprot_sprot.fasta"
+SWISSPROT_DB = "/data/blast/sprot"
 ELM_DB_GO_COMPLETE = "/home/joanna/skrypty/elm_classes_complete.txt"
 
 UNIPROT_DAT_DIR = "/home/joanna/data/uniprot_dat/"
