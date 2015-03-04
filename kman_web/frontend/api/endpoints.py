@@ -23,7 +23,10 @@ def create_kman(output_type):
     """
     strategy = KmanStrategyFactory.create(output_type)
     _log.debug("Using '{}'".format(strategy.__class__.__name__))
-    celery_id = strategy(request.form['data'])
+    _log.debug(request.form)
+    celery_id = strategy(request.form['fasta'],
+                         request.form['prediction_methods'],
+                         "")
 
     _log.info("Task created with id '{}'".format(celery_id))
     return jsonify({'id': celery_id}), 202
