@@ -12,6 +12,7 @@ CELERY_QUEUES = (
 CELERY_RESULT_BACKEND = 'redis://localhost/2'
 
 #CELERY_TASK_SERIALIZER = 'json'
+<<<<<<< HEAD
 CELERYBEAT_SCHEDULE = {
     # Every day at midnight
     'update_elmdb': {
@@ -40,3 +41,5 @@ PFAM_DB = "/home/joanna/data/Pfam"
 UNIPROT_FASTA_DIR = "/home/joanna/data/uniprot_fasta/"
 UNIPROT_DAT_DIR = "/home/joanna/data/uniprot_dat/"
 extension = {"disopred":".diso", "psipred":".ss2", "predisorder": ".predisorder", "spine":".spd"}
+=======
+>>>>>>> 3055ed785fc1c05c5b6367fc894cb29091436f84

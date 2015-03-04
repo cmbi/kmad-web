@@ -19,10 +19,15 @@ def is_empty(s1):
 
 
 def get_seq_from_uniprot(uniprot_id):
+<<<<<<< HEAD
     # uniprot = open(paths.UNIPROT_FASTA_DIR
     #                + uniprot_id + ".fasta").readlines()
     req = urllib2.Request("http://www.uniprot.org/uniprot/"
                           + uniprot_id + ".fasta")
+=======
+    req = urllib2.Request(
+        "www.uniprot.org/uniprot/{}.fasta".format(uniprot_id))
+>>>>>>> 3055ed785fc1c05c5b6367fc894cb29091436f84
     uniprot = urllib2.urlopen(req).readlines()
     for i, lineI in enumerate(uniprot):
         if lineI.startswith('>') and uniprot_id in lineI:
