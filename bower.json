@@ -21,6 +21,7 @@
     "jquery": "~2.1.1",
     "bootstrap-tour": "~0.10.2",
     "jquery-ui": "~1.11.3",
-    "highlightjs-v8.1": "~8.2.0"
+    "highlightjs-v8.1": "~8.2.0",
+    "bootstrap-validator": "~0.7.2"
   }
 }
