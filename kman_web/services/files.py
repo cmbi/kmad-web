@@ -58,7 +58,7 @@ def get_fasta_from_blast(blast_name, query_filename):
     count = 0
     newfasta = ''
     i = -1
-    while i < len(blastfile):
+    while i < len(blastfile) - 1:
         i += 1
         lineI = blastfile[i]
         if "Sequences producing significant alignments" in lineI:
