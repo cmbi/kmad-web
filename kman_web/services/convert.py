@@ -238,6 +238,21 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
     limits = []
     elms_ids = []
     probabilities = []
+    ## get annotated motifs first
+    req = urllib2.Request("http://elm.eu.org/elms/browse_instances.gff"
+                          "?q="+uniprotID)
+    response = urllib2.urlopen(req)
+    features = response.read().splitlines()
+
+    for i in features:
+        if 'sequence_feature' in i:
+            start = int(i.split()[3])
+            end = int(i.split()[4])
+            elm_id = i.split()[8].split('=')[1]
+            limits.append([start, end])
+            probabilities.append(1)
+            elms_ids.append(elm_id)
+    ## now get predicted motifs
     req = urllib2.Request("http://elm.eu.org/start_search/"+uniprotID+".csv")
     response = urllib2.urlopen(req)
     features = response.read()
