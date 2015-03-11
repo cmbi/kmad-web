@@ -67,7 +67,8 @@ def get_fasta_from_blast(blast_name, query_filename):
         elif reading and len(lineI.split()) > 0:
             e_val = get_e_val(lineI)
             if e_val <= 0.0001:
-                uniprot_id = lineI.split(" ")[2].split("|")[2]
+                # uniprot_id = lineI.split(" ")[2].split("|")[2]
+                uniprot_id = lineI.split(" ")[0].split("|")[2]
                 sequence = get_seq_from_uniprot(uniprot_id)
                 count += 1
                 if count == 1 and sequence[1] != query_fasta[1]:
