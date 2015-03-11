@@ -28,8 +28,8 @@ Length=3
                                                                       Score     E
 Sequences producing significant alignments:                          (Bits)  Value
 
-  test|test|testseq1                                                  3    0.0  
-  test|test|testseq2                                                  2    e-10  
+test|test|testseq1                                                  3    0.0  
+test|test|testseq2                                                  2    e-10  
 
 
 > test|test|testseq1 Test sequence 1
