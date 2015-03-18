@@ -154,8 +154,8 @@ for IDP sequence alignment.
 <br>
 <figure>
 
-  <img src="{{ url_for('static', filename='files/all_bali_out_sp.png') }}"/>
-  <img src="{{ url_for('static', filename='files/all_bali_out_elm_sp.png') }}"/>
+  <img src="{{ url_for('static', filename='files/plots/all_bali_out_sp.jpg') }}"/>
+  <img src="{{ url_for('static', filename='files/plots/all_bali_out_elm_sp.jpg') }}"/>
   <figcaption>
   Figure 1. Scatter plots for BAliBASE scores for KMAD alignments versus Clustal Omega alignments. Left: overall
   BAliBASE scores; Right: BAliBASE scores for motifs. As there are more dots below the line than above the line,
@@ -177,7 +177,7 @@ sequence identity.
 <div>
   <br>
   <figure>
-    <img src="{{ url_for('static', filename='files/motif_score_plot.png') }}"/>
+    <img src="{{ url_for('static', filename='files/plots/motif_score_plot.jpg') }}"/>
     <br>
 <P ALIGN="JUSTIFY">
 <figcaption>
@@ -252,8 +252,30 @@ Clustal Omega alignment.
 <H4>Validation type 2</H4>
 <P ALIGN="JUSTIFY">
 <figure>
-  <img src="{{ url_for('static', filename='files/refine_increased_weights_sp.png') }}"/>
-  <img src="{{ url_for('static', filename='files/refine_increased_weights_elm_sp.png') }}"/>
+  <div class="row">
+    <div class="col-xs-3">
+      <img src="{{ url_for('static',
+      filename='files/plots/refine_increased_weights_sp.jpg') }}"/>
+    </div>
+    <div class="col-xs-3">
+      <img src="{{ url_for('static',
+      filename='files/plots/refine_increased_weights_elm_sp.jpg') }}"/>
+    </div>
+  </div>
+  <br>
+  Increased weights
+  <br>
+  <div class="row">
+    <div class="col-xs-3">
+      <img src="{{ url_for('static',
+      filename='files/plots/refine_standard_params_sp.jpg') }}"/>
+    </div>
+    <div class="col-xs-3">
+      <img src="{{ url_for('static',
+      filename='files/plots/refine_standard_params_elm_sp.jpg') }}"/>
+    </div>
+  </div>
+  <br>
   <figcaption></figcaption>
 <figure>
 </P>
