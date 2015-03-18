@@ -2,10 +2,14 @@
 {% block content %}
 <div class="panel-group" id="panel-group0">
   <div class="panel panel-default" style="width=100%;" id="panel0">
-    <div class="panel-body">
+    <div class="panel-heading">
+    <div class="panel-title">
       <H1><strong>KMAD</strong>: <strong>K</strong>nowledge Based
         <strong>M</strong>ultiple Sequence <strong>A</strong>lignment for Intrinsically
         <strong>D</strong>isordered Proteins</H1>
+    </div>
+    </div>
+    <div class="panel-body">
 <H2>Joanna Lange &amp; Gert Vriend</H2>
 <H2>CMBI, Radboudumc, Nijmegen, The Netherlands</H2>
 
@@ -86,14 +90,12 @@ KMAD obtains a large number of sequence annotations to augment the alignment:
 <LI>phosphorylations predicted by NetPhos</li>
 <LI>domains predicted by Pfam</li>
 </OL>
-All these features participate in the scoring of alignments with the following weights:
+All these features participate in the scoring of alignments with weights, that
+are settable by the user. The recommended values are:
 <UL>
-<LI>Joanna finishes this table
-<LI>
-<LI>
-<LI>
-<LI>
-<LI>
+<LI>PTMs &#8594; 10,
+<LI>domains &#8594; 3,
+<LI>motifs &#8594; 3
 </UL>
 </P><P ALIGN="JUSTIFY">
 Many SLiMs and predicted PTMs have a high probability of occurrence. For example, the motif N,{P},[S,T],{P}
@@ -156,8 +158,8 @@ for IDP sequence alignment.
   <img src="{{ url_for('static', filename='files/all_bali_out_elm_sp.png') }}"/>
   <figcaption>
   Figure 1. Scatter plots for Bailbase scores for KMAD alignments versus Clustal Omega alignments. Left: overall
-  Balibase scores; Right: Balibase scores for motifs. As there are more dots below the line than above the line,
-  and as Balibase scores range from zero (worst) to one (best), it is clear that Clustal Omega provides better
+  BAliBASE scores; Right: BAliBASE scores for motifs. As there are more dots below the line than above the line,
+  and as BAliBASE scores range from zero (worst) to one (best), it is clear that Clustal Omega provides better
   results than KMAD. This is, of course, the result of Clustal Omega&#39;s understanding of protein
   structures that is encoded in its scoring matrix and a series of algorithms.
   </figcaption>
@@ -166,10 +168,10 @@ for IDP sequence alignment.
 But now comes the big trick. If we first make an alignment with Clustal Omega
 and derive KMAD&#39;s profile
 from this Clustal Omega derived MSA, and then do two more rounds of alignment with KMAD, we sometimes
-see that KMAD gets bette scores from Balibase while it never gets Balibase scores that are worse than
+see that KMAD gets bette scores from BAliBASE while it never gets BAliBASE scores that are worse than
 Clustal Omega&#39;s scores.
 <BR>
-We analysed all ten entries in the Balibase set that hold sequences ranging 40-80% in pairwise
+We analysed all 27 entries in the BAliBASE set that hold sequences ranging 40-80% in pairwise
 sequence identity. 
 </P>
 <div>
@@ -191,38 +193,38 @@ Clustal Omega alignment.
 </div>
 <div>
  <br>
-  alignment 1:
+  <strong>alignment 1:</strong>
   <br>
-  KMAD
+  <strong>KMAD</strong>
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box158_kman.html') }}"
     style="width:100%;height:400px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
   <br>
   <br>
-  Clustal
+  <strong>Clustal</strong>
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box158_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
  <br>
  <br>
- alignment 2:
+ <strong>alignment 2:</strong>
   <br>
-  KMAD
+  <strong>KMAD</strong>
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box132_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
   <br>
   <br>
-  Clustal
+  <strong>Clustal</strong>
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box132_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
  <br>
  <br>
- alignment 3:
+ <strong>alignment 3:</strong>
   <br>
-  KMAD
+ <strong>KMAD</strong>
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box133_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
@@ -234,22 +236,26 @@ Clustal Omega alignment.
     </iframe>
  <br>
  <br>
- alignment 4:
+ <strong>alignment 4:</strong>
   <br>
-  KMAD
+  <strong>KMAD</strong>
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box076_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
   <br>
   <br>
-  Clustal
+  <strong>Clustal</strong>
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box076_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
 </div>
 <H4>Validation type 2</H4>
 <P ALIGN="JUSTIFY">
-&lt;Joanna writes here, briefly, what happens when the motif weight are increased, and shows the plot(s)&gt;.
+<figure>
+  <img src="{{ url_for('static', filename='files/refine_increased_weights_sp.png') }}"/>
+  <img src="{{ url_for('static', filename='files/refine_increased_weights_elm_sp.png') }}"/>
+  <figcaption></figcaption>
+<figure>
 </P>
 </div>
 </div>
