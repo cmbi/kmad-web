@@ -52,7 +52,7 @@ things:
 <LI>run BLAST against the PDB to check that there is no trivial solution that renders the use of
     KMAD meaningless
 <LI>run BLAST against UniProt to obtain homologous sequences
-<LI>extract curator annotations for these sequences from UniProt, ELM, etc
+<LI>extract curator annotations for these sequences from SwissProt, ELM, etc.
 <LI>obtain software predicted sequence features such as phosphorylation sites 
 <LI>align the sequences against the input sequence using a hybrid scoring schema, that includes 
     an IDP specific Dayhoff-style matrix and scores for the curator annotations and predicted sequence
@@ -71,18 +71,20 @@ things:
 <H3>Improving the alignment by use of sequence features</H3>
 KMAD obtains a large number of sequence annotations to augment the alignment:
 <UL>
-<LI>SLiMs from ELM
-<LI>Posttranslational modifications from SwissProt (phosphorylations, 
-                                                    N-linked glycosylations,
-                                                    O-linekd glycosylations,
-                                                    methylations, amidations, 
-                                                    acetylations,
-                                                    hydroxylations)
-<LI>
-<LI>
-<LI>
-<LI>
-<LI>
+  <LI>SLiMs from ELM</li>
+  <LI>posttranslational modifications (PTMs) from SwissProt 
+  <ul>
+    <li>phosphorylations,</li>
+    <li>N-linked glycosylations,</li>
+    <li>O-linekd glycosylations,</li>
+    <li>methylations,</li>
+    <li>amidations,</li> 
+    <li>acetylations,</li>
+    <li>hydroxylations</li>
+  </ul>
+  </li>
+<LI>phosphorylations predicted by NetPhos</li>
+<LI>domains predicted by Pfam</li>
 </OL>
 All these features participate in the scoring of alignments with the following weights:
 <UL>
@@ -98,7 +100,7 @@ Many SLiMs and predicted PTMs have a high probability of occurrence. For example
 has a chance of 1/200 to occur anywhere, so most often this motif is meaningless. To avoid guiding the
 alignment by these meaningless motifs we check if there is overlap in the GO terms for the motif in the
 input sequence and the GO terms for the sequence to be aligned against the input sequence. If there is no
-overlap in these Go terms, &lt;or was it just the other way around?&gt;.
+overlap in these GO terms we reject the motif from this sequence.
 </P>
 
 <H3>Validation</H3>
@@ -128,7 +130,7 @@ From a HOPE point of view, though, it seems safe to assume that identical functi
 IDPs will perform identical, or at least highly similar, functions. To automatically transfer the 
 information about motifs from aligned IDPs to the IDP of interest, these motifs should be aligned in 
 the MSA, and this obtained best by adding some weights on the alignment of these motifs. Obviously,
-this is a circular argument: &#34;Lets add some weights to the alignemnt of
+this is a circular argument: &#34;Lets add some weights to the alignment of
 motifs&#34; and &#34;Wow,
 the alignment becomes much better because I see more motifs align well&#34;.
 </P><P ALIGN="JUSTIFY">
@@ -148,13 +150,18 @@ not surprising because Clustal Omega has been optimised for this purpose while
 KMAD was &#39;optimised&#39;
 for IDP sequence alignment. 
 <br>
-&lt;Joanna insert here figures of KMAD versus ClustalO showing that in their native forms ClustalO does
-a bit better than KMAD. And use the next paragraph as figure caption&gt;.
-Scatter plots for Bailbase scores for KMAD alignments versus Clustal Omega alignments. Left: overall
-Balibase scores; Right: Balibase scores for motifs. As there are more dots below the line than above the line,
-and as Balibase scores range from zero (worst) to one (best), it is clear that Clustal Omega provides better
-results than KMAD. This is, of course, the result of Clustal Omega&#39;s understanding of protein
-structures that is encoded in its scoring matrix and a series of algorithms.
+<figure>
+
+  <img src="{{ url_for('static', filename='files/all_bali_out_sp.png') }}"/>
+  <img src="{{ url_for('static', filename='files/all_bali_out_elm_sp.png') }}"/>
+  <figcaption>
+  Figure 1. Scatter plots for Bailbase scores for KMAD alignments versus Clustal Omega alignments. Left: overall
+  Balibase scores; Right: Balibase scores for motifs. As there are more dots below the line than above the line,
+  and as Balibase scores range from zero (worst) to one (best), it is clear that Clustal Omega provides better
+  results than KMAD. This is, of course, the result of Clustal Omega&#39;s understanding of protein
+  structures that is encoded in its scoring matrix and a series of algorithms.
+  </figcaption>
+</figure>
 <BR>
 But now comes the big trick. If we first make an alignment with Clustal Omega
 and derive KMAD&#39;s profile
@@ -171,14 +178,15 @@ sequence identity.
     <img src="{{ url_for('static', filename='files/motif_score_plot.png') }}"/>
     <br>
 <P ALIGN="JUSTIFY">
-Scatter plot for Bailbase motif scores for KMAD alignments versus Clustal Omega alignments. The four 
+<figcaption>
+Figure 2. Scatter plot for Bailbase motif scores for KMAD alignments versus Clustal Omega alignments. The four 
 cases where KMAD does better than Clustal Omega all related to a C-terminal KDEL motif that KMAD
 recognized and aligned better than Clustal Omega these cases are shown below. For each of the four
 cases two frames are provided; the first holding the KMAD alignment and the second holding the 
 Clustal Omega alignment.
+</figcaption>
 </P>
     <br>
-    <figcaption>Figure 1. Balibase motif scores</figcaption>
   </figure>
 </div>
 <div>
