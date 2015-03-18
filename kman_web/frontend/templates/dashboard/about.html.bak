@@ -35,10 +35,10 @@ that explains to biomedical scientists what the mutation does to the protein, an
 why the mutation causes the human disease phenotype.
 </P><P ALIGN="JUSTIFY">
 The transfer of curator annotations from homologous non-human sequences to the human sequence of interest
-is a major contributor to HOPE&#39;s reasoning. It does not make any sense to study insertions relative
+is a major contributor to HOPE&#39;s reasoning. It does not make any sence to study insertions relative
 to the human sequence because curator annotations such as post translational modifications (PTMs) or 
 short linear motifs (SLiMs) in an insertion in, for example, the sequence of the mouse cannot be 
-transferred to the human sequence anyway. 
+transfered to the human sequence anyway. 
 </P><P ALIGN="JUSTIFY">
 The transfer of curator annotations to the human sequence is most valuable when the species from which
 this information is obtained is closest related to man. 
@@ -107,24 +107,24 @@ overlap in these GO terms we reject the motif from this sequence.
 
 <H3>Validation</H3>
 <P ALIGN="JUSTIFY">
-Several good multiple sequence alignment (MSA) programs are available all with a slightly different angle
+Several good multiple sequence alignment (MSA) programs are available all with a slighly different angle
 and with different pros and cons. We chose to compare KMAD outputs with Clustal Omega outputs, simply
 because Clustal Omega works well, is supported by a responsive team, and it is easy to obtain, install
 and use.
 </P><P ALIGN="JUSTIFY">
 The quality of alignments of software such as Clustal Omega has been optimized by tuning the parameters
-and designing algorithms to achieve the greatest overlap between the MSA sequence alignments and structure
+and designing algoritms to achieve the greatest overlap between the MSA sequence alignments and structure
 based sequence alignments. Structure based sequence alignments provide the truth that can be used to 
 determine the quality of the MSA. The underlying concept is that
-&#39;regulation&#39; is more conserved
-than &#39;function&#39; is more conserved than &#39;structure&#39; is more
-conserved than &#39;sequence&#39;.
+&#39;sregulation&#39; is more converved
+than &#39;function&#39; is more converved than &#39;structure&#39; is more
+converved than &#39;sequence&#39;.
 From this hierarchy of conservation we can extrapolate that if two residues have the same role in
 regulation or function that they will have the same location in the structure, and thus should be
 aligned in the MSA. 
 </P><P ALIGN="JUSTIFY">
 IDPs have no structure, or when they do, this structure is induced by interactions with other (macro)
-molecules, and then there is no guarantee that homologous IDPs will have similar induced structures upon
+molecules, and then there is no guarantee that homologoous IDPs will have similar induced structures upon
 binding. Additionally, there are far too few IDPs for which an induced structure is available from the PDB
 to even start contemplating these for validation purposes. Consequently, the idea breaks down that 
 residues with a similar functional role are located at corresponding positions in the protein structures.
@@ -148,8 +148,8 @@ align, unless knowledge about the presence of sequence motifs is used to guide t
 We had to resort to indirect validation techniques (on top of the trivial visual inspection). We 
 first compared KMAD MSA outputs with Clustal Omega MSA outputs to conclude that Clustal Omega normally
 performs a bit better than KMAD when sequences of proteins with know structure are aligned. That is
-not surprising because Clustal Omega has been optimized for this purpose while
-KMAD was &#39;optimized&#39;
+not surprising because Clustal Omega has been optimised for this purpose while
+KMAD was &#39;optimised&#39;
 for IDP sequence alignment. 
 <br>
 <figure>
@@ -157,7 +157,7 @@ for IDP sequence alignment.
   <img src="{{ url_for('static', filename='files/all_bali_out_sp.png') }}"/>
   <img src="{{ url_for('static', filename='files/all_bali_out_elm_sp.png') }}"/>
   <figcaption>
-  Figure 1. Scatter plots for BAliBASE scores for KMAD alignments versus Clustal Omega alignments. Left: overall
+  Figure 1. Scatter plots for Bailbase scores for KMAD alignments versus Clustal Omega alignments. Left: overall
   BAliBASE scores; Right: BAliBASE scores for motifs. As there are more dots below the line than above the line,
   and as BAliBASE scores range from zero (worst) to one (best), it is clear that Clustal Omega provides better
   results than KMAD. This is, of course, the result of Clustal Omega&#39;s understanding of protein
@@ -168,10 +168,10 @@ for IDP sequence alignment.
 But now comes the big trick. If we first make an alignment with Clustal Omega
 and derive KMAD&#39;s profile
 from this Clustal Omega derived MSA, and then do two more rounds of alignment with KMAD, we sometimes
-see that KMAD gets better scores from BAliBASE while it never gets BAliBASE scores that are worse than
+see that KMAD gets bette scores from BAliBASE while it never gets BAliBASE scores that are worse than
 Clustal Omega&#39;s scores.
 <BR>
-We analyzed all 27 entries in the BAliBASE set that hold sequences ranging 40-80% in pairwise
+We analysed all 27 entries in the BAliBASE set that hold sequences ranging 40-80% in pairwise
 sequence identity. 
 </P>
 <div>
@@ -181,7 +181,7 @@ sequence identity.
     <br>
 <P ALIGN="JUSTIFY">
 <figcaption>
-Figure 2. Scatter plot for BAliBASE motif scores for KMAD alignments versus Clustal Omega alignments. The four 
+Figure 2. Scatter plot for Bailbase motif scores for KMAD alignments versus Clustal Omega alignments. The four 
 cases where KMAD does better than Clustal Omega all related to a C-terminal KDEL motif that KMAD
 recognized and aligned better than Clustal Omega these cases are shown below. For each of the four
 cases two frames are provided; the first holding the KMAD alignment and the second holding the 
