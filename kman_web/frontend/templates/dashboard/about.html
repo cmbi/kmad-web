@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel-group" id="panel-group0">
+  <div class="panel panel-default" style="width=100%;" id="panel0">
+    <div class="panel-body">
+      <H1><strong>KMAD</strong>: <strong>K</strong>nowledge Based
+        <strong>M</strong>ultiple Sequence <strong>A</strong>lignment for Intrinsically
+        <strong>D</strong>isordered Proteins</H1>
+<H2>Joanna Lange &amp; Gert Vriend</H2>
+<H2>CMBI, Radboudumc, Nijmegen, The Netherlands</H2>
+
+<H2>Introduction</H2>
+<P ALIGN="JUSTIFY">
+KMAD was designed to align intrinsically disordered (aka natively unfolded) proteins for the HOPE 
+mutation analysis server. This led to three major considerations:
+</P>
+<OL>
+<LI>A HSSP-style iterative profile alignment would be needed;
+<LI>The scoring scheme should be hybrid and include knowledge about the IDPs other than their sequences;
+<LI>Validation of the results would be very difficult as there are no structures that can be superposed 
+    to obtain the &#39;real&#39; alignment.
+</OL> 
+
+<H3>HOPE</H3>
+<P ALIGN="JUSTIFY">
+The <A HREF="http://www.cmbi.ru.nl/hope/home">HOPE</A> server accepts from the user a sequence and
+a mutation that is known causal for a genetic disorder. HOPE then looks up the protein&#39;s structure
+or models it, it calls dozens of compute servers and looks up very much data from all kinds of databases,
+it combines all results and reasons about those results to finally arrive at a human readable report
+that explains to biomedical scientists what the mutation does to the protein, and why that might explain
+why the mutation causes the human disease phenotype.
+</P><P ALIGN="JUSTIFY">
+The transfer of curator annotations from homologous non-human sequences to the human sequence of interest
+is a major contributor to HOPE&#39;s reasoning. It does not make any sence to study insertions relative
+to the human sequence because curator annotations such as post translational modifications (PTMs) or 
+short linear motifs (SLiMs) in an insertion in, for example, the sequence of the mouse cannot be 
+transfered to the human sequence anyway. 
+</P><P ALIGN="JUSTIFY">
+The transfer of curator annotations to the human sequence is most valuable when the species from which
+this information is obtained is closest related to man. 
+</P><P ALIGN="JUSTIFY">
+These HOPE-centric considerations naturally led to the choice for an iterative profile alignment method.
+</P>
+
+<H3>Iterative profile alignment</H3>
+<P ALIGN="JUSTIFY">
+In its default form, KMAD starts with one sequence, either the human sequence that it receives from HOPE,
+or a sequences submitted by a user through a form in this KMAD website. KMAD then does a series of
+things:
+</P>
+<OL>
+<LI>run BLAST against the PDB to check that there is no trivial solution that renders the use of
+    KMAD meaningless
+<LI>run BLAST against UniProt to obtain homologous sequences
+<LI>extract curator annotations for these sequences from UniProt, ELM, etc
+<LI>obtain software predicted sequence features such as phosphorylation sites 
+<LI>align the sequences against the input sequence using a hybrid scoring schema, that includes 
+    an IDP specific Dayhoff-style matrix and scores for the curator annotations and predicted sequence
+    features
+<LI>Iterate over the next two steps with decreasing N and increasing W:
+    <OL>
+    <LI>make a sequence profile based for the input sequence that is based on on all sequences that
+        are better than N sequence identical to the input sequence
+    <LI>Align all sequences against this profile with weight W on the profile and weight (1-W) on
+        the IDP-specific Dayhoff-style scoring matrix (and constant weight on the annotation features)
+    </OL>
+<LI>Present the alignment to the user in an interactive web page that allows for the interactive colouring
+    of all curator annotations and predicted features
+</OL>
+
+<H3>Improving the alignment by use of sequence features</H3>
+KMAD obtains a large number of sequence annotations to augment the alignment:
+<UL>
+<LI>SLiMs from ELM
+<LI>Posttranslational modifications from SwissProt (phosphorylations, 
+                                                    N-linked glycosylations,
+                                                    O-linekd glycosylations,
+                                                    methylations, amidations, 
+                                                    acetylations,
+                                                    hydroxylations)
+<LI>
+<LI>
+<LI>
+<LI>
+<LI>
+</OL>
+All these features participate in the scoring of alignments with the following weights:
+<UL>
+<LI>Joanna finishes this table
+<LI>
+<LI>
+<LI>
+<LI>
+<LI>
+</UL>
+</P><P ALIGN="JUSTIFY">
+Many SLiMs and predicted PTMs have a high probability of occurrence. For example, the motif N,{P},[S,T],{P}
+has a chance of 1/200 to occur anywhere, so most often this motif is meaningless. To avoid guiding the
+alignment by these meaningless motifs we check if there is overlap in the GO terms for the motif in the
+input sequence and the GO terms for the sequence to be aligned against the input sequence. If there is no
+overlap in these Go terms, &lt;or was it just the other way around?&gt;.
+</P>
+
+<H3>Validation</H3>
+<P ALIGN="JUSTIFY">
+Several good multiple sequence alignment (MSA) programs are available all with a slighly different angle
+and with different pros and cons. We chose to compare KMAD outputs with Clustal Omega outputs, simply
+because Clustal Omega works well, is supported by a responsive team, and it is easy to obtain, install
+and use.
+</P><P ALIGN="JUSTIFY">
+The quality of alignments of software such as Clustal Omega has been optimized by tuning the parameters
+and designing algoritms to achieve the greatest overlap between the MSA sequence alignments and structure
+based sequence alignments. Structure based sequence alignments provide the truth that can be used to 
+determine the quality of the MSA. The underlying concept is that
+&#39;sregulation&#39; is more converved
+than &#39;function&#39; is more converved than &#39;structure&#39; is more
+converved than &#39;sequence&#39;.
+From this hierarchy of conservation we can extrapolate that if two residues have the same role in
+regulation or function that they will have the same location in the structure, and thus should be
+aligned in the MSA. 
+</P><P ALIGN="JUSTIFY">
+IDPs have no structure, or when they do, this structure is induced by interactions with other (macro)
+molecules, and then there is no guarantee that homologoous IDPs will have similar induced structures upon
+binding. Additionally, there are far too few IDPs for which an induced structure is available from the PDB
+to even start contemplating these for validation purposes. Consequently, the idea breaks down that 
+residues with a similar functional role are located at corresponding positions in the protein structures.
+From a HOPE point of view, though, it seems safe to assume that identical functional motifs in different
+IDPs will perform identical, or at least highly similar, functions. To automatically transfer the 
+information about motifs from aligned IDPs to the IDP of interest, these motifs should be aligned in 
+the MSA, and this obtained best by adding some weights on the alignment of these motifs. Obviously,
+this is a circular argument: &#34;Lets add some weights to the alignemnt of
+motifs&#34; and &#34;Wow,
+the alignment becomes much better because I see more motifs align well&#34;.
+</P><P ALIGN="JUSTIFY">
+Conclusion: There is no easy natural way to validate KMAD MSA results.
+</P><P ALIGN="JUSTIFY">
+But, HOPE does require the transfer of information about curator annotations and predicted features from
+homologous IDP sequences to the IDP sequence of interest, and many IDP sequences are hard or very hard to 
+align, unless knowledge about the presence of sequence motifs is used to guide the alignment.
+</P>
+
+<H4>Validation type 1</H4>
+<P ALIGN="JUSTIFY">
+We had to resort to indirect validation techniques (on top of the trivial visual inspection). We 
+first compared KMAD MSA outputs with Clustal Omega MSA outputs to conclude that Clustal Omega normally
+performs a bit better than KMAD when sequences of proteins with know structure are aligned. That is
+not surprising because Clustal Omega has been optimised for this purpose while
+KMAD was &#39;optimised&#39;
+for IDP sequence alignment. 
+<br>
+&lt;Joanna insert here figures of KMAD versus ClustalO showing that in their native forms ClustalO does
+a bit better than KMAD. And use the next paragraph as figure caption&gt;.
+Scatter plots for Bailbase scores for KMAD alignments versus Clustal Omega alignments. Left: overall
+Balibase scores; Right: Balibase scores for motifs. As there are more dots below the line than above the line,
+and as Balibase scores range from zero (worst) to one (best), it is clear that Clustal Omega provides better
+results than KMAD. This is, of course, the result of Clustal Omega&#39;s understanding of protein
+structures that is encoded in its scoring matrix and a series of algorithms.
+<BR>
+But now comes the big trick. If we first make an alignment with Clustal Omega
+and derive KMAD&#39;s profile
+from this Clustal Omega derived MSA, and then do two more rounds of alignment with KMAD, we sometimes
+see that KMAD gets bette scores from Balibase while it never gets Balibase scores that are worse than
+Clustal Omega&#39;s scores.
+<BR>
+We analysed all ten entries in the Balibase set that hold sequences ranging 40-80% in pairwise
+sequence identity. 
+</P>
+<div>
+  <br>
+  <figure>
+    <img src="{{ url_for('static', filename='files/motif_score_plot.png') }}"/>
+    <br>
+<P ALIGN="JUSTIFY">
+Scatter plot for Bailbase motif scores for KMAD alignments versus Clustal Omega alignments. The four 
+cases where KMAD does better than Clustal Omega all related to a C-terminal KDEL motif that KMAD
+recognized and aligned better than Clustal Omega these cases are shown below. For each of the four
+cases two frames are provided; the first holding the KMAD alignment and the second holding the 
+Clustal Omega alignment.
+</P>
+    <br>
+    <figcaption>Figure 1. Balibase motif scores</figcaption>
+  </figure>
+</div>
+<div>
+ <br>
+  alignment 1:
+  <br>
+  KMAD
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box158_kman.html') }}"
+    style="width:100%;height:400px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+  <br>
+  <br>
+  Clustal
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box158_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+ <br>
+ <br>
+ alignment 2:
+  <br>
+  KMAD
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box132_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+  <br>
+  <br>
+  Clustal
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box132_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+ <br>
+ <br>
+ alignment 3:
+  <br>
+  KMAD
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box133_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+  <br>
+  <br>
+  Clustal
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box133_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+ <br>
+ <br>
+ alignment 4:
+  <br>
+  KMAD
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box076_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+  <br>
+  <br>
+  Clustal
+  <br>
+  <iframe src="{{ url_for('static', filename='alignments/box076_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+    </iframe>
+</div>
+<H4>Validation type 2</H4>
+<P ALIGN="JUSTIFY">
+&lt;Joanna writes here, briefly, what happens when the motif weight are increased, and shows the plot(s)&gt;.
+</P>
+</div>
+</div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}
