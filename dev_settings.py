@@ -6,6 +6,7 @@ SECRET_KEY = 'development_key'
 DEBUG_TB_ENABLED = DEBUG
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 WTF_CSRF_ENABLED = False
+CSRF_ENABLED = False
 
 # Email logging settings
 MAIL_SERVER = "131.174.165.22"
