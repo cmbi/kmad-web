@@ -130,7 +130,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
             "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
             "-p", str(ptm_score), "-d", str(domain_score),
             "--out-encoded",
-            "-m", str(motif_score), "-c", str(codon_length), "-outfmt", "10"]
+            "-m", str(motif_score), "-c", str(codon_length)]
     if conffilename:
         args.extend(["--conf", conffilename])
     _log.debug("Running KMAN: {}".format(subprocess.list2cmdline(args)))
