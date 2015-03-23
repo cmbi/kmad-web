@@ -192,7 +192,14 @@ Clustal Omega alignment.
   </figure>
 </div>
 <div>
+  <button type="button" class="btn btn-primary" id="al1_button" onClick=alignmentToggle('al1')>Alignment 1</button>
+  <button type="button" class="btn btn-primary" id="al2_button" onClick=alignmentToggle('al2')>Alignment 2</button>
+  <button type="button" class="btn btn-primary" id="al3_button" onClick=alignmentToggle('al3')>Alignment 3</button>
+  <button type="button" class="btn btn-primary" id="al4_button" onClick=alignmentToggle('al4')>Alignment 4</button>
+</div>
+<div>
  <br>
+  <div id="al1" style="display:none;">
   <strong>alignment 1:</strong>
   <br>
   <strong>KMAD</strong>
@@ -208,6 +215,8 @@ Clustal Omega alignment.
     </iframe>
  <br>
  <br>
+ </div>
+ <div id="al2" style="display:none;">
  <strong>alignment 2:</strong>
   <br>
   <strong>KMAD</strong>
@@ -222,6 +231,8 @@ Clustal Omega alignment.
     </iframe>
  <br>
  <br>
+ </div>
+ <div id="al3" style="display:none;">
  <strong>alignment 3:</strong>
   <br>
  <strong>KMAD</strong>
@@ -236,6 +247,8 @@ Clustal Omega alignment.
     </iframe>
  <br>
  <br>
+ </div>
+ <div id="al4" style="display:none;">
  <strong>alignment 4:</strong>
   <br>
   <strong>KMAD</strong>
@@ -248,23 +261,12 @@ Clustal Omega alignment.
   <br>
   <iframe src="{{ url_for('static', filename='alignments/box076_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
+ </div>
 </div>
-<H4>Validation type 2</H4>
+<H4>Refinement results for the whole BAliBASE dataset</H4>
+
 <P ALIGN="JUSTIFY">
 <figure>
-  <div class="row">
-    <div class="col-xs-3">
-      <img src="{{ url_for('static',
-      filename='files/plots/refine_increased_weights_sp.jpg') }}"/>
-    </div>
-    <div class="col-xs-3">
-      <img src="{{ url_for('static',
-      filename='files/plots/refine_increased_weights_elm_sp.jpg') }}"/>
-    </div>
-  </div>
-  <br>
-  Increased weights
-  <br>
   <div class="row">
     <div class="col-xs-3">
       <img src="{{ url_for('static',
@@ -276,12 +278,152 @@ Clustal Omega alignment.
     </div>
   </div>
   <br>
-  <figcaption></figcaption>
-<figure>
+</figure>
+<div>
+  <button type="button" class="btn btn-primary" id="refal1_button" onClick=refinementToggle('refal1')>Alignment 1</button>
+  <button type="button" class="btn btn-primary" id="refal2_button" onClick=refinementToggle('refal2')>Alignment 2</button>
+  <button type="button" class="btn btn-primary" id="refal3_button" onClick=refinementToggle('refal3')>Alignment 3</button>
+  <button type="button" class="btn btn-primary" id="refal4_button" onClick=refinementToggle('refal4')>Alignment 4</button>
+  <button type="button" class="btn btn-primary" id="refal5_button" onClick=refinementToggle('refal5')>Alignment 5</button>
+</div>
+<div>
+  <div id="refal1" style="display:none;">
+    <strong>alignment 1:</strong>
+    <br>
+    <strong>KMAD</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv942_box017_kman_bali_col.html') }}"
+      style="width:100%;height:300px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+    <br>
+    <strong>Clustal</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv942_box017.clustalo_bali_col.html') }}"
+      style="width:100%;height:300px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+  </div>
+  <div id="refal2" style="display:none;">
+    <strong>alignment 2:</strong>
+    <br>
+    <strong>KMAD</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box007_kman_bali_col.html') }}"
+      style="width:100%;height:300px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+    <br>
+    <strong>Clustal</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box007.clustalo_bali_col.html') }}" 
+      style="width:100%;height:300px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+  </div>
+  <div id="refal3" style="display:none;">
+    <strong>alignment 3:</strong>
+    <br>
+    <strong>KMAD</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv942_box202_kman_bali_col.html') }}"
+      style="width:100%;height:300px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+    <br>
+    <strong>Clustal</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv942_box202.clustalo_bali_col.html') }}"
+      style="width:100%;height:300px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+  </div>
+  <div id="refal4" style="display:none;">
+    <strong>alignment 4:</strong>
+    <br>
+    <strong>KMAD</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box001_kman_bali_col.html') }}"
+      style="width:100%;height:300px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+    <br>
+    <strong>Clustal</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box001.clustalo_bali_col.html') }}" 
+      style="width:100%;height:300px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+ </div>
+  <div id="refal5" style="display:none;">
+    <strong>alignment 5:</strong>
+    <br>
+    <strong>KMAD</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box009_kman_bali_col.html') }}"
+      style="width:100%;height:300px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+    <br>
+    <strong>Clustal</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box009.clustalo_bali_col.html') }}" 
+      style="width:100%;height:300px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+ </div>
+</div>
+
 </P>
 </div>
 </div>
 </div>
 {% endblock %}
 {% block js %}
+<script>
+function alignmentToggle(div_id){
+  var refs = ['1', '2', '3', '4'];
+  console.debug(div_id);
+  for (i in refs) {
+    if ("al" + refs[i] != div_id) {
+     document.getElementById('al' + refs[i]).style.display = 'none';
+     $("#al"+refs[i]+"_button").removeClass('active');
+    }
+  }
+  if (document.getElementById(div_id).style.display == 'none') {
+    $('#'+div_id+"_button").addClass('active');
+    document.getElementById(div_id).style.display = '';
+  } else {
+    $('#'+div_id+"_button").removeClass('active');
+    document.getElementById(div_id).style.display = 'none';
+  }
+}
+function refinementToggle(div_id){
+  var refs = ['1', '2', '3', '4', '5'];
+  console.debug(div_id);
+  for (i in refs) {
+    if ("refal" + refs[i] != div_id) {
+     document.getElementById('refal' + refs[i]).style.display = 'none';
+     $("#refal"+refs[i]+"_button").removeClass('active');
+    }
+  }
+  if (document.getElementById(div_id).style.display == 'none') {
+    $('#'+div_id+"_button").addClass('active');
+    document.getElementById(div_id).style.display = '';
+  } else {
+    $('#'+div_id+"_button").removeClass('active');
+    document.getElementById(div_id).style.display = 'none';
+  }
+}
+</script>
 {% endblock %}

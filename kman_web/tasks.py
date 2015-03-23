@@ -162,7 +162,7 @@ def query_d2p2(filename, output_type, multi_seq_input):
         out_blast = filename.split(".")[0]+".blastp"
         args = ["blastp", "-query", filename, "-evalue", "1e-5",
                 "-num_threads", "15", "-db", paths.SWISSPROT_DB,
-                "-out", out_blast]
+                "-out", out_blast, '-outfmt', '10']
         try:
             subprocess.call(args)
         except subprocess.CalledProcessError as e:
