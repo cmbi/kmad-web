@@ -66,12 +66,12 @@ def test_find_seqid_blast(mock_open):
     from kman_web.services.txtproc import find_seqid_blast
 
     # check found
-    m_file.read.return_value = open('tests/unit/testdata/test2.blastp').read()
+    m_file.read.return_value = open('tests/unit/testdata/test.blastp').read()
     expected = [True, 'test']
     result = find_seqid_blast('testname')
     eq_(expected, result)
     # check not found
-    m_file.read.return_value = open('tests/unit/testdata/test.blastp').read()
+    m_file.read.return_value = open('tests/unit/testdata/test2.blastp').read()
     expected = [False, '']
     result = find_seqid_blast('testname')
     eq_(expected, result)
