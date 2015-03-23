@@ -117,6 +117,7 @@
                         <div id="usr_feat_inner_div">
                           {{ form.usr_features.label(style="font-size:110%;") }}
                           {{ form.csrf_token }}
+                          {{ form.hidden_tag() }}
                           <table>
                             {% if form.usr_features.data | length > 0 %}
                               <tr>
@@ -135,7 +136,8 @@
                             {% endif %}
                             {% for feat in form.usr_features %}
                               <tr>
-                                {{ form.csrf_token }}
+                                {{ feat.csrf_token }}
+                                {{ feat.hidden_tag() }}
                                 <td> {{ feat.featname(maxlength=10,
                                    class="form-control",
                                    placeholder="Feature name",
