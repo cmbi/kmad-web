@@ -90,7 +90,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 out_file = psipred_outfilename(fasta_file)
                 args = [method, fasta_file]
             elif pred_name == 'globplot':
-                method = paths.GLOBPLOT_PATH_MAC
+                method = paths.GLOBPLOT_PATH
                 out_file = fasta_file + ".gplot"
                 args = [method, '10', '8', '75', '8', '8',
                         fasta_file, '>', out_file]
