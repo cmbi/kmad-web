@@ -274,6 +274,8 @@
   }
 
   $(document).ready( function() {
+    document.getElementById("start_tour").style.display = '';
+    document.getElementById("start_tour2").style.display = 'none';
     // Setup tour
     var tour = new Tour({
       backdrop: true,
@@ -403,6 +405,7 @@
     tour.init();
 
     $('#start_tour').click(function() { tour.restart(); });
+    if (window.location.hash == '#start_tour') {tour.restart();}
 
     // Ensure that the input types listed are correct for the selected output
     // type.

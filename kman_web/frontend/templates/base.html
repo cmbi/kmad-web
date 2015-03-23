@@ -73,7 +73,9 @@
           </a>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a id="start_tour" href="#">Tour</a>
+              <a id="start_tour" href="#" style="display:none;">Tour</a>
+              <a id="start_tour2" href={{ url_for('dashboard.index')
+              }}#start_tour>Tour</a>
             </li>
             <li>
               <a href="{{ url_for('dashboard.help') }}">Help page</a>
