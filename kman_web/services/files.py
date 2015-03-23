@@ -45,48 +45,78 @@ def get_e_val(textline):
 # returns name of the file
 # blast name - path to the file with blast results
 # query_filename - path to the file with the original sequence
+
 def get_fasta_from_blast(blast_name, query_filename):
     outfile_name = blast_name.split(".")[0]+"_toalign.fasta"
     outfile = open(outfile_name, 'w')
     with open(query_filename) as a:
-        query_fasta = a.read()
-    query_fasta = query_fasta.splitlines()
+        query_fasta = a.read().splitlines()
     with open(blast_name) as a:
-        blastfile = a.read()
-    blastfile = blastfile.splitlines()
-    reading = False
-    count = 0
-    newfasta = ''
-    i = -1
-    while i < len(blastfile) - 1:
-        i += 1
-        lineI = blastfile[i]
-        if "Sequences producing significant alignments" in lineI:
-            reading = True
-            i += 1
-        elif reading and len(lineI.split()) > 0:
-            e_val = get_e_val(lineI)
-            if e_val <= 0.0001:
-                # uniprot_id = lineI.split(" ")[2].split("|")[2]
-                uniprot_id = lineI.split(" ")[0].split("|")[2]
-                sequence = get_seq_from_uniprot(uniprot_id)
-                count += 1
-                if count == 1 and sequence[1] != query_fasta[1]:
-                        newfasta += query_fasta[0]+'\n'
-                        newfasta += query_fasta[1]+'\n'
-                elif count >= 35:   # pragma: no cover
-                    _log.debug('Limit of sequences number reached')
-                    break
-                elif count % 10 == 0:     # pragma: no cover
-                    time.sleep(5)
-                if len(sequence[0]) > 1:
-                    newfasta += sequence[0]
-                    newfasta += sequence[1]+'\n'
-        elif reading:
-            break
+        blastfile = a.read().splitlines()
+
+    newfasta = ""
+    # take query sequence if it's different form the first seq. from blast
+    uniprot_id = blastfile[0].split(',')[1].split("|")[1]
+    sequence = get_seq_from_uniprot(uniprot_id)
+    if query_fasta[1] != sequence[1]:
+        newfasta += "{}\n{}\n".format(query_fasta[0], query_fasta[1])
+
+    #
+    for i, lineI in enumerate(blastfile[:35]):
+        line_list = lineI.split(',')
+        if float(line_list[-2]) < 0.0001:
+            uniprot_id = line_list[1].split("|")[1]
+            sequence = get_seq_from_uniprot(uniprot_id)
+            if len(sequence[0]) > 1:
+                newfasta += "{}{}\n".format(sequence[0], sequence[1])
+        elif i % 10 == 0:     # pragma: no cover
+            time.sleep(3)
     outfile.write(newfasta)
     outfile.close()
     return outfile_name
+
+# def get_fasta_from_blast(blast_name, query_filename):
+#     outfile_name = blast_name.split(".")[0]+"_toalign.fasta"
+#     outfile = open(outfile_name, 'w')
+#     with open(query_filename) as a:
+#         query_fasta = a.read()
+#     query_fasta = query_fasta.splitlines()
+#     with open(blast_name) as a:
+#         blastfile = a.read()
+#     blastfile = blastfile.splitlines()
+#     reading = False
+#     count = 0
+#     newfasta = ''
+#     i = -1
+#     while i < len(blastfile) - 1:
+#         i += 1
+#         lineI = blastfile[i]
+#         if "Sequences producing significant alignments" in lineI:
+#             reading = True
+#             i += 1
+#         elif reading and len(lineI.split()) > 0:
+#             e_val = get_e_val(lineI)
+#             if e_val <= 0.0001:
+#                 # uniprot_id = lineI.split(" ")[2].split("|")[2]
+#                 uniprot_id = lineI.split(" ")[0].split("|")[2]
+#                 sequence = get_seq_from_uniprot(uniprot_id)
+#                 count += 1
+#                 if count == 1 and sequence[1] != query_fasta[1]:
+#                         newfasta += query_fasta[0]+'\n'
+#                         newfasta += query_fasta[1]+'\n'
+#                 elif count >= 35:   # pragma: no cover
+#                     _log.debug('Limit of sequences number reached')
+#                     break
+#                 elif count % 10 == 0:     # pragma: no cover
+#                     time.sleep(5)
+#                 if len(sequence[0]) > 1:
+#                     newfasta += sequence[0]
+#                     newfasta += sequence[1]+'\n'
+#         elif reading:
+#             break
+#     outfile.write(newfasta)
+#     outfile.close()
+#     return outfile_name
 
 
 def disopred_outfilename(fasta_file):

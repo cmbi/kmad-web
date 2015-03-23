@@ -106,43 +106,54 @@ def find_length(lines):
 
 def find_seqid_blast(filename):
     with open(filename) as a:
-        blast = a.read()
-    blast = blast.splitlines()
-    i = -1
-    reading = True
+        firstline = a.read().splitlines()[0].split(',')
     found = False
-    seqID = ''
-    while reading and i < len(blast):
-        i += 1
-        if "Query=" in blast[i]:
-            query_length = find_length(blast[i+1:i+6])
-        if "Sequences producing significant alignments" in blast[i]:
-            i += 2
-            e_val = float(blast[i].split()[-1])
-            if e_val < float(1e-5):
-                j = i+1
-                while j < len(blast):
-                    if ">" in blast[j]:
-                        linelist = blast[j + 5].split()
-                        if linelist[0] == 'Score':
-                            linelist = blast[j + 6].split()
-                        hit_length = find_length(blast[j+1:j+6])
-                        ''' check if identities equals 100% and gaps 0% and
-                        length == query_length -> then it is the query sequence,
-                        otherwise not found (this was the best hit)
-                        '''
-                        if (linelist[3] == "(100%)," and
-                                linelist[-1] == "(0%)" and
-                                query_length == hit_length):
-                            found = True
-                            seqID = blast[j].split("|")[1]
-                        reading = False
-                        break
-                    else:
-                        j += 1
-            else:
-                reading = False  # pragma: no cover
+    seqID = ""
+    if firstline[2] == "100.00" and firstline[4] == "0" and firstline[5] == "0":
+        found = True
+        seqID = firstline[1].split('|')[1]
     return [found, seqID]
+
+
+# def find_seqid_blast(filename):
+#     with open(filename) as a:
+#         blast = a.read()
+#     blast = blast.splitlines()
+#     i = -1
+#     reading = True
+#     found = False
+#     seqID = ''
+#     while reading and i < len(blast):
+#         i += 1
+#         if "Query=" in blast[i]:
+#             query_length = find_length(blast[i+1:i+6])
+#         if "Sequences producing significant alignments" in blast[i]:
+#             i += 2
+#             e_val = float(blast[i].split()[-1])
+#             if e_val < float(1e-5):
+#                 j = i+1
+#                 while j < len(blast):
+#                     if ">" in blast[j]:
+#                         linelist = blast[j + 5].split()
+#                         if linelist[0] == 'Score':
+#                             linelist = blast[j + 6].split()
+#                         hit_length = find_length(blast[j+1:j+6])
+#                         ''' check if identities equals 100% and gaps 0% and
+#                         length == query_length -> then it is the query sequence,
+#                         otherwise not found (this was the best hit)
+#                         '''
+#                         if (linelist[3] == "(100%)," and
+#                                 linelist[-1] == "(0%)" and
+#                                 query_length == hit_length):
+#                             found = True
+#                             seqID = blast[j].split("|")[1]
+#                         reading = False
+#                         break
+#                     else:
+#                         j += 1
+#             else:
+#                 reading = False  # pragma: no cover
+#     return [found, seqID]
 
 
 def process_d2p2(prediction):
