@@ -116,8 +116,6 @@
                         width=100%; height:100%;margin:15px;padding-top:25px;">
                         <div id="usr_feat_inner_div">
                           {{ form.usr_features.label(style="font-size:110%;") }}
-                          {{ form.csrf_token }}
-                          {{ form.hidden_tag() }}
                           <table>
                             {% if form.usr_features.data | length > 0 %}
                               <tr>
