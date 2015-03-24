@@ -76,7 +76,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 tmp_path = '/'.join(fasta_file.split("/")[:-1])
                 method = paths.SPINE_DIR+"/bin/run_spine-d"
                 args = [method, tmp_path, tmp_name]
-                out_file = paths.SPINE_OUTPUT_DIR+tmp_name+".spd"
+                out_file = paths.SPINE_OUTPUT_DIR+tmp_name+".spined"
             elif pred_name == "disopred":
                 method = paths.DISOPRED_PATH
                 args = [method, fasta_file]
