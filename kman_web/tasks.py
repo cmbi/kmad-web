@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import subprocess
 import re
 import urllib2
@@ -102,12 +103,15 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                     _log.info("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
                     subprocess.call(args)
-                    with open(out_file) as f:
-                        data = f.read()
+                    if os.path.exists(out_file):
+                        with open(out_file) as f:
+                            data = f.read()
+                    else:
+                        _log.debug(
+                            "Ouput file {} doesn't exist".format(out_file))
+                data = preprocess(data, pred_name)
             except (subprocess.CalledProcessError, OSError) as e:
                 _log.error("Error: {}".format(e))
-            finally:
-                data = preprocess(data, pred_name)
         return data
 
 
