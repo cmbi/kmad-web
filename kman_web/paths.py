@@ -1,6 +1,6 @@
 SPINE_DIR = "/usr/local/src/spined"
 SPINE_OUTPUT_DIR = SPINE_DIR+"predout/"
-DISOPRED_PATH ="/usr/local/src/disopred/run_disopred"
+DISOPRED_PATH ="/usr/local/src/disopred/run_disopred.pl"
 PREDISORDER_PATH = "/usr/local/src/predisorder/bin/predict_diso.sh"
 GLOBPLOT_PATH  = "GlobPipe.py"
 PSIPRED_PATH = "/usr/local/src/psipred/runpsipred"

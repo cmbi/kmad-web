@@ -56,3 +56,6 @@ node_modules/
 
 #redis
 dump.rdb
+
+#tmp files produced by predictors
+tmp*
