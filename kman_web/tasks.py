@@ -122,34 +122,38 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
     # blast result file already created in "query_d2p2"
     if not multi_seq_input:
         out_blast = filename.split(".")[0]+".blastp"
-        fastafile = get_fasta_from_blast(out_blast, filename)  # fasta filename
+        fastafile, blast_success = get_fasta_from_blast(out_blast, filename)  # fasta filename
     else:
         fastafile = filename
-    toalign = convert_to_7chars(fastafile)  # .7c filename
-    codon_length = 7
+    if multi_seq_input or blast_success:
+        toalign = convert_to_7chars(fastafile)  # .7c filename
+        codon_length = 7
 
-    al_outfile = "%s_al" % toalign
-    args = ["kman", "-i", toalign,
-            "-o", toalign, "-g", str(gap_opening_penalty),
-            "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
-            "-p", str(ptm_score), "-d", str(domain_score),
-            "--out-encoded",
-            "-m", str(motif_score), "-c", str(codon_length)]
-    if conffilename:
-        args.extend(["--conf", conffilename])
-    _log.debug("Running KMAN: {}".format(subprocess.list2cmdline(args)))
-    subprocess.call(args)
+        al_outfile = "%s_al" % toalign
+        args = ["kman", "-i", toalign,
+                "-o", toalign, "-g", str(gap_opening_penalty),
+                "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
+                "-p", str(ptm_score), "-d", str(domain_score),
+                "--out-encoded",
+                "-m", str(motif_score), "-c", str(codon_length)]
+        if conffilename:
+            args.extend(["--conf", conffilename])
+        _log.debug("Running KMAN: {}".format(subprocess.list2cmdline(args)))
+        subprocess.call(args)
 
-    with open(fastafile.split('.')[0] + '.map') as a:
-        # feature_codemap = [i.split() for i in a.read().splitlines()]
-        feature_codemap = a.read().splitlines()
-    motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
-    domains = [i.split() for i in feature_codemap if i.startswith('domain')]
-    feature_codemap = {'motifs': motifs, 'domains': domains}
+        with open(fastafile.split('.')[0] + '.map') as a:
+            # feature_codemap = [i.split() for i in a.read().splitlines()]
+            feature_codemap = a.read().splitlines()
+        motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
+        domains = [i.split() for i in feature_codemap if i.startswith('domain')]
+        feature_codemap = {'motifs': motifs, 'domains': domains}
 
-    alignment_encoded = open(al_outfile).read().encode('ascii', errors='ignore')
-    alignment_processed = process_alignment(alignment_encoded, codon_length)
-    result = alignment_processed + [feature_codemap]
+        alignment_encoded = open(al_outfile).read().encode('ascii',
+                                                           errors='ignore')
+        alignment_processed = process_alignment(alignment_encoded, codon_length)
+        result = alignment_processed + [feature_codemap]
+    else:
+        result = [[], [], [], []]
     return result
 
 

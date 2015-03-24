@@ -6,8 +6,10 @@
           <strong>Job status: </strong><span class="label label-default" id="status">QUEUED</span>
           <br>
           <br>
-          The calculation might take a few minutes, you can bookmark
-          this page and check the result later.
+          <div id="job_message">
+            The calculation might take a few minutes, you can bookmark
+            this page and check the result later.
+          </div>
         </div>
     </div>
     <div class="panel panel-default" style="width=100%" id="panel1">
@@ -200,38 +202,47 @@
                     }
                     if ("{{ output_type }}" != 'predict'){
                       var raw_alignment = data['result']['alignment']['raw'];
-                      document.getElementById('download_al_input').value = raw_alignment;
-                      var processed_alignment = data['result']['alignment']['processed'];
-                      var encoded_alignment = data['result']['alignment']['encoded'];
-                      var feature_codemap = data['result']['feature_codemap'];
-                      var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
-                      alignment.update();
-                      var codon_length = 7;
-                      var alignment_ptms = new SequenceAlignmentPTMs(
-                        'alignment_canvas_ptms', encoded_alignment,
-                        codon_length);
-                      alignment_ptms.update();
-                      var ptms_legend = new PTMsLegend('legend_canvas_ptms');
-                      ptms_legend.update();
-                      var motifs_legend = new MotifsLegend(
-                          'legend_canvas_motifs',
-                          feature_codemap['motifs']);
-                      motifs_legend.update();
-                      var domains_legend = new DomainsLegend(
-                          'legend_canvas_domains',
-                          feature_codemap['domains']);
-                      domains_legend.update();
-                      var alignment_motifs = new SequenceAlignmentFeatures(
-                          'alignment_canvas_motifs', encoded_alignment,
-                          codon_length, feature_codemap['motifs'], 'motifs');
-                      alignment_motifs.update();
-                      var alignment_domains = new SequenceAlignmentFeatures(
-                          'alignment_canvas_domains', encoded_alignment,
-                          codon_length, feature_codemap['domains'], 'domains');
-                      alignment_domains.update();
-                      $('#download_al_button').removeClass('disabled');
-                      $('#collapseTwo').addClass('in');
-                      $('#collapseThree').addClass('in');
+                      if (raw_alignment.length > 0) {
+                        document.getElementById('download_al_input').value = raw_alignment;
+                        var processed_alignment = data['result']['alignment']['processed'];
+                        var encoded_alignment = data['result']['alignment']['encoded'];
+                        var feature_codemap = data['result']['feature_codemap'];
+                        var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
+                        alignment.update();
+                        var codon_length = 7;
+                        var alignment_ptms = new SequenceAlignmentPTMs(
+                          'alignment_canvas_ptms', encoded_alignment,
+                          codon_length);
+                        alignment_ptms.update();
+                        var ptms_legend = new PTMsLegend('legend_canvas_ptms');
+                        ptms_legend.update();
+                        var motifs_legend = new MotifsLegend(
+                            'legend_canvas_motifs',
+                            feature_codemap['motifs']);
+                        motifs_legend.update();
+                        var domains_legend = new DomainsLegend(
+                            'legend_canvas_domains',
+                            feature_codemap['domains']);
+                        domains_legend.update();
+                        var alignment_motifs = new SequenceAlignmentFeatures(
+                            'alignment_canvas_motifs', encoded_alignment,
+                            codon_length, feature_codemap['motifs'], 'motifs');
+                        alignment_motifs.update();
+                        var alignment_domains = new SequenceAlignmentFeatures(
+                            'alignment_canvas_domains', encoded_alignment,
+                            codon_length, feature_codemap['domains'], 'domains');
+                        alignment_domains.update();
+                        $('#download_al_button').removeClass('disabled');
+                        $('#collapseTwo').addClass('in');
+                        $('#collapseThree').addClass('in');
+                      } else {
+                        document.getElementById('status').innerHTML = "FAILURE";
+                        $('#status').removeClass("label-default label-info label-success")
+                                    .addClass("label-warning");
+                        $('#panel0').removeClass("panel-default panel-info panel-success")
+                                    .addClass("panel-warning");
+                        document.getElementById('job_message').innerHTML = 'No sequences found with BLAST. Nothing to align.';
+                      }
                     }
                 });
             }
