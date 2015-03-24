@@ -99,7 +99,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                     # data = run_globplot(fasta_file)
                     data = subprocess.check_output(args)
                 else:
-                    _log.debug("Ran command: {}".format(
+                    _log.info("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
                     subprocess.call(args)
                     with open(out_file) as f:
