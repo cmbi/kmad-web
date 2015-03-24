@@ -55,10 +55,12 @@ class UsrFeatureEntryForm(Form):
                                                       indicate positions 1, \
                                                       2, and all positions \
                                                       from 15 to 20')
+
     featname = TextField(u'Feature name', [validators.length(max=10)])
     add_score = IntegerField(u'Add score', [validators.Optional()])
     sequence_number = IntegerField(u'Sequence number', [validators.Optional()])
-    positions = TextField(u'Feature positions')
+    positions = TextField(u'Feature positions', [validators.Optional()])
+    pattern = TextField(u'Feature pattern(regex)', [validators.Optional()])
 
 
 class KmanForm(Form):

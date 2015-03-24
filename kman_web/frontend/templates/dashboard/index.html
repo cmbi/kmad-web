@@ -128,6 +128,8 @@
                                   <th>&nbsp</th>
                                   <th> Positions </th>
                                   <th>&nbsp</th>
+                                  <th> Pattern </th>
+                                  <th>&nbsp</th>
                                   <th></th>
                                 </div>
                               </tr>
@@ -157,6 +159,9 @@
                                 <td> {{ feat.positions(pattern="[
                                   ]?(([0-9]((,)[ ]?)?)|([0-9][ ]?-[
                                   ]?[0-9]((,)[ ]?)?)){1,}(([ ]){1,})?", placeholder="e.g. '1,2,7-9'", class="form-control") }} </td>
+                                <td>&nbsp</td>
+                                <td> {{ feat.pattern(placeholder="Regex
+                                  expression", class="form-control") }}
                                 <td>&nbsp</td>
                                 <td> {{ form.remove_feature(value='X',
                                   class="btn btn-danger") }} </td>

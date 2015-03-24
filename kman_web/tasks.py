@@ -123,6 +123,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
     if not multi_seq_input:
         out_blast = filename.split(".")[0]+".blastp"
         fastafile, blast_success = get_fasta_from_blast(out_blast, filename)  # fasta filename
+        _log.debug("BLAST success: {}".format(blast_success))
     else:
         fastafile = filename
     if multi_seq_input or blast_success:
