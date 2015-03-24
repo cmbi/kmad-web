@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import subprocess
 import re
 import urllib2
@@ -102,10 +101,6 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 else:
                     _log.info("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
-                    if 'LD_LIBRARY_PATH' in os.environ.keys():
-                        _log.info(os.environ['LD_LIBRARY_PATH'])
-                    else:
-                        _log.info("LD_LIBRARY_PATH is not environment variables")
                     subprocess.call(args)
                     with open(out_file) as f:
                         data = f.read()
