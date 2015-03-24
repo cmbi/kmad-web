@@ -101,9 +101,6 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 else:
                     _log.debug("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
-                    subprocess.call([
-                        'export',
-                        'LD_LIBRARY_PATH="$HOME/lib:$LD_LIBRARY_PATH"'])
                     subprocess.call(args)
                     with open(out_file) as f:
                         data = f.read()
