@@ -115,47 +115,6 @@ def find_seqid_blast(filename):
     return [found, seqID]
 
 
-# def find_seqid_blast(filename):
-#     with open(filename) as a:
-#         blast = a.read()
-#     blast = blast.splitlines()
-#     i = -1
-#     reading = True
-#     found = False
-#     seqID = ''
-#     while reading and i < len(blast):
-#         i += 1
-#         if "Query=" in blast[i]:
-#             query_length = find_length(blast[i+1:i+6])
-#         if "Sequences producing significant alignments" in blast[i]:
-#             i += 2
-#             e_val = float(blast[i].split()[-1])
-#             if e_val < float(1e-5):
-#                 j = i+1
-#                 while j < len(blast):
-#                     if ">" in blast[j]:
-#                         linelist = blast[j + 5].split()
-#                         if linelist[0] == 'Score':
-#                             linelist = blast[j + 6].split()
-#                         hit_length = find_length(blast[j+1:j+6])
-#                         ''' check if identities equals 100% and gaps 0% and
-#                         length == query_length -> then it is the query sequence,
-#                         otherwise not found (this was the best hit)
-#                         '''
-#                         if (linelist[3] == "(100%)," and
-#                                 linelist[-1] == "(0%)" and
-#                                 query_length == hit_length):
-#                             found = True
-#                             seqID = blast[j].split("|")[1]
-#                         reading = False
-#                         break
-#                     else:
-#                         j += 1
-#             else:
-#                 reading = False  # pragma: no cover
-#     return [found, seqID]
-
-
 def process_d2p2(prediction):
     processed = []
     for i in prediction:
@@ -232,6 +191,7 @@ def parse_features(usr_features):
         if i['featname'] not in feat_dict.keys():
             feat_dict[i['featname']] = {'name': i['featname'],
                                         'add_score': i['add_score'],
+                                        'pattern': i['pattern'],
                                         'positions': [{'seq':
                                                        i['sequence_number'],
                                                        'pos':
@@ -253,14 +213,14 @@ def parse_features(usr_features):
                    + '    subtract_features = ();\n' \
                    + '    subtract_tags = ();\n' \
                    + '    subtract_exceptions = ();\n' \
+                   + '    pattern = "{}";\n'.format(feat_dict[i]['pattern']) \
                    + '    positions = ( '
         for j in feat_dict[i]['positions']:
-            outtext += '{{ seq = {}; pos = ({}); }}'.format(j['seq'],
-                                                            ', '.join(j['pos']))
-            if j != feat_dict[i]['positions'][-1]:
-                outtext += ','
-                _log.debug("Added a coma")
-            _log.debug("New stuff")
+            if j['seq']:
+                outtext += '{{ seq = {}; pos = ({}); }}'.format(j['seq'],
+                                                                ', '.join(j['pos']))
+                if j != feat_dict[i]['positions'][-1]:
+                    outtext += ','
             outtext += '\n'
         outtext += ');\n}\n'
     outtext += ');\n};\n'

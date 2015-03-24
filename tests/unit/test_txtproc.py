@@ -90,7 +90,9 @@ def test_parse_features():
     from kman_web.services.txtproc import parse_features
 
     text_features = [{'featname': 'feat1', 'add_score': 2,
-                      'sequence_number': '2', 'positions': '7,6,8-9'}]
+                      'sequence_number': '2',
+                      'pattern': '',
+                      'positions': '7,6,8-9'}]
     expected = 'feature_settings = \n  {\n' \
                + '  usr_features = ( \n' \
                + '{    name = "feat1";\n' \
@@ -103,6 +105,7 @@ def test_parse_features():
                + '    subtract_features = ();\n' \
                + '    subtract_tags = ();\n' \
                + '    subtract_exceptions = ();\n' \
+               + '    pattern = "";\n' \
                + '    positions = ( { seq = 2; pos = (7, 6, 8, 9); }\n' \
                + ');\n' \
                + '}\n' \

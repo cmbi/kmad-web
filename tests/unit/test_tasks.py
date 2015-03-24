@@ -27,7 +27,7 @@ class TestTasks(object):
     @patch('subprocess.call')
     def test_align(self, mock_subprocess, mock_call1, mock_call2):
         filename = 'tests/unit/testdata/test.fasta'
-        mock_call1.return_value = 'tests/unit/testdata/test.blastp'
+        mock_call1.return_value = ['tests/unit/testdata/test.fasta', True]
         mock_call2.return_value = 'tests/unit/testdata/test.7c'
         expected = [test.alignment_1c, test.alignment_1c_list,
                     test.alignment_7c_list, {"domains": [], "motifs": []}]
@@ -156,26 +156,3 @@ class TestTasks(object):
 
         result = run_single_predictor.delay(d2p2_result, filename, pred_name)
         eq_(result.get(),  expected)
-
-    # def test_update_elm(self):
-    #     filename = 'tests/unit/testdata/elm_complete_test.txt'
-    #     if os.path.isfile(filename):
-    #         os.remove(filename)
-
-    #     from kman_web.tasks import update_elmdb
-    #     update_elmdb.delay(filename)
-
-    #     ok_(os.path.isfile(filename))
-    #     with open(filename) as a:
-    #         result = a.read().splitlines()
-
-    #     ok_(len(result) > 0)
-    #     # first_line = result.splitlines()[0].split()
-    #     first_line = result[0].split()
-    #     print 'first line: ' + first_line
-    #     ok_(len(first_line) >= 3)
-    #     ok_(first_line[2].isdigit())
-    #     if len(first_line) > 3:
-    #         for i in first_line[3:]:
-    #             ok_(i.isalnum() and i.isdigit())
-    #     # os.remove(filename)
