@@ -84,6 +84,11 @@ def about():
     return render_template('dashboard/about.html')
 
 
+@bp.route('/standalone', methods=['GET'])
+def standalone():
+    return render_template('dashboard/standalone.html')
+
+
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
