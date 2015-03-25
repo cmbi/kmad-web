@@ -11,6 +11,7 @@ from wtforms.widgets import html_params, HTMLString
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
+
 class MyListWidget(object):
     """
     Renders a list of fields as a `ul` or `ol` list.
@@ -64,9 +65,43 @@ class UsrFeatureEntryForm(Form):
     pattern = TextField(u'Feature pattern(regex)', [validators.Optional()])
 
 
+def alpha_or_dash(sequence):
+    check1 = len(''.join(sequence.split())) > 0
+    check2 = all([i.isalpha() or i == '-' for i in sequence])
+    return check1 and check2
+
+
+def check_if_fasta(sequences):
+    fasta_header_count = ''.join(sequences).count('>')
+    alright = True
+    if fasta_header_count > 0:
+        # check if first and last are not headers
+        alright = (sequences[0].startswith('>')
+                   and not sequences[-1].startswith('>')
+                   and alpha_or_dash(sequences[-1]))
+        if alright:
+            for i, lineI in enumerate(sequences[:-1]):
+                fasta_header = lineI.startswith('>')
+                if fasta_header and not alpha_or_dash(sequences[i + 1]):
+                    _log.debug("fasta header and next not alphadash")
+                    alright = False
+                    break
+                elif not fasta_header and not alpha_or_dash(lineI):
+                    _log.debug("Current not fasta header and not alpha dash")
+                    alright = False
+                    break
+    elif not alpha_or_dash(''.join(sequences)):
+        _log.debug("No fasta headers and not alpha_dash")
+        alright = False
+    if not alright:
+        raise validators.ValidationError('Sequence should be either in \
+                                          FASTA format or simply a \
+                                          sequence of one-letter amino \
+                                          acid codes')
+
+
 class KmanForm(Form):
     def validate_sequence(form, field):
-        reading = True
         i = 0
         seq_list = field.data.splitlines()
         # check seq length
@@ -79,17 +114,7 @@ class KmanForm(Form):
                 raise validators.ValidationError('Sequence should be at least \
                                                   10 amino acids long')
         # check format
-        while reading and i < len(seq_list):
-            if (seq_list[i] and not (seq_list[i].startswith('>')
-                                     and i < len(seq_list) - 1
-                                     and seq_list[i + 1].isalpha())
-                            and not seq_list[i].isalpha()):
-                raise validators.ValidationError('Sequence should be either in \
-                                                  FASTA format or simply a \
-                                                  sequence of one-letter amino \
-                                                  acid codes')
-                reading = False
-            i += 1
+        check_if_fasta(seq_list)
         # if output type == refine check if multiple sequences are provided
         # and if seq lengths are equal
         if form.output_type.data == 'refine':
