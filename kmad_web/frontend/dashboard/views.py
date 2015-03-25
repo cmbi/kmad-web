@@ -4,9 +4,9 @@ import StringIO
 from flask import (Blueprint, render_template,
                    request, redirect, url_for, send_file)
 
-from kman_web.frontend.dashboard.forms import KmanForm
-from kman_web.services.kman import KmanStrategyFactory
-from kman_web.services import txtproc
+from kmad_web.frontend.dashboard.forms import KmanForm
+from kmad_web.services.kmad import KmanStrategyFactory
+from kmad_web.services import txtproc
 
 
 _log = logging.getLogger(__name__)
@@ -107,5 +107,5 @@ def download_alignment():
     strIO.write(alignment)
     strIO.seek(0)
     return send_file(strIO,
-                     attachment_filename="kman_alignment.txt",
+                     attachment_filename="kmad_alignment.txt",
                      as_attachment=True)

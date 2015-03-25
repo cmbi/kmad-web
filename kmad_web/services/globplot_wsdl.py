@@ -1,5 +1,5 @@
 import logging
-from kman_web.services.soap import run
+from kmad_web.services.soap import run
 
 
 logging.basicConfig()

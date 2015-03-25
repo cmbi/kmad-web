@@ -2,7 +2,7 @@ from nose.tools import eq_
 
 
 def test_find_consensus_disorder():
-    from kman_web.services.consensus import find_consensus_disorder
+    from kmad_web.services.consensus import find_consensus_disorder
 
     in_data = [['1', [0, 0, 0, 0]],
                ['2', [0, 0, 0, 2]],
@@ -15,7 +15,7 @@ def test_find_consensus_disorder():
 
 
 def test_filter_out_short_stretches():
-    from kman_web.services.consensus import filter_out_short_stretches
+    from kmad_web.services.consensus import filter_out_short_stretches
 
     in_data = [0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 0, 1]
     expected = ['filtered', [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0]]

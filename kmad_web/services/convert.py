@@ -11,7 +11,7 @@ import urllib2
 from operator import itemgetter
 import xml.etree.ElementTree as ET
 
-from kman_web import paths
+from kmad_web import paths
 
 
 logging.basicConfig()

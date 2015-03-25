@@ -6,7 +6,7 @@ The output is sent to the command line.
 
 Example:
 
-    python predict_and_align.py TAU_HUMAN.fasta http://www.cmbi.umcn.nl/kman-web/ predict_and_align
+    python predict_and_align.py TAU_HUMAN.fasta http://www.cmbi.umcn.nl/kmad-web/ predict_and_align
 """
 
 import argparse
@@ -15,7 +15,7 @@ import requests
 import time
 
 
-def kman(sequence_path, kman_url, output_type):
+def kmad(sequence_path, kmad_url, output_type):
     # Read the fasta file data into a variable
     with open(sequence_path) as fasta_file:
         fasta_content = fasta_file.read()
@@ -25,7 +25,7 @@ def kman(sequence_path, kman_url, output_type):
     # If an error occurs, an exception is raised and the program exits. If the
     # request is successful, the id of the job running on the server is
     # returned.
-    url_create = '{}api/create/{}/'.format(kman_url,
+    url_create = '{}api/create/{}/'.format(kmad_url,
                                            output_type)
     print url_create
     r = requests.post(url_create, data={'data': fasta_content})
@@ -41,7 +41,7 @@ def kman(sequence_path, kman_url, output_type):
         # Check the status of the running job. If an error occurs an exception
         # is raised and the program exits. If the request is successful, the
         # status is returned.
-        url_status = '{}api/status/{}/{}/'.format(kman_url,
+        url_status = '{}api/status/{}/{}/'.format(kmad_url,
                                                   output_type,
                                                   job_id)
         r = requests.get(url_status)
@@ -68,7 +68,7 @@ def kman(sequence_path, kman_url, output_type):
         # Requests the result of the job. If an error occurs an exception is
         # raised and the program exits. If the request is successful, the result
         # is returned.
-        url_result = '{}api/result/predict/{}/'.format(kman_url,
+        url_result = '{}api/result/predict/{}/'.format(kmad_url,
                                                        job_id)
         r = requests.get(url_result)
         r.raise_for_status()
@@ -81,9 +81,9 @@ def kman(sequence_path, kman_url, output_type):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Predict disorder')
     parser.add_argument('sequence_path')
-    parser.add_argument('kman_url')
+    parser.add_argument('kmad_url')
     parser.add_argument('output_type')
     args = parser.parse_args()
 
-    result = kman(args.sequence_path, args.kman_url, args.output_type)
+    result = kmad(args.sequence_path, args.kmad_url, args.output_type)
     print result

@@ -7,16 +7,16 @@ from testdata import test_variables as test_vars
 
 
 @patch('urllib2.urlopen')
-@patch('kman_web.services.convert.urllib2.Request')
-@patch('kman_web.services.convert.check_id')
-@patch('kman_web.services.convert.elm_db')
-@patch('kman_web.services.convert.tmp_fasta')
-@patch('kman_web.services.convert.read_fasta')
-@patch('kman_web.services.convert.find_phosph_sites')
-@patch('kman_web.services.convert.run_netphos')
-@patch('kman_web.services.convert.search_elm')
-@patch('kman_web.services.convert.run_pfam_scan')
-@patch('kman_web.services.convert.open', create=True)
+@patch('kmad_web.services.convert.urllib2.Request')
+@patch('kmad_web.services.convert.check_id')
+@patch('kmad_web.services.convert.elm_db')
+@patch('kmad_web.services.convert.tmp_fasta')
+@patch('kmad_web.services.convert.read_fasta')
+@patch('kmad_web.services.convert.find_phosph_sites')
+@patch('kmad_web.services.convert.run_netphos')
+@patch('kmad_web.services.convert.search_elm')
+@patch('kmad_web.services.convert.run_pfam_scan')
+@patch('kmad_web.services.convert.open', create=True)
 def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
                            mock_search_elm, mock_run_netphos,
                            mock_find_phosph_sites,
@@ -42,7 +42,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
                                                'prob': 0.9}}
     mock_check_id.return_value = True
 
-    from kman_web.services.convert import convert_to_7chars
+    from kmad_web.services.convert import convert_to_7chars
 
     convert_to_7chars(filename)
     expected_calls = [call('testdata/test.7c', 'w'),
@@ -114,9 +114,9 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
 
 
 @patch('urllib2.urlopen')
-@patch('kman_web.services.convert.urllib2.Request')
-@patch('kman_web.services.convert.os.path.exists')
-@patch('kman_web.services.convert.open',
+@patch('kmad_web.services.convert.urllib2.Request')
+@patch('kmad_web.services.convert.os.path.exists')
+@patch('kmad_web.services.convert.open',
        mock_open(read_data=open(
            'tests/unit/testdata/test_get_uniprot_txt.dat').read()),
        create=True)
@@ -130,12 +130,12 @@ def test_get_uniprot_txt(mock_os_path_exists, mock_urlopen, mock_request):
                 ["FT   MOD_RES       2      2       N-acetylalanine."],
                 "GO": ["0030424"]}
 
-    from kman_web.services.convert import get_uniprot_txt
+    from kmad_web.services.convert import get_uniprot_txt
     eq_(get_uniprot_txt('test_id'), expected)
 
 
 @patch('urllib2.urlopen')
-@patch('kman_web.services.convert.urllib2.Request')
+@patch('kmad_web.services.convert.urllib2.Request')
 def test_search_elm(mock_request, mock_urlopen):
 
     # check: no motifs found
@@ -144,7 +144,7 @@ def test_search_elm(mock_request, mock_urlopen):
     slims_classes = dict()
     seq_go_terms = ["007"]
 
-    from kman_web.services.convert import search_elm
+    from kmad_web.services.convert import search_elm
 
     result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
     eq_(result, expected)
@@ -168,7 +168,7 @@ def test_search_elm(mock_request, mock_urlopen):
 
 
 def test_filter_out_overlappig():
-    from kman_web.services.convert import filter_out_overlapping
+    from kmad_web.services.convert import filter_out_overlapping
 
     lims = [[1, 2], [2, 3]]
     ids = ['MOTIF1', 'MOTIF2']
@@ -179,9 +179,9 @@ def test_filter_out_overlappig():
     eq_(result, expected)
 
 
-@patch('kman_web.services.convert.get_uniprot_txt')
+@patch('kmad_web.services.convert.get_uniprot_txt')
 def test_find_phosph_sites(mock_uni_txt):
-    from kman_web.services.convert import get_uniprot_txt
+    from kmad_web.services.convert import get_uniprot_txt
 
     mock_uni_txt.return_value = {"features": open(
         'tests/unit/testdata/test_features.dat').readlines(),
@@ -194,7 +194,7 @@ def test_find_phosph_sites(mock_uni_txt):
                 [[1], [], [], []],
                 [[5], [], [], []],
                 [[3], [], [], []]]
-    from kman_web.services.convert import find_phosph_sites
+    from kmad_web.services.convert import find_phosph_sites
 
     result = find_phosph_sites(uniprot_txt['features'])
     eq_(result, expected)
@@ -204,7 +204,7 @@ def test_find_phosph_sites(mock_uni_txt):
 def test_run_netphos(mock_subprocess):
     mock_subprocess.return_value = open('tests/unit/testdata/test.np').read()
 
-    from kman_web.services.convert import run_netphos
+    from kmad_web.services.convert import run_netphos
 
     result = run_netphos('test')
     expected = [1]
@@ -212,12 +212,12 @@ def test_run_netphos(mock_subprocess):
     eq_(result, expected)
 
 
-@patch('kman_web.services.convert.open',
+@patch('kmad_web.services.convert.open',
        mock_open(read_data=open(
            'tests/unit/testdata/TAU_HUMAN.fasta').read()),
        create=True)
 def test_run_pfam_scan():
-    from kman_web.services.convert import run_pfam_scan
+    from kmad_web.services.convert import run_pfam_scan
     expected = [[[560, 591], [592, 622], [623, 653], [654, 685]],
                 ['PF00418.14', 'PF00418.14', 'PF00418.14', 'PF00418.14']]
 
@@ -226,7 +226,7 @@ def test_run_pfam_scan():
 
 
 def test_get_id():
-    from kman_web.services.convert import get_id
+    from kmad_web.services.convert import get_id
 
     header = 'TEST_HEADER'
     eq_(get_id(header), 'UNKNOWN_ID')
@@ -235,12 +235,12 @@ def test_get_id():
     eq_(get_id(header), 'TEST_ID')
 
 
-@patch('kman_web.services.convert.open',
+@patch('kmad_web.services.convert.open',
        mock_open(read_data=open(
            'tests/unit/testdata/test_elm_classes_goterms.txt').read()),
        create=True)
 def test_elm_db():
-    from kman_web.services.convert import elm_db
+    from kmad_web.services.convert import elm_db
     expected = {'TEST_ID': {"prob": 0.003564849399,
                             "regex": "KR.",
                             "GO": ["007", "008"]}}
@@ -248,25 +248,25 @@ def test_elm_db():
     eq_(elm_db(), expected)
 
 
-@patch('kman_web.services.convert.open',
+@patch('kmad_web.services.convert.open',
        mock_open(read_data='>1\nSEQ\nSEQ\n>2\nSEQ\n'),
        create=True)
 def test_read_fasta():
     expected = ['>1', 'SEQSEQ', '>2', 'SEQ']
-    from kman_web.services.convert import read_fasta
+    from kmad_web.services.convert import read_fasta
 
     eq_(read_fasta('testname'), expected)
 
 
 @patch('urllib2.urlopen')
-@patch('kman_web.services.convert.urllib2.Request')
+@patch('kmad_web.services.convert.urllib2.Request')
 def test_check_id(mock_request, mock_urlopen):
     # check: no motifs found
     seq = ">1\nSEQ"
     seq_check = "SEQ"
     mock_urlopen.return_value = MockResponse(seq)
 
-    from kman_web.services.convert import check_id
+    from kmad_web.services.convert import check_id
 
     eq_(check_id('test_id', seq_check), True)
 
@@ -283,7 +283,7 @@ def test_check_id(mock_request, mock_urlopen):
 
 
 def test_check_id_without_mocks():
-    from kman_web.services.convert import check_id
+    from kmad_web.services.convert import check_id
     ok_(check_id('CRAM_CRAAB',
                  'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'))
     ok_(not check_id('CRAM_CRAAB',
@@ -292,7 +292,7 @@ def test_check_id_without_mocks():
 
 
 def test_get_annotation_level():
-    from kman_web.services.convert import get_annotation_level
+    from kmad_web.services.convert import get_annotation_level
     data = ['', '', '']
     eq_(get_annotation_level(data), 3)
     data = ['FT          ECO:0000269']

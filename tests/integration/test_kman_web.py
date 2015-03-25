@@ -16,10 +16,10 @@ import time
 import requests
 from nose.tools import eq_
 
-from kman_web import paths
+from kmad_web import paths
 
 
-KMAN_URL = 'http://127.0.0.1:5000/api/'
+KMAD_URL = 'http://127.0.0.1:5000/api/'
 FMT_CREATE = '{}create/{}/'
 FMT_STATUS = '{}status/{}/{}/'
 
@@ -50,7 +50,7 @@ class TestApi(object):
             for output_type in output_types:
                 _log.info('Getting {} for {}...'.format(output_type,
                                                         seq_id))
-                url_create = FMT_CREATE.format(KMAN_URL,
+                url_create = FMT_CREATE.format(KMAD_URL,
                                                output_type)
 
                 r = requests.post(url_create, data={'data': sequence})
@@ -58,7 +58,7 @@ class TestApi(object):
                 job_id = json.loads(r.text)['id']
 
                 while True:
-                    url_status = FMT_STATUS.format(KMAN_URL,
+                    url_status = FMT_STATUS.format(KMAD_URL,
                                                    output_type,
                                                    job_id)
                     r = requests.get(url_status)
@@ -86,7 +86,7 @@ class TestApi(object):
 
         The test tries to get 5 randomly chosen sequences from Uniprot
         and perform disorder prediction and alignment (or prediction only)
-        using the KMAN API
+        using the KMAD API
         """
         n = 1
         test_sequences, test_ids = self._get_random_sequences(n)

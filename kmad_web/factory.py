@@ -13,11 +13,11 @@ def create_app(settings=None):
 
     app = Flask(__name__, static_folder='frontend/static',
                 template_folder='frontend/templates')
-    app.config.from_object('kman_web.default_settings')
+    app.config.from_object('kmad_web.default_settings')
     if settings:
         app.config.update(settings)
     else:  # pragma: no cover
-        app.config.from_envvar('KMAN_WEB_SETTINGS')  # pragma: no cover
+        app.config.from_envvar('KMAD_WEB_SETTINGS')  # pragma: no cover
 
     # Set the maximum content length to 150MB. This is to allow large PDB files
     # to be sent in post requests. The largest PDB file found to date is 109MB
@@ -34,7 +34,7 @@ def create_app(settings=None):
     # It is somewhat dubious to get _log from the root package, but I can't see
     # a better way. Having the email handler configured at the root means all
     # child loggers inherit it.
-    from kman_web import _log as root_logger
+    from kmad_web import _log as root_logger
 
     # Only log to email during production.
     if not app.debug and not app.testing:  # pragma: no cover
@@ -42,7 +42,7 @@ def create_app(settings=None):
                                    app.config["MAIL_SMTP_PORT"]),
                                    app.config["MAIL_FROM"],
                                    app.config["MAIL_TO"],
-                                   "kman_web failed")
+                                   "kmad_web failed")
         mail_handler.setLevel(logging.ERROR)
         root_logger.addHandler(mail_handler)
         mail_handler.setFormatter(
@@ -70,20 +70,20 @@ def create_app(settings=None):
         root_logger.setLevel(logging.INFO)
 
     # Use ProxyFix to correct URL's when redirecting.
-    from kman_web.middleware import ReverseProxied
+    from kmad_web.middleware import ReverseProxied
     app.wsgi_app = ReverseProxied(app.wsgi_app)
 
     # Initialise extensions
-    from kman_web import toolbar
+    from kmad_web import toolbar
     toolbar.init_app(app)
 
     # Register jinja2 filters
-    from kman_web.frontend.filters import beautify_docstring
+    from kmad_web.frontend.filters import beautify_docstring
     app.jinja_env.filters['beautify_docstring'] = beautify_docstring
 
     # Register blueprints
-    from kman_web.frontend.api.endpoints import bp as api_bp
-    from kman_web.frontend.dashboard.views import bp as dashboard_bp
+    from kmad_web.frontend.api.endpoints import bp as api_bp
+    from kmad_web.frontend.dashboard.views import bp as dashboard_bp
     app.register_blueprint(api_bp)
     app.register_blueprint(dashboard_bp)
 
@@ -110,6 +110,6 @@ def create_celery_app(app):  # pragma: no cover
 
     celery.Task = ContextTask
 
-    import kman_web.tasks
+    import kmad_web.tasks
 
     return celery

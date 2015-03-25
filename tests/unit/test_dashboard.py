@@ -2,7 +2,7 @@ from mock import patch
 
 from nose.tools import eq_
 
-from kman_web.factory import create_app
+from kmad_web.factory import create_app
 
 
 class TestDashboard(object):
@@ -18,8 +18,8 @@ class TestDashboard(object):
         rv = self.app.get('/')
         eq_(rv.status_code, 200)
 
-    @patch('kman_web.services.kman.PredictStrategy.__call__')
-    @patch('kman_web.services.kman.PredictAndAlignStrategy.__call__')
+    @patch('kmad_web.services.kmad.PredictStrategy.__call__')
+    @patch('kmad_web.services.kmad.PredictAndAlignStrategy.__call__')
     def test_index_post_predict(self, mock_call1, mock_call2):
         mock_call1.return_value = 12345
         mock_call2.return_value = 12345

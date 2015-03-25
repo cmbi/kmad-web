@@ -163,7 +163,7 @@
   $(document).ready(function() {
     var intervalId = setInterval(function(){
         $.getJSON(
-          "{{ url_for('kman.get_kman_status', output_type=output_type, id=celery_id) }}",
+          "{{ url_for('kmad.get_kmad_status', output_type=output_type, id=celery_id) }}",
           function(data) {
           $('#status').text(data['status']);
 
@@ -191,7 +191,7 @@
                           .addClass("panel-success");
               document.getElementById('job_message').innerHTML = "";
               $.getJSON(
-                  "{{ url_for('kman.get_kman_result', output_type=output_type, id=celery_id) }}",
+                  "{{ url_for('kmad.get_kmad_result', output_type=output_type, id=celery_id) }}",
                   function(data) {
                   if ("{{ output_type }}" != 'align' && "{{ output_type }}" != 'refine'){ 
                       var proseq = new ProteinSequences("canvas", data['result']['prediction']);

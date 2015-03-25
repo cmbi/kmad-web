@@ -2,7 +2,7 @@ import logging
 import tempfile
 
 
-from kman_web.services import txtproc, files
+from kmad_web.services import txtproc, files
 
 
 _log = logging.getLogger(__name__)
@@ -26,9 +26,9 @@ class PredictStrategy(object):
         self.output_type = output_type
 
     def __call__(self, fasta_seq, prediction_methods, multi_seq_input):
-        from kman_web.tasks import query_d2p2
+        from kmad_web.tasks import query_d2p2
         from celery import chain, group
-        from kman_web.tasks import run_single_predictor, postprocess, get_seq
+        from kmad_web.tasks import run_single_predictor, postprocess, get_seq
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
         _log.debug("Created tmp file '{}'".format(tmp_file.name))
@@ -64,7 +64,7 @@ class PredictAndAlignStrategy(object):
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  prediction_methods, multi_seq_input, usr_features,
                  first_seq_gapped):
-        from kman_web.tasks import (query_d2p2, align,
+        from kmad_web.tasks import (query_d2p2, align,
                                     run_single_predictor, postprocess, get_seq)
         from celery import chain, group
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
@@ -111,7 +111,7 @@ class AlignStrategy(object):
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  multi_seq_input, usr_features, output_type, first_seq_gapped):
-        from kman_web.tasks import (query_d2p2, align,
+        from kmad_web.tasks import (query_d2p2, align,
                                     postprocess, get_seq)
         from celery import chain, group
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)

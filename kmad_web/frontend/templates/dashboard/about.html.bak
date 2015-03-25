@@ -197,7 +197,7 @@ Clustal Omega alignment.
   <br>
   <strong>KMAD</strong>
   <br>
-  <iframe src="{{ url_for('static', filename='alignments/box158_kman.html') }}"
+  <iframe src="{{ url_for('static', filename='alignments/box158_kmad.html') }}"
     style="width:100%;height:400px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
   <br>
@@ -212,7 +212,7 @@ Clustal Omega alignment.
   <br>
   <strong>KMAD</strong>
   <br>
-  <iframe src="{{ url_for('static', filename='alignments/box132_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+  <iframe src="{{ url_for('static', filename='alignments/box132_kmad.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
   <br>
   <br>
@@ -226,7 +226,7 @@ Clustal Omega alignment.
   <br>
  <strong>KMAD</strong>
   <br>
-  <iframe src="{{ url_for('static', filename='alignments/box133_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+  <iframe src="{{ url_for('static', filename='alignments/box133_kmad.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
   <br>
   <br>
@@ -240,7 +240,7 @@ Clustal Omega alignment.
   <br>
   <strong>KMAD</strong>
   <br>
-  <iframe src="{{ url_for('static', filename='alignments/box076_kman.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+  <iframe src="{{ url_for('static', filename='alignments/box076_kmad.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
     </iframe>
   <br>
   <br>

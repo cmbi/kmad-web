@@ -5,9 +5,9 @@ from kombu import Exchange, Queue
 # Celery
 CELERY_BROKER_URL = 'amqp://guest@localhost'
 
-CELERY_DEFAULT_QUEUE = 'kman_web'
+CELERY_DEFAULT_QUEUE = 'kmad_web'
 CELERY_QUEUES = (
-    Queue('kman_web', Exchange('kman_web'), routing_key='kman_web'),
+    Queue('kmad_web', Exchange('kmad_web'), routing_key='kmad_web'),
 )
 CELERY_RESULT_BACKEND = 'redis://localhost/2'
 
@@ -15,8 +15,8 @@ CELERY_RESULT_BACKEND = 'redis://localhost/2'
 CELERYBEAT_SCHEDULE = {
     # Every day at midnight
     'update_elmdb': {
-        'task': 'kman_web.tasks.update_elmdb',
+        'task': 'kmad_web.tasks.update_elmdb',
         'schedule': crontab(hour=0,minute=0),
-        'args': ('kman_web/frontend/static/dbs/elm_complete.txt',)
+        'args': ('kmad_web/frontend/static/dbs/elm_complete.txt',)
     },
 }

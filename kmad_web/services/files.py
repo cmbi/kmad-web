@@ -5,7 +5,7 @@ import tempfile
 import time
 import urllib2
 
-from kman_web.services import txtproc
+from kmad_web.services import txtproc
 
 
 _log = logging.getLogger(__name__)

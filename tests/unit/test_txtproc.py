@@ -6,7 +6,7 @@ def test_decode():
     data = '>1\nSAAAAAAEAAAAAAQAAAAAA\n>2\nSAAAAAAQAAAAAA\n'
     expected = '>1\nSEQ\n>2\nSQ'
 
-    from kman_web.services.txtproc import decode
+    from kmad_web.services.txtproc import decode
 
     result = decode(data, 7)
     eq_(result, expected)
@@ -16,7 +16,7 @@ def test_process_fasta():
     data = '>1\nSEQ\nSEQ\n'
     expected = '>1\nSEQSEQ'
 
-    from kman_web.services.txtproc import process_fasta
+    from kmad_web.services.txtproc import process_fasta
 
     result = process_fasta(data)
 
@@ -27,7 +27,7 @@ def test_process_fasta():
 
 
 def test_preprocess():
-    from kman_web.services.txtproc import preprocess
+    from kmad_web.services.txtproc import preprocess
 
     # check spined
     data = 'S D 0.9\nE D 0.9\nQ O 0.9\n'
@@ -59,11 +59,11 @@ def test_preprocess():
     eq_(result, expected)
 
 
-@patch('kman_web.services.txtproc.open', create=True)
+@patch('kmad_web.services.txtproc.open', create=True)
 def test_find_seqid_blast(mock_open):
     m_file = mock_open.return_value.__enter__.return_value
 
-    from kman_web.services.txtproc import find_seqid_blast
+    from kmad_web.services.txtproc import find_seqid_blast
 
     # check found
     m_file.read.return_value = open('tests/unit/testdata/test.blastp').read()
@@ -78,7 +78,7 @@ def test_find_seqid_blast(mock_open):
 
 
 def test_check_if_multi():
-    from kman_web.services.txtproc import check_if_multi
+    from kmad_web.services.txtproc import check_if_multi
 
     testfasta = '>1\nSEQSEQ\nSEQ'
     ok_(not check_if_multi(testfasta))
@@ -87,7 +87,7 @@ def test_check_if_multi():
 
 
 def test_parse_features():
-    from kman_web.services.txtproc import parse_features
+    from kmad_web.services.txtproc import parse_features
 
     text_features = [{'featname': 'feat1', 'add_score': 2,
                       'sequence_number': '2',

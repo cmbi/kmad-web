@@ -7,18 +7,18 @@ import urllib2
 
 from celery import current_app as celery_app
 
-from kman_web import paths
-from kman_web.services import files
-from kman_web.services.txtproc import (preprocess, process_alignment,
+from kmad_web import paths
+from kmad_web.services import files
+from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
-from kman_web.services.consensus import (find_consensus_disorder,
+from kmad_web.services.consensus import (find_consensus_disorder,
                                          filter_out_short_stretches)
-from kman_web.services.convert import convert_to_7chars
-from kman_web.services.files import (get_fasta_from_blast,
+from kmad_web.services.convert import convert_to_7chars
+from kmad_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
                                      psipred_outfilename)
-from kman_web.services import update_elm as elm
+from kmad_web.services import update_elm as elm
 
 
 logging.basicConfig()
@@ -132,7 +132,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
         codon_length = 7
 
         al_outfile = "%s_al" % toalign
-        args = ["kman", "-i", toalign,
+        args = ["kmad", "-i", toalign,
                 "-o", toalign, "-g", str(gap_opening_penalty),
                 "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
                 "-p", str(ptm_score), "-d", str(domain_score),
@@ -144,7 +144,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
             args.extend(["--conf", conffilename])
         if first_seq_gapped == "gapped":
             args.append("--gapped")
-        _log.debug("Running KMAN: {}".format(subprocess.list2cmdline(args)))
+        _log.debug("Running KMAD: {}".format(subprocess.list2cmdline(args)))
         subprocess.call(args)
 
         with open(fastafile.split('.')[0] + '.map') as a:

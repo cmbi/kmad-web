@@ -2,7 +2,7 @@ from mock import mock_open, patch
 from nose.tools import eq_, raises
 
 from testdata import test_variables as test
-from kman_web.factory import create_app, create_celery_app
+from kmad_web.factory import create_app, create_celery_app
 
 
 class TestTasks(object):
@@ -17,13 +17,13 @@ class TestTasks(object):
     def test_get_seq(self):
         output = test.seq
 
-        from kman_web.tasks import get_seq
+        from kmad_web.tasks import get_seq
 
         result = get_seq.delay('d2p2', '>test\nSEQ\n')
         eq_(result.get(), output)
 
-    @patch('kman_web.tasks.convert_to_7chars')
-    @patch('kman_web.tasks.get_fasta_from_blast')
+    @patch('kmad_web.tasks.convert_to_7chars')
+    @patch('kmad_web.tasks.get_fasta_from_blast')
     @patch('subprocess.call')
     def test_align(self, mock_subprocess, mock_call1, mock_call2):
         filename = 'tests/unit/testdata/test.fasta'
@@ -32,7 +32,7 @@ class TestTasks(object):
         expected = [test.alignment_1c, test.alignment_1c_list,
                     test.alignment_7c_list, {"domains": [], "motifs": []}]
 
-        from kman_web.tasks import align
+        from kmad_web.tasks import align
 
         result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False, "")
         eq_(result.get(), expected)
@@ -40,7 +40,7 @@ class TestTasks(object):
     def test_postprocess(self):
         filename = 'testdata/test.fasta'
 
-        from kman_web.tasks import postprocess
+        from kmad_web.tasks import postprocess
 
         # check d2p2 result and output type 'predict'
         func_input = [test.seq, test.d2p2_result]
@@ -83,7 +83,7 @@ class TestTasks(object):
     def test_get_task(self):
         output_type = 'predict'
 
-        from kman_web.tasks import get_task, postprocess
+        from kmad_web.tasks import get_task, postprocess
 
         expected = postprocess
         result = get_task(output_type)
@@ -93,17 +93,17 @@ class TestTasks(object):
     def test_get_value_error(self):
         output_type = 'incorrect_value'
 
-        from kman_web.tasks import get_task
+        from kmad_web.tasks import get_task
 
         get_task(output_type)
 
-    @patch('kman_web.tasks.find_seqid_blast')
+    @patch('kmad_web.tasks.find_seqid_blast')
     @patch('subprocess.call')
     def test_query_d2p2(self, mock_subprocess, mock_call):
         filename = 'testdata/test.fasta'
         mock_subprocess.return_value = 'testdata/test.blastp'
 
-        from kman_web.tasks import query_d2p2
+        from kmad_web.tasks import query_d2p2
 
         # check: sequence not found in swissprot
         mock_call.return_value = [False, '']
@@ -125,9 +125,9 @@ class TestTasks(object):
         result = query_d2p2.delay(filename, 'predict', False).get()
         eq_(result[0], True)
 
-    @patch('kman_web.tasks.preprocess')
+    @patch('kmad_web.tasks.preprocess')
     @patch('subprocess.call')
-    @patch('kman_web.tasks.open',
+    @patch('kmad_web.tasks.open',
            mock_open(read_data='prediction_out'),
            create=True)
     def test_run_single_predictor(self, mock_subprocess, mock_call):
@@ -137,7 +137,7 @@ class TestTasks(object):
         methods = ["dummy"]
         pred = []
 
-        from kman_web.tasks import run_single_predictor
+        from kmad_web.tasks import run_single_predictor
 
         # check when there is no result from d2p2
         d2p2_result = [False, []]

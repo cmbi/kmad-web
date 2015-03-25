@@ -6,16 +6,16 @@ import StringIO
 from flask import Blueprint, render_template, request, send_file
 from flask.json import jsonify
 
-from kman_web.services.kman import KmanStrategyFactory
+from kmad_web.services.kmad import KmanStrategyFactory
 
 
 _log = logging.getLogger(__name__)
 
-bp = Blueprint('kman', __name__, url_prefix='/api')
+bp = Blueprint('kmad', __name__, url_prefix='/api')
 
 
 @bp.route('/create/<output_type>/', methods=['POST'])
-def create_kman(output_type):
+def create_kmad(output_type):
     """
     :param output_type: Either 'predict', 'predict_and_align' or 'align'.
     :return: The id of the job.
@@ -33,14 +33,14 @@ def create_kman(output_type):
 
 
 @bp.route('/status/<output_type>/<id>/', methods=['GET'])
-def get_kman_status(output_type, id):
+def get_kmad_status(output_type, id):
     """
     Get the status of a previous job submission.
     :param output_type: Either 'predict', 'predict_and_align' or 'align'.
     :param id: The id returned by a call to the create method.
     :return: Either PENDING, STARTED, SUCCESS, FAILURE, RETRY, or REVOKED.
     """
-    from kman_web.tasks import get_task
+    from kmad_web.tasks import get_task
     task = get_task(output_type)
     async_result = task.AsyncResult(id)
 
@@ -51,7 +51,7 @@ def get_kman_status(output_type, id):
 
 
 @bp.route('/result/<output_type>/<id>/', methods=['GET'])
-def get_kman_result(output_type, id):
+def get_kmad_result(output_type, id):
     """
     Get the result of a previous job submission.
 
@@ -60,7 +60,7 @@ def get_kman_result(output_type, id):
     :return: The output of the job. If the job status is not SUCCESS, this
              method returns an error.
     """
-    from kman_web.tasks import get_task
+    from kmad_web.tasks import get_task
     task = get_task(output_type)
     _log.debug("task is {}".format(task.__name__))
     result = task.AsyncResult(id).get()
@@ -82,9 +82,9 @@ def get_kman_result(output_type, id):
 
 @bp.route('/', methods=['GET'])
 def api_docs():
-    fs = [create_kman,
-          get_kman_status,
-          get_kman_result]
+    fs = [create_kmad,
+          get_kmad_status,
+          get_kmad_result]
     docs = {}
     for f in fs:
         src = inspect.getsourcelines(f)
@@ -109,11 +109,11 @@ def api_example():  # pragma: no cover
 
 @bp.route('/download_api_example', methods=['GET', 'POST'])
 def download_api_example():
-    with open("kman_web/frontend/static/files/api_example.py") as a:
+    with open("kmad_web/frontend/static/files/api_example.py") as a:
             api_example = a.read()
     strIO = StringIO.StringIO()
     strIO.write(api_example)
     strIO.seek(0)
     return send_file(strIO,
-                     attachment_filename="kman_api.py",
+                     attachment_filename="kmad_api.py",
                      as_attachment=True)

@@ -1,41 +1,4 @@
-{% extends "base.html" %}
-{% block additional_imports %}
-  <link rel="stylesheet" href="{{ url_for('static',
-  filename='libs/highlightjs-v8.1/styles/default.css')}}">
-	<script type="text/javascript" src="{{ url_for('static',
-    filename='libs/highlightjs-v8.1/highlight.pack.js') }}"></script>
-{% endblock %}
 
-{% block content %}
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <h2>API Example <small>(python)</small></h2>
-    </div>
-  </div>
-<div class="panel-body">
-  <p>
-  <span class="panel_body_text">
-    <div class="row">
-      <div class="col-xs-8">
-      The example performs disorder prediction and alignment of sequence 
-      TAU_HUMAN from Uniprot.
-      </div>
-      <div class="col-xs-4">
-        <div id="download_api_example" style="float:right;">
-          <form action="{{ url_for("kman.download_api_example") }}" method=POST style="clear:both;" >
-            <button type="submit" id="download_al_button" class="btn btn-primary btn-xs" style="float:right;" value="Submit">
-              <span class="glyphicon glyphicon-save"></span> Download
-            </button>
-          </form>
-          <div class="clearfix"></div>
-        </div>
-      </div>
-    </div>
-  </span>
-</p>
-<pre>
-<code class="python">
 """
 This example client takes a FASTA sequence, sends it to the service, which
 performs prediction and alignment.
@@ -43,7 +6,7 @@ The output is sent to the command line.
 
 Example:
 
-    python kman_api.py TAU_HUMAN.fasta http://www.cmbi.ru.nl/kmad/ predict_and_align
+    python predict_and_align.py TAU_HUMAN.fasta http://www.cmbi.umcn.nl/kmad-web/ predict_and_align
 """
 
 import argparse
@@ -52,7 +15,7 @@ import requests
 import time
 
 
-def kman(sequence_path, kman_url, output_type):
+def kmad(sequence_path, kmad_url, output_type):
     # Read the fasta file data into a variable
     with open(sequence_path) as fasta_file:
         fasta_content = fasta_file.read()
@@ -62,12 +25,10 @@ def kman(sequence_path, kman_url, output_type):
     # If an error occurs, an exception is raised and the program exits. If the
     # request is successful, the id of the job running on the server is
     # returned.
-    url_create = '{}api/create/{}/'.format(kman_url,
-                                                  output_type)
+    url_create = '{}api/create/{}/'.format(kmad_url,
+                                           output_type)
     print url_create
-    r = requests.post(url_create, data={'output_type': output_type,
-                                        'sequence': fasta_content,
-                                        'submit_job': 'Submit'})
+    r = requests.post(url_create, data={'data': fasta_content})
     r.raise_for_status()
 
     job_id = json.loads(r.text)['id']
@@ -80,7 +41,7 @@ def kman(sequence_path, kman_url, output_type):
         # Check the status of the running job. If an error occurs an exception
         # is raised and the program exits. If the request is successful, the
         # status is returned.
-        url_status = '{}api/status/{}/{}/'.format(kman_url,
+        url_status = '{}api/status/{}/{}/'.format(kmad_url,
                                                   output_type,
                                                   job_id)
         r = requests.get(url_status)
@@ -107,8 +68,8 @@ def kman(sequence_path, kman_url, output_type):
         # Requests the result of the job. If an error occurs an exception is
         # raised and the program exits. If the request is successful, the result
         # is returned.
-        url_result = '{}api/result/predict/{}/'.format(kman_url,
-                                                                  job_id)
+        url_result = '{}api/result/predict/{}/'.format(kmad_url,
+                                                       job_id)
         r = requests.get(url_result)
         r.raise_for_status()
         result = json.loads(r.text)['result']
@@ -120,25 +81,9 @@ def kman(sequence_path, kman_url, output_type):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Predict disorder')
     parser.add_argument('sequence_path')
-    parser.add_argument('kman_url')
+    parser.add_argument('kmad_url')
     parser.add_argument('output_type')
     args = parser.parse_args()
 
-    result = kman(args.sequence_path, args.kman_url, args.output_type)
+    result = kmad(args.sequence_path, args.kmad_url, args.output_type)
     print result
-
-</code>
-</pre>
-</div>
-</div>
-
-
-
-
-{% endblock %}
-
-{% block js %}
-<script type="text/javascript">
-  hljs.initHighlightingOnLoad();
-</script>
-{% endblock %}
