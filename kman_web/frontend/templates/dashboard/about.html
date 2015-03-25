@@ -165,14 +165,18 @@ for IDP sequence alignment.
   </figcaption>
 </figure>
 <BR>
-But now comes the big trick. If we first make an alignment with Clustal Omega
+But now comes the big trick.
+We can first make an alignment with Clustal Omega
 and derive KMAD&#39;s profile
-from this Clustal Omega derived MSA, and then do two more rounds of alignment with KMAD, we sometimes
+from this, and then do two more rounds of alignment with KMAD. 
+Then for a subset from BAliBASE that holds holds sequences ranging 40% - 80% in
+pairwise sequence identity 
+we sometimes
 see that KMAD gets better scores from BAliBASE while it never gets BAliBASE scores that are worse than
 Clustal Omega&#39;s scores.
 <BR>
-We analyzed all 27 entries in the BAliBASE set that hold sequences ranging 40-80% in pairwise
-sequence identity. 
+<!--We analyzed all 27 entries in the BAliBASE set that hold sequences ranging 40-80% in pairwise
+sequence identity. --> 
 </P>
 <div>
   <br>
@@ -181,7 +185,8 @@ sequence identity.
     <br>
 <P ALIGN="JUSTIFY">
 <figcaption>
-Figure 2. Scatter plot for BAliBASE motif scores for KMAD alignments versus Clustal Omega alignments. The four 
+Figure 2. Scatter plot for BAliBASE motif scores for KMAD alignment
+'refinements' versus Clustal Omega alignments. The four 
 cases where KMAD does better than Clustal Omega all related to a C-terminal KDEL motif that KMAD
 recognized and aligned better than Clustal Omega these cases are shown below. For each of the four
 cases two frames are provided; the first holding the KMAD alignment and the second holding the 
@@ -264,6 +269,10 @@ Clustal Omega alignment.
  </div>
 </div>
 <H4>Refinement results for the whole BAliBASE dataset</H4>
+The refinement results for the whole BAliBASE dataset shows that the overall
+scores of Clustal Omega and KMAD are comparable. 
+In terms of motif scores KMAD often outperforms Clustal Omega and gets lower
+scores only in several cases.
 
 <P ALIGN="JUSTIFY">
 <figure>
