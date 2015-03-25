@@ -415,6 +415,34 @@
         }
       },
       {
+        element: "#gapped_div",
+        title: "First sequence",
+        content: "The produced alignment might be either with or without" +
+                 "gaps in the first sequence (HSSP style)",
+
+        placement: "bottom",
+        onShown:  function() {
+          document.getElementById("gapped_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("gapped_div").style.background="";
+        }
+      },
+      {
+        element: "#usr_feat_inner_div",
+        title: "User defined features",
+        content: "You may define new features that will be assigned to" +
+                 "sequences either based on the specified positions or" +
+                 "pattern",
+        placement: "bottom",
+        onShown:  function() {
+          document.getElementById("usr_feat_inner_div").style.background="#EBEBEB";
+        },
+        onHidden:  function() {
+          document.getElementById("usr_feat_inner_div").style.background="";
+        }
+      },
+      {
         element: "#submit_inner_div",
         title: "Submit",
         content: "When you're ready, click <code>Submit</code> to send your " +
