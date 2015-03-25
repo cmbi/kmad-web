@@ -106,12 +106,14 @@ def find_length(lines):
 
 def find_seqid_blast(filename):
     with open(filename) as a:
-        firstline = a.read().splitlines()[0].split(',')
+        infile = a.read().splitlines()
     found = False
     seqID = ""
-    if firstline[2] == "100.00" and firstline[4] == "0" and firstline[5] == "0":
-        found = True
-        seqID = firstline[1].split('|')[1]
+    if len(infile) > 0:
+        firstline = infile[0].split(',')
+        if firstline[2] == "100.00" and firstline[4] == "0" and firstline[5] == "0":
+            found = True
+            seqID = firstline[1].split('|')[1]
     return [found, seqID]
 
 

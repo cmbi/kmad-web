@@ -72,7 +72,7 @@ def get_kman_result(output_type, id):
                                              'encoded': result[-1][2]}}}
     elif output_type == "predict":
         response = {'result': {'prediction': result}}
-    elif output_type == 'align':
+    elif output_type == 'align' or output_type == 'refine':
         response = {'result': {'feature_codemap': result[-1][3],
                                'alignment': {'raw': result[-1][0],
                                              'processed': result[-1][1],

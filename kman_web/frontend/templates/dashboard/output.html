@@ -157,7 +157,7 @@
   if ("{{ output_type }}" == 'predict'){
      document.getElementById('panel2').style.display = 'none';
   }
-  else if ("{{ output_type }}" == 'align'){
+  else if ("{{ output_type }}" == 'align' || "{{ output_type }}" == 'refine'){
      document.getElementById('panel1').style.display = 'none';
   }
   $(document).ready(function() {
@@ -193,7 +193,7 @@
               $.getJSON(
                   "{{ url_for('kman.get_kman_result', output_type=output_type, id=celery_id) }}",
                   function(data) {
-                    if ("{{ output_type }}" != 'align'){
+                  if ("{{ output_type }}" != 'align' && "{{ output_type }}" != 'refine'){ 
                       var proseq = new ProteinSequences("canvas", data['result']['prediction']);
                       proseq.update()
                       $('#collapseOne').addClass('in');
@@ -203,6 +203,7 @@
                     }
                     if ("{{ output_type }}" != 'predict'){
                       var raw_alignment = data['result']['alignment']['raw'];
+                      console.debug('hejjjjj');
                       if (raw_alignment.length > 0) {
                         document.getElementById('download_al_input').value = raw_alignment;
                         var processed_alignment = data['result']['alignment']['processed'];

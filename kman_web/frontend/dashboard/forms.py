@@ -125,13 +125,14 @@ class KmanForm(Form):
                                                  sequence alignment in FASTA \
                                                  format')
             else:
-                tmp_seq = [""]
+                tmp_seq = []
                 for i in field.data.splitlines():
                     if i.startswith('>'):
                         tmp_seq.append("")
                     else:
                         tmp_seq[-1] += i
                 if any([len(i) != len(tmp_seq[0]) for i in tmp_seq]):
+                    _log.debug("Sequences: {}".format(tmp_seq))
                     raise validators.ValidationError('Sequences have different \
                                                      lengths - in the \
                                                      refinement mode  \

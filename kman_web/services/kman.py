@@ -15,7 +15,7 @@ class KmanStrategyFactory(object):
             return PredictStrategy(output_type)
         elif output_type == 'predict_and_align':
             return PredictAndAlignStrategy(output_type)
-        elif output_type == 'align':
+        elif output_type == 'align' or output_type == 'refine':
             return AlignStrategy(output_type)
         else:
             raise ValueError("Unexpected output type '{}'".format(output_type))

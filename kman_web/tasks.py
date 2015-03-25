@@ -228,7 +228,7 @@ def get_task(output_type):
     If the output_type is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
-    if output_type in ['predict', 'predict_and_align', 'align']:
+    if output_type in ['predict', 'predict_and_align', 'align', 'refine']:
         task = postprocess
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
