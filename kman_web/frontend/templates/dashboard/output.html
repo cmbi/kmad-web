@@ -189,6 +189,7 @@
                           .addClass("label-success");
               $('#panel0').removeClass("panel-default panel-info")
                           .addClass("panel-success");
+              document.getElementById('job_message').innerHTML = "";
               $.getJSON(
                   "{{ url_for('kman.get_kman_result', output_type=output_type, id=celery_id) }}",
                   function(data) {

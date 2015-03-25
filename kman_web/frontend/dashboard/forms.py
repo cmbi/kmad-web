@@ -4,11 +4,13 @@ from flask_wtf import Form
 from wtforms import widgets, validators
 from wtforms.fields import (FloatField, IntegerField, SelectField,
                             TextAreaField, SelectMultipleField,
-                            FieldList, FormField, TextField, SubmitField)
+                            FieldList, FormField, TextField, SubmitField,
+                            RadioField)
 from wtforms.widgets import html_params, HTMLString
 
 logging.basicConfig()
 _log = logging.getLogger(__name__)
+
 
 class MyListWidget(object):
     """
@@ -63,11 +65,46 @@ class UsrFeatureEntryForm(Form):
     pattern = TextField(u'Feature pattern(regex)', [validators.Optional()])
 
 
+def alpha_or_dash(sequence):
+    check1 = len(''.join(sequence.split())) > 0
+    check2 = all([i.isalpha() or i == '-' for i in sequence])
+    return check1 and check2
+
+
+def check_if_fasta(sequences):
+    fasta_header_count = ''.join(sequences).count('>')
+    alright = True
+    if fasta_header_count > 0:
+        # check if first and last are not headers
+        alright = (sequences[0].startswith('>')
+                   and not sequences[-1].startswith('>')
+                   and alpha_or_dash(sequences[-1]))
+        if alright:
+            for i, lineI in enumerate(sequences[:-1]):
+                fasta_header = lineI.startswith('>')
+                if fasta_header and not alpha_or_dash(sequences[i + 1]):
+                    _log.debug("fasta header and next not alphadash")
+                    alright = False
+                    break
+                elif not fasta_header and not alpha_or_dash(lineI):
+                    _log.debug("Current not fasta header and not alpha dash")
+                    alright = False
+                    break
+    elif not alpha_or_dash(''.join(sequences)):
+        _log.debug("No fasta headers and not alpha_dash")
+        alright = False
+    if not alright:
+        raise validators.ValidationError('Sequence should be either in \
+                                          FASTA format or simply a \
+                                          sequence of one-letter amino \
+                                          acid codes')
+
+
 class KmanForm(Form):
     def validate_sequence(form, field):
-        reading = True
         i = 0
         seq_list = field.data.splitlines()
+        # check seq length
         if field.data.count('>') < 2:
             if field.data.startswith('>'):
                 length = len(''.join(seq_list[1:]))
@@ -76,21 +113,42 @@ class KmanForm(Form):
             if length < 10:
                 raise validators.ValidationError('Sequence should be at least \
                                                   10 amino acids long')
-        while reading and i < len(seq_list):
-            if (seq_list[i] and not (seq_list[i].startswith('>')
-                                     and i < len(seq_list) - 1
-                                     and seq_list[i + 1].isalpha())
-                            and not seq_list[i].isalpha()):
-                raise validators.ValidationError('Sequence should be either in \
-                                                  FASTA format or simply a \
-                                                  sequence of one-letter amino \
-                                                  acid codes')
-                reading = False
-            i += 1
+        # check format
+        check_if_fasta(seq_list)
+        # if output type == refine check if multiple sequences are provided
+        # and if seq lengths are equal
+        if form.output_type.data == 'refine':
+            if field.data.count('>') < 2:
+                raise validators.ValidationError('In the refinement mode \
+                                                 the input should \
+                                                 be a multiple \
+                                                 sequence alignment in FASTA \
+                                                 format')
+            else:
+                tmp_seq = [""]
+                for i in field.data.splitlines():
+                    if i.startswith('>'):
+                        tmp_seq.append("")
+                    else:
+                        tmp_seq[-1] += i
+                if any([len(i) != len(tmp_seq[0]) for i in tmp_seq]):
+                    raise validators.ValidationError('Sequences have different \
+                                                     lengths - in the \
+                                                     refinement mode  \
+                                                     the input shoudl be \
+                                                     a multiple \
+                                                     sequence alignment in \
+                                                     FASTA format')
+
+
+
+
 
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',
                                                    'align'),
+                                                  ('refine',
+                                                   'refine alignment'),
                                                   ('predict_and_align',
                                                    'predict and align'),
                                                   ('predict',
@@ -101,6 +159,11 @@ class KmanForm(Form):
     ptm_score = IntegerField(u'PTM score', default=10)
     domain_score = IntegerField(u'domain score', default=3)
     motif_score = IntegerField(u'motif score', default=3)
+
+    first_seq_gapped = RadioField(u'First sequence:',
+                                  choices=[('ungapped', 'without gaps'),
+                                           ('gapped', 'with gaps')],
+                                  default='ungapped')
 
     prediction_method = SelectMultipleField(
         u'Prediction methods:',

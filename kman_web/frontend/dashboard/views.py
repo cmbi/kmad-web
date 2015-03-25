@@ -18,14 +18,11 @@ bp = Blueprint('dashboard', __name__)
 def index():
     form = KmanForm()
     if (form.submit_job.data and form.validate_on_submit()
-            and form.sequence.data
-            and form.output_type.data
-            and form.gap_open_p.data
-            and form.gap_ext_p.data
-            and form.end_gap_p.data
-            and form.ptm_score.data
-            and form.domain_score.data
-            and form.motif_score.data):
+            and form.sequence.data and form.output_type.data
+            and form.gap_open_p.data and form.gap_ext_p.data
+            and form.end_gap_p.data and form.ptm_score.data
+            and form.domain_score.data and form.motif_score.data
+            and form.first_seq_gapped):
         _log.debug("validation")
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
@@ -35,12 +32,14 @@ def index():
             celery_id = strategy(seq_data, form.prediction_method.data,
                                  multi_seq_input)
             _log.debug(form.prediction_method.data)
-        elif form.output_type.data == 'align':
+        elif (form.output_type.data == 'align'
+              or form.output_type.data == 'refine'):
             celery_id = strategy(seq_data, form.gap_open_p.data,
                                  form.gap_ext_p.data, form.end_gap_p.data,
                                  form.ptm_score.data, form.domain_score.data,
                                  form.motif_score.data, multi_seq_input,
-                                 form.usr_features.data)
+                                 form.usr_features.data, form.output_type.data,
+                                 form.first_seq_gapped.data)
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
         else:
             celery_id = strategy(seq_data, form.gap_open_p.data,
@@ -48,7 +47,8 @@ def index():
                                  form.ptm_score.data, form.domain_score.data,
                                  form.motif_score.data,
                                  form.prediction_method.data, multi_seq_input,
-                                 form.usr_features.data)
+                                 form.usr_features.data,
+                                 form.first_seq_gapped.data)
         _log.info("Job has id '{}'".format(celery_id))
         _log.info("Redirecting to output page")
         return redirect(url_for('dashboard.output',
