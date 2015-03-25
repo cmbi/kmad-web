@@ -62,7 +62,8 @@ class PredictAndAlignStrategy(object):
 
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
-                 prediction_methods, multi_seq_input, usr_features):
+                 prediction_methods, multi_seq_input, usr_features,
+                 first_seq_gapped):
         from kman_web.tasks import (query_d2p2, align,
                                     run_single_predictor, postprocess, get_seq)
         from celery import chain, group
@@ -85,13 +86,15 @@ class PredictAndAlignStrategy(object):
             single_fasta_filename = tmp_file.name
 
         tasks_to_run = [get_seq.s(fasta_seq)]
+        output_type = "predict_and_align"
         for pred_name in prediction_methods:
             tasks_to_run += [run_single_predictor.s(single_fasta_filename,
                                                     pred_name)]
         tasks_to_run += [align.s(align_fasta_filename, gap_opening_penalty,
                                  gap_extension_penalty, end_gap_penalty,
                                  ptm_score, domain_score, motif_score,
-                                 multi_seq_input, conffilename)]
+                                 multi_seq_input, conffilename, output_type,
+                                 first_seq_gapped)]
         job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                  multi_seq_input),
                     group(tasks_to_run),
@@ -107,7 +110,7 @@ class AlignStrategy(object):
 
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
-                 multi_seq_input, usr_features):
+                 multi_seq_input, usr_features, output_type, first_seq_gapped):
         from kman_web.tasks import (query_d2p2, align,
                                     postprocess, get_seq)
         from celery import chain, group
@@ -132,7 +135,8 @@ class AlignStrategy(object):
                         align.s(align_fasta_filename, gap_opening_penalty,
                                 gap_extension_penalty, end_gap_penalty,
                                 ptm_score, domain_score, motif_score,
-                                multi_seq_input, conffilename)]
+                                multi_seq_input, conffilename, output_type,
+                                first_seq_gapped)]
         job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                  multi_seq_input),
                     group(tasks_to_run),
