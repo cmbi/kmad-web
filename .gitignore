@@ -59,3 +59,5 @@ dump.rdb
 
 #tmp files produced by predictors
 tmp*
+
+error.log
