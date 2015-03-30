@@ -157,7 +157,8 @@
   if ("{{ output_type }}" == 'predict'){
      document.getElementById('panel2').style.display = 'none';
   }
-  else if ("{{ output_type }}" == 'align' || "{{ output_type }}" == 'refine'){
+  else if ("{{ output_type }}" == 'align' || "{{ output_type }}" == 'refine'
+      || "{{ output_type }}" == 'annotate'){
      document.getElementById('panel1').style.display = 'none';
   }
   $(document).ready(function() {
@@ -193,7 +194,7 @@
               $.getJSON(
                   "{{ url_for('kmad.get_kmad_result', output_type=output_type, id=celery_id) }}",
                   function(data) {
-                  if ("{{ output_type }}" != 'align' && "{{ output_type }}" != 'refine'){ 
+                  if ("{{ output_type }}" == 'predict' || "{{ output_type }}" == 'predict_and_align'){ 
                       var proseq = new ProteinSequences("canvas", data['result']['prediction']);
                       proseq.update()
                       $('#collapseOne').addClass('in');
