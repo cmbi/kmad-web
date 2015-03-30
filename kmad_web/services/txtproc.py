@@ -131,6 +131,11 @@ def process_d2p2(prediction):
 
 def process_alignment(data, codon_length):
     data_list = data.splitlines()
+    if '## PROBABILITIES' in data_list:
+        prob_index = data_list.index('## PROBABILITIES')
+        data_list = data_list[:prob_index]
+        _log.debug("BLABLABLA")
+    _log.debug(data_list)
     processed = []
     processed_text = ""
     encoded = []

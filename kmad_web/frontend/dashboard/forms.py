@@ -117,9 +117,10 @@ class KmanForm(Form):
         check_if_fasta(seq_list)
         # if output type == refine check if multiple sequences are provided
         # and if seq lengths are equal
-        if form.output_type.data == 'refine':
+        if form.output_type.data in ['refine', 'annotate']:
             if field.data.count('>') < 2:
-                raise validators.ValidationError('In the refinement mode \
+                raise validators.ValidationError('In the refinement and \
+                                                 annotation modes \
                                                  the input should \
                                                  be a multiple \
                                                  sequence alignment in FASTA \
@@ -135,15 +136,13 @@ class KmanForm(Form):
                     _log.debug("Sequences: {}".format(tmp_seq))
                     raise validators.ValidationError('Sequences have different \
                                                      lengths - in the \
-                                                     refinement mode  \
-                                                     the input shoudl be \
+                                                     refinement and \
+                                                     annotations \
+                                                     modes  \
+                                                     the input should be \
                                                      a multiple \
                                                      sequence alignment in \
                                                      FASTA format')
-
-
-
-
 
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',
@@ -153,7 +152,9 @@ class KmanForm(Form):
                                                   ('predict_and_align',
                                                    'predict and align'),
                                                   ('predict',
-                                                   'predict disorder')])
+                                                   'predict disorder'),
+                                                  ('annotate',
+                                                   'annotate alignment')])
     gap_open_p = FloatField(u'gap opening penalty', default=-5)
     gap_ext_p = FloatField(u'gap extension penalty', default=-1)
     end_gap_p = FloatField(u'end gap penalty', default=-1)

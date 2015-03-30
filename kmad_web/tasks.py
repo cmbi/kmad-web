@@ -148,7 +148,6 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
         subprocess.call(args)
 
         with open(fastafile.split('.')[0] + '.map') as a:
-            # feature_codemap = [i.split() for i in a.read().splitlines()]
             feature_codemap = a.read().splitlines()
         motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
         domains = [i.split() for i in feature_codemap if i.startswith('domain')]
@@ -160,6 +159,23 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
         result = alignment_processed + [feature_codemap]
     else:
         result = [[], [], [], []]
+    return result
+
+
+@celery_app.task
+def annotate(d2p2, filename):
+    encoded_filename = convert_to_7chars(filename)  # .7c filename
+    with open(filename.split('.')[0] + '.map') as a:
+        feature_codemap = a.read().splitlines()
+    motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
+    domains = [i.split() for i in feature_codemap if i.startswith('domain')]
+    feature_codemap = {'motifs': motifs, 'domains': domains}
+
+    encoded = open(encoded_filename).read().encode('ascii',
+                                                   errors='ignore')
+    codon_length = 7
+    processed = process_alignment(encoded, codon_length)
+    result = processed + [feature_codemap]
     return result
 
 
@@ -228,7 +244,8 @@ def get_task(output_type):
     If the output_type is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
-    if output_type in ['predict', 'predict_and_align', 'align', 'refine']:
+    if output_type in ['predict', 'predict_and_align', 'align', 'refine',
+                       'annotate']:
         task = postprocess
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))

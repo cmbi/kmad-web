@@ -4,14 +4,6 @@
   that runs programs that depend on them
 * should I make a patch for the change in sspro?
 
-# GlobPlot (done)
-
-* wget http://globplot.embl.de/html/GlobPipe-2.3.tgz
-* tar zxvf GlobPipe-2.3.tgz
-* cd GlobPipe-2.3
-* patch GlobPipe.py globplot-fix_biopython.diff
-* sudo cp GlobPipe.py /usr/local/bin
-* test: GlobPipe.py 10 8 75 8 8 1crn.fasta
 
 # Tisean (done)
 
@@ -20,7 +12,17 @@
 * cd Tisean_3.0.1
 * export FC=gfortran
 * ./configure
+* make
 * sudo cp source_c/sav_gol /usr/local/bin
+
+# GlobPlot (done)
+* install Tisean
+* wget http://globplot.embl.de/html/GlobPipe-2.3.tgz
+* tar zxvf GlobPipe-2.3.tgz
+* cd GlobPipe-2.3
+* patch GlobPipe.py globplot-fix_biopython.diff
+* sudo cp GlobPipe.py /usr/local/bin
+* test: GlobPipe.py 10 8 75 8 8 1crn.fasta
 
 # netphos (done)
 
