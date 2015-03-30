@@ -8,9 +8,71 @@
   </div>
   <div class="panel-body">
     <span class="panel_body_text">
-      The sequence should be either in FASTA format or a raw protein sequence.
+      <strong>Sequence</strong>
+      <br>
+      <br>
+      The sequence should be either in FASTA format or a plain protein
+      sequence, in case of a single sequence input. In case of multiple
+      sequences input the accpeted format is FASTA.
+      If the chosen action is 'refine' the sequences have to be aligned (FASTA).
+      <br>
+      <br>
+      <strong>Action</strong>
+      <br>
+      <br>
       In the action field you specify which action do you want to perform:
-      either predict, predict and align or align.
+      either 'predict', 'predict and align', 'align', or 'refine'.
+      The 'predict' option will use the programs chosen by the
+      user to predict disorder.
+      'Align' will either just perform a multiple sequence alignment if
+      multiple sequences are provided, or if the input is a single sequence it
+      will run a BLAST search against SwissProt and align the first 75
+      homologues with e-value lower or equal 1e-05.
+      'Predict and align' will simply perform both of the mentioned actions,
+      and refine will run a KMAD refinement on an alignment provided by the
+      user.
+      <br>
+      <br>
+      <strong>Gap penalties</strong>
+      <br>
+      <br>
+      <dl>
+        <dt>gap opening penalty</dt> 
+          <dd>- penalty for opening a new gap</dd>
+        <dt>gap extension penalty</dt>
+          <dd>- penalty for extending an already existing gap</dd>
+        <dt>end gap penalty</dt>
+          <dd>- gap penalty for a gap et the end (or
+        beginning) of a sequence</dd>
+      </dl>
+      <br>
+      <br>
+      <strong>Feature weights (&omega;<sub>f<sub>t</sub></sub>)</strong>
+      <br>
+      <br>
+      <dl>
+        <dt>motif score</dt> 
+          <dd>score for aligning two motifs of the same type</dd>
+        <dt>PTM score</dt>
+          <dd>score for aligning two PTMs of the same type together</dd>
+        <dt>domain score</dt>
+          <dd>score for aligning two domains of the same type and at the same
+          time penalty for aligning two domains of a different type</dd>
+      </dl>
+      <br>
+      <br>
+      <strong>User defined features</strong>
+      <br>
+      <br>
+      You can add new features to your sequences by specifiying their exact
+      positions in the sequences or by pattern - the feature will be assigned
+      to every position where it matches the provided regex.
+      <br>
+      <br>
+      <strong>Results</strong>
+      <br>
+      <br>
+
       'Submit' button submits the job and redirects you to the output page. 
       You can download both the disorder prediction and the alignment (in FASTA
       format).
