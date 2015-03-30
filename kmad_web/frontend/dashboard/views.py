@@ -41,6 +41,8 @@ def index():
                                  form.usr_features.data, form.output_type.data,
                                  form.first_seq_gapped.data)
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
+        elif form.output_type.data == 'annotate':
+            celery_id = strategy(seq_data)
         else:
             celery_id = strategy(seq_data, form.gap_open_p.data,
                                  form.gap_ext_p.data, form.end_gap_p.data,

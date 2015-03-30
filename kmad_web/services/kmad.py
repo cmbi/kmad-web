@@ -15,8 +15,10 @@ class KmanStrategyFactory(object):
             return PredictStrategy(output_type)
         elif output_type == 'predict_and_align':
             return PredictAndAlignStrategy(output_type)
-        elif output_type == 'align' or output_type == 'refine':
+        elif output_type in ['align', 'refine']:
             return AlignStrategy(output_type)
+        elif output_type == "annotate":
+            return AnnotateStrategy(output_type)
         else:
             raise ValueError("Unexpected output type '{}'".format(output_type))
 
@@ -142,5 +144,33 @@ class AlignStrategy(object):
                     group(tasks_to_run),
                     postprocess.s(single_fasta_filename, align_fasta_filename,
                                   conffilename, self.output_type))()
+        task_id = job.id
+        return task_id
+
+
+class AnnotateStrategy(object):
+    def __init__(self, output_type):
+        self.output_type = output_type
+
+    def __call__(self, fasta_seq):
+        from kmad_web.tasks import (query_d2p2, annotate,
+                                    postprocess, get_seq)
+        from celery import chain, group
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+        fasta_seq = txtproc.process_fasta(fasta_seq)
+        _log.debug("Created tmp file '{}'".format(tmp_file.name))
+        with tmp_file as f:
+            _log.debug("Writing data to '{}'".format(tmp_file.name))
+            f.write(fasta_seq)
+
+        multi_fasta_filename = tmp_file.name
+        single_fasta_filename = files.write_single_fasta(fasta_seq)
+        tasks_to_run = [get_seq.s(fasta_seq),
+                        annotate.s(multi_fasta_filename)]
+        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                 True),
+                    group(tasks_to_run),
+                    postprocess.s(single_fasta_filename, multi_fasta_filename,
+                                  "dummyname", self.output_type))()
         task_id = job.id
         return task_id
