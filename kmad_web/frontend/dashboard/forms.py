@@ -155,9 +155,9 @@ class KmanForm(Form):
                                                    'predict disorder'),
                                                   ('annotate',
                                                    'annotate alignment')])
-    gap_open_p = FloatField(u'gap opening penalty', default=-5)
-    gap_ext_p = FloatField(u'gap extension penalty', default=-1)
-    end_gap_p = FloatField(u'end gap penalty', default=-1)
+    gap_open_p = FloatField(u'gap opening penalty', default=-12)
+    gap_ext_p = FloatField(u'gap extension penalty', default=-1.2)
+    end_gap_p = FloatField(u'end gap penalty', default=-1.2)
     ptm_score = IntegerField(u'PTM score', default=10)
     domain_score = IntegerField(u'domain score', default=3)
     motif_score = IntegerField(u'motif score', default=3)
