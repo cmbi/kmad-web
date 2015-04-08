@@ -31,6 +31,7 @@ class PredictStrategy(object):
         from kmad_web.tasks import query_d2p2
         from celery import chain, group
         from kmad_web.tasks import run_single_predictor, postprocess, get_seq
+        _log.debug("Called it")
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
         _log.debug("Created tmp file '{}'".format(tmp_file.name))
