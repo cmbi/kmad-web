@@ -21,9 +21,10 @@ draw_alignment = function(canvas_id, data) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
   var start = Date.now();
-  var container_height = ROWS * ROW_HEIGHT;
   var ctx=$("#" + canvas_id).get(0).getContext("2d");
   document.getElementById(canvas_id).width = data[0][1].length * 11;
+  var container_height = ROWS * ROW_HEIGHT * 1.6;
+  document.getElementById(canvas_id).height = ROWS * ROW_HEIGHT * 1.5;
   document.getElementById("canvases").style.height = container_height.toString() + 'px';
   var x = 10;
   var y = 30;
@@ -57,6 +58,9 @@ draw_alignment_with_features = function(canvas_id, data, codon_length,
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
   document.getElementById(canvas_id).width = data[0][1].length * 1.75;
+  var container_height = ROWS * ROW_HEIGHT * 1.6;
+  document.getElementById(canvas_id).height = ROWS * ROW_HEIGHT * 1.5;
+  document.getElementById("canvases").style.height = container_height.toString() + 'px';
   var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
                        'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
                        'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
@@ -134,6 +138,9 @@ draw_alignment_ptms = function(canvas_id, data, codon_length) {
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
   document.getElementById(canvas_id).width = data[0][1].length * 1.75;
+  var container_height = ROWS * ROW_HEIGHT * 1.6;
+  document.getElementById(canvas_id).height = ROWS * ROW_HEIGHT * 1.5;
+  document.getElementById("canvases").style.height = container_height.toString() + 'px';
   var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
                        'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
                        'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
