@@ -89,22 +89,18 @@
           <br>
             <pre>
               <div id="canvases" style="position:relative; height:auto; width:100%;">
-                <div id="alignment_canvas" style="position:absolute; left:0px;
-                  top:0px; overflow:auto; height:auto; width:100%;">
-                </div>
-                <div id="alignment_canvas_ptms" style="position:absolute;
-                  left:0px; top:0px; overflow:auto;
-                  height:auto; width:100%; display:none;">
-                </div>
-                <div id="alignment_canvas_motifs" style="position:absolute;
-                  left:0px; top:0px;
-                  overflow:auto;
-                  height:auto; width:100%; display:none;">
-                </div>
-                <div id="alignment_canvas_domains" style="position:absolute;
-                  left:0px; top:0px; overflow:auto;
-                  height:auto; width:100%; display:none;">
-                </div>
+                  <canvas id="canvas_regular"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;"></canvas>
+                  <canvas id="canvas_ptms"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;"></canvas>
+                  <canvas id="canvas_motifs"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;"></canvas>
+                  <canvas id="canvas_domains"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;"></canvas>
               </div>
             </pre>
             <div id="legend_canvases_container" style="display:none;">
@@ -204,19 +200,27 @@
                     }
                     if ("{{ output_type }}" != 'predict'){
                       var raw_alignment = data['result']['alignment']['raw'];
-                      console.debug('hejjjjj');
                       if (raw_alignment.length > 0) {
                         document.getElementById('download_al_input').value = raw_alignment;
                         var processed_alignment = data['result']['alignment']['processed'];
                         var encoded_alignment = data['result']['alignment']['encoded'];
                         var feature_codemap = data['result']['feature_codemap'];
-                        var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
-                        alignment.update();
+                        draw_alignment('canvas_regular', processed_alignment);
+                        // var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
+                        // alignment.update();
                         var codon_length = 7;
-                        var alignment_ptms = new SequenceAlignmentPTMs(
-                          'alignment_canvas_ptms', encoded_alignment,
-                          codon_length);
-                        alignment_ptms.update();
+                        draw_alignment_ptms('canvas_ptms', encoded_alignment, 
+                            codon_length);
+                        draw_alignment_with_features('canvas_motifs', 
+                            encoded_alignment, codon_length,
+                            feature_codemap['motifs'], 'motifs');
+                        draw_alignment_with_features('canvas_domains', 
+                            encoded_alignment, codon_length,
+                            feature_codemap['domains'], 'domains');
+                        // var alignment_ptms = new SequenceAlignmentPTMs(
+                        //   'alignment_canvas_ptms', encoded_alignment,
+                        //   codon_length);
+                        // alignment_ptms.update();
                         var ptms_legend = new PTMsLegend('legend_canvas_ptms');
                         ptms_legend.update();
                         var motifs_legend = new MotifsLegend(
@@ -227,14 +231,14 @@
                             'legend_canvas_domains',
                             feature_codemap['domains']);
                         domains_legend.update();
-                        var alignment_motifs = new SequenceAlignmentFeatures(
-                            'alignment_canvas_motifs', encoded_alignment,
-                            codon_length, feature_codemap['motifs'], 'motifs');
-                        alignment_motifs.update();
-                        var alignment_domains = new SequenceAlignmentFeatures(
-                            'alignment_canvas_domains', encoded_alignment,
-                            codon_length, feature_codemap['domains'], 'domains');
-                        alignment_domains.update();
+                        // var alignment_motifs = new SequenceAlignmentFeatures(
+                        //     'alignment_canvas_motifs', encoded_alignment,
+                        //     codon_length, feature_codemap['motifs'], 'motifs');
+                        // alignment_motifs.update();
+                        // var alignment_domains = new SequenceAlignmentFeatures(
+                        //     'alignment_canvas_domains', encoded_alignment,
+                        //     codon_length, feature_codemap['domains'], 'domains');
+                        // alignment_domains.update();
                         $('#download_al_button').removeClass('disabled');
                         $('#collapseTwo').addClass('in');
                         $('#collapseThree').addClass('in');
@@ -253,10 +257,10 @@
         )}, 1000);
   });
   changeModePTMS = function() {
-    document.getElementById('alignment_canvas').style.display = 'none'; 
-    document.getElementById('alignment_canvas_domains').style.display = 'none'; 
-    document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
-    document.getElementById('alignment_canvas_ptms').style.display = ''; 
+    document.getElementById('canvas_regular').style.display = 'none'; 
+    document.getElementById('canvas_domains').style.display = 'none'; 
+    document.getElementById('canvas_motifs').style.display = 'none'; 
+    document.getElementById('canvas_ptms').style.display = ''; 
     document.getElementById('download_canvas_button').style.display = 'none'; 
     document.getElementById('download_domains_canvas_button').style.display = 'none'; 
     document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
@@ -275,10 +279,10 @@
 
   }
   changeModeRegular = function() {
-    document.getElementById('alignment_canvas').style.display = ''; 
-    document.getElementById('alignment_canvas_domains').style.display = 'none'; 
-    document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
-    document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('canvas_regular').style.display = ''; 
+    document.getElementById('canvas_domains').style.display = 'none'; 
+    document.getElementById('canvas_motifs').style.display = 'none'; 
+    document.getElementById('canvas_ptms').style.display = 'none'; 
     document.getElementById('download_canvas_button').style.display = ''; 
     document.getElementById('download_domains_canvas_button').style.display = 'none'; 
     document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
@@ -293,10 +297,10 @@
     $('#domain_mode_button').removeClass('active');
   }
   changeModeDomains = function() {
-    document.getElementById('alignment_canvas').style.display = 'none'; 
-    document.getElementById('alignment_canvas_domains').style.display = ''; 
-    document.getElementById('alignment_canvas_motifs').style.display = 'none'; 
-    document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('canvas_regular').style.display = 'none'; 
+    document.getElementById('canvas_domains').style.display = ''; 
+    document.getElementById('canvas_motifs').style.display = 'none'; 
+    document.getElementById('canvas_ptms').style.display = 'none'; 
     document.getElementById('download_canvas_button').style.display = 'none'; 
     document.getElementById('download_domains_canvas_button').style.display = ''; 
     document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
@@ -315,10 +319,10 @@
 
   }
   changeModeMotifs = function() {
-    document.getElementById('alignment_canvas').style.display = 'none'; 
-    document.getElementById('alignment_canvas_domains').style.display = 'none'; 
-    document.getElementById('alignment_canvas_motifs').style.display = ''; 
-    document.getElementById('alignment_canvas_ptms').style.display = 'none'; 
+    document.getElementById('canvas_regular').style.display = 'none'; 
+    document.getElementById('canvas_domains').style.display = 'none'; 
+    document.getElementById('canvas_motifs').style.display = ''; 
+    document.getElementById('canvas_ptms').style.display = 'none'; 
     document.getElementById('download_canvas_button').style.display = 'none'; 
     document.getElementById('download_domains_canvas_button').style.display = 'none'; 
     document.getElementById('download_motifs_canvas_button').style.display = ''; 

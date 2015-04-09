@@ -56,7 +56,8 @@ def postprocess(result, single_filename, multi_filename, conffilename,
         result = [result[0]] + result[-2:]
     elif output_type == 'predict':
         result = result[:2]
-    # else: output_type = 'align' -> then there is no need to change the result
+    # else: output_type = 'align' or 'annotate' -> then there is no need to
+    # change the result
     return result
 
 
@@ -149,8 +150,15 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
 
         with open(fastafile.split('.')[0] + '.map') as a:
             feature_codemap = a.read().splitlines()
-        motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
-        domains = [i.split() for i in feature_codemap if i.startswith('domain')]
+
+        motifs = [[i.split()[0].split('_')[1]] + i.split()[1:]
+                  for i in feature_codemap if i.startswith('motif')]
+
+        domains = [[i.split()[0].split('_')[1], i.split()[1]]
+                   for i in feature_codemap if i.startswith('domain')]
+
+        _log.debug("motif_codes: {}".format(motifs))
+        _log.info("domain_codes: {}".format(domains))
         feature_codemap = {'motifs': motifs, 'domains': domains}
 
         alignment_encoded = open(al_outfile).read().encode('ascii',
@@ -159,6 +167,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
         result = alignment_processed + [feature_codemap]
     else:
         result = [[], [], [], []]
+    _log.debug("Finished alignment")
     return result
 
 
