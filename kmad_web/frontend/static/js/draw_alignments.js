@@ -50,6 +50,102 @@ draw_alignment = function(canvas_id, data) {
   console.debug(Date.now() - start);
 }
 
+
+register_tooltip = function(src, x, y, message, t_layer) {
+  console.debug("register");
+  var tooltip;
+  // var url = 'http://elm.eu.org/elmPages/'+message+'.html';
+  // var left_button_clicked = false;
+  // src.on('mousedown', function(e) {
+  //   if (e.evt.buttons == 1 || e.evt.keyCode == 0) {
+  //     left_button_clicked = true;
+  //   }
+  // });
+  // src.on('click', function(e) {
+  //   if (left_button_clicked) {
+  //     window.open(url);
+  //     left_button_clicked = false;
+  //   }
+  // });
+  src.on('mouseover', function() {
+    // tooltip = draw_tooltip(x, y, message, shapesLayer);
+    tooltip = draw_tooltip(x, y, message, t_layer);
+    console.debug("mouseenter");
+  });
+  src.on('mouseout', function() {
+    console.debug("mouseout");
+    tooltip.destroy();
+    // shapesLayer.draw();
+    t_layer.draw();
+  });
+}
+
+
+draw_tooltip = function(x, y, message, t_layer) {
+  tooltip = new Kinetic.Label({
+    x: x,
+    y: y,
+    opacity: 0.75
+  });
+  tooltip_tag = new Kinetic.Tag({
+    fill: 'gray',
+    pointerDirection: 'up',
+    pointerWidth: 10,
+    pointerHeight: 10,
+    lineJoin: 'round',
+    shadowColor: 'black',
+    shadowBlur: 3,
+    shadowOffset: {x:2, y:2},
+    shadowOpacity: 0.5
+  });
+  tooltip_text = new Kinetic.Text({
+    text: message,
+    fontFamily: "Monospace",
+    fontSize: 15,
+    padding: 5,
+    fill: 'white'
+  });
+  tooltip.add(tooltip_tag);
+  tooltip.add(tooltip_text);
+  // shapesLayer.add(tooltip);
+  // shapesLayer.draw();
+  t_layer.add(tooltip);
+  t_layer.draw();
+  return tooltip;
+};
+
+
+create_tooltip = function(feature_coords, feature_names, container_id, w, h) {
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    width: w,
+    height: h,
+    listening: true
+  });
+  stage.on("mousemove", function(){
+    alert("works");
+  });
+  var shapesLayer = new Kinetic.Layer();
+  var t_layer = new Kinetic.Layer();
+  stage.add(shapesLayer);
+  stage.add(t_layer);
+  for (var i = 0; i < feature_coords.length; i++) {
+    var rect = new Kinetic.Rect({
+         x: feature_coords[i][0],
+         y: feature_coords[i][1],
+         width: 10,
+         height: 15,
+         fill: null,
+         stroke: null,
+         strokeWidth: 4
+    });
+    register_tooltip(rect, rect.x, rect.y, feature_names[i], t_layer);
+    shapesLayer.add(rect);
+  }
+  shapesLayer.draw();
+}
+
+
 draw_alignment_with_features = function(container_id, data, codon_length,
     feature_codemap, feature_type) {
   var start = Date.now();
@@ -99,6 +195,8 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   var r_up;
   var letter_col;
   var is_feature;
+  var feature_coords = [];
+  var feature_names = [];
   draw_residue = function(res_num, seq_num, x, y) {
     feature_code = data[seq_num][1].substring(res_num + 2 + index_add,
                                               res_num + 4 + index_add);
@@ -119,6 +217,8 @@ draw_alignment_with_features = function(container_id, data, codon_length,
           break;    
         }
       }
+      feature_coords = feature_coords.concat([x, y]);
+      feature_names = feature_names.concat(feature_codemap[feat_number][1]);
       letter_col = feature_colors[feat_number];
     }
       ctx.fillStyle = letter_col;
@@ -142,7 +242,13 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       x += 10;
     }
   }
-  console.debug("draw_alignment_with_features");
+  if (feature_type == "motifs") {
+    var canv = document.getElementById(canvas_id);
+    var h = canv.height;
+    var w = canv.width;
+    create_tooltip(feature_coords, feature_names, "motifs_tooltip", w, h);
+  }
+  console.debug("draw_alignmenti_with_features");
   console.debug(Date.now() - start);
 }
 
