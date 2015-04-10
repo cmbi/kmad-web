@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel_title_text">Alignment 1</span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel_body_text">
+      <br>
+      <strong>KMAD</strong>
+      <br>
+      <iframe src="{{ url_for('static', filename='alignments/box158_kmad.html') }}"
+        style="width:100%;height:400px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+        </iframe>
+      <br>
+      <br>
+      <strong>Clustal</strong>
+      <br>
+      <iframe src="{{ url_for('static', filename='alignments/box158_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+        </iframe>
+      <br>
+    </span>
+  </div>
+
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}
