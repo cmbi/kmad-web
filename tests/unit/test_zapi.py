@@ -31,8 +31,10 @@ class TestEndpoints(object):
     @patch('kmad_web.services.kmad.PredictStrategy.__call__')
     def test_create_kmad_predict(self, mock_call):
         mock_call.return_value = 12345
-        rv = self.app.post('/api/create/predict/',
-                           data={'data': 'testdata'})
+        rv = self.app.post('/api/create/predict',
+                           data=dict(seq_data='testdata',
+                                     prediction_method='test_method'))
+        print rv
         eq_(rv.status_code, 202)
         response = json.loads(rv.data)
         ok_('id' in response)
