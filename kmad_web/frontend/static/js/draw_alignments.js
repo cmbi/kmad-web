@@ -184,6 +184,8 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   var r;
   var r_up;
   var letter_col;
+  var rect_width = 10;
+  var rect_height = 15;
   var is_feature;
   var feature_coords = [];
   var feature_names = [];
@@ -211,7 +213,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       letter_col = feature_colors[feat_number];
     }
       ctx.fillStyle = letter_col;
-      ctx.fillRect(x, y, 10, 15);
+      ctx.fillRect(x, y, rect_width, rect_height);
       ctx.fillStyle = "#000000";
       ctx.fillText(r, x + 1, y + 10)
   }

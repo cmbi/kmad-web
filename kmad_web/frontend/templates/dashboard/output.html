@@ -148,17 +148,7 @@
             <div class="clearfix"></div>
         </div>
       </div>
-
    </div>                
-    <div class="panel panel-default" style="width=100%" id ="panel0">
-        <div class="panel-body">
-          <div style="position:relative;height:auto; width:100%">
-                  <div id="motifs_tooltip"
-                       style="overflow:auto;position:absolute;left:0px;
-                              top:0px;"></div>
-          </div>
-        </div>
-    </div>
 </div>
 {% endblock %}
 
@@ -222,8 +212,6 @@
                         var encoded_alignment = data['result']['alignment']['encoded'];
                         var feature_codemap = data['result']['feature_codemap'];
                         draw_alignment('canvas_regular', processed_alignment);
-                        // var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
-                        // alignment.update();
                         var codon_length = 7;
                         draw_alignment_ptms('canvas_ptms', encoded_alignment, 
                             codon_length);
@@ -233,10 +221,6 @@
                         draw_alignment_with_features('canvas_domains', 
                             encoded_alignment, codon_length,
                             feature_codemap['domains'], 'domains');
-                        // var alignment_ptms = new SequenceAlignmentPTMs(
-                        //   'alignment_canvas_ptms', encoded_alignment,
-                        //   codon_length);
-                        // alignment_ptms.update();
                         var ptms_legend = new PTMsLegend('legend_canvas_ptms');
                         ptms_legend.update();
                         var motifs_legend = new MotifsLegend(
@@ -247,14 +231,6 @@
                             'legend_canvas_domains',
                             feature_codemap['domains']);
                         domains_legend.update();
-                        // var alignment_motifs = new SequenceAlignmentFeatures(
-                        //     'alignment_canvas_motifs', encoded_alignment,
-                        //     codon_length, feature_codemap['motifs'], 'motifs');
-                        // alignment_motifs.update();
-                        // var alignment_domains = new SequenceAlignmentFeatures(
-                        //     'alignment_canvas_domains', encoded_alignment,
-                        //     codon_length, feature_codemap['domains'], 'domains');
-                        // alignment_domains.update();
                         $('#download_al_button').removeClass('disabled');
                         $('#collapseTwo').addClass('in');
                         $('#collapseThree').addClass('in');
