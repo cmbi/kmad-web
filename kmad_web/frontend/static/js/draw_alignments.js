@@ -50,17 +50,119 @@ draw_alignment = function(canvas_id, data) {
   console.debug(Date.now() - start);
 }
 
-draw_alignment_with_features = function(canvas_id, data, codon_length,
+
+register_tooltip = function(src, x, y, message, t_layer, feature_type) {
+  var tooltip;
+  if (feature_type == "motifs") {
+    var url = 'http://elm.eu.org/elmPages/'+message+'.html';
+  } else {
+    var url = 'http://pfam.xfam.org/family/'+message;
+  }  
+  var left_button_clicked = false;
+  src.on('mousedown', function(e) {
+    if (e.evt.buttons == 1 || e.evt.keyCode == 0) {
+      left_button_clicked = true;
+    }
+  });
+  src.on('click', function(e) {
+    if (left_button_clicked) {
+      window.open(url);
+      left_button_clicked = false;
+    }
+  });
+  src.on('mouseover', function() {
+    tooltip = draw_tooltip(x, y, message, t_layer);
+  });
+  src.on('mouseout', function() {
+    tooltip.destroy();
+    t_layer.draw();
+  });
+}
+
+
+draw_tooltip = function(x, y, message, t_layer) {
+  tooltip = new Kinetic.Label({
+    x: x,
+    y: y,
+    opacity: 0.75
+  });
+  tooltip_tag = new Kinetic.Tag({
+    fill: 'gray',
+    pointerDirection: 'up',
+    pointerWidth: 10,
+    pointerHeight: 10,
+    lineJoin: 'round',
+    shadowColor: 'black',
+    shadowBlur: 3,
+    shadowOffset: {x:2, y:2},
+    shadowOpacity: 0.5
+  });
+  tooltip_text = new Kinetic.Text({
+    text: message,
+    fontFamily: "Monospace",
+    fontSize: 15,
+    padding: 5,
+    fill: 'white'
+  });
+  tooltip.add(tooltip_tag);
+  tooltip.add(tooltip_text);
+  t_layer.add(tooltip);
+  t_layer.draw();
+  return tooltip;
+};
+
+
+create_tooltip = function(feature_coords, feature_names, shapes_layer, t_layer,
+    feature_type) {
+  for (var i = 0; i < feature_coords.length; i++) {
+    var rect = new Kinetic.Rect({
+         x: feature_coords[i][0],
+         y: feature_coords[i][1],
+         width: 10,
+         height: 15,
+         fill: null,
+         stroke: null,
+         strokeWidth: 4
+    });
+    shapes_layer.add(rect);
+    register_tooltip(rect, feature_coords[i][0], feature_coords[i][1] + 10,
+        feature_names[i], t_layer, feature_type);
+  }
+  shapes_layer.draw();
+}
+
+
+draw_alignment_with_features = function(container_id, data, codon_length,
     feature_codemap, feature_type) {
   var start = Date.now();
   const ROW_HEIGHT = 15;
   const ROWS = data.length;
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
-  document.getElementById(canvas_id).width = data[0][1].length * 1.75;
-  var container_height = ROWS * ROW_HEIGHT * 1.6;
-  document.getElementById(canvas_id).height = ROWS * ROW_HEIGHT * 1.5;
-  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+
+  var container_width = data[0][1].length * 1.75;
+  var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
+
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    width: container_width,
+    height: container_height,
+    listening: true
+
+  });
+
+  var tooltip_layer = new Kinetic.Layer();
+  var shapes_layer = new Kinetic.Layer();
+  var native_layer = new Kinetic.Layer();
+  stage.add(native_layer);
+  stage.add(tooltip_layer);
+  stage.add(shapes_layer);
+
+  document.getElementById(container_id).style.width = container_width;
+  document.getElementById(container_id).style.height = container_height;
+  document.getElementById("canvases").style.height = (container_height + 20).toString() + 'px';
+  
+
   var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
                        'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
                        'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
@@ -71,8 +173,7 @@ draw_alignment_with_features = function(canvas_id, data, codon_length,
   }
   // color spectrum for features
   var feature_colors = ColorRange(feature_codemap.length);
-  // var ctx = feature_layer.getContext()._context;
-  var ctx=$("#" + canvas_id).get(0).getContext("2d");
+  var ctx = native_layer.getContext()._context;
   var index_add = 0;
   var char_index = 7;
   if (feature_type == 'motifs') {
@@ -84,16 +185,16 @@ draw_alignment_with_features = function(canvas_id, data, codon_length,
   var r_up;
   var letter_col;
   var is_feature;
+  var feature_coords = [];
+  var feature_names = [];
   draw_residue = function(res_num, seq_num, x, y) {
     feature_code = data[seq_num][1].substring(res_num + 2 + index_add,
                                               res_num + 4 + index_add);
 
     r = data[seq_num][1].charAt(res_num);
 
-    // r_up = r.toUpperCase(); 
     letter_col = color_to_hex['gray'];
     if (feature_code == 'AA') {
-      // letter_col = shaded_to_hex[aa_to_color[r_up]]
       letter_col = aa_to_hex[r.toUpperCase()];
     }
     else {
@@ -104,6 +205,9 @@ draw_alignment_with_features = function(canvas_id, data, codon_length,
           break;    
         }
       }
+      feature_coords = feature_coords.concat([[x, y]]);
+
+      feature_names = feature_names.concat(feature_codemap[feat_number][1]);
       letter_col = feature_colors[feat_number];
     }
       ctx.fillStyle = letter_col;
@@ -127,6 +231,8 @@ draw_alignment_with_features = function(canvas_id, data, codon_length,
       x += 10;
     }
   }
+  create_tooltip(feature_coords, feature_names, shapes_layer,
+      tooltip_layer, feature_type);
   console.debug("draw_alignmenti_with_features");
   console.debug(Date.now() - start);
 }
@@ -165,14 +271,7 @@ draw_alignment_ptms = function(canvas_id, data, codon_length) {
     aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
   }
   // color spectrum for features
-  // var ctx = feature_layer.getContext()._context;
   var ctx=$("#" + canvas_id).get(0).getContext("2d");
-  // var index_add = 0;
-  // var char_index = 7;
-  // if (feature_type == 'motifs') {
-  //   index_add = 3;
-  //   char_index = 6;
-  // }
   var feature_code;
   var r;
   var r_up;

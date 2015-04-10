@@ -95,12 +95,18 @@
                   <canvas id="canvas_ptms"
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;display:none;"></canvas>
-                  <canvas id="canvas_motifs"
+                  <div id="canvas_motifs"
                           style="overflow:auto;position:absolute;left:0px;
-                                 top:0px;display:none;"></canvas>
-                  <canvas id="canvas_domains"
+                                 top:0px;display:none;"></div>
+                  <!--<canvas id="canvas_motifs"
                           style="overflow:auto;position:absolute;left:0px;
-                                 top:0px;display:none;"></canvas>
+                                 top:0px;display:none;"></canvas>-->
+                  <div id="canvas_domains"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;display:none;"></div>
+                  <!--<canvas id="canvas_domains"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;display:none;"></canvas>-->
               </div>
             </pre>
             <div id="legend_canvases_container" style="display:none;">
@@ -142,7 +148,17 @@
             <div class="clearfix"></div>
         </div>
       </div>
+
    </div>                
+    <div class="panel panel-default" style="width=100%" id ="panel0">
+        <div class="panel-body">
+          <div style="position:relative;height:auto; width:100%">
+                  <div id="motifs_tooltip"
+                       style="overflow:auto;position:absolute;left:0px;
+                              top:0px;"></div>
+          </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
