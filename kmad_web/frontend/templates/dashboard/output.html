@@ -95,12 +95,18 @@
                   <canvas id="canvas_ptms"
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;display:none;"></canvas>
-                  <canvas id="canvas_motifs"
+                  <div id="canvas_motifs"
                           style="overflow:auto;position:absolute;left:0px;
-                                 top:0px;display:none;"></canvas>
-                  <canvas id="canvas_domains"
+                                 top:0px;display:none;"></div>
+                  <!--<canvas id="canvas_motifs"
                           style="overflow:auto;position:absolute;left:0px;
-                                 top:0px;display:none;"></canvas>
+                                 top:0px;display:none;"></canvas>-->
+                  <div id="canvas_domains"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;display:none;"></div>
+                  <!--<canvas id="canvas_domains"
+                          style="overflow:auto;position:absolute;left:0px;
+                                 top:0px;display:none;"></canvas>-->
               </div>
             </pre>
             <div id="legend_canvases_container" style="display:none;">
@@ -216,7 +222,6 @@
                         var encoded_alignment = data['result']['alignment']['encoded'];
                         var feature_codemap = data['result']['feature_codemap'];
                         draw_alignment('canvas_regular', processed_alignment);
-                       //  create_tooltip("canvas_test");
                         // var alignment = new SequenceAlignment('alignment_canvas', processed_alignment);
                         // alignment.update();
                         var codon_length = 7;
