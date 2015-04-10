@@ -21,10 +21,11 @@ draw_alignment = function(canvas_id, data) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
   var start = Date.now();
+  var container_width = data[0][1].length * 10.5 + 160;
+  var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
   var ctx=$("#" + canvas_id).get(0).getContext("2d");
-  document.getElementById(canvas_id).width = data[0][1].length * 11;
-  var container_height = ROWS * ROW_HEIGHT * 1.6;
-  document.getElementById(canvas_id).height = ROWS * ROW_HEIGHT * 1.5;
+  document.getElementById(canvas_id).width = container_width;
+  document.getElementById(canvas_id).height = container_height;
   document.getElementById("canvases").style.height = container_height.toString() + 'px';
   var x = 10;
   var y = 30;
@@ -160,7 +161,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = data[0][1].length * 1.75;
+  var container_width = data[0][1].length * 1.5 + 60;
   var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
 
   var stage = new Kinetic.Stage({
@@ -174,6 +175,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   var tooltip_layer = new Kinetic.Layer();
   var shapes_layer = new Kinetic.Layer();
   var native_layer = new Kinetic.Layer();
+
   stage.add(native_layer);
   stage.add(tooltip_layer);
   stage.add(shapes_layer);
@@ -194,6 +196,10 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   // color spectrum for features
   var feature_colors = ColorRange(feature_codemap.length);
   var ctx = native_layer.getContext()._context;
+
+  ctx.fillStyle = '#F5F5F5';
+  ctx.fillRect(0, 0, container_width, container_height);
+
   var index_add = 0;
   var char_index = 7;
   if (feature_type == 'motifs') {
@@ -257,6 +263,18 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       tooltip_layer, feature_type);
   console.debug("draw_alignmenti_with_features");
   console.debug(Date.now() - start);
+
+  function downloadCanvas(link, filename) {
+    canvas = stage.children[0].canvas;
+    link.href = canvas.toDataURL();
+    link.download = filename;
+  }
+
+  document.getElementById('download_' + feature_type + "_canvas_button").addEventListener('click',
+      function() {
+         downloadCanvas(this, "alignment_"+feature_type+".png");
+  }, false);
+
 }
 
 draw_alignment_ptms = function(canvas_id, data, codon_length) {
