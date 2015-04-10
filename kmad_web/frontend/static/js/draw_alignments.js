@@ -51,31 +51,30 @@ draw_alignment = function(canvas_id, data) {
 }
 
 
-register_tooltip = function(src, x, y, message, t_layer) {
-  console.debug("register");
+register_tooltip = function(src, x, y, message, t_layer, feature_type) {
   var tooltip;
-  // var url = 'http://elm.eu.org/elmPages/'+message+'.html';
-  // var left_button_clicked = false;
-  // src.on('mousedown', function(e) {
-  //   if (e.evt.buttons == 1 || e.evt.keyCode == 0) {
-  //     left_button_clicked = true;
-  //   }
-  // });
-  // src.on('click', function(e) {
-  //   if (left_button_clicked) {
-  //     window.open(url);
-  //     left_button_clicked = false;
-  //   }
-  // });
+  if (feature_type == "motifs") {
+    var url = 'http://elm.eu.org/elmPages/'+message+'.html';
+  } else {
+    var url = 'http://pfam.xfam.org/family/'+message;
+  }  
+  var left_button_clicked = false;
+  src.on('mousedown', function(e) {
+    if (e.evt.buttons == 1 || e.evt.keyCode == 0) {
+      left_button_clicked = true;
+    }
+  });
+  src.on('click', function(e) {
+    if (left_button_clicked) {
+      window.open(url);
+      left_button_clicked = false;
+    }
+  });
   src.on('mouseover', function() {
-    // tooltip = draw_tooltip(x, y, message, shapesLayer);
     tooltip = draw_tooltip(x, y, message, t_layer);
-    console.debug("mouseenter");
   });
   src.on('mouseout', function() {
-    console.debug("mouseout");
     tooltip.destroy();
-    // shapesLayer.draw();
     t_layer.draw();
   });
 }
@@ -107,28 +106,14 @@ draw_tooltip = function(x, y, message, t_layer) {
   });
   tooltip.add(tooltip_tag);
   tooltip.add(tooltip_text);
-  // shapesLayer.add(tooltip);
-  // shapesLayer.draw();
   t_layer.add(tooltip);
   t_layer.draw();
   return tooltip;
 };
 
 
-create_tooltip = function(feature_coords, feature_names, container_id, w, h) {
-  var stage = new Kinetic.Stage({
-    container: container_id,
-    width: w,
-    height: h,
-    listening: true
-  });
-  stage.on("mousemove", function(){
-    alert("works");
-  });
-  var shapesLayer = new Kinetic.Layer();
-  var t_layer = new Kinetic.Layer();
-  stage.add(shapesLayer);
-  stage.add(t_layer);
+create_tooltip = function(feature_coords, feature_names, shapes_layer, t_layer,
+    feature_type) {
   for (var i = 0; i < feature_coords.length; i++) {
     var rect = new Kinetic.Rect({
          x: feature_coords[i][0],
@@ -139,10 +124,11 @@ create_tooltip = function(feature_coords, feature_names, container_id, w, h) {
          stroke: null,
          strokeWidth: 4
     });
-    register_tooltip(rect, rect.x, rect.y, feature_names[i], t_layer);
-    shapesLayer.add(rect);
+    shapes_layer.add(rect);
+    register_tooltip(rect, feature_coords[i][0], feature_coords[i][1] + 10,
+        feature_names[i], t_layer, feature_type);
   }
-  shapesLayer.draw();
+  shapes_layer.draw();
 }
 
 
@@ -155,17 +141,22 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   const FONT_FAMILY = "Monospace";
 
   var container_width = data[0][1].length * 1.75;
-  var container_height = ROWS * ROW_HEIGHT * 1.5;
+  var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
 
   var stage = new Kinetic.Stage({
     container: container_id,
     width: container_width,
-    height: container_height
+    height: container_height,
+    listening: true
+
   });
+
   var tooltip_layer = new Kinetic.Layer();
+  var shapes_layer = new Kinetic.Layer();
   var native_layer = new Kinetic.Layer();
   stage.add(native_layer);
   stage.add(tooltip_layer);
+  stage.add(shapes_layer);
 
   document.getElementById(container_id).style.width = container_width;
   document.getElementById(container_id).style.height = container_height;
@@ -183,7 +174,6 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   // color spectrum for features
   var feature_colors = ColorRange(feature_codemap.length);
   var ctx = native_layer.getContext()._context;
-  // var ctx=$("#" + canvas_id).get(0).getContext("2d");
   var index_add = 0;
   var char_index = 7;
   if (feature_type == 'motifs') {
@@ -203,10 +193,8 @@ draw_alignment_with_features = function(container_id, data, codon_length,
 
     r = data[seq_num][1].charAt(res_num);
 
-    // r_up = r.toUpperCase(); 
     letter_col = color_to_hex['gray'];
     if (feature_code == 'AA') {
-      // letter_col = shaded_to_hex[aa_to_color[r_up]]
       letter_col = aa_to_hex[r.toUpperCase()];
     }
     else {
@@ -217,7 +205,8 @@ draw_alignment_with_features = function(container_id, data, codon_length,
           break;    
         }
       }
-      feature_coords = feature_coords.concat([x, y]);
+      feature_coords = feature_coords.concat([[x, y]]);
+
       feature_names = feature_names.concat(feature_codemap[feat_number][1]);
       letter_col = feature_colors[feat_number];
     }
@@ -242,12 +231,8 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       x += 10;
     }
   }
-  if (feature_type == "motifs") {
-    var canv = document.getElementById(canvas_id);
-    var h = canv.height;
-    var w = canv.width;
-    create_tooltip(feature_coords, feature_names, "motifs_tooltip", w, h);
-  }
+  create_tooltip(feature_coords, feature_names, shapes_layer,
+      tooltip_layer, feature_type);
   console.debug("draw_alignmenti_with_features");
   console.debug(Date.now() - start);
 }
@@ -286,14 +271,7 @@ draw_alignment_ptms = function(canvas_id, data, codon_length) {
     aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
   }
   // color spectrum for features
-  // var ctx = feature_layer.getContext()._context;
   var ctx=$("#" + canvas_id).get(0).getContext("2d");
-  // var index_add = 0;
-  // var char_index = 7;
-  // if (feature_type == 'motifs') {
-  //   index_add = 3;
-  //   char_index = 6;
-  // }
   var feature_code;
   var r;
   var r_up;
