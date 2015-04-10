@@ -50,17 +50,32 @@ draw_alignment = function(canvas_id, data) {
   console.debug(Date.now() - start);
 }
 
-draw_alignment_with_features = function(canvas_id, data, codon_length,
+draw_alignment_with_features = function(container_id, data, codon_length,
     feature_codemap, feature_type) {
   var start = Date.now();
   const ROW_HEIGHT = 15;
   const ROWS = data.length;
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
-  document.getElementById(canvas_id).width = data[0][1].length * 1.75;
-  var container_height = ROWS * ROW_HEIGHT * 1.6;
-  document.getElementById(canvas_id).height = ROWS * ROW_HEIGHT * 1.5;
-  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+
+  var container_width = data[0][1].length * 1.75;
+  var container_height = ROWS * ROW_HEIGHT * 1.5;
+
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    width: container_width,
+    height: container_height
+  });
+  var tooltip_layer = new Kinetic.Layer();
+  var native_layer = new Kinetic.Layer();
+  stage.add(native_layer);
+  stage.add(tooltip_layer);
+
+  document.getElementById(container_id).style.width = container_width;
+  document.getElementById(container_id).style.height = container_height;
+  document.getElementById("canvases").style.height = (container_height + 20).toString() + 'px';
+  
+
   var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
                        'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
                        'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
@@ -71,8 +86,8 @@ draw_alignment_with_features = function(canvas_id, data, codon_length,
   }
   // color spectrum for features
   var feature_colors = ColorRange(feature_codemap.length);
-  // var ctx = feature_layer.getContext()._context;
-  var ctx=$("#" + canvas_id).get(0).getContext("2d");
+  var ctx = native_layer.getContext()._context;
+  // var ctx=$("#" + canvas_id).get(0).getContext("2d");
   var index_add = 0;
   var char_index = 7;
   if (feature_type == 'motifs') {
@@ -127,7 +142,7 @@ draw_alignment_with_features = function(canvas_id, data, codon_length,
       x += 10;
     }
   }
-  console.debug("draw_alignmenti_with_features");
+  console.debug("draw_alignment_with_features");
   console.debug(Date.now() - start);
 }
 
