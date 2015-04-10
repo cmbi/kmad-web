@@ -76,6 +76,28 @@ def help():
     return render_template('dashboard/help.html')
 
 
+@bp.route("/examples/alignment1_1", endpoint="alignment1_1", methods=['GET'],
+          defaults={"filename": "alignment1_1"})
+@bp.route("/examples/alignment1_2", endpoint="alignment1_2", methods=['GET'],
+          defaults={"filename": "alignment1_2"})
+@bp.route("/examples/alignment1_3", endpoint="alignment1_3", methods=['GET'],
+          defaults={"filename": "alignment1_3"})
+@bp.route("/examples/alignment1_4", endpoint="alignment1_4", methods=['GET'],
+          defaults={"filename": "alignment1_4"})
+@bp.route("/examples/alignment2_1", endpoint="alignment2_1", methods=['GET'],
+          defaults={"filename": "alignment2_1"})
+@bp.route("/examples/alignment2_2", endpoint="alignment2_2", methods=['GET'],
+          defaults={"filename": "alignment2_2"})
+@bp.route("/examples/alignment2_3", endpoint="alignment2_3", methods=['GET'],
+          defaults={"filename": "alignment2_3"})
+@bp.route("/examples/alignment2_4", endpoint="alignment2_4", methods=['GET'],
+          defaults={"filename": "alignment2_4"})
+@bp.route("/examples/alignment2_5", endpoint="alignment2_5", methods=['GET'],
+          defaults={"filename": "alignment2_5"})
+def alignment_example(filename):
+    return render_template('dashboard/examples/{}.html'.format(filename))
+
+
 @bp.route('/methods', methods=['GET'])
 def methods():
     return render_template('dashboard/methods.html')
