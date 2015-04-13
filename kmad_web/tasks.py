@@ -63,7 +63,7 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 
 @celery_app.task
 def run_single_predictor(prev_result, fasta_file, pred_name):
-    _log.debug("Run single predictor")
+    _log.debug("Run single predictor: {}".format(pred_name))
     if prev_result[0]:
         return prev_result[1]
     else:
@@ -96,6 +96,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 out_file = fasta_file + ".gplot"
                 args = [method, '10', '8', '75', '8', '8',
                         fasta_file, '>', out_file]
+                _log.debug(args)
             try:
                 if pred_name == 'globplot':
                     # data = run_globplot(fasta_file)
