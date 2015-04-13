@@ -21,34 +21,55 @@ class TestEndpoints(object):
     def test_create_kmad_align(self, mock_call):
         mock_call.return_value = 12345
         rv = self.app.post('/api/create/align/',
-                           data={'data': 'testdata'})
+                           data={'seq_data': 'testdata',
+                                 'gap_open_p': -1, 'gap_ext_p': -1,
+                                 'end_gap_p': -1, 'ptm_score': 1,
+                                 'domain_score': 1, 'motif_score': 1,
+                                 'usr_features': ['test'],
+                                 'output_type': 'align',
+                                 'first_seq_gapped': False})
         eq_(rv.status_code, 202)
         response = json.loads(rv.data)
         ok_('id' in response)
         eq_(response['id'], 12345)
-        mock_call.assert_called_once_with('testdata')
+        mock_call.assert_called_once_with(u'testdata', -1, -1, -1,
+                                          1, 1, 1, False,
+                                          [], u'align', False)
 
     @patch('kmad_web.services.kmad.PredictStrategy.__call__')
     def test_create_kmad_predict(self, mock_call):
         mock_call.return_value = 12345
+        methods = 'testmethod1 testmethod2'
         rv = self.app.post('/api/create/predict/',
-                           data={'data': 'testdata'})
+                           data={'seq_data': 'testdata',
+                                 'prediction_methods': methods})
+
         eq_(rv.status_code, 202)
         response = json.loads(rv.data)
         ok_('id' in response)
         eq_(response['id'], 12345)
-        mock_call.assert_called_once_with('testdata')
+        mock_call.assert_called_once_with('testdata', methods.split(), False)
 
     @patch('kmad_web.services.kmad.PredictAndAlignStrategy.__call__')
     def test_create_kmad_predict_and_align(self, mock_call):
         mock_call.return_value = 12345
+        methods = 'testmethod1 testmethod2'
         rv = self.app.post('/api/create/predict_and_align/',
-                           data={'data': 'testdata'})
+                           data={'seq_data': 'testdata',
+                                 'gap_open_p': -1, 'gap_ext_p': -1,
+                                 'end_gap_p': -1, 'ptm_score': 1,
+                                 'domain_score': 1, 'motif_score': 1,
+                                 'usr_features': ['test'],
+                                 'output_type': 'predict_and_align',
+                                 'first_seq_gapped': False,
+                                 'prediction_methods': methods})
         eq_(rv.status_code, 202)
         response = json.loads(rv.data)
         ok_('id' in response)
         eq_(response['id'], 12345)
-        mock_call.assert_called_once_with('testdata')
+        mock_call.assert_called_once_with(u'testdata', -1, -1, -1,
+                                          1, 1, 1, methods.split(),
+                                          False, [], False)
 
     def test_create_kmad_predict_no_data(self):
         rv = self.app.post('/api/create/predict/')
