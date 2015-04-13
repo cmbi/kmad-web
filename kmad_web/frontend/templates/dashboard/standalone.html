@@ -11,14 +11,17 @@
       <div class="row">
       <div class="col-xs-12">
       <br>
-      1. Download the source code from GitHub:
+      1. Download the source code:
       <br>
       <br>
-      <a class="btn btn-success"
-        href="https://github.com/cmbi/kmad/archive/v1.0.tar.gz"
-        role="button"> <img src="{{ url_for('static',
-        filename='files/GitHub-Mark-Light-120px-plus.png') }}"
-        style="width:20px;"/> &nbsp;<strong>KMAD.tar.gz</strong></a>
+      <div id="download_source">
+        <form action="{{ url_for("dashboard.download_source") }}" method=POST style="clear:both;" >
+        <button type="submit" class="btn btn-success">
+        <span class="glyphicon glyphicon-download-alt"
+          aria-hidden="true"></span>
+        &nbsp;<strong>KMAD-1.02.tar.gz</strong></a>
+      </button>
+      </div>
       <br>
       <br>
       2. Unpack the directory:
@@ -28,7 +31,7 @@
       </div>
       <div class="row">
       <div class="col-xs-6">
-        <pre>tar -zxvf kmad-1.0.tar.gz</pre>
+        <pre>tar -zxvf KMAD-1.02.tar.gz</pre>
       </div>
       </div>
       <div class="row">

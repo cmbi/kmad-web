@@ -19,8 +19,8 @@ bp = Blueprint('kmad', __name__, url_prefix='/api')
 @bp.route('/create/<output_type>/', methods=['POST'])
 def create_kmad(output_type):
     """
-    :param output_type: Either 'predict', 'predict_and_align', 'align', 'refine'
-    or 'annotate'
+    :param output_type: Either 'predict', 'predict_and_align', 'align'
+    or 'refine'
     :return: The id of the job.
 
     """
@@ -63,8 +63,8 @@ def create_kmad(output_type):
 def get_kmad_status(output_type, id):
     """
     Get the status of a previous job submission.
-    :param output_type: Either 'predict', 'predict_and_align', 'align', 'refine'
-    or 'annotate'
+    :param output_type: Either 'predict', 'predict_and_align', 'align'
+    or 'refine'
     :param id: The id returned by a call to the create method.
     :return: Either PENDING, STARTED, SUCCESS, FAILURE, RETRY, or REVOKED.
     """
@@ -83,8 +83,8 @@ def get_kmad_result(output_type, id):
     """
     Get the result of a previous job submission.
 
-    :param output_type: Either 'predict', 'predict_and_align', 'align', 'refine'
-    or 'annotate'.
+    :param output_type: Either 'predict', 'predict_and_align', 'align'
+    or 'refine'
     :param id: The id returned by a call to the create method.
     :return: The output of the job. If the job status is not SUCCESS, this
              method returns an error.

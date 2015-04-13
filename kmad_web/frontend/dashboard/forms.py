@@ -180,6 +180,7 @@ class KmanForm(Form):
             html_tag='collist',
             prefix_label=False))
     add_feature = SubmitField()
+    # remove_feature = SubmitField()
     remove_feature = SubmitField()
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")

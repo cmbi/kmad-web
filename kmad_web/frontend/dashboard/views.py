@@ -113,6 +113,22 @@ def standalone():
     return render_template('dashboard/standalone.html')
 
 
+@bp.route('/download_source', methods=['POST', 'GET'])
+def download_source():
+    current_version = "1.02"
+    filename = "kmad_web/frontend/static/files/kmad-{}.tar.gz".format(
+        current_version)
+    with open(filename) as a:
+            kmad_archive = a.read()
+    strIO = StringIO.StringIO()
+    strIO.write(kmad_archive)
+    strIO.seek(0)
+    return send_file(strIO,
+                     attachment_filename="KMAD-{}.tar.gz".format(
+                         current_version),
+                     as_attachment=True)
+
+
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
