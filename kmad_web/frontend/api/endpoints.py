@@ -1,3 +1,4 @@
+import ast
 import inspect
 import logging
 import re
@@ -7,6 +8,7 @@ from flask import Blueprint, render_template, request, send_file
 from flask.json import jsonify
 
 from kmad_web.services.kmad import KmanStrategyFactory
+from kmad_web.services import txtproc
 
 
 _log = logging.getLogger(__name__)
@@ -22,37 +24,36 @@ def create_kmad(output_type):
     :return: The id of the job.
 
     """
+    form = request.form
     strategy = KmanStrategyFactory.create(output_type)
     _log.debug("Using '{}'".format(strategy.__class__.__name__))
-    _log.debug(request.form)
+    multi_seq_input = txtproc.check_if_multi(form['seq_data'])  # bool
     if output_type == "predict":
+        methods = form['prediction_methods'].split()
         celery_id = strategy(request.form['seq_data'],
-                             request.form['prediction_method.data'],
+                             methods,
                              multi_seq_input)
-        _log.debug(form.prediction_method.data)
-    elif (form.output_type.data == 'align'
-          or form.output_type.data == 'refine'):
-        celery_id = strategy(seq_data, form.gap_open_p.data,
-                             form.gap_ext_p.data, form.end_gap_p.data,
-                             form.ptm_score.data, form.domain_score.data,
-                             form.motif_score.data, multi_seq_input,
-                             form.usr_features.data, form.output_type.data,
-                             form.first_seq_gapped.data)
-        _log.debug("UsrFeatures: {}".format(form.usr_features.data))
-    elif form.output_type.data == 'annotate':
-        celery_id = strategy(seq_data)
+    elif output_type in ['align', 'refine']:
+        usr_features = []
+        celery_id = strategy(form['seq_data'], float(form['gap_open_p']),
+                             float(form['gap_ext_p']), float(form['end_gap_p']),
+                             float(form['ptm_score']),
+                             float(form['domain_score']),
+                             float(form['motif_score']), multi_seq_input,
+                             usr_features, form['output_type'],
+                             ast.literal_eval(form['first_seq_gapped']))
+    elif output_type == 'annotate':
+        celery_id = strategy(form['seq_data'])
     else:
-        celery_id = strategy(seq_data, form.gap_open_p.data,
-                             form.gap_ext_p.data, form.end_gap_p.data,
-                             form.ptm_score.data, form.domain_score.data,
-                             form.motif_score.data,
-                             form.prediction_method.data, multi_seq_input,
-                             form.usr_features.data,
-                             form.first_seq_gapped.data)
-
-    # celery_id = strategy(request.form['fasta'],
-    #                     request.form['prediction_methods'],
-    #                     "")
+        methods = form['prediction_methods'].split()
+        usr_features = []
+        celery_id = strategy(form['seq_data'], float(form['gap_open_p']),
+                             float(form['gap_ext_p']), float(form['end_gap_p']),
+                             float(form['ptm_score']),
+                             float(form['domain_score']),
+                             float(form['motif_score']), methods,
+                             multi_seq_input, usr_features,
+                             ast.literal_eval(form['first_seq_gapped']))
 
     _log.info("Task created with id '{}'".format(celery_id))
     return jsonify({'id': celery_id}), 202
