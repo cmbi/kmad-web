@@ -6,7 +6,7 @@ The output is sent to the command line.
 
 Example:
 
-    python api_example.py TAU_HUMAN.fasta http://www.cmbi.umcn.nl/kmad-web/ predict_and_align
+    python api_example.py TAU_HUMAN.fasta http://www.cmbi.ru.nl/kmad/ predict_and_align
 """
 
 import argparse
