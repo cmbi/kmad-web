@@ -63,6 +63,7 @@ class UsrFeatureEntryForm(Form):
     sequence_number = IntegerField(u'Sequence number', [validators.Optional()])
     positions = TextField(u'Feature positions', [validators.Optional()])
     pattern = TextField(u'Feature pattern(regex)', [validators.Optional()])
+    trash_it = SubmitField()
 
 
 def alpha_or_dash(sequence):

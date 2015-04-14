@@ -184,13 +184,12 @@
                                 <td> {{ form.usr_features[i].pattern(placeholder="Regex
                                   expression", class="form-control") }}
                                 <td>&nbsp</td>
-                                {% if i == (form.usr_features | length) - 1 %}
+                               </td>
                                 <td> 
-                                  {{ form.remove_feature(value='X', class="btn
+                                  {{ form.usr_features[i].trash_it(value='x', class="btn
                                     btn-danger", id="remove_feature_" + (i |
                                     string))}}
                                </td>
-                                {% endif%}
                               </tr>
                               <tr>
                                 <td>&nbsp</td>

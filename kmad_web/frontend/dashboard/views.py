@@ -6,7 +6,7 @@ from flask import (Blueprint, render_template,
 
 from kmad_web.frontend.dashboard.forms import KmanForm
 from kmad_web.services.kmad import KmanStrategyFactory
-from kmad_web.services import txtproc
+from kmad_web.services import txtproc, fieldlist_helper
 
 
 _log = logging.getLogger(__name__)
@@ -58,9 +58,10 @@ def index():
                                 celery_id=celery_id))
     elif form.add_feature.data:
         form.usr_features.append_entry()
-    elif form.remove_feature.data:
-        form.usr_features.pop_entry()
-
+    trash_it_data = [i['trash_it'] for i in form.usr_features.data]
+    if any(trash_it_data):
+        del_index = trash_it_data.index(True)
+        fieldlist_helper.delete(form.usr_features, del_index)
     _log.info("Rendering index page")
     return render_template('dashboard/index.html', form=form)
 
