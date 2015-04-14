@@ -51,30 +51,29 @@
             <strong>coloring mode:&#160;&#160;&#160;&#160;</strong>
             <div class="btn-group" data-toggle="buttons">
               <button type="submit" id="regular_mode_button" class="btn btn-regular
-                btn-s disabled" onclick="changeMode('regular')">
+                btn-s disabled" onclick="changeModeRegular()">
                 <strong>Regular</strong>
               </button>
               <button type="submit" id="ptm_mode_button" class="btn btn-ptms
-                btn-s" onclick="changeMode('ptm')">
+                btn-s" onclick="changeModePTMS()">
                 <strong>PTMs</strong>
               </button>
-              <button type="submit" id="motif_mode_button" class="btn
-                btn-motifs btn-s" onclick="changeMode('motif')">
+              <button type="submit" id="motif_mode_button" class="btn btn-motifs
+                btn-s" onclick="changeModeMotifs()">
                 <strong>Motifs</strong>
               </button>
-              <button type="submit" id="domain_mode_button" class="btn
-                btn-domains
-                btn-s" onclick="changeMode('domain')">
+              <button type="submit" id="domain_mode_button" class="btn btn-domains
+                btn-s" onclick="changeModeDomains()">
                 <strong>Domains</strong>
               </button>
             </div>
-            <a class="btn btn-default btn-xs" id="download_regular_canvas_button"
+            <a class="btn btn-default btn-xs" id="download_canvas_button"
               style="float:right;"><strong>PNG</strong></a>
-            <a class="btn btn-default btn-xs" id="download_ptm_canvas_button"
+            <a class="btn btn-default btn-xs" id="download_ptms_canvas_button"
               style="float:right;display:none;"><strong>PNG</strong></a>
-            <a class="btn btn-default btn-xs" id="download_motif_canvas_button"
+            <a class="btn btn-default btn-xs" id="download_motifs_canvas_button"
               style="float:right;display:none;"><strong>PNG</strong></a>
-            <a class="btn btn-default btn-xs" id="download_domain_canvas_button"
+            <a class="btn btn-default btn-xs" id="download_domains_canvas_button"
               style="float:right;display:none;"><strong>PNG</strong></a>
           
           </span>
@@ -85,13 +84,13 @@
                   <div id="canvas_regular"
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;"></div>
-                  <div id="canvas_ptm"
+                  <div id="canvas_ptms"
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;display:none;"></div>
-                  <div id="canvas_motif"
+                  <div id="canvas_motifs"
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;display:none;"></div>
-                  <div id="canvas_domain"
+                  <div id="canvas_domains"
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;display:none;"></div>
               </div>
@@ -106,16 +105,16 @@
                   <div id="legend_canvas" style="position:absolute; left:0px;
                     top:0px; overflow:auto; height:auto; width:100%;">
                   </div>
-                  <div id="legend_canvas_ptm" style="position:absolute;
+                  <div id="legend_canvas_ptms" style="position:absolute;
                     left:0px; top:0px; overflow:auto;
                     height:auto; width:100%; display:none;">
                   </div>
-                  <div id="legend_canvas_motif" style="position:absolute;
+                  <div id="legend_canvas_motifs" style="position:absolute;
                     left:0px; top:0px;
                     overflow:auto;
                     height:auto; width:100%; display:none;">
                   </div>
-                  <div id="legend_canvas_domain" style="position:absolute;
+                  <div id="legend_canvas_domains" style="position:absolute;
                     left:0px; top:0px; overflow:auto;
                     height:auto; width:100%; display:none;">
                   </div>
@@ -200,24 +199,24 @@
                         var feature_codemap = data['result']['feature_codemap'];
                         draw_alignment('canvas_regular', processed_alignment);
                         var codon_length = 7;
-                        draw_alignment_ptms('canvas_ptm', encoded_alignment, 
+                        draw_alignment_ptms('canvas_ptms', encoded_alignment, 
                             codon_length);
-                        draw_alignment_with_features('canvas_motif', 
+                        draw_alignment_with_features('canvas_motifs', 
                             encoded_alignment, codon_length,
-                            feature_codemap['motifs'], 'motif');
-                        draw_alignment_with_features('canvas_domain', 
+                            feature_codemap['motifs'], 'motifs');
+                        draw_alignment_with_features('canvas_domains', 
                             encoded_alignment, codon_length,
-                            feature_codemap['domains'], 'domain');
-                        var ptm_legend = new PTMsLegend('legend_canvas_ptm');
-                        ptm_legend.update();
-                        var motif_legend = new MotifsLegend(
-                            'legend_canvas_motif',
+                            feature_codemap['domains'], 'domains');
+                        var ptms_legend = new PTMsLegend('legend_canvas_ptms');
+                        ptms_legend.update();
+                        var motifs_legend = new MotifsLegend(
+                            'legend_canvas_motifs',
                             feature_codemap['motifs']);
-                        motif_legend.update();
-                        var domain_legend = new DomainsLegend(
-                            'legend_canvas_domain',
+                        motifs_legend.update();
+                        var domains_legend = new DomainsLegend(
+                            'legend_canvas_domains',
                             feature_codemap['domains']);
-                        domain_legend.update();
+                        domains_legend.update();
                         $('#download_al_button').removeClass('disabled');
                         $('#collapseTwo').addClass('in');
                         $('#collapseThree').addClass('in');
@@ -235,33 +234,88 @@
           }
         )}, 1000);
   });
+  changeModePTMS = function() {
+    document.getElementById('canvas_regular').style.display = 'none'; 
+    document.getElementById('canvas_domains').style.display = 'none'; 
+    document.getElementById('canvas_motifs').style.display = 'none'; 
+    document.getElementById('canvas_ptms').style.display = ''; 
+    document.getElementById('download_canvas_button').style.display = 'none'; 
+    document.getElementById('download_domains_canvas_button').style.display = 'none'; 
+    document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
+    document.getElementById('download_ptms_canvas_button').style.display = ''; 
+    document.getElementById('legend_canvases_container').style.display = ''; 
+    document.getElementById('legend_canvas_ptms').style.display = ''; 
+    document.getElementById('legend_canvas_motifs').style.display = 'none'; 
+    document.getElementById('legend_canvas_domains').style.display = 'none'; 
+    $('#ptm_mode_button').addClass('disabled');
+    $('#regular_mode_button').removeClass('disabled');
+    $('#motif_mode_button').removeClass('disabled');
+    $('#domain_mode_button').removeClass('disabled');
+    $('#domain_mode_button').removeClass('active');
+    $('#regular_mode_button').removeClass('active');
+    $('#motif_mode_button').removeClass('active');
 
-  changeMode = function(newMode) {
-    modes = ["regular", "ptm", "domain", "motif"];
-    $('#' + newMode + '_mode_button').addClass('disabled');
-    if (newMode != "regular") {
-      document.getElementById('legend_canvases_container').style.display = ''; 
-      document.getElementById('legend_canvas_' + newMode).style.display = ''; 
-    } else {
-      document.getElementById('legend_canvases_container').style.display = 'none'; 
-    }
-    document.getElementById('canvas_' + newMode).style.display = ''; 
-    document.getElementById('download_' + newMode + '_canvas_button').style.display = ''; 
-    for (i in modes) {
-      m = modes[i];
-      if (m != newMode) {
-        console.debug(m);
+  }
+  changeModeRegular = function() {
+    document.getElementById('canvas_regular').style.display = ''; 
+    document.getElementById('canvas_domains').style.display = 'none'; 
+    document.getElementById('canvas_motifs').style.display = 'none'; 
+    document.getElementById('canvas_ptms').style.display = 'none'; 
+    document.getElementById('download_canvas_button').style.display = ''; 
+    document.getElementById('download_domains_canvas_button').style.display = 'none'; 
+    document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
+    document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
+    document.getElementById('legend_canvases_container').style.display = 'none'; 
+    $('#regular_mode_button').addClass('disabled');
+    $('#ptm_mode_button').removeClass('disabled');
+    $('#motif_mode_button').removeClass('disabled');
+    $('#domain_mode_button').removeClass('disabled');
+    $('#ptm_mode_button').removeClass('active');
+    $('#motif_mode_button').removeClass('active');
+    $('#domain_mode_button').removeClass('active');
+  }
+  changeModeDomains = function() {
+    document.getElementById('canvas_regular').style.display = 'none'; 
+    document.getElementById('canvas_domains').style.display = ''; 
+    document.getElementById('canvas_motifs').style.display = 'none'; 
+    document.getElementById('canvas_ptms').style.display = 'none'; 
+    document.getElementById('download_canvas_button').style.display = 'none'; 
+    document.getElementById('download_domains_canvas_button').style.display = ''; 
+    document.getElementById('download_motifs_canvas_button').style.display = 'none'; 
+    document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
+    document.getElementById('legend_canvases_container').style.display = ''; 
+    document.getElementById('legend_canvas_ptms').style.display = 'none'; 
+    document.getElementById('legend_canvas_motifs').style.display = 'none'; 
+    document.getElementById('legend_canvas_domains').style.display = ''; 
+    $('#ptm_mode_button').removeClass('disabled');
+    $('#regular_mode_button').removeClass('disabled');
+    $('#motif_mode_button').removeClass('disabled');
+    $('#domain_mode_button').addClass('disabled');
+    $('#ptm_mode_button').removeClass('active');
+    $('#regular_mode_button').removeClass('active');
+    $('#motif_mode_button').removeClass('active');
 
-        document.getElementById('canvas_' + m).style.display = 'none'; 
-        document.getElementById(
-            'download_' + m + '_canvas_button').style.display = 'none'; 
-        $('#' + m + '_mode_button').removeClass('disabled');
-        $('#' + m + '_mode_button').removeClass('active');
-        if (m != "regular") {
-          document.getElementById('legend_canvas_' + m).style.display = 'none'; 
-        }
-      }
-    }
+  }
+  changeModeMotifs = function() {
+    document.getElementById('canvas_regular').style.display = 'none'; 
+    document.getElementById('canvas_domains').style.display = 'none'; 
+    document.getElementById('canvas_motifs').style.display = ''; 
+    document.getElementById('canvas_ptms').style.display = 'none'; 
+    document.getElementById('download_canvas_button').style.display = 'none'; 
+    document.getElementById('download_domains_canvas_button').style.display = 'none'; 
+    document.getElementById('download_motifs_canvas_button').style.display = ''; 
+    document.getElementById('download_ptms_canvas_button').style.display = 'none'; 
+    document.getElementById('legend_canvases_container').style.display = ''; 
+    document.getElementById('legend_canvas_ptms').style.display = 'none'; 
+    document.getElementById('legend_canvas_motifs').style.display = ''; 
+    document.getElementById('legend_canvas_domains').style.display = 'none'; 
+    $('#motif_mode_button').addClass('disabled');
+    $('#ptm_mode_button').removeClass('disabled');
+    $('#regular_mode_button').removeClass('disabled');
+    $('#domain_mode_button').removeClass('disabled');
+    $('#ptm_mode_button').removeClass('active');
+    $('#regular_mode_button').removeClass('active');
+    $('#domain_mode_button').removeClass('active');
   }
 </script>
 {% endblock %}
