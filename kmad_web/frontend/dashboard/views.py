@@ -60,6 +60,7 @@ def index():
         form.usr_features.append_entry()
     elif form.remove_feature.data:
         form.usr_features.pop_entry()
+
     _log.info("Rendering index page")
     return render_template('dashboard/index.html', form=form)
 
