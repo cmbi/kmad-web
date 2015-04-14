@@ -1,0 +1,98 @@
+.navbar-inverse {
+  background-color: #252525;
+  background-image: none;
+}
+
+.navbar-brand {
+  height: 60px;
+  padding-top: 15;
+  padding-bottom: 15;
+  font-size: 250%;
+  line-height: 35px;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #7109AA;
+    outline: none;
+}
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus {
+    color: #822EAF;
+    background-color: transparent;
+    outline: none;
+}
+.navbar-inverse .navbar-brand span {
+    color: #CECE00;
+}
+.navbar-inverse .navbar-brand:focus span,
+.navbar-inverse .navbar-brand:hover span {
+    color: #FFFF39;
+}
+.navbar-inverse .navbar-brand span span{
+    color: #7BB800;
+}
+.navbar-inverse .navbar-brand:focus span span,
+.navbar-inverse .navbar-brand:hover span span {
+    color: #B1EF35;
+}
+.navbar-inverse .navbar-brand span span span {
+    color: #9E0059;
+}
+.navbar-inverse .navbar-brand:focus span span span,
+.navbar-inverse .navbar-brand:hover span span span {
+    color: #D02E8A;
+}
+
+.navbar {
+ min-height: 60px;
+}
+
+.navbar-inverse .navbar-brand-active{
+    color: #822EAF;
+    outline: none;
+    text-decoration:none;
+}
+
+.navbar-inverse .navbar-brand-active:hover,
+.navbar-inverse .navbar-brand-active:focus {
+    color: #822EAF;
+    background-color: transparent;
+    outline: none;
+    text-decoration:none;
+}
+
+.navbar-inverse .navbar-brand-active span {
+    color: #FFFF39;
+}
+
+.navbar-inverse .navbar-brand-active:focus span,
+.navbar-inverse .navbar-brand-active:hover span {
+    color: #FFFF39;
+}
+
+.navbar-inverse .navbar-brand-active span span{
+    color: #B1EF35;
+}
+
+.navbar-inverse .navbar-brand-active:focus span span,
+.navbar-inverse .navbar-brand-active:hover span span {
+    color: #B1EF35;
+}
+
+.navbar-inverse .navbar-brand-active span span span {
+    color: #D02E8A;
+}
+
+.navbar-inverse .navbar-brand-active:focus span span span,
+.navbar-inverse .navbar-brand-active:hover span span span {
+    color: #D02E8A;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: #ccc;
+  line-height: 35px;
+  font-size: 150%;
+}
+.navbar-inverse .navbar-nav > li > a:focus {
+  color: #fff;
+}
