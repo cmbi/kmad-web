@@ -68,7 +68,7 @@ draw_alignment = function(container_id, data) {
       x += 10;
     }
   }
-  document.getElementById('download_canvas_button').addEventListener('click',
+  document.getElementById('download_regular_canvas_button').addEventListener('click',
       function() {
          downloadCanvasFromStage(this, "alignment.png", stage);
   }, false);
@@ -79,7 +79,7 @@ draw_alignment = function(container_id, data) {
 
 register_tooltip = function(src, x, y, message, t_layer, feature_type) {
   var tooltip;
-  if (feature_type == "motifs") {
+  if (feature_type == "motif") {
     var url = 'http://elm.eu.org/elmPages/'+message+'.html';
   } else {
     var url = 'http://pfam.xfam.org/family/'+message;
@@ -226,7 +226,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
 
   var index_add = 0;
   var char_index = 7;
-  if (feature_type == 'motifs') {
+  if (feature_type == 'motif') {
     index_add = 3;
     char_index = 6;
   }
@@ -287,12 +287,6 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       tooltip_layer, feature_type);
   console.debug("draw_alignmenti_with_features");
   console.debug(Date.now() - start);
-
-  // function downloadCanvas(link, filename) {
-  //   canvas = stage.children[0].canvas;
-  //   link.href = canvas.toDataURL();
-  //   link.download = filename;
-  // }
 
   document.getElementById('download_' + feature_type + "_canvas_button").addEventListener('click',
       function() {
@@ -397,7 +391,7 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
       x += 10;
     }
   }
-  document.getElementById('download_ptms_canvas_button').addEventListener('click',
+  document.getElementById('download_ptm_canvas_button').addEventListener('click',
       function() {
          downloadCanvasFromStage(this, "alignment_ptms.png", stage);
   }, false);
