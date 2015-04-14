@@ -2,9 +2,8 @@ import ast
 import inspect
 import logging
 import re
-import StringIO
 
-from flask import Blueprint, render_template, request, send_file
+from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
 from kmad_web.services.kmad import KmanStrategyFactory
@@ -134,15 +133,3 @@ def api_docs():
 @bp.route('/example', methods=['GET'])
 def api_example():  # pragma: no cover
     return render_template('api/example.html')
-
-
-@bp.route('/download_api_example', methods=['GET', 'POST'])
-def download_api_example():
-    with open("kmad_web/frontend/static/files/api_example.py") as a:
-            api_example = a.read()
-    strIO = StringIO.StringIO()
-    strIO.write(api_example)
-    strIO.seek(0)
-    return send_file(strIO,
-                     attachment_filename="kmad_api.py",
-                     as_attachment=True)
