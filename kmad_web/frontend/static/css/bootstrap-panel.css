@@ -3,7 +3,6 @@
   background-image:      -o-linear-gradient(top, #d5d5d5 0%, #d8d8d8 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#d5d5d5), to(#d8d8d8));
   background-image:         linear-gradient(to bottom, #d5d5d5 0%, #d8d8d8 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd5d5d5', endColorstr='#ffd8d8d8', GradientType=0);
   background-repeat: repeat-x;
 }
 .panel-primary > .panel-heading {
@@ -11,7 +10,6 @@
   background-image:      -o-linear-gradient(top, #bce3f2 0%, #357ebd 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#bce3f2), to(#357ebd));
   background-image:         linear-gradient(to bottom, #bce3f2 0%, #357ebd 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffbce3f2', endColorstr='#ff357ebd', GradientType=0);
   background-repeat: repeat-x;
 }
 .panel-success > .panel-heading {
@@ -19,7 +17,6 @@
   background-image:      -o-linear-gradient(top, #d3eaca 0%, #d0e9c6 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#d3eaca), to(#d0e9c6));
   background-image:         linear-gradient(to bottom, #d3eaca 0%, #d0e9c6 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd3eaca', endColorstr='#ffd0e9c6', GradientType=0);
   background-repeat: repeat-x;
 }
 .panel-danger > .panel-heading {
@@ -27,7 +24,6 @@
   background-image:      -o-linear-gradient(top, #f2dede 0%, #ebcccc 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#f2dede), to(#ebcccc));
   background-image:         linear-gradient(to bottom, #f2dede 0%, #ebcccc 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff2dede', endColorstr='#ffebcccc', GradientType=0);
   background-repeat: repeat-x;
 }
 .panel-info > .panel-heading {
@@ -35,6 +31,5 @@
   background-image:      -o-linear-gradient(top, #c7e4f4 0%, #c4e3f3 100%);
   background-image: -webkit-gradient(linear, left top, left bottom, from(#c7e4f4), to(#c4e3f3));
   background-image:         linear-gradient(to bottom, #c7e4f4 0%, #c4e3f3 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffc7e4f4', endColorstr='#ffc4e3f3', GradientType=0);
   background-repeat: repeat-x;
 }
