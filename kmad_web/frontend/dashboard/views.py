@@ -116,7 +116,7 @@ def standalone():
 
 @bp.route('/download_source', methods=['POST', 'GET'])
 def download_source():
-    current_version = "1.02"
+    current_version = "1.03"
     filename = "kmad_web/frontend/static/files/kmad-{}.tar.gz".format(
         current_version)
     with open(filename) as a:
