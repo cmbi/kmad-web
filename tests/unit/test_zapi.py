@@ -2,7 +2,7 @@ import inspect
 import json
 import re
 
-from mock import patch, mock_open
+from mock import patch
 from nose.tools import eq_, ok_, raises
 
 from kmad_web.factory import create_app
@@ -216,12 +216,3 @@ class TestEndpoints(object):
                 url = url.replace('>', '&gt;')
                 url = url.replace('<', '&lt;')
                 assert "<samp>/api{}</samp>".format(url) in rv.data
-
-    @patch('kmad_web.frontend.api.endpoints.open',
-           mock_open(read_data=open(
-               'tests/unit/testdata/test_api_example.py').read()),
-           create=True)
-    def test_download_api_example(self):
-        rv = self.app.get('/api/download_api_example')
-        eq_(rv.status_code, 200)
-        assert "This example client" in rv.data
