@@ -23,11 +23,10 @@
       </div>
       <div class="col-xs-4">
         <div id="download_api_example" style="float:right;">
-          <form action="{{ url_for("kmad.download_api_example") }}" method=POST style="clear:both;" >
-            <button type="submit" id="download_al_button" class="btn btn-primary btn-xs" style="float:right;" value="Submit">
+          <a href="{{ url_for('static', filename='files/api_example.py') }}"
+            class="btn btn-primary btn-xs">
               <span class="glyphicon glyphicon-save"></span> Download
-            </button>
-          </form>
+          </a>
           <div class="clearfix"></div>
         </div>
       </div>

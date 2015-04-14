@@ -15,12 +15,11 @@
       <br>
       <br>
       <div id="download_source">
-        <form action="{{ url_for("dashboard.download_source") }}" method=POST style="clear:both;" >
-        <button type="submit" class="btn btn-success">
+      <a href="{{ url_for('static', filename='files/kmad-1.03.tar.gz') }}"
+        class="btn btn-primary">
         <span class="glyphicon glyphicon-download-alt"
           aria-hidden="true"></span>
-        &nbsp;<strong>KMAD-1.03.tar.gz</strong></a>
-      </button>
+        <strong>KMAD-1.03.tar.gz</strong></a>
       </div>
       <br>
       <br>
@@ -31,7 +30,7 @@
       </div>
       <div class="row">
       <div class="col-xs-6">
-        <pre>tar -zxvf KMAD-1.02.tar.gz</pre>
+        <pre>tar -zxvf kmad-1.03.tar.gz</pre>
       </div>
       </div>
       <div class="row">
