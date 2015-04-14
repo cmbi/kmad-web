@@ -179,17 +179,21 @@
                                 <td>&nbsp</td>
                                 <td> {{ form.usr_features[i].positions(pattern="[
                                   ]?(([0-9]((,)[ ]?)?)|([0-9][ ]?-[
-                                  ]?[0-9]((,)[ ]?)?)){1,}(([ ]){1,})?", placeholder="e.g. '1,2,7-9'", class="form-control") }} </td>
+                                  ]?[0-9]((,)[ ]?)?)){1,}(([ ]){1,})?",
+                                  placeholder="e.g. '1,2,7-9'",
+                                  class="form-control") }}</td>
                                 <td>&nbsp</td>
                                 <td> {{ form.usr_features[i].pattern(placeholder="Regex
                                   expression", class="form-control") }}
+                                </td>
                                 <td>&nbsp</td>
-                               </td>
                                 <td> 
-                                  {{ form.usr_features[i].trash_it(value='x', class="btn
-                                    btn-danger", id="remove_feature_" + (i |
-                                    string))}}
-                               </td>
+                                    {{ form.usr_features[i].trash_it(value='X', class="btn
+                                      btn-danger btn-trash",
+                                      style="float:left;clear:both;",
+                                      id="remove_feature_" + (i |
+                                      string))}}
+                                </td>
                               </tr>
                               <tr>
                                 <td>&nbsp</td>
@@ -498,6 +502,7 @@
     $('#prediction_method-2').change( function() {show_prediction_alert(); });
     $('#prediction_method-3').change( function() {show_prediction_alert(); });
     $('#prediction_method-4').change( function() {show_prediction_alert(); });
+    
 
   });
 </script>
