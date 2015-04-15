@@ -1,6 +1,7 @@
 import logging
 import math
 import os
+import re
 import string
 import subprocess
 import tempfile
@@ -68,7 +69,7 @@ def run_pfam_scan(filename):
     domain_coords = []
     domain_accessions = []
     with open(filename) as a:
-        fastafile = a.read()
+        fastafile = re.sub('-', '', a.read())
     values = {'seq': fastafile, 'output': 'xml'}
     data = urllib.urlencode(values)
     request = urllib2.Request('http://pfam.xfam.org/search/sequence', data)
@@ -314,7 +315,7 @@ def encode_domains(seq, domains, domain_codes):
         j = 0
         k = 0
         while j < end+1 and k < len(seq):
-            if k % 7 == 2 and j >= start:
+            if k % 7 == 2 and j >= start and seq[k - 2] != '-':
                 seq[k] = domainsCode[0]
                 seq[k+1] = domainsCode[1]
             elif k % 7 == 0 and seq[k] != "-":
@@ -369,7 +370,7 @@ def encode_slims(seq, slims, slim_codes):
             k = 0
             j = 0
             while j < end + 1 and k < len(seq):
-                if k % 7 == 5 and j >= start:
+                if k % 7 == 5 and j >= start and seq[k - 5] != '-':
                     seq[k] = slimsCode[0]
                     seq[k+1] = slimsCode[1]
                 elif k % 7 == 0 and seq[k] != "-":
