@@ -187,7 +187,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   const FONT_FAMILY = "Monospace";
 
   var container_width = data[0][1].length * 1.5 + 60;
-  var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
+  var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
 
   var stage = new Kinetic.Stage({
     container: container_id,
