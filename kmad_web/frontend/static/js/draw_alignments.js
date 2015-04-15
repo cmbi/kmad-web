@@ -186,7 +186,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = data[0][1].length * 1.5 + 60;
+  var container_width = data[0][1].length * 1.5 + 180;
   var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
 
   var stage = new Kinetic.Stage({
@@ -242,7 +242,6 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   draw_residue = function(res_num, seq_num, x, y) {
     feature_code = data[seq_num][1].substring(res_num + 2 + index_add,
                                               res_num + 4 + index_add);
-
     r = data[seq_num][1].charAt(res_num);
 
     letter_col = color_to_hex['gray'];
@@ -260,6 +259,11 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       feature_coords = feature_coords.concat([[x, y, rect_width, rect_height]]);
       feature_names = feature_names.concat(feature_codemap[feat_number][1]);
       letter_col = feature_colors[feat_number];
+      if (feature_type == 'motif') {
+        console.debug("feature_code: " + feature_code);
+        console.debug(feature_names);
+        console.debug(letter_col);
+      }
     }
       ctx.fillStyle = letter_col;
       ctx.fillRect(x, y, rect_width, rect_height);
@@ -287,6 +291,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       tooltip_layer, feature_type);
   console.debug("draw_alignmenti_with_features");
   console.debug(Date.now() - start);
+  console.debug(feature_codemap);
 
   document.getElementById('download_' + feature_type + "_canvas_button").addEventListener('click',
       function() {
@@ -302,7 +307,7 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = data[0][1].length * 1.5 + 60;
+  var container_width = data[0][1].length * 1.5 + 180;
   var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
 
   var stage = new Kinetic.Stage({

@@ -158,8 +158,6 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
         domains = [[i.split()[0].split('_')[1], i.split()[1]]
                    for i in feature_codemap if i.startswith('domain')]
 
-        _log.debug("motif_codes: {}".format(motifs))
-        _log.info("domain_codes: {}".format(domains))
         feature_codemap = {'motifs': motifs, 'domains': domains}
 
         alignment_encoded = open(al_outfile).read().encode('ascii',
@@ -177,8 +175,14 @@ def annotate(d2p2, filename):
     encoded_filename = convert_to_7chars(filename)  # .7c filename
     with open(filename.split('.')[0] + '.map') as a:
         feature_codemap = a.read().splitlines()
-    motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
-    domains = [i.split() for i in feature_codemap if i.startswith('domain')]
+    # motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
+    # domains = [i.split() for i in feature_codemap if i.startswith('domain')]
+    motifs = [[i.split()[0].split('_')[1]] + i.split()[1:]
+              for i in feature_codemap if i.startswith('motif')]
+
+    domains = [[i.split()[0].split('_')[1], i.split()[1]]
+               for i in feature_codemap if i.startswith('domain')]
+
     feature_codemap = {'motifs': motifs, 'domains': domains}
 
     encoded = open(encoded_filename).read().encode('ascii',
