@@ -276,7 +276,7 @@ PTMsLegend = function(container_id) {
   var stage = new Kinetic.Stage({
     container: container_id,
     height: 185,
-    width: 600 
+    width: 900 
   });
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
@@ -403,6 +403,8 @@ PTMsLegend = function(container_id) {
     });
     this.seq_layer.add(res_text);
     y = y + 30; 
+    y = 50;
+    x += 300;
     this.draw_residue(' ', 'V', x, y);
     this.draw_residue(' ', 'W', x + 10, y);
     this.draw_residue(' ', 'X', x + 20, y);
