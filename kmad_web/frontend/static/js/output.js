@@ -12,8 +12,6 @@ changeMode = function(newMode) {
   for (i in modes) {
     m = modes[i];
     if (m != newMode) {
-      console.debug(m);
-
       document.getElementById('canvas_' + m).style.display = 'none'; 
       document.getElementById(
           'download_' + m + '_canvas_button').style.display = 'none'; 
