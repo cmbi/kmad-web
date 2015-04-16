@@ -13,6 +13,11 @@ function show_forms_align() {
   $('#predictionMethod').addClass('hidden');
   $('#alignment_options_div').removeClass('hidden');
 }
+function hide_forms() {
+  console.debug("hejehej");
+  $('#predictionMethod').addClass('hidden');
+  $('#alignment_options_div').addClass('hidden');
+}
 function show_forms() {
   var selected = $('#output_type').children(":selected").attr('value');
     switch (selected) {
@@ -20,7 +25,7 @@ function show_forms() {
       show_forms_align();
       break;
     case 'annotate':
-      show_forms_align();
+      hide_forms();
       break;
     case 'refine':
       show_forms_align();
