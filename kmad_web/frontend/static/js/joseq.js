@@ -441,6 +441,33 @@ PTMsLegend = function(container_id) {
     this.draw();
   }
 }
+
+register_link = function(src, name, feature_type, canvas_id) {
+  if (feature_type == "motif") {
+    var url = 'http://elm.eu.org/elmPages/'+name+'.html';
+  } else {
+    var url = 'http://pfam.xfam.org/family/'+name;
+  }  
+  var left_button_clicked = false;
+  src.on('mousedown', function(e) {
+    if (e.evt.buttons == 1 || e.evt.keyCode == 0) {
+      left_button_clicked = true;
+    }
+  });
+  src.on('click', function(e) {
+     if (left_button_clicked) {
+       window.open(url);
+       left_button_clicked = false;
+     }
+   });
+  src.on('mouseover', function(e) {
+    $('#' + canvas_id).css('cursor', 'pointer');
+  });
+  src.on('mouseleave', function(e) {
+    $('#' + canvas_id).css('cursor', 'auto');
+  });
+}
+
 MotifsLegend = function(container_id, motifs) {
   const SEQ_LAYER_OFFSET_X = 50;
   const FONT_FAMILY = "Monospace";
@@ -493,6 +520,7 @@ MotifsLegend = function(container_id, motifs) {
         fontFamily: FONT_FAMILY,
         fill: 'black'
       });
+      register_link(res_text, motifs[i][1], 'motif', container_id);
       this.seq_layer.add(res_text);
       y = y + 30;
     }
@@ -556,6 +584,7 @@ DomainsLegend = function(container_id, domains) {
         fontFamily: FONT_FAMILY,
         fill: 'black'
       });
+      register_link(res_text, domains[i][1], 'domain', container_id);
       this.seq_layer.add(res_text);
       y = y + 30;
     }

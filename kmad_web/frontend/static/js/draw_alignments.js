@@ -41,7 +41,7 @@ draw_alignment = function(container_id, data) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
   var container_width = data[0][1].length * 10.5 + 160;
-  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -100,7 +100,8 @@ draw_alignment = function(container_id, data) {
 }
 
 
-register_tooltip = function(src, x, y, message, t_layer, feature_type) {
+register_tooltip = function(src, x, y, message, t_layer, feature_type,
+    canvas_id) {
   var tooltip;
   if (feature_type == "motif") {
     var url = 'http://elm.eu.org/elmPages/'+message+'.html';
@@ -121,8 +122,10 @@ register_tooltip = function(src, x, y, message, t_layer, feature_type) {
   });
   src.on('mouseover', function(e) {
     tooltip = draw_tooltip(e.evt.layerX, e.evt.layerY, message, t_layer);
+    $('#' + canvas_id).css('cursor', 'pointer');
   });
   src.on('mouseout', function() {
+    $('#' + canvas_id).css('cursor', 'auto');
     tooltip.destroy();
     t_layer.draw();
   });
@@ -162,7 +165,7 @@ draw_tooltip = function(x, y, message, t_layer) {
 
 
 create_tooltip = function(feature_coords, feature_names, shapes_layer, t_layer,
-    feature_type) {
+    feature_type, canvas_id) {
   for (var i = 0; i < feature_coords.length; i++) {
     var rect = new Kinetic.Rect({
          x: feature_coords[i][0],
@@ -175,7 +178,7 @@ create_tooltip = function(feature_coords, feature_names, shapes_layer, t_layer,
     });
     shapes_layer.add(rect);
     register_tooltip(rect, feature_coords[i][0], feature_coords[i][1] + 10,
-        feature_names[i], t_layer, feature_type);
+        feature_names[i], t_layer, feature_type, canvas_id);
   }
   shapes_layer.draw();
 }
@@ -197,6 +200,8 @@ group_coords = function(feature_coords, feature_names) {
       new_block = feature_coords[i];
     }
   }
+  new_coords.push(new_block);
+  new_names.push(feature_names[feature_names.length - 1]);
   return [new_coords, new_names];
 }
 
@@ -210,7 +215,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   const FONT_FAMILY = "Monospace";
 
   var container_width = data[0][1].length * 1.5 + 180;
-  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -303,12 +308,11 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       x += 10;
     }
   }
-  // [feature_coords, feature_names] = group_coords(feature_coords, feature_names);
   coords_and_names =  group_coords(feature_coords, feature_names);
   feature_coords = coords_and_names[0];
   feature_names = coords_and_names[1];
   create_tooltip(feature_coords, feature_names, shapes_layer,
-      tooltip_layer, feature_type);
+      tooltip_layer, feature_type, container_id);
   console.debug("draw_alignmenti_with_features " + feature_type);
   console.debug(Date.now() - start);
 
@@ -327,8 +331,7 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
   const FONT_FAMILY = "Monospace";
 
   var container_width = data[0][1].length * 1.5 + 180;
-  var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
-  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 40;
+  var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
 
   var stage = new Kinetic.Stage({
     container: container_id,
