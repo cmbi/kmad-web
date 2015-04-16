@@ -303,7 +303,10 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       x += 10;
     }
   }
-  [feature_coords, feature_names] = group_coords(feature_coords, feature_names);
+  // [feature_coords, feature_names] = group_coords(feature_coords, feature_names);
+  coords_and_names =  group_coords(feature_coords, feature_names);
+  feature_coords = coords_and_names[0];
+  feature_names = coords_and_names[1];
   create_tooltip(feature_coords, feature_names, shapes_layer,
       tooltip_layer, feature_type);
   console.debug("draw_alignmenti_with_features " + feature_type);

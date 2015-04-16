@@ -125,7 +125,7 @@
           </div>
       </div>
       <div class=panel-footer>
-        <div id="download_alignment">
+        <div id="download_alignment" style="display:none;">
             <form action="{{ url_for("dashboard.download_alignment") }}" method=POST style="clear:both;" >
              <input type="hidden" id="download_al_input" name="alignment" style="display:none;"/>
              <button type="submit" id="download_al_button" class="btn btn-primary btn-xs disabled" style="float:right;" value="Submit">
@@ -219,6 +219,7 @@
                             feature_codemap['domains']);
                         domain_legend.update();
                         $('#download_al_button').removeClass('disabled');
+                        document.getElementById('download_alignment').style.display = "";
                         $('#collapseTwo').addClass('in');
                         $('#collapseThree').addClass('in');
                       } else {

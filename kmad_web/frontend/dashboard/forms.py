@@ -145,6 +145,37 @@ class KmanForm(Form):
                                                      sequence alignment in \
                                                      FASTA format')
 
+    def validate_gap_open_p(form, field):
+        if field.data >= 0:
+            raise validators.ValidationError("gap penalty values \
+                                             have to be negative")
+
+    def validate_gap_ext_p(form, field):
+        if field.data >= 0:
+            raise validators.ValidationError("gap penalty values \
+                                             have to be negative")
+
+    def validate_end_gap_p(form, field):
+        if field.data >= 0:
+            raise validators.ValidationError("gap penalty values \
+                                             have to be negative")
+
+    def validate_domain_score(form, field):
+        if field.data < 0:
+            raise validators.ValidationError("domain, motif, and ptm scores \
+                                             cannot be negative")
+
+    def validate_motif_score(form, field):
+        if field.data < 0:
+            raise validators.ValidationError("domain, motif, and ptm scores \
+                                             cannot be negative")
+
+    def validate_ptm_score(form, field):
+        if field.data < 0:
+            raise validators.ValidationError("domain, motif, and ptm scores \
+                                             cannot be negative")
+
+
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',
                                                    'align'),

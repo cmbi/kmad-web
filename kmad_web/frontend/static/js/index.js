@@ -19,6 +19,12 @@ function show_forms() {
     case 'align':
       show_forms_align();
       break;
+    case 'annotate':
+      show_forms_align();
+      break;
+    case 'refine':
+      show_forms_align();
+      break;
     case 'predict_and_align':
       show_forms_panda();
       break;
