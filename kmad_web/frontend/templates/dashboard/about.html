@@ -26,25 +26,25 @@ mutation analysis server. This led to three major considerations:
 </OL> 
 
 <H3>HOPE</H3>
-<P ALIGN="JUSTIFY">
-The <A HREF="http://www.cmbi.ru.nl/hope/home">HOPE</A> server accepts from the user a sequence and
-a mutation that is known causal for a genetic disorder. HOPE then looks up the protein&#39;s structure
-or models it, it calls dozens of compute servers and looks up very much data from all kinds of databases,
-it combines all results and reasons about those results to finally arrive at a human readable report
-that explains to biomedical scientists what the mutation does to the protein, and why that might explain
-why the mutation causes the human disease phenotype.
-</P><P ALIGN="JUSTIFY">
-The transfer of curator annotations from homologous non-human sequences to the human sequence of interest
-is a major contributor to HOPE&#39;s reasoning. It does not make any sense to study insertions relative
-to the human sequence because curator annotations such as post translational modifications (PTMs) or 
-short linear motifs (SLiMs) in an insertion in, for example, the sequence of the mouse cannot be 
-transferred to the human sequence anyway. 
-</P><P ALIGN="JUSTIFY">
-The transfer of curator annotations to the human sequence is most valuable when the species from which
-this information is obtained is closest related to man. 
-</P><P ALIGN="JUSTIFY">
-These HOPE-centric considerations naturally led to the choice for an iterative profile alignment method.
-</P>
+  <P ALIGN="JUSTIFY">
+    The <A HREF="http://www.cmbi.ru.nl/hope/home">HOPE</A> server accepts from the user a sequence and
+    a mutation that is known causal for a genetic disorder. HOPE then looks up the protein&#39;s structure
+    or models it, it calls dozens of compute servers and looks up very much data from all kinds of databases,
+    it combines all results and reasons about those results to finally arrive at a human readable report
+    that explains to biomedical scientists what the mutation does to the protein, and why that might explain
+    why the mutation causes the human disease phenotype.
+  </P><P ALIGN="JUSTIFY">
+    The transfer of curator annotations from homologous non-human sequences to the human sequence of interest
+    is a major contributor to HOPE&#39;s reasoning. It does not make any sense to study insertions relative
+    to the human sequence because curator annotations such as post translational modifications (PTMs) or 
+    short linear motifs (SLiMs) in an insertion in, for example, the sequence of the mouse cannot be 
+    transferred to the human sequence anyway. 
+  </P><P ALIGN="JUSTIFY">
+    The transfer of curator annotations to the human sequence is most valuable when the species from which
+    this information is obtained is closest related to man. 
+  </P><P ALIGN="JUSTIFY">
+    These HOPE-centric considerations naturally led to the choice for an iterative profile alignment method.
+  </P>
 
 <H3>Iterative profile alignment</H3>
 <P ALIGN="JUSTIFY">
@@ -52,6 +52,7 @@ In its default form, KMAD starts with one sequence, either the human sequence th
 or a sequences submitted by a user through a form in this KMAD website. KMAD then does a series of
 things:
 </P>
+<P ALIGN="JUSTIFY">
 <OL>
 <LI>run BLAST against the PDB to check that there is no trivial solution that renders the use of
     KMAD meaningless
@@ -71,39 +72,43 @@ things:
 <LI>Present the alignment to the user in an interactive web page that allows for the interactive colouring
     of all curator annotations and predicted features
 </OL>
-
-<H3>Improving the alignment by use of sequence features</H3>
-KMAD obtains a large number of sequence annotations to augment the alignment:
-<UL>
-  <LI>SLiMs from ELM</li>
-  <LI>posttranslational modifications (PTMs) from SwissProt 
-  <ul>
-    <li>phosphorylations,</li>
-    <li>N-linked glycosylations,</li>
-    <li>O-linked glycosylations,</li>
-    <li>methylations,</li>
-    <li>amidations,</li> 
-    <li>acetylations,</li>
-    <li>hydroxylations</li>
-  </ul>
-  </li>
-<LI>phosphorylations predicted by NetPhos</li>
-<LI>domains predicted by Pfam</li>
-</OL>
-All these features participate in the scoring of alignments with weights, that
-are settable by the user. The default values are:
-<UL>
-<LI>PTMs &#8594; 10,
-<LI>domains &#8594; 3,
-<LI>motifs &#8594; 3
-</UL>
-</P><P ALIGN="JUSTIFY">
-Many SLiMs and predicted PTMs have a high probability of occurrence. For example, the motif N,{P},[S,T],{P}
-has a chance of 1/200 to occur anywhere, so most often this motif is meaningless. To avoid guiding the
-alignment by these meaningless motifs we check if there is overlap in the GO terms for the motif in the
-input sequence and the GO terms for the sequence to be aligned against the input sequence. If there is no
-overlap in these GO terms we reject the motif from this sequence.
 </P>
+<H3>Improving the alignment by use of sequence features</H3>
+  <P ALIGN="JUSTIFY">
+    KMAD obtains a large number of sequence annotations to augment the alignment:
+  </P>
+  <P ALIGN="JUSTIFY">
+    <OL>
+      <LI>SLiMs from ELM</li>
+      <LI>posttranslational modifications (PTMs) from SwissProt 
+      <ul>
+        <li>phosphorylations,</li>
+        <li>N-linked glycosylations,</li>
+        <li>O-linked glycosylations,</li>
+        <li>methylations,</li>
+        <li>amidations,</li> 
+        <li>acetylations,</li>
+        <li>hydroxylations</li>
+      </ul>
+      </li>
+    <LI>phosphorylations predicted by NetPhos</li>
+    <LI>domains predicted by Pfam</li>
+    </OL>
+    All these features participate in the scoring of alignments with weights, that
+    are settable by the user. The default values are:
+    <ul>
+      <li>PTMs &#8594; 10,</LI>
+      <li>domains &#8594; 3,</LI>
+      <li>motifs &#8594; 3</LI>
+    </ul>
+  </P>
+  <P ALIGN="JUSTIFY">
+  Many SLiMs and predicted PTMs have a high probability of occurrence. For example, the motif N,{P},[S,T],{P}
+  has a chance of 1/200 to occur anywhere, so most often this motif is meaningless. To avoid guiding the
+  alignment by these meaningless motifs we check if there is overlap in the GO terms for the motif in the
+  input sequence and the GO terms for the sequence to be aligned against the input sequence. If there is no
+  overlap in these GO terms we reject the motif from this sequence.
+  </P>
 
 <H3>Validation</H3>
 <P ALIGN="JUSTIFY">
