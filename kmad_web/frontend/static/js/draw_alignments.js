@@ -18,7 +18,8 @@ aa_to_color = {'C': 'yellow', 'M': 'yellow',
                'E': 'red', 'Q': 'red',
                'N': 'pink', 'D': 'pink',
                'G': 'gray', 'P': 'gray', 'W': 'gray',
-               '-': 'white'};
+               '-': 'white', 'B': 'white', 'Z': 'white', 'X': 'white',
+               'J': 'white', 'U': 'white', 'O': 'white'};
 
 draw_residue_rect = function(residues, x, y, context, rect_color) {
   context.fillStyle = rect_color;
@@ -40,7 +41,7 @@ draw_alignment = function(container_id, data) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
   var container_width = data[0][1].length * 10.5 + 160;
-  var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -57,8 +58,8 @@ draw_alignment = function(container_id, data) {
   ctx.fillRect(0, 0, container_width, container_height);
 
   document.getElementById(container_id).width = container_width;
-  document.getElementById(container_id).height = container_height;
-  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+  document.getElementById(container_id).height = container_height + 10;
+  document.getElementById("canvases").style.height = (container_height + 10).toString() + 'px';
   var x = 10;
   var y = 30;
   ctx.fillStyle = "#515454";
@@ -69,24 +70,26 @@ draw_alignment = function(container_id, data) {
   var res;
   var residues = [];
   var current_color;
+  var last_index = data[0][1].length - 1;
   for (var i = 0; i < data.length; i++) {
     x = 160;
     y = 20 + (i * ROW_HEIGHT);
     for (var j = 0; j < data[i][1].length; j++) {
       res = data[i][1].charAt(j);
+      res_up = res.toUpperCase();
       if (residues.length > 0) {
-        if (current_color != aa_to_hex[res.toUpperCase()]) {
+        if (current_color != aa_to_hex[res_up]) {
           x = draw_residue_rect(residues, x, y, ctx, current_color);
           residues = [];
+          current_color = aa_to_hex[res_up];
         }
       }
       residues.push(res);
-      current_color = aa_to_hex[res.toUpperCase()];
-      if (j == data[i][1].length - 1) {
-          x = draw_residue_rect(residues, x, y, ctx, current_color);
-          residues = [];
-      }
+      current_color = aa_to_hex[res_up];
     }
+    // now draw the last block of residues in the sequence
+    draw_residue_rect(residues, x, y, ctx, current_color);
+    residues = [];
   }
   document.getElementById('download_regular_canvas_button').addEventListener('click',
       function() {
@@ -207,7 +210,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   const FONT_FAMILY = "Monospace";
 
   var container_width = data[0][1].length * 1.5 + 180;
-  var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -225,8 +228,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   stage.add(shapes_layer);
 
   document.getElementById(container_id).style.width = container_width;
-  document.getElementById(container_id).style.height = container_height;
-  document.getElementById("canvases").style.height = (container_height + 20).toString() + 'px';
+  document.getElementById(container_id).style.height = container_height + 10;
   
 
   var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
@@ -323,6 +325,7 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
 
   var container_width = data[0][1].length * 1.5 + 180;
   var container_height = ROWS * ROW_HEIGHT * 1.5 + 20;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 40;
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -334,8 +337,7 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
   stage.add(native_layer);
 
   document.getElementById(container_id).width = container_width;
-  document.getElementById(container_id).height = container_height;
-  document.getElementById("canvases").style.height = container_height.toString() + 'px';
+  document.getElementById(container_id).height = container_height + 10;
   var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
                        'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
                        'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
