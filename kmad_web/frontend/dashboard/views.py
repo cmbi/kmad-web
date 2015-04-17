@@ -78,6 +78,8 @@ def help():
     return render_template('dashboard/help.html')
 
 
+@bp.route("/examples/alignment1_1_short", endpoint="alignment1_1_short",
+          methods=['GET'], defaults={"filename": "alignment1_1_short"})
 @bp.route("/examples/alignment1_1", endpoint="alignment1_1", methods=['GET'],
           defaults={"filename": "alignment1_1"})
 @bp.route("/examples/alignment1_2", endpoint="alignment1_2", methods=['GET'],
