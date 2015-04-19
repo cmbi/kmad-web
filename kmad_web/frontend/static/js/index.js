@@ -118,13 +118,13 @@ $(document).ready( function() {
       content: "Enter protein sequence(s) - if it is a single sequence "
                + "both FASTA and plain sequence formats are accepted, in case "
                + "of multiple sequences only FASTA is allowed",
-      placement: "right"
+      placement: "top"
     },
     {
       element: "#gap_open_div",
       title: "Gap opening penalty",
       content: "Set the penalty for opening a gap (has to be negative)",
-      placement: "left",
+      placement: "top",
       onShown:  function() {
         document.getElementById("gap_open_div").style.background="#EBEBEB";
       },
@@ -136,7 +136,7 @@ $(document).ready( function() {
       element: "#gap_ext_div",
       title: "Gap extension penalty",
       content: "Set the penalty for extending a gap (has to be negative)",
-      placement: "left",
+      placement: "top",
       backdrop: true,
       onShown:  function() {
         document.getElementById("gap_ext_div").style.background="#EBEBEB";
@@ -150,7 +150,7 @@ $(document).ready( function() {
       title: "End gap penalty",
       content: "Set the penalty for a gap at the end or beginning of a" +
                " sequence (has to be negative)",
-      placement: "bottom",
+      placement: "top",
       onShown:  function() {
         document.getElementById("end_gap_div").style.background="#EBEBEB";
       },
@@ -165,7 +165,7 @@ $(document).ready( function() {
       content: "Set the additional score for aligning two residues with a" +
                " certain PTM assigned to them (has to be greater than or" + 
                " equal to 0)",
-      placement: "bottom",
+      placement: "top",
       onShown:  function() {
         document.getElementById("ptm_score_div").style.background="#EBEBEB";
       },
@@ -179,7 +179,7 @@ $(document).ready( function() {
       content: "Set the additional score for aligning two residues with a" +
                " certain domain assigned to them (has to be greater than" +
                " or equal to 0)",
-      placement: "bottom",
+      placement: "top",
       onShown:  function() {
         document.getElementById("domain_score_div").style.background="#EBEBEB";
       },
@@ -193,7 +193,7 @@ $(document).ready( function() {
       content: "Set the additional score for aligning two residues with a" +
                " certain motif assigned to them (has to be greater than or" +
                " equal to 0)",
-      placement: "bottom",
+      placement: "top",
       onShown:  function() {
         document.getElementById("motif_score_div").style.background="#EBEBEB";
       },
@@ -207,7 +207,7 @@ $(document).ready( function() {
       content: "The produced alignment might be either with or without" +
                " gaps in the first sequence (HSSP style)",
 
-      placement: "bottom",
+      placement: "right",
       onShown:  function() {
         document.getElementById("gapped_div").style.background="#EBEBEB";
       },
@@ -221,7 +221,7 @@ $(document).ready( function() {
       content: "You may define new features that will be assigned to " +
                "sequences either based on the specified positions or" +
                " pattern",
-      placement: "bottom",
+      placement: "right",
       onShown:  function() {
         document.getElementById("usr_feat_inner_div").style.background="#EBEBEB";
       },
@@ -237,7 +237,7 @@ $(document).ready( function() {
                "with the status of your request, and when completed, the " +
                "output will be shown.",
 
-      placement: "left" 
+      placement: "top" 
     }
   ]});
   tour.init();
