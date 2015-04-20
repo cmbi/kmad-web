@@ -192,26 +192,32 @@
                                 <td> {{ form.usr_features[i].featname(maxlength=10,
                                    class="form-control",
                                    placeholder="Feature name",
-                                   pattern="^[a-zA-Z0-9]{1,}$") }} </td>
+                                   pattern="^[a-zA-Z0-9]{1,}$",
+                                   title="Feature name has to be alphanumeral - 
+                                   cannot contain any
+                                   special characters") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{
                                   form.usr_features[i].add_score(pattern="[-+]?[0-9]*\.?[0-9]+",
-                                  placeholder="Real number", class="form-control") }} </td>
+                                  placeholder="Real number",
+                                  class="form-control",
+                                  title="The score has to be a real number") }} </td>
                                 <td>&nbsp</td>
                                 <td> {{ form.usr_features[i].sequence_number(pattern="^\d+$",
                                   type="text", placeholder="Integer",
                                   class="form-control", maxlength="20",
-                                  message="Feature
-                                  positions need to be listed in a comma
-                                  separated format, e.g. '1, 2, 15-20' would
-                                  indicate positions 1, 2, and all positions
-                                  from 15 to 20")}} </td>
+                                  title="Sequence number has to be an integer")}} </td>
                                 <td>&nbsp</td>
                                 <td> {{ form.usr_features[i].positions(pattern="[
                                   ]?(([0-9]((,)[ ]?)?)|([0-9][ ]?-[
                                   ]?[0-9]((,)[ ]?)?)){1,}(([ ]){1,})?",
                                   placeholder="e.g. '1,2,7-9'",
-                                  class="form-control") }}</td>
+                                  class="form-control", 
+                                  title="Feature
+                                  positions need to be in a comma
+                                  separated format, 
+                                  e.g. '1, 2, 15-20'"
+                                  )}} </td>
                                 <td>&nbsp</td>
                                 <td> {{ form.usr_features[i].pattern(placeholder="Regex
                                   expression", class="form-control") }}
