@@ -49,6 +49,7 @@ Session.vim
 
 # celery
 celerybeat-schedule
+celerybeat-schedule.db
 
 # bower
 kmad_web/frontend/static/libs

@@ -38,9 +38,9 @@
                 </div>
               </div>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" style="margin-left:20px;margin-right:20px;">
               <div class="row" style='height:100%;'>
-                <div class="col-xs-6">
+                <div class="col-xs-12">
                   <button id="use_example" class="btn btn-success"
                     onclick="useExample()"
                     style="margin:10px;">Use example sequence</button>
@@ -48,12 +48,14 @@
                     <div style="margin:10px;">
                       {{ form.sequence(class="form-control",
                                        placeholder='Enter a protein sequence',
-                                       style="height:450px;resize:none;") }}
+                                       style="height:250px;resize:none;") }}
                     </div>
                     <div class="help-block with-errors"></div>
                   </div>
                 </div>
-        <div class="col-xs-6">
+              </div>
+              <div class="row">
+        <div class="col-xs-12">
           <span class="panel-body-text">
                 <div id="alignment_options_div">
                   <div class="row">

@@ -14,7 +14,7 @@
       The sequence should be either in 
       <a href="https://wiki.cmbi.umcn.nl/index.php/FASTA">FASTA</a> format or a plain protein
       sequence, in case of a single sequence input. In case of multiple
-      sequences input the accpeted format is 
+      sequences input the accepted format is 
       <a href="https://wiki.cmbi.umcn.nl/index.php/FASTA">FASTA</a>.
       If the chosen action is 'refine' the input sequences have to be aligned 
       (also in <a href="https://wiki.cmbi.umcn.nl/index.php/FASTA">FASTA</a>).
@@ -24,10 +24,12 @@
       <br>
       <br>
       In the action field you specify which action do you want to perform:
-      either 'predict', 'predict and align', 'align', or 'refine'.
-      The 'predict' option will use the programs chosen by the
+      either <strong>predict</strong>, <strong>predict and align</strong>,
+      <strong>align</strong>, or
+      <strong>refine</strong>.
+      The <strong>predict</strong> option will use the programs chosen by the
       user to predict disorder.
-      'Align' will either just perform a <a
+      <strong>Align</strong> will either only perform a <a
         href="https://wiki.cmbi.umcn.nl/index.php/MSA">multiple sequence
         alignment</a> if
       multiple sequences are provided, or if the input is a single sequence it
@@ -35,25 +37,28 @@
       <a href="https://wiki.cmbi.umcn.nl/index.php/Blast">BLAST</a> 
       search against 
       <a href="https://wiki.cmbi.umcn.nl/index.php/SwissProt">SwissProt</a> 
-      and align the first 75
+      and align the first 35
       homologues with e-value lower or equal 1e-05.
-      'Predict and align' will simply perform both of the mentioned actions,
-      and refine will run a KMAD refinement on an alignment provided by the
+      <strong>Predict and align</strong> will simply perform both of the mentioned actions,
+      and <strong>refine</strong> will run a KMAD refinement on an alignment provided by the
       user.
       <br>
       <br>
       <a href="https://wiki.cmbi.umcn.nl/index.php/Gap_penalty"><strong>Gap
           penalties</strong></a>
+      All gap penalty values need to be negative.
       <br>
       <br>
       <dl>
-        <dt>gap opening penalty</dt> 
-          <dd>- penalty for opening a new gap</dd>
-        <dt>gap extension penalty</dt>
-          <dd>- penalty for extending an already existing gap</dd>
+        <dt>gap opening penalty (GOP)</dt> 
+          <dd>- penalty for opening a new gap - recommended values are not lower
+          than -20 and not higher -4</dd>
+        <dt>gap extension penalty (GEP)</dt>
+          <dd>- penalty for extending an already existing gap - should be
+          significantly lower than GOP, usually around 10% of the GOP value</dd>
         <dt>end gap penalty</dt>
           <dd>- gap penalty for a gap et the end (or
-        beginning) of a sequence</dd>
+        beginning) of a sequence - recommended values are the same as for GEP</dd>
       </dl>
       <br>
       <br>
@@ -61,13 +66,16 @@
       <br>
       <br>
       <dl>
-        <dt><a href="https://wiki.cmbi.umcn.nl/index.php/Motif">motif</a> score</dt> 
-          <dd>score for aligning two motifs of the same type</dd>
         <dt>PTM score</dt>
-          <dd>score for aligning two PTMs of the same type together</dd>
+          <dd>score for aligning two PTMs of the same type together -
+          recommended values are between 10 and 20
+        <dt><a href="https://wiki.cmbi.umcn.nl/index.php/Motif">motif</a> score</dt> 
+          <dd>score for aligning two motifs of the same type - recommended
+          values are higher than 2, and 2 - 3 times lower than the PTM score</dd>
         <dt><a href="https://wiki.cmbi.umcn.nl/index.php/Domain">domain</a> score</dt>
           <dd>score for aligning two domains of the same type and at the same
-          time penalty for aligning two domains of a different type</dd>
+          time penalty for aligning two domains of a different type -
+          recommended values are the same as for the motif score</dd>
       </dl>
       A more deatiled description of the feature scoring can be found in the
       <a href="{{ url_for('dashboard.methods') }}">methods</a> section.
@@ -77,8 +85,29 @@
       <br>
       <br>
       You can add new features to your sequences by specifiying their exact
-      positions in the sequences or by pattern - the feature will be assigned
-      to every position where it matches the provided regex.
+      positions in the sequences or by pattern. If you want to assign features
+      by position in several different sequences then add the same feature
+      (having the same feature name) once for every sequence that you want to
+      assign it to:
+      <pre style="background-color:white;width=76%">
+      <img src="{{ url_for('static',
+      filename="images/features-help-screenshot.jpg") }}"
+style="width:70%;"/>
+      </pre>
+      In the example above the feature 'feature1' will be assigned in the first
+      sequence to positions from 3 to 4 and from 6 to 10, and in the
+      second sequence to positions 11, 12, and from 15 to 20.
+      <br>
+      In case of assigning by pattern an exmaple input looks like this:
+      <pre style="background-color:white;width=76%">
+      <img src="{{ url_for('static',
+      filename="images/features-regex-help-screenshot.jpg") }}"
+style="width:70%;"/>
+      </pre>
+      In this case all of the segments (in all of the sequences) that match
+      the provided pattern ('K.P')
+      will have 'feature2' assigned to them.
+
       <br>
       <br>
       <strong>Results</strong>
