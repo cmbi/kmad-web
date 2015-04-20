@@ -8,33 +8,23 @@
   </div>
   <div class="panel-body">
     <span class="panel-body-text">
+      <span style="font-size:12; color:grey;">
+        The original alignment consisted of 55 sequences, first 15 of them are
+        shown below.
+      </span>
+      <br>
       <br>
       <strong>KMAD</strong>
       <br>
-      {#
       <iframe src="{{ url_for('static', filename='alignments/box158_kmad.html') }}"
-        style="width:100%;height:400px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+        style="width:100%;height:310px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
         </iframe>
       <br>
       <br>
       <strong>Clustal</strong>
       <br>
-      <iframe src="{{ url_for('static', filename='alignments/box158_clustal.html') }}" style="width:100%;height:400px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      <iframe src="{{ url_for('static', filename='alignments/box158_clustal.html') }}" style="width:100%;height:310px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
         </iframe>
-      #}
-      <div style="overflow:auto;max-width:1400px;max-height:400px;">
-        <img src="{{ url_for('static',
-        filename='alignments/box158_clustal.png') }}"
-        style="width:auto;height:900px;"/>
-      </div>
-      <br>
-      <strong>Clustal</strong>
-      <br>
-      <div style="overflow:auto;max-width:1400px;max-height:400px;">
-        <img src="{{ url_for('static',
-        filename='alignments/box158_kmad.png') }}"
-        style="width:auto;height:900px;"/>
-      </div>
     </span>
   </div>
 

@@ -62,7 +62,6 @@ def get_fasta_from_blast(blast_name, query_filename):
         if query_fasta[1] != sequence[1]:
             newfasta += "{}\n{}\n".format(query_fasta[0], query_fasta[1])
 
-        #
         for i, lineI in enumerate(blastfile[:35]):
             line_list = lineI.split(',')
             if float(line_list[-2]) < 0.0001:
