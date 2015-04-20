@@ -111,7 +111,8 @@ def find_seqid_blast(filename):
     seqID = ""
     if len(infile) > 0:
         firstline = infile[0].split(',')
-        if firstline[2] == "100.00" and firstline[4] == "0" and firstline[5] == "0":
+        if (firstline[2] == "100.00"
+                and firstline[4] == "0" and firstline[5] == "0"):
             found = True
             seqID = firstline[1].split('|')[1]
     return [found, seqID]
@@ -230,3 +231,15 @@ def parse_features(usr_features):
         outtext += ');\n}\n'
     outtext += ');\n};\n'
     return outtext
+
+
+def remove_empty(usr_features):
+    new_features = usr_features[:]
+    indexes = range(len(usr_features))
+    indexes.reverse()
+    for i in indexes:
+        for j in usr_features[i].keys():
+            if not usr_features[i][j]:
+                del new_features[i]
+                break
+    return new_features

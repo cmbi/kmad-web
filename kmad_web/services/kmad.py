@@ -77,6 +77,7 @@ class PredictAndAlignStrategy(object):
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
+        usr_features = txtproc.remove_empty(usr_features)
         if usr_features:
             conffilename = files.write_conf_file(usr_features)
         else:
@@ -123,6 +124,7 @@ class AlignStrategy(object):
         with tmp_file as f:
             _log.debug("Writing data to '{}'".format(tmp_file.name))
             f.write(fasta_seq)
+        usr_features = txtproc.remove_empty(usr_features)
         if usr_features:
             conffilename = files.write_conf_file(usr_features)
         else:

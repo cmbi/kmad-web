@@ -115,3 +115,16 @@ def test_parse_features():
     result_list = parse_features(text_features).splitlines()
     for i in range(len(expected_list)):
         eq_(expected_list[i], result_list[i])
+
+
+def test_remove_empty():
+    from kmad_web.services.txtproc import remove_empty
+    test = [{'1': [1, 2, 3], '2': None, '3': 5}]
+    eq_(remove_empty(test), [])
+    test = [{'1': [1, 2, 3], '2': "test", '3': 5}]
+    eq_(remove_empty(test), test)
+    test = [{'1': [], '2': "test", '3': 5}]
+    eq_(remove_empty(test), [])
+    test = [{'1': [], '2': "test", '3': 5},
+            {'1': [1, 2, 3], '2': "test", '3': 5}]
+    eq_(remove_empty(test), [{'1': [1, 2, 3], '2': "test", '3': 5}])
