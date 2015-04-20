@@ -105,8 +105,12 @@
                       <div id = "ptm_score_div" class="form-group" style="margin:20px;">
                         <div class="row">
                           <div class="col-xs-8">{{ form.ptm_score.label }}</div>
-                          <div class="col-xs-4">{{ form.ptm_score(class_='form-control gap-form')}}</div>
+                          <div class="col-xs-4">{{
+                            form.ptm_score(class_='form-control gap-form',
+                            pattern="^[0-9]*\.?[0-9]+", title="PTM score has to
+                          be a positive real number")}}</div>
                         </div>
+                      <div class="help-block with-errors"></div>
                       </div>
                     </div>
                   </div>
@@ -116,16 +120,24 @@
                       <div id = "domain_score_div" class="form-group" style="margin:20px;">
                         <div class="row">
                           <div class="col-xs-8">{{ form.domain_score.label }}</div>
-                          <div class="col-xs-4">{{ form.domain_score(class_='form-control gap-form')}}</div>
+                          <div class="col-xs-4">{{
+                            form.domain_score(class_='form-control gap-form',
+                            pattern="^[0-9]*\.?[0-9]+", title="domain score has to
+                          be a positive real number")}}</div>
                         </div>
+                      <div class="help-block with-errors"></div>
                       </div>
                     </div>
                     <div class="col-xs-6">
                       <div id = "motif_score_div" class="form-group" style="margin:20px;">
                         <div class="row">
                           <div class="col-xs-8">{{ form.motif_score.label }}</div>
-                          <div class="col-xs-4">{{ form.motif_score(class_='form-control gap-form')}}</div>
+                          <div class="col-xs-4">{{
+                            form.motif_score(class_='form-control gap-form',
+                            pattern="^[0-9]*\.?[0-9]+", title="motif score has to
+                          be a positive real number")}}</div>
                         </div>
+                      <div class="help-block with-errors"></div>
                       </div>
                     </div>
                     <div class="help-block with-errors"></div>

@@ -67,7 +67,7 @@ class UsrFeatureEntryForm(Form):
                                              not both')
 
     featname = TextField(u'Feature name', [validators.length(max=10)])
-    add_score = IntegerField(u'Add score', [validators.Optional()])
+    add_score = FloatField(u'Add score', [validators.Optional()])
     sequence_number = IntegerField(u'Sequence number', [validators.Optional()])
     positions = TextField(u'Feature positions', [validators.Optional()])
     pattern = TextField(u'Feature pattern(regex)', [validators.Optional()])
@@ -183,7 +183,6 @@ class KmanForm(Form):
             raise validators.ValidationError("domain, motif, and ptm scores \
                                              cannot be negative")
 
-
     sequence = TextAreaField(u'sequence')
     output_type = SelectField(u'Action', choices=[('align',
                                                    'align'),
@@ -198,9 +197,9 @@ class KmanForm(Form):
     gap_open_p = FloatField(u'gap opening penalty', default=-12)
     gap_ext_p = FloatField(u'gap extension penalty', default=-1.2)
     end_gap_p = FloatField(u'end gap penalty', default=-1.2)
-    ptm_score = IntegerField(u'PTM score', default=10)
-    domain_score = IntegerField(u'domain score', default=3)
-    motif_score = IntegerField(u'motif score', default=3)
+    ptm_score = FloatField(u'PTM score', default=10)
+    domain_score = FloatField(u'domain score', default=3)
+    motif_score = FloatField(u'motif score', default=3)
 
     first_seq_gapped = RadioField(u'First sequence:',
                                   choices=[('ungapped', 'without gaps'),
