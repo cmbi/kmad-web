@@ -58,6 +58,14 @@ class UsrFeatureEntryForm(Form):
                                                       2, and all positions \
                                                       from 15 to 20')
 
+    def validate_pattern(form, field):
+        if field.data and (form.positions.data or form.sequence_number.data):
+            raise validators.ValidationError('Assign feature either by \
+                                             position (fill in the \
+                                             sequence number and \
+                                             positions) OR by pattern - \
+                                             not both')
+
     featname = TextField(u'Feature name', [validators.length(max=10)])
     add_score = IntegerField(u'Add score', [validators.Optional()])
     sequence_number = IntegerField(u'Sequence number', [validators.Optional()])
