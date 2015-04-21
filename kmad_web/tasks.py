@@ -78,7 +78,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 tmp_path = '/'.join(fasta_file.split("/")[:-1])
                 method = paths.SPINE_DIR+"/bin/run_spine-d"
                 args = [method, tmp_path, tmp_name]
-                out_file = paths.SPINE_OUTPUT_DIR+tmp_name+".spined"
+                out_file = paths.SPINE_OUTPUT_DIR + tmp_name + ".spd"
             elif pred_name == "disopred":
                 method = paths.DISOPRED_PATH
                 args = [method, fasta_file]
@@ -105,11 +105,13 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                     _log.info("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
                     subprocess.call(args)
+                    _log.info("out file name: {}; exists: {}".format(out_file,
+                        os.path.exists(out_file)))
                     if os.path.exists(out_file):
                         with open(out_file) as f:
                             data = f.read()
                     else:
-                        _log.debug(
+                        _log.info(
                             "Ouput file {} doesn't exist".format(out_file))
                 data = preprocess(data, pred_name)
             except (subprocess.CalledProcessError, OSError) as e:
