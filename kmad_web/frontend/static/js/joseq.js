@@ -24,8 +24,6 @@ ProteinSequences = function(container_id, data) {
   for (var i = 1; i < data.length; i++){
     this.disorder.push(data[i])
   }
-  console.debug(this.seq);
-  console.debug(this.disorder);
   var container_height = ROWS * ROW_HEIGHT;
   document.getElementById(container_id).style.height = (container_height + 60).toString() + 'px';
   var cont_width = 150 + this.disorder[0][1].length * 10;
@@ -39,6 +37,8 @@ ProteinSequences = function(container_id, data) {
   });
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
+  this.ruler_layer = new Kinetic.Layer();
+
 
   // Private methods
   this.draw_residue = function(res_num, seq_num, x, y) {
@@ -144,14 +144,13 @@ ProteinSequences = function(container_id, data) {
       fill: 'gray'
     });
     this.v_header_layer.add(res_num_leg);
-    for (var i = 0; i < this.disorder.length; i++) {
-      //var x = 0;
-      //var y = (i * ROW_HEIGHT) + ROW_MARGIN_T;
-      x = 10;
-      y = 20 + ((i + 1) * ROW_HEIGHT) + ROW_MARGIN_T;
 
-      // Draw the residue number heading
-      var res_num_txt = new Kinetic.Text({
+    for (var i = 0; i < this.disorder.length; i++) {
+      x = 10;
+      y = 40 + ((i + 1) * ROW_HEIGHT) + ROW_MARGIN_T;
+
+      // Draw the method name
+      var method_name = new Kinetic.Text({
         x: x,
         y: y,
         text: this.disorder[i][0],       //method name
@@ -160,25 +159,44 @@ ProteinSequences = function(container_id, data) {
         fontFamily: FONT_FAMILY,
         fill: 'gray'
       });
-      this.v_header_layer.add(res_num_txt);
-      var res_num_txt_w = res_num_txt.getWidth();
+      this.v_header_layer.add(method_name);
+      var method_name_w = method_name.getWidth();
       v_header_width = (
-          res_num_txt_w > v_header_width ? res_num_txt_w : v_header_width);
+         method_name_w > v_header_width ? method_name_w : v_header_width);
 
-      // Calculate the number of residues for the current row. The default is
-      // to draw 60, but the last row often has less.
-      if (i == this.disorder.length - 1) {
-        num_res_in_row = this.disorder[i][1].length - (i * MAX_RES_PER_ROW);
-      } else {
-        num_res_in_row = MAX_RES_PER_ROW;
-      }
-      // Iterate over the residues in the current row. For each residue, draw
-      // it with the appropriate accessibility colour, and draw the secondary
-      // structure representation.
+      // iterate over all residues, use the colour according to the disorder
+      // prediction
       for (var j = 0; j < this.disorder[i][1].length; j++)
       {
         var res_text_width = this.draw_residue(j, i, x, y);
         x = x + res_text_width;
+      }
+    }
+    x = 10;
+    y = 45;
+    for (var i = 0; i < this.disorder[0][1].length; i++) {
+      if (i % 5 == 0) {
+        var ruler_text = new Kinetic.Text({
+          x: x,
+          y: y,
+          text: i.toString(),
+          fontSize: FONT_SIZE - 2,
+          fontStyle: 'bold',
+          fontFamily: FONT_FAMILY,
+          fill: 'gray'
+        });
+        var tick  = new Kinetic.Text({
+          x: x,
+          y: y + 15,
+          text: '|',
+          fontSize: FONT_SIZE - 5,
+          fontStyle: 'bold',
+          fontFamily: FONT_FAMILY,
+          fill: 'gray'
+        });
+        this.seq_layer.add(ruler_text);
+        this.seq_layer.add(tick);
+        x += 50;
       }
     }
 
@@ -188,6 +206,7 @@ ProteinSequences = function(container_id, data) {
 
     stage.add(this.v_header_layer);
     stage.add(this.seq_layer);
+    stage.add(this.ruler_layer);
   }
 
   // Public methods
@@ -249,10 +268,6 @@ ColorRange = function(number) {
   result = [];
   var frequency = Math.PI*2 / number;
   for (var i = 0; i < number; i++) {
-    // var hue = Math.floor((100 - i * norm) * 120 / 100);
-    // // var saturation = Math.abs(i * norm - 50) / 50;
-    // var saturation = 1;
-    // result.push(HSLtoHEX(hue, saturation, 0.5));
     var r = Math.sin(frequency*i + 0) * 127 + 128;
     var g = Math.sin(frequency*i + 2) * 127 + 128;
     var b = Math.sin(frequency*i + 4) * 127 + 128;
