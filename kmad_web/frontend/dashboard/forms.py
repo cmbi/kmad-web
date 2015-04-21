@@ -4,8 +4,8 @@ from flask_wtf import Form
 from wtforms import widgets, validators
 from wtforms.fields import (FloatField, IntegerField, SelectField,
                             TextAreaField, SelectMultipleField,
-                            FieldList, FormField, TextField, SubmitField,
-                            RadioField)
+                            FieldList, FormField, TextField,
+                            SubmitField, RadioField)
 from wtforms.widgets import html_params, HTMLString
 
 logging.basicConfig()
@@ -205,6 +205,7 @@ class KmanForm(Form):
                                   choices=[('ungapped', 'without gaps'),
                                            ('gapped', 'with gaps')],
                                   default='ungapped')
+
 
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
