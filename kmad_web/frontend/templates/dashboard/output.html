@@ -30,7 +30,9 @@
         <div id="download">
             <form action="{{ url_for("dashboard.download") }}" method=POST style="clear:both;" >
                   <input type="hidden" id="download_pred_input" name="prediction"  style="display:none;"/>
-                  <button type="submit" id="download_pred_button" class="btn btn-primary btn-xs disabled" style="float:right;" value="Submit">
+                  <button type="submit" id="download_pred_button" class="btn
+                    btn-primary btn-xs disabled"
+                    style="float:right;display:none;" value="Submit">
                       <span class="glyphicon glyphicon-save"></span> Download
                   </button>
             </form>
@@ -190,6 +192,7 @@
                       var raw_data = get_text_data(data['result']['prediction']);
                       document.getElementById('download_pred_input').value = raw_data;
                       $('#download_pred_button').removeClass('disabled');
+                      document.getElementById('download_pred_button').style.display = "";
                     }
                     if ("{{ output_type }}" != 'predict'){
                       var raw_alignment = data['result']['alignment']['raw'];
