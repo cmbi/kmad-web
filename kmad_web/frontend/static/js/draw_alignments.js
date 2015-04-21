@@ -62,11 +62,25 @@ draw_alignment = function(container_id, data) {
   document.getElementById("canvases").style.height = (container_height + 10).toString() + 'px';
   var x = 10;
   var y = 30;
+
   ctx.fillStyle = "#515454";
+  // draw sequence headers
   for (var i = 0; i < data.length; i++) {
     y = 30 + i * ROW_HEIGHT;
     ctx.fillText(data[i][0], x, y)
   }
+
+  // draw numbering
+  x = 160;
+  y = 10;
+  for (var i = 0; i < data[0][1].length; i++) {
+    if (i % 5 == 0) {
+      ctx.fillText(i.toString(), x, y)
+      ctx.fillText('I', x, y + 10)
+      x += 50;
+    }
+  }
+
   var res;
   var residues = [];
   var current_color;
@@ -296,10 +310,23 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   var x = 10;
   var y = 30;
   ctx.fillStyle = "#515454";
+  // draw headers
   for (var i = 0; i < data.length; i++) {
     y = 30 + i * ROW_HEIGHT;
     ctx.fillText(data[i][0], x, y)
   }
+
+  // draw numbering
+  x = 160;
+  y = 10;
+  for (var i = 0; i < data[0][1].length / codon_length; i++) {
+    if (i % 5 == 0) {
+      ctx.fillText(i.toString(), x, y)
+      ctx.fillText('I', x, y + 10)
+      x += 50;
+    }
+  }
+
   for (var i = 0; i < data.length; i++) {
     x = 160;
     y = 20+(i * ROW_HEIGHT);
@@ -402,10 +429,21 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
   // 
   var x = 10;
   var y = 30;
+  // draw headers
   ctx.fillStyle = "#515454";
   for (var i = 0; i < data.length; i++) {
     y = 30 + i * ROW_HEIGHT;
     ctx.fillText(data[i][0], x, y)
+  }
+  // draw numbering
+  x = 160;
+  y = 10;
+  for (var i = 0; i < data[0][1].length / codon_length; i++) {
+    if (i % 5 == 0) {
+      ctx.fillText(i.toString(), x, y)
+      ctx.fillText('I', x, y + 10)
+      x += 50;
+    }
   }
   for (var i = 0; i < data.length; i++) {
     x = 160;
