@@ -82,8 +82,9 @@ KMAD {{ output_type | replace('_', ' ')}}
           
           <br>
           <br>
-            <pre>
-              <div id="canvases" style="position:relative;height:300px;width:100%;">
+          <div class="jumbotron" style="overflow:auto;">
+              <div id="canvases"
+                style="position:relative;height:300px;width:100%">
                   <div id="canvas_regular"
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;"></div>
@@ -97,12 +98,12 @@ KMAD {{ output_type | replace('_', ' ')}}
                           style="overflow:auto;position:absolute;left:0px;
                                  top:0px;display:none;"></div>
               </div>
-            </pre>
+              </div>
             <div id="legend_canvases_container" style="display:none;">
               <br>
               <span class="panel-title-text">Color legend</span>
               <br>
-              <pre>
+              <div class="jumbotron" style="overflow:auto;">
                 <div id="legend_canvases" style="position:relative; height:auto;
                   width:100%">
                   <div id="legend_canvas" style="position:absolute; left:0px;
@@ -121,8 +122,8 @@ KMAD {{ output_type | replace('_', ' ')}}
                     left:0px; top:0px; overflow:auto;
                     height:auto; width:100%; display:none;">
                   </div>
-                </div>
-              </pre>
+               </div>
+             </div>
             </div>
           </div>
       </div>
