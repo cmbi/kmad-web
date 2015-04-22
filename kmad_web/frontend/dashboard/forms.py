@@ -38,7 +38,7 @@ class MyListWidget(object):
                 html.append(u'<li>%s: %s</li>' % (subfield.label, subfield()))
             else:
                 html.append(u'<li>%s %s</li>' % (subfield(), subfield.label))
-        html.append(u'</%s>' % self.html_tag)
+        html.append(u'</%s>' % self.html_end_tag)
         return HTMLString(u''.join(html))
 
 
