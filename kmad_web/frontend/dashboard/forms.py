@@ -27,6 +27,7 @@ class MyListWidget(object):
     def __init__(self, html_tag='ul', prefix_label=True):
         assert html_tag in ('ol', 'ul', 'collist')
         self.html_tag = 'ul id="listwidget"'
+        self.html_end_tag = self.html_tag.split()[0]
         self.prefix_label = prefix_label
 
     def __call__(self, field, **kwargs):
