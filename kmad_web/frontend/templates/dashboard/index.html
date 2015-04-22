@@ -1,13 +1,13 @@
 {% extends "base.html" %}
+{% block title %}
+KMAD
+{% endblock %}
 
 {% block content %}
 
 {% from "form_macros.html" import render_form_errors %}
 
 {{ render_form_errors(form) }}
-<style>
-    .ui-menu { width: 150px; }
-</style>
 
 <!-- wtforms -->
 <div id='prediction_alert' class="alert alert-warning alert-dismissible" role="alert"
