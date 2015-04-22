@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-KMAD {{ output_type }}
+KMAD {{ output_type | replace('_', ' ')}}
 {% endblock %}
 {% block content %} 
 <div class = "panel-group" id="accordion">
