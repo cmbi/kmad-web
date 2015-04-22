@@ -54,7 +54,7 @@ draw_alignment = function(container_id, data) {
 
   var ctx = native_layer.getContext()._context;
 
-  ctx.fillStyle = '#F5F5F5';
+  ctx.fillStyle = '#EEEEEE';
   ctx.fillRect(0, 0, container_width, container_height);
 
   document.getElementById(container_id).width = container_width;
@@ -262,7 +262,7 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   var feature_colors = ColorRange(feature_codemap.length);
   var ctx = native_layer.getContext()._context;
 
-  ctx.fillStyle = '#F5F5F5';
+  ctx.fillStyle = '#EEEEEE';
   ctx.fillRect(0, 0, container_width, container_height);
 
   var index_add = 0;
@@ -398,7 +398,7 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
   // var ctx=$("#" + canvas_id).get(0).getContext("2d");
   var ctx = native_layer.getContext()._context;
 
-  ctx.fillStyle = '#F5F5F5';
+  ctx.fillStyle = '#EEEEEE';
   ctx.fillRect(0, 0, container_width, container_height);
   var feature_code;
   var r;

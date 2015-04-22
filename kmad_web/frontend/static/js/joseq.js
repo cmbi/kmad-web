@@ -37,7 +37,6 @@ ProteinSequences = function(container_id, data) {
   });
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
-  this.ruler_layer = new Kinetic.Layer();
 
 
   // Private methods
@@ -173,23 +172,23 @@ ProteinSequences = function(container_id, data) {
       }
     }
     x = 10;
-    y = 45;
+    y = 55;
     for (var i = 0; i < this.disorder[0][1].length; i++) {
       if (i % 5 == 0) {
         var ruler_text = new Kinetic.Text({
           x: x,
           y: y,
           text: i.toString(),
-          fontSize: FONT_SIZE - 2,
+          fontSize: FONT_SIZE - 6,
           fontStyle: 'bold',
           fontFamily: FONT_FAMILY,
           fill: 'gray'
         });
         var tick  = new Kinetic.Text({
           x: x,
-          y: y + 15,
+          y: y + 10,
           text: '|',
-          fontSize: FONT_SIZE - 5,
+          fontSize: FONT_SIZE - 7,
           fontStyle: 'bold',
           fontFamily: FONT_FAMILY,
           fill: 'gray'
@@ -206,7 +205,6 @@ ProteinSequences = function(container_id, data) {
 
     stage.add(this.v_header_layer);
     stage.add(this.seq_layer);
-    stage.add(this.ruler_layer);
   }
 
   // Public methods
