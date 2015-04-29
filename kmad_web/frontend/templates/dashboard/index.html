@@ -35,6 +35,9 @@ KMAD
                     for Intrinsically </span><span
                     class="kmad-n">D</span><span class="panel-title-text">isordered
                     Proteins </span>
+                  <button id="use_example" class="btn" 
+                    onclick="useExample()"
+                    style="margin:10px;background:transparent;border:none;"></button>
                 </div>
               </div>
             </div>
@@ -42,14 +45,11 @@ KMAD
               style="margin-left:20px;margin-right:20px;">
               <div class="row" style='height:100%;'>
                 <div class="col-md-12">
-                  <button id="use_example" class="btn" 
-                    onclick="useExample()"
-                    style="margin:10px;background:transparent;border:none;"></button>
                   <div id="sequence_div" class="form-group">
                     <div style="margin:10px;">
                       {{ form.sequence(class="form-control",
                                        placeholder='Enter a protein sequence',
-                                       style="height:250px;resize:none;") }}
+                                       style="height:180px;resize:none;") }}
                     </div>
                     <div class="help-block with-errors"></div>
                   </div>
@@ -147,7 +147,6 @@ KMAD
                       <div id = "gapped_div" class="form-group"
                         style="margin:20px;">
                           {{ form.first_seq_gapped.label }}
-                          <br>
                           <table>
                           <tr>
                           {% for subfield in form.first_seq_gapped %}
@@ -247,7 +246,6 @@ KMAD
                     </div> 
                   </div>
                 </div>
-                <br>
                 <div class="row">
                   <div class="col-md-12">
                     <div id="predictionMethod" class="form-group" style="width=100%;

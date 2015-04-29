@@ -143,15 +143,30 @@ the MSA, and this obtained best by adding some weights on the alignment of these
 this is a circular argument: &#34;Lets add some weights to the alignment of
 motifs&#34; and &#34;Wow,
 the alignment becomes much better because I see more motifs align well&#34;.
-</P><P ALIGN="JUSTIFY">
+</P>
+<P ALIGN="JUSTIFY">
 Conclusion: There is no easy natural way to validate KMAD MSA results.
-</P><P ALIGN="JUSTIFY">
+</P>
+<P ALIGN="JUSTIFY">
 But, HOPE does require the transfer of information about curator annotations and predicted features from
 homologous IDP sequences to the IDP sequence of interest, and many IDP sequences are hard or very hard to 
 align, unless knowledge about the presence of sequence motifs is used to guide the alignment.
 </P>
-
-<H4>Validation</H4>
+<h4>Visual inspection</h4>
+<P ALIGN="JUSTIFY">
+The visual inspection of the alignments showed that KMAD often
+manages to overcome problems encountered by Clustal. Here we present two
+representative examples of what are the usual problems and how KMAD solves
+them:
+<br>
+  <a href="{{ url_for('dashboard.example1') }}"
+    class="btn btn-primary btn-xs" >SIAL_HUMAN</a>
+  <a href="{{ url_for('dashboard.example2') }}" class="btn
+    btn-primary btn-xs" >RLA3_CANAX</a>
+<br>
+<br>
+</P>
+<H4>Benchmark validation</H4>
 <P ALIGN="JUSTIFY">
 We had to resort to indirect validation techniques (on top of the trivial visual inspection). We 
 first compared KMAD MSA outputs with Clustal Omega MSA outputs to conclude that Clustal Omega normally

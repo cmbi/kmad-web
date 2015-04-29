@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}
+Alignment example
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">Yeast 60S acidic ribosomal protein P1-B
+        (RLA3_CANAX)</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+      <span style="font-size:12; color:grey;">
+      </span>
+      <br>
+      <br>
+      <strong>KMAD</strong>
+      <br>
+      <iframe src="{{ url_for('static', filename='alignments/dp00001_kmad.html') }}"
+        style="width:100%;height:450px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+        </iframe>
+      <br>
+      <br>
+      <strong>Clustal</strong>
+      <br>
+      <iframe src="{{ url_for('static', filename='alignments/dp00001_clustal.html') }}" style="width:100%;height:450px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+        </iframe>
+  </div>
+
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}
