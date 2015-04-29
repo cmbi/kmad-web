@@ -140,6 +140,8 @@ KMAD methods
         KMAD algorithm is a progressive iterative alignment, based on the
         MaxHom algorithm. Pairiwise alignments follow the Gotoh algorithm with
         a modified scoring function shown in Figure 1.
+        The final multiple sequence alignment is optimized as described <a
+          href="#optimization">here</a>.
         <br>
         <br>
         <div class="row">
@@ -283,8 +285,22 @@ KMAD methods
         might result in forcing alignment of subsequences that should not be
         aligned with each other.
         </p>
+        <div id="optimization">
+        <h4><strong>Optimization</strong></h4>
+        The final alignment is optimized to compensate for some of the flaws of
+        a heuristic MSA. 
+        Optimization rounds are performed until no more changes are introduced,
+        but not more than 15 times. 
+        For each gap in the alignment KMAD checks if moving the residue the 
+        other side of that gap gives a better alignment score. In each round
+        only one residue can be moved to and from a certain column - so, for
+        example, if both moving residues from sequence 1, position 2 and sequence
+        2, position 2 would increase the alignment score then KMAD moves only
+        the one that gives a higher score gain.
+        </div>
+
         <br>
-        <strong>References</strong>
+        <h4><strong>References</strong></h4>
         <p>
         <strong>ELM</strong>
         <br>

@@ -96,6 +96,10 @@ def help():
           defaults={"filename": "alignment2_4"})
 @bp.route("/examples/alignment2_5", endpoint="alignment2_5", methods=['GET'],
           defaults={"filename": "alignment2_5"})
+@bp.route("/examples/example1", endpoint="example1", methods=['GET'],
+          defaults={"filename": "example1"})
+@bp.route("/examples/example2", endpoint="example2", methods=['GET'],
+          defaults={"filename": "example2"})
 def alignment_example(filename):
     return render_template('dashboard/examples/{}.html'.format(filename))
 
