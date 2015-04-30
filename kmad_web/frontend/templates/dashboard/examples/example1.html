@@ -13,22 +13,56 @@ Alignment example
       <span style="font-size:12;">
 
       </span>
+      The following Clustal alignment has multiple alignment errors, with three
+      of them concerning alignment of features.
+      First, the two serines on positions 74 and 75 in sequence 1 should be shifted by one position
+      to the right to be aligned with the two columns of conserved
+      phosphorylated serines. Second, it would probably be more meaningful to
+      move the serine from position 94 in the first sequence 2 residues to the
+      left. Finally, the N-glycosylated asparagines on position 105 in the
+      first 3 sequences and on position 102 in the other two sequences should
+      be all lined up. All of these problems are solved in the KMAD alignment.
+      Moreover, there are at least two errors not related to
+      the features which are solved by the optimization that KMAD performs
+      after the alignment:
       <br>
+      - glutamate on position 117 in sequence 3 - the alignment score would be
+      higher if it was placed at the right side of the gap (postion 118)
       <br>
-      <strong>KMAD</strong>
-      <br>
-      <iframe src="{{ url_for('static', filename='alignments/dp00332_kmad.html') }}"
-        style="width:100%;height:310px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
-        </iframe>
+      - glutamate on position 158 in sequence 4 - moving it to position 157
+      also increases the alignment score
       <br>
       <br>
       <strong>Clustal</strong>
       <br>
-      <iframe src="{{ url_for('static', filename='alignments/dp00332_clustal.html') }}" style="width:100%;height:310px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
-        </iframe>
+      <iframe
+        src="{{ url_for('static',
+                        filename='alignments/dp00332_clustal.html') }}"
+        style="width:100%;height:180px" name="targetframe"
+        allowTransparency="true" scrolling="yes" frameborder="1" >
+     </iframe>
+      <br>
+      <br>
+      <strong>KMAD</strong>
+      <br>
+      <iframe src="{{ url_for('static',
+                              filename='alignments/dp00332_kmad.html') }}"
+        style="width:100%;height:180px;" name="targetframe"
+        allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+     <div id="legend_canvases">
+      <div id="legend_div">
+      </div>
+     </div>
   </div>
 
 </div>
 {% endblock %}
 {% block js %}
+<script>
+  $(document).ready(function() {
+    var ptm_legend = new PTMsLegend('legend_div');
+    ptm_legend.update();
+  });
+</script>
 {% endblock %}

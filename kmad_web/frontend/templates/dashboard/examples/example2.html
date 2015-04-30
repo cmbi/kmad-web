@@ -9,22 +9,43 @@ Alignment example
       <span class="panel-title-text">Yeast 60S acidic ribosomal protein P1-B
         (RLA3_CANAX)</span>
     </div>
-  </div>
+</div>
+
   <div class="panel-body panel-body-custom">
       <span style="font-size:12; color:grey;">
       </span>
+  <br>
+  <p>
+  This example shows how KMAD can improve motif alignment.
+  The motif 
+  <a href="http://www.elm.eu.org/elmPages/LIG_TRAF2_1.html">LIG_TRAF2_2</a>
+  highlighted in <span style="background:#EDA400">orange</span> (in sequence 1
+  on positions 17 - 20, 85 - 88, 90 - 93, and 94 - 97) seems to be conserved in
+  around position 85 but is not very well aligned. In the KMAD
+  alignment more instances of this motif are lined up together.
+  In some of the sequences motif's location and surrounding deviates too much
+  for the SLiM score to overcome the alignment. Other motifs in the alignment
+  are not always lined up together, but this is not considered a disadvantage - 
+  KMAD's purpose is to align the motifs only if the rets of the alignment stays
+  intact. If the motif weight was increased the instances of the same motif
+  would be 'forced' to be aligned together, but it would not be beneficial for
+  the alignment quality.
+  </p>
+      <br>
+      <br>
+      <strong>Clustal</strong>
+      <br>
+      <iframe src="{{ url_for('static', filename='alignments/dp00001_clustal.html') }}"
+        style="width:100%;height:450px" name="targetframe"
+        allowTransparency="true" scrolling="yes" frameborder="1" >
+        </iframe>
       <br>
       <br>
       <strong>KMAD</strong>
       <br>
       <iframe src="{{ url_for('static', filename='alignments/dp00001_kmad.html') }}"
-        style="width:100%;height:450px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
-        </iframe>
-      <br>
-      <br>
-      <strong>Clustal</strong>
-      <br>
-      <iframe src="{{ url_for('static', filename='alignments/dp00001_clustal.html') }}" style="width:100%;height:450px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+        style="width:100%;height:450px;" name="targetframe"
+        allowTransparency="true" scrolling="yes" frameborder="1" >
         </iframe>
   </div>
 
