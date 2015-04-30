@@ -373,7 +373,7 @@ def encode_slims(seq, slims, slim_codes):
                 if k % 7 == 5 and j >= start and seq[k - 5] != '-':
                     seq[k] = slimsCode[0]
                     seq[k+1] = slimsCode[1]
-                elif k % 7 == 0 and seq[k] != "-":
+                elif k % 7 == 0 and seq[k] != "-" and seq[k] != 'X':
                     j += 1
                 k += 1
     return seq
