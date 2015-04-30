@@ -140,7 +140,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
                 "-o", toalign, "-g", str(gap_opening_penalty),
                 "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
                 "-p", str(ptm_score), "-d", str(domain_score),
-                "--out-encoded",
+                "--out-encoded", "--opt",
                 "-m", str(motif_score), "-c", str(codon_length)]
         if output_type == "refine":
             args.append("--refine")
