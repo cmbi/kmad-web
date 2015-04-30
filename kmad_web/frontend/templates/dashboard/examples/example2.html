@@ -36,7 +36,7 @@ Alignment example
       <strong>Clustal</strong>
       <br>
       <iframe src="{{ url_for('static', filename='alignments/dp00001_clustal.html') }}"
-        style="width:100%;height:450px" name="targetframe"
+        style="width:80%;height:480px" name="targetframe"
         allowTransparency="true" scrolling="yes" frameborder="1" >
         </iframe>
       <br>
@@ -44,10 +44,20 @@ Alignment example
       <strong>KMAD</strong>
       <br>
       <iframe src="{{ url_for('static', filename='alignments/dp00001_kmad.html') }}"
-        style="width:100%;height:450px;" name="targetframe"
+        style="width:80%;height:480px;" name="targetframe"
         allowTransparency="true" scrolling="yes" frameborder="1" >
         </iframe>
+      <br>
+      You can run this example by copying this sequence to the protein sequence
+      input box and submitting a job with default parameters:
+      <textarea style='resize:none; width:60%;height:100px;'>
+        >DP00001
+        MSTEASVSYAALILADAEQEITSEKLLAITKAAGANVDQVWADVFAKAVEGKNLKELLFS
+        FAAAAPASGAAAGSASGAAAGGEAAAEEAAEEEAAEESDDDMGFGLFD
+      </textarea>
+
   </div>
+
 
 </div>
 {% endblock %}
