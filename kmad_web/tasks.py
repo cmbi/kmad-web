@@ -3,12 +3,13 @@ import logging
 import os
 import subprocess
 import re
+import tempfile
 import urllib2
 
 from celery import current_app as celery_app
 
 from kmad_web import paths
-from kmad_web.services import files
+from kmad_web.services import (files, mutation_analysis)
 from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
 from kmad_web.services.consensus import (find_consensus_disorder,
@@ -229,6 +230,53 @@ def query_d2p2(filename, output_type, multi_seq_input):
 
 
 @celery_app.task
+def analyze_mutation(processed_result, mutation_site, new_aa,
+                     wild_seq_filename):
+    sequence = processed_result[0]
+
+    disorder_prediction = processed_result[-2]  # filtered consensus
+    encoded_alignment = processed_result[-1][2]
+    feature_codemap = processed_result[-1][3]
+
+    mutant = mutation_analysis.create_mutant_sequence(sequence, mutation_site,
+                                                      new_aa)
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    with tmp_file as f:
+        f.write(mutant)
+
+    ptm_data = mutation_analysis.analyze_ptms(encoded_alignment, mutant,
+                                              wild_seq_filename,
+                                              tmp_file.name, mutation_site)
+
+    os.remove(tmp_file.name)
+
+    motif_data = mutation_analysis.analyze_motifs(encoded_alignment,
+                                                  mutant, mutation_site,
+                                                  feature_codemap)
+
+    output = mutation_analysis.process_mutation_result(ptm_data, motif_data,
+                                                       disorder_prediction,
+                                                       sequence)
+    # output = {
+    #     'residues': [
+    #         {
+    #             'position': 1,  # 1-based!
+    #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
+    #             'ptm': [{
+    #                 'phosrel': ['certain/putative', 'N', 'description'],
+    #                 'glycosylation': ['certain/putative', 'N', 'description']
+    #             }],
+    #             'motifs': [{
+    #                 'motif-a': ['certain/putative', 'M', 'description'],
+    #                 'motif-b': ['certain/putative', 'M', 'description']
+    #             }],
+    #         }
+    #     ]
+    # }
+    return output
+
+
+@celery_app.task
 def update_elmdb(output_filename):
     _log.info("Running elm update")
     elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
@@ -263,6 +311,8 @@ def get_task(output_type):
     if output_type in ['predict', 'predict_and_align', 'align', 'refine',
                        'annotate']:
         task = postprocess
+    elif output_type == 'hope':
+        task = mutation_analysis
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
 
