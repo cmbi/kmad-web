@@ -1,5 +1,4 @@
 import logging
-import tempfile
 
 from kmad_web.services.convert import run_netphos
 
@@ -7,10 +6,42 @@ from kmad_web.services.convert import run_netphos
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
+
+PTM_CODES = {'N': "ptm_phosph0", 'O': "ptm_phosph1", 'P': "ptm_phosph2",
+             'Q': "ptm_phosph3", 'd': "ptm_phosphP",
+             'B': "ptm_acet0", 'C': "ptm_acet1", 'D': "ptm_acet2",
+             'E': "ptm_acet3",
+             'F': "ptm_Nglyc0", 'G': "ptm_Nglyc1", 'H': "ptm_Nglyc2",
+             'I': "ptm_Nglyc3",
+             'J': "ptm_amid0", 'K': "ptm_amid1", 'L': "ptm_amid2",
+             'M': "ptm_amid3",
+             'R': "ptm_hydroxy0", 'S': "ptm_hydroxy1", 'T': "ptm_hydroxy2",
+             'U': "ptm_hydroxy3",
+             'V': "ptm_methyl0", 'W': "ptm_methyl1", 'X': "ptm_methyl2",
+             'Y': "ptm_methyl3",
+             'Z': "ptm_Oglyc0", 'a': "ptm_Oglyc1", 'b': "ptm_Oglyc2",
+             'c': "ptm_Oglyc3"
+             }
+
+
+def codon_to_features(codon):
+    features = {'ptm': PTM_CODES[codon[4]],
+                'motif': 'motif_{}'.format(codon[5:])}
+    return features
+
+
 def process_features(encoded_alignment):
-    split_alignment = []
-    # for i in encoded_alignment
-    pass
+    aligned_sequences = []
+    n = 7
+    for i in encoded_alignment:
+        if not i.startswith('>'):
+            aligned_sequences.append([])
+            for j in range(0, len(i), n):
+                new_residue = {'aa': i[j],
+                               'features': codon_to_features(i[j: j + n])}
+                aligned_sequences[-1].append(new_residue)
+    return aligned_sequences
+
 
 def analyze_ptms(encoded_alignment, mutated_sequence, wild_seq_filename,
                  mut_seq_filename, mutation_site, new_aa):

@@ -339,13 +339,14 @@ def encode_predicted_phosph(seq, pred_phosph):
 
 
 def encode_ptms(seq, ptms):
-    code_table = [["Z", "a", "b", "c"],  # code table for PTMs
-                  ["V", "W", "X", "Y"],
-                  ["R", "S", "T", "U"],
-                  ["J", "K", "L", "M"],
-                  ["F", "G", "H", "I"],
-                  ["B", "C", "D", "E"],
-                  ["N", "O", "P", "Q"]]
+    # code table for PTMs
+    code_table = [["Z", "a", "b", "c"],  # Oglycs
+                  ["V", "W", "X", "Y"],  # methyls
+                  ["R", "S", "T", "U"],  # hydroxyls
+                  ["J", "K", "L", "M"],  # amids
+                  ["F", "G", "H", "I"],  # Nglycs
+                  ["B", "C", "D", "E"],  # acetyl
+                  ["N", "O", "P", "Q"]]  # phosph
     for i, ptmI in enumerate(ptms):
         for j, ptmModeJ in enumerate(ptmI):
             if ptmModeJ:
