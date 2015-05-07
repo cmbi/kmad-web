@@ -9,12 +9,13 @@ import urllib2
 from celery import current_app as celery_app
 
 from kmad_web import paths
-from kmad_web.services import (files, mutation_analysis)
+from kmad_web.services import files
+from kmad_web.services import mutation_analysis as ma
 from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
 from kmad_web.services.consensus import (find_consensus_disorder,
                                          filter_out_short_stretches)
-from kmad_web.services.convert import convert_to_7chars
+from kmad_web.services.convert import convert_to_7chars, run_netphos
 from kmad_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
@@ -107,7 +108,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                         subprocess.list2cmdline(args)))
                     subprocess.call(args)
                     _log.info("out file name: {}; exists: {}".format(out_file,
-                        os.path.exists(out_file)))
+                              os.path.exists(out_file)))
                     if os.path.exists(out_file):
                         with open(out_file) as f:
                             data = f.read()
@@ -167,6 +168,8 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
                                                            errors='ignore')
         alignment_processed = process_alignment(alignment_encoded, codon_length)
         result = alignment_processed + [feature_codemap]
+        _log.debug("feature codemap: {}".format(feature_codemap))
+
     else:
         result = [[], [], [], []]
     _log.debug("Finished alignment")
@@ -232,31 +235,36 @@ def query_d2p2(filename, output_type, multi_seq_input):
 @celery_app.task
 def analyze_mutation(processed_result, mutation_site, new_aa,
                      wild_seq_filename):
-    sequence = processed_result[0]
+    wild_seq = processed_result[0]
 
     disorder_prediction = processed_result[-2]  # filtered consensus
     encoded_alignment = processed_result[-1][2]
     feature_codemap = processed_result[-1][3]
 
-    mutant = mutation_analysis.create_mutant_sequence(sequence, mutation_site,
-                                                      new_aa)
-    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    with tmp_file as f:
-        f.write(mutant)
+    mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site, new_aa)
+    mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    with mutant_seq_file as f:
+        f.write(mutant_seq)
 
-    ptm_data = mutation_analysis.analyze_ptms(encoded_alignment, mutant,
-                                              wild_seq_filename,
-                                              tmp_file.name, mutation_site)
+    alignment_position = ma.get_real_position(encoded_alignment,
+                                              mutation_site)
+    predicted_phosph_wild = run_netphos(wild_seq_filename)
+    predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
+    alignment = ma.preprocess_features(encoded_alignment, feature_codemap)
 
-    os.remove(tmp_file.name)
+    os.remove(mutant_seq_file.name)
 
-    motif_data = mutation_analysis.analyze_motifs(encoded_alignment,
-                                                  mutant, mutation_site,
-                                                  feature_codemap)
+    surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
+                                              predicted_phosph_mutant,
+                                              alignment, mutation_site,
+                                              encoded_alignment)
+    ptm_data = ma.analyze_ptms(alignment, mutation_site, alignment_position,
+                               new_aa)
+    motif_data = ma.analyze_motifs(alignment, wild_seq, mutant_seq,
+                                   mutation_site, feature_codemap)
 
-    output = mutation_analysis.process_mutation_result(ptm_data, motif_data,
-                                                       disorder_prediction,
-                                                       sequence)
+    output = ma.combine_results(ptm_data, motif_data, surrounding_data,
+                                disorder_prediction)
     # output = {
     #     'residues': [
     #         {
@@ -312,7 +320,7 @@ def get_task(output_type):
                        'annotate']:
         task = postprocess
     elif output_type == 'hope':
-        task = mutation_analysis
+        task = analyze_mutation
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
 

@@ -1,36 +1,66 @@
+import itertools
 import logging
-
-from kmad_web.services.convert import run_netphos
 
 
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
-PTM_CODES = {'N': "ptm_phosph0", 'O': "ptm_phosph1", 'P': "ptm_phosph2",
-             'Q': "ptm_phosph3", 'd': "ptm_phosphP",
-             'B': "ptm_acet0", 'C': "ptm_acet1", 'D': "ptm_acet2",
-             'E': "ptm_acet3",
-             'F': "ptm_Nglyc0", 'G': "ptm_Nglyc1", 'H': "ptm_Nglyc2",
-             'I': "ptm_Nglyc3",
-             'J': "ptm_amid0", 'K': "ptm_amid1", 'L': "ptm_amid2",
-             'M': "ptm_amid3",
-             'R': "ptm_hydroxy0", 'S': "ptm_hydroxy1", 'T': "ptm_hydroxy2",
-             'U': "ptm_hydroxy3",
-             'V': "ptm_methyl0", 'W': "ptm_methyl1", 'X': "ptm_methyl2",
-             'Y': "ptm_methyl3",
-             'Z': "ptm_Oglyc0", 'a': "ptm_Oglyc1", 'b': "ptm_Oglyc2",
-             'c': "ptm_Oglyc3"
+PTM_CODES = {'N': {'type': 'phosphorylation', 'level': 0},
+             'O': {'type': 'phosphorylation', 'level': 1},
+             'P': {'type': 'phosphorylation', 'level': 2},
+             'Q': {'type': 'phosphorylation', 'level': 3},
+             'd': {'type': 'phosphorylation', 'level': 4},
+             'B': {'type': 'acetylation', 'level': 0},
+             'C': {'type': 'acetylation', 'level': 1},
+             'D': {'type': 'acetylation', 'level': 2},
+             'E': {'type': 'acetylation', 'level': 3},
+             'F': {'type': 'N-glycosylation', 'level': 0},
+             'G': {'type': 'N-glycosylation', 'level': 1},
+             'H': {'type': 'N-glycosylation', 'level': 2},
+             'I': {'type': 'N-glycosylation', 'level': 3},
+             'J': {'type': 'amidation', 'level': 0},
+             'K': {'type': 'amidation', 'level': 1},
+             'L': {'type': 'amidation', 'level': 2},
+             'M': {'type': 'amidation', 'level': 3},
+             'R': {'type': 'hydroxylation', 'level': 0},
+             'S': {'type': 'hydroxylation', 'level': 1},
+             'T': {'type': 'hydroxylation', 'level': 2},
+             'U': {'type': 'hydroxylation', 'level': 3},
+             'V': {'type': 'methylation', 'level': 0},
+             'W': {'type': 'methylation', 'level': 1},
+             'X': {'type': 'methylation', 'level': 2},
+             'Y': {'type': 'methylation', 'level': 3},
+             'Z': {'type': 'O-glycosylation', 'level': 0},
+             'a': {'type': 'O-glycosylation', 'level': 1},
+             'b': {'type': 'O-glycosylation', 'level': 2},
+             'c': {'type': 'O-glycosylation', 'level': 3}
              }
 
 
-def codon_to_features(codon):
-    features = {'ptm': PTM_CODES[codon[4]],
-                'motif': 'motif_{}'.format(codon[5:])}
+def codon_to_features(codon, feature_codemap):
+    if codon[4] in PTM_CODES.keys():
+        ptm_dict = PTM_CODES[codon[4]]
+    else:
+        ptm_dict = {}
+
+    if codon[5:] != 'AA':
+        motif_index = feature_codemap['motifs'].index(list(
+            itertools.ifilter(lambda x: x[0] == codon[5:],
+                              feature_codemap['motifs']))[0])
+        motif_name = feature_codemap['motifs'][motif_index][1]
+        motif_regex = feature_codemap['motifs'][motif_index][2]
+        motif_dict = {'name': motif_name, 'regex': motif_regex}
+    else:
+        motif_dict = {}
+
+    features = {'ptm': ptm_dict,
+                'motif': motif_dict
+                }
     return features
 
 
-def process_features(encoded_alignment):
+def preprocess_features(encoded_alignment, feature_codemap):
     aligned_sequences = []
     n = 7
     for i in encoded_alignment:
@@ -38,33 +68,53 @@ def process_features(encoded_alignment):
             aligned_sequences.append([])
             for j in range(0, len(i), n):
                 new_residue = {'aa': i[j],
-                               'features': codon_to_features(i[j: j + n])}
+                               'features': codon_to_features(i[j: j + n],
+                                                             feature_codemap)}
                 aligned_sequences[-1].append(new_residue)
     return aligned_sequences
 
 
-def analyze_ptms(encoded_alignment, mutated_sequence, wild_seq_filename,
-                 mut_seq_filename, mutation_site, new_aa):
-
-    predicted_phosph_wild = run_netphos(wild_seq_filename)
-    predicted_phosph_mutant = run_netphos(mutant_seq_filename)
-    alignment = process_features(encoded_alignment)
+def analyze_ptms(alignment, mutation_site, new_aa):
     pass
 
 
-def analyze_motifs(encoded_alignment, mutated_sequence, feature_codemap):
+def analyze_motifs(alignment, wild_seq, mutant_seq, mutation_site,
+                   feature_codemap):
     pass
 
 
-def process_mutation_result(ptm_data, motif_data, disorder_prediction,
-                            sequence):
+def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
+                        mutation_site, encoded_alignment):
+    result = []
+    missing = set(pred_phosph_wild).difference(set(pred_phosph_mut))
+    for i in missing:
+        if i < mutation_site + 20 and i > mutation_site - 20:
+            real_pos = get_real_position(encoded_alignment, i)
+            ptm = alignment[0][real_pos]['features']['ptm']
+            if (ptm and ptm['type'] == 'phosphorylation' and ptm['level'] != 4):
+                new_entry = {'position': i,
+                             'ptms': [{'type': 'phosphorylation',
+                                       'level': ptm['level'],
+                                       'status_wild': 'certain',
+                                       'status_mut': 'N'
+                                       }]
+                             }
+                result.append(new_entry)
+        else:
+            _log.debug("Prediction change more then 20 amino acids away from"
+                       "the mutation site")
+    return result
+
+
+def combine_results(ptm_data, motif_data, surrounding_data,
+                    disorder_prediction):
     output = {'residues': []}
-    dis_dict = {2: 'Y', 1: 'M', 0: 'N'}
-    disorder_txt = [dis_dict[i] for i in disorder_prediction]
-    for i in range(len(sequence)):
-        new_entry = {'ptms': ptm_data[i], 'motifs': motif_data[i],
-                     'disorder': disorder_txt[i]}
-        output['residues'].append(new_entry)
+    # dis_dict = {2: 'Y', 1: 'M', 0: 'N'}
+    # disorder_txt = [dis_dict[i] for i in disorder_prediction]
+    # for i in range(len(sequence)):
+    #     new_entry = {'ptms': ptm_data[i], 'motifs': motif_data[i],
+    #                  'disorder': disorder_txt[i]}
+    #     output['residues'].append(new_entry)
     return output
 
 
@@ -73,3 +123,15 @@ def create_mutant_sequence(sequence, mutation_site, new_aa):
                     + new_aa
                     + sequence[mutation_site + 1:])
     return new_sequence
+
+
+def get_real_position(encoded_alignment, mutation_site):
+    query_seq = encoded_alignment[1]
+    query_seq = [query_seq[i] for i in range(0, len(query_seq), 7)]
+    count = -1
+    i = -1
+    while i < len(query_seq) - 1 and count < mutation_site:
+        i += 1
+        if query_seq[i] != '-':
+            count += 1
+    return i
