@@ -74,7 +74,7 @@ def preprocess_features(encoded_alignment, feature_codemap):
     return aligned_sequences
 
 
-def analyze_ptms(alignment, mutation_site, new_aa):
+def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
     pass
 
 

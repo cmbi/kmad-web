@@ -82,7 +82,10 @@ def test_analyze_predictions():
     eq_(result, expected)
 
 
-def test_analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
+def test_analyze_ptms():
+
+    from kmad_web.services.mutation_analysis import analyze_ptms
+
     alignment = [[
         {'aa': 'S',
          'features': {'ptm': {},
@@ -109,5 +112,26 @@ def test_analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
     ]]
     mutation_site = 1
     alignment_position = 1
-    new_aa = 'T'
+    new_aa = 'S'
+    expected = [{'position': 1,
+                 'ptms': [{'type': 'phosphorylation',
+                           'level': 0,
+                           'status_wild': 'certain',
+                           'status_mut': 'Y',
+                           'description': ''
+                           }]
+                 }]
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
+    eq_(result, expected)
 
+    new_aa = 'T'
+    expected = [{'position': 1,
+                 'ptms': [{'type': 'phosphorylation',
+                           'level': 0,
+                           'status_wild': 'certain',
+                           'status_mut': 'N',
+                           'description': ''
+                           }]
+                 }]
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
+    eq_(result, expected)
