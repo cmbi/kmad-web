@@ -10,6 +10,15 @@ KMAD
 {{ render_form_errors(form) }}
 
 <!-- wtforms -->
+<div id='uniprot_id_alert' class="alert alert-warning alert-dismissible" role="alert"
+  style="display:none;">
+    <button type="button" class="close" data-dismiss="alert"
+      aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Warning!</strong> If you want the data from uniprot to be included
+    by KMAD the FASTA headers need to either: 1) be like uniprot FASTA headers,
+    e.g. '>sp|P10636|TAU_HUMAN' or 2) contain only the uniprot ID, e.g.
+    '>P10636'.
+</div>
 <div id='prediction_alert' class="alert alert-warning alert-dismissible" role="alert"
   style="display:none;">
     <button type="button" class="close" data-dismiss="alert"
