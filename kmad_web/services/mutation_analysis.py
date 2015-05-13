@@ -75,7 +75,44 @@ def preprocess_features(encoded_alignment, feature_codemap):
 
 
 def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
-    pass
+    level_to_score = {0: 1., 1: 0.9, 2: 0.8, 3: 0.7, 4: 0.3}
+    result = []
+    ptm = alignment[0][alignment_position]['features']['ptm']
+    threshold = 0.3
+    status_wild = ''
+    status_mut = 'N'
+    if ptm:
+        # if annotated
+        if ptm['level'] < 4:
+            status_wild = 'certain'
+        else:
+            # it is predicted, so now check if the conservation of annotated
+            # ptms is above the threshold
+            conservation = 0
+            # check if all four sequences (after the query seq. have an
+            # annotated ptm of that type)
+            first_four = True
+            for i in range(1, len(alignment)):
+                ptm_i = alignment[i][alignment_position]['features']['ptm']
+                if ptm_i and ptm['type'] == ptm_i['type']:
+                    conservation += level_to_score[ptm_i['level']]
+                if i < 5 and (not ptm_i or ptm_i['level'] < 4):
+                    first_four = False
+            conservation = conservation / len(alignment)
+            if conservation > threshold or first_four:
+                status_wild = 'putative'
+    if new_aa == alignment[0][alignment_position]['aa']:
+        status_mut = 'Y'
+    if status_wild:
+        ptm_dict = {'position': mutation_site,
+                    'ptms': [{'type': ptm['type'],
+                              'level': ptm['level'],
+                              'status_wild': status_wild,
+                              'status_mut': status_mut,
+                              'description': ''}]
+                    }
+        result.append(ptm_dict)
+    return result
 
 
 def analyze_motifs(alignment, wild_seq, mutant_seq, mutation_site,

@@ -97,7 +97,7 @@ def test_analyze_ptms():
                       'motif':  {}
                       }
          }
-    ]
+    ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
@@ -106,7 +106,7 @@ def test_analyze_ptms():
          },
         {'aa': 'S',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif':  {}
+                      'motif':  7
                       }
          }
     ]]
