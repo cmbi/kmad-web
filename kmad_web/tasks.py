@@ -239,6 +239,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
 
     disorder_prediction = processed_result[-2]  # filtered consensus
     encoded_alignment = processed_result[-1][2]
+    proc_alignment = processed_result[-1][1]
     feature_codemap = processed_result[-1][3]
 
     mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site, new_aa)
@@ -260,8 +261,9 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
                                               encoded_alignment)
     ptm_data = ma.analyze_ptms(alignment, mutation_site, alignment_position,
                                new_aa)
-    motif_data = ma.analyze_motifs(alignment, wild_seq, mutant_seq,
-                                   mutation_site, feature_codemap)
+    motif_data = ma.analyze_motifs(alignment, proc_alignment, wild_seq,
+                                   mutant_seq, mutation_site,
+                                   alignment_position, feature_codemap)
 
     output = ma.combine_results(ptm_data, motif_data, surrounding_data,
                                 disorder_prediction)

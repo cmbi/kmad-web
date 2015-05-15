@@ -69,15 +69,17 @@ def test_analyze_predictions():
     mutation_site = 0
     result = analyze_predictions(pred_wild, pred_mut, alignment, mutation_site,
                                  encoded_alignment)
-
     expected = [{'position': 3,
-                 'ptms': [{'type': 'phosphorylation',
-                           'level': 0,
-                           'status_wild': 'certain',
-                           'status_mut': 'N'
-                           }]
-                 },
-                ]
+                 'ptms': {'phosphorylation': ['certain', 'N',
+                                              'description']}}]
+    # expected = [{'position': 3,
+    #              'ptms': [{'type': 'phosphorylation',
+    #                        'level': 0,
+    #                        'status_wild': 'certain',
+    #                        'status_mut': 'N'
+    #                        }]
+    #              },
+    #             ]
 
     eq_(result, expected)
 
@@ -106,32 +108,122 @@ def test_analyze_ptms():
          },
         {'aa': 'S',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif':  7
+                      'motif': {}
                       }
          }
     ]]
     mutation_site = 1
     alignment_position = 1
     new_aa = 'S'
-    expected = [{'position': 1,
-                 'ptms': [{'type': 'phosphorylation',
-                           'level': 0,
-                           'status_wild': 'certain',
-                           'status_mut': 'Y',
-                           'description': ''
-                           }]
-                 }]
+    expected = {'position': 1,
+                'ptms': {'phosphorylation': ['certain', 'Y', 'description']}}
+    # expected = [{'position': 1,
+    #              'ptms': [{'type': 'phosphorylation',
+    #                        'level': 0,
+    #                        'status_wild': 'certain',
+    #                        'status_mut': 'Y',
+    #                        'description': ''
+    #                        }]
+    #              }]
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
     eq_(result, expected)
 
     new_aa = 'T'
-    expected = [{'position': 1,
-                 'ptms': [{'type': 'phosphorylation',
-                           'level': 0,
-                           'status_wild': 'certain',
-                           'status_mut': 'N',
-                           'description': ''
-                           }]
-                 }]
+    expected = {'position': 1,
+                'ptms': {'phosphorylation': ['certain', 'N', 'description']}}
+    # expected = [{'position': 1,
+    #              'ptms': [{'type': 'phosphorylation',
+    #                        'level': 0,
+    #                        'status_wild': 'certain',
+    #                        'status_mut': 'N',
+    #                        'description': ''
+    #                        }]
+    #              }]
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
     eq_(result, expected)
+
+
+def test_analyze_motifs():
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif': {
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         },
+        {'aa': 'R',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  {
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         },
+        {'aa': 'T',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  {
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         },
+        {'aa': 'T',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif': {
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         },
+        {'aa': 'R',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         }
+    ]
+    ]
+
+    mutation_site = 1
+    alignment_position = 1
+    wild_seq = 'SR'
+    mutant_seq = 'SK'
+    raw_alignment = [['>1', 'SR'], ['>2', 'ST'],
+                     ['>3', 'ST'], ['>4', 'SR']]
+    feature_codemap = {'motifs': [['aa', 'SOMEMOTIF', 'ST'],
+                                  ['ab', 'SOMEOTHERMOTIF', 'SR']],
+                       'domains': []}
+
+    from kmad_web.services.mutation_analysis import analyze_motifs
+
+    result = analyze_motifs(alignment, raw_alignment, wild_seq, mutant_seq,
+                            mutation_site, alignment_position, feature_codemap)
+
+    expected = [{'MOTIFB': ['putative', 'N', 'description']}]
+    # eq_(result, expected)

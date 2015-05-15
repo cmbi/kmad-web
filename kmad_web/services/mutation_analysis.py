@@ -76,7 +76,8 @@ def preprocess_features(encoded_alignment, feature_codemap):
 
 def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
     level_to_score = {0: 1., 1: 0.9, 2: 0.8, 3: 0.7, 4: 0.3}
-    result = []
+    result = {'position': mutation_site,
+              'ptms': {}}
     ptm = alignment[0][alignment_position]['features']['ptm']
     threshold = 0.3
     status_wild = ''
@@ -104,19 +105,20 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
     if new_aa == alignment[0][alignment_position]['aa']:
         status_mut = 'Y'
     if status_wild:
-        ptm_dict = {'position': mutation_site,
-                    'ptms': [{'type': ptm['type'],
-                              'level': ptm['level'],
-                              'status_wild': status_wild,
-                              'status_mut': status_mut,
-                              'description': ''}]
-                    }
-        result.append(ptm_dict)
+        # ptm_dict = {'position': mutation_site,
+        #             'ptms': [{'type': ptm['type'],
+        #                       'level': ptm['level'],
+        #                       'status_wild': status_wild,
+        #                       'status_mut': status_mut,
+        #                       'description': ''}]
+        #             }
+        # result.append(ptm_dict)
+        result['ptms'][ptm['type']] = [status_wild, status_mut, 'description']
     return result
 
 
-def analyze_motifs(alignment, wild_seq, mutant_seq, mutation_site,
-                   feature_codemap):
+def analyze_motifs(alignment, raw_alignment, wild_seq, mutant_seq,
+                   mutation_site, alignment_position, feature_codemap):
     pass
 
 
@@ -130,12 +132,18 @@ def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
             ptm = alignment[0][real_pos]['features']['ptm']
             if (ptm and ptm['type'] == 'phosphorylation' and ptm['level'] != 4):
                 new_entry = {'position': i,
-                             'ptms': [{'type': 'phosphorylation',
-                                       'level': ptm['level'],
-                                       'status_wild': 'certain',
-                                       'status_mut': 'N'
-                                       }]
+                             'ptms': {
+                                 'phosphorylation': ['certain', 'N',
+                                                     'description']
                              }
+                             }
+                # new_entry = {'position': i,
+                #              'ptms': [{'type': 'phosphorylation',
+                #                        'level': ptm['level'],
+                #                        'status_wild': 'certain',
+                #                        'status_mut': 'N'
+                #                        }]
+                #              }
                 result.append(new_entry)
         else:
             _log.debug("Prediction change more then 20 amino acids away from"
