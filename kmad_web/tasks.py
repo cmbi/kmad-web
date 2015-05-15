@@ -248,7 +248,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
         f.write(mutant_seq)
 
     alignment_position = ma.get_real_position(encoded_alignment,
-                                              mutation_site)
+                                              mutation_site, 0)
     predicted_phosph_wild = run_netphos(wild_seq_filename)
     predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
     alignment = ma.preprocess_features(encoded_alignment, feature_codemap)
@@ -261,8 +261,8 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
                                               encoded_alignment)
     ptm_data = ma.analyze_ptms(alignment, mutation_site, alignment_position,
                                new_aa)
-    motif_data = ma.analyze_motifs(alignment, proc_alignment, wild_seq,
-                                   mutant_seq, mutation_site,
+    motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
+                                   wild_seq, mutant_seq, mutation_site,
                                    alignment_position, feature_codemap)
 
     output = ma.combine_results(ptm_data, motif_data, surrounding_data,

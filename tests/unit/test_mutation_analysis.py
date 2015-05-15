@@ -22,6 +22,7 @@ def test_codon_to_features():
 
     expected = {'ptm': {'type': 'phosphorylation', 'level': 4},
                 'motif': {'regex': 'SOMEREGEX',
+                          'code': 'aa',
                           'name': 'SOMEMOTIF'}}
     result = codon_to_features(codon, feature_codemap)
 
@@ -33,8 +34,8 @@ def test_get_real_position():
                          '>seq2', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA']
     from kmad_web.services.mutation_analysis import get_real_position
 
-    eq_(get_real_position(encoded_alignment, 1), 2)
-    eq_(get_real_position(encoded_alignment, 2), 5)
+    eq_(get_real_position(encoded_alignment, 1, 0), 2)
+    eq_(get_real_position(encoded_alignment, 2, 0), 5)
 
 
 def test_analyze_predictions():
@@ -148,6 +149,7 @@ def test_analyze_motifs():
         {'aa': 'S',
          'features': {'ptm': {},
                       'motif': {
+                          'code': 'ab',
                           'name': 'ab',
                           'regex': 'SR'}
                       }
@@ -155,6 +157,7 @@ def test_analyze_motifs():
         {'aa': 'R',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
                       'motif': {
+                          'code': 'ab',
                           'name': 'ab',
                           'regex': 'SR'}
                       }
@@ -164,6 +167,7 @@ def test_analyze_motifs():
         {'aa': 'S',
          'features': {'ptm': {},
                       'motif':  {
+                          'code': 'aa',
                           'name': 'aa',
                           'regex': 'ST'}
                       }
@@ -171,6 +175,7 @@ def test_analyze_motifs():
         {'aa': 'T',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
                       'motif': {
+                          'code': 'aa',
                           'name': 'aa',
                           'regex': 'ST'}
                       }
@@ -180,6 +185,7 @@ def test_analyze_motifs():
         {'aa': 'S',
          'features': {'ptm': {},
                       'motif':  {
+                          'code': 'aa',
                           'name': 'aa',
                           'regex': 'ST'}
                       }
@@ -187,6 +193,7 @@ def test_analyze_motifs():
         {'aa': 'T',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
                       'motif': {
+                          'code': 'aa',
                           'name': 'aa',
                           'regex': 'ST'}
                       }
@@ -196,6 +203,7 @@ def test_analyze_motifs():
         {'aa': 'S',
          'features': {'ptm': {},
                       'motif': {
+                          'code': 'ab',
                           'name': 'ab',
                           'regex': 'SR'}
                       }
@@ -203,6 +211,7 @@ def test_analyze_motifs():
         {'aa': 'R',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
                       'motif': {
+                          'code': 'ab',
                           'name': 'ab',
                           'regex': 'SR'}
                       }
@@ -216,14 +225,104 @@ def test_analyze_motifs():
     mutant_seq = 'SK'
     raw_alignment = [['>1', 'SR'], ['>2', 'ST'],
                      ['>3', 'ST'], ['>4', 'SR']]
+    encoded_alignment = ['>1', 'SAAAAabRAAAAab', '>2', 'SAAAAaaTAAAAaa',
+                         '>3', 'SAAAAaaTAAAAaa', '>4', 'SAAAAabRAAAAab']
     feature_codemap = {'motifs': [['aa', 'SOMEMOTIF', 'ST'],
                                   ['ab', 'SOMEOTHERMOTIF', 'SR']],
                        'domains': []}
 
     from kmad_web.services.mutation_analysis import analyze_motifs
 
-    result = analyze_motifs(alignment, raw_alignment, wild_seq, mutant_seq,
-                            mutation_site, alignment_position, feature_codemap)
+    result = analyze_motifs(alignment, raw_alignment, encoded_alignment,
+                            wild_seq, mutant_seq, mutation_site,
+                            alignment_position, feature_codemap)
 
     expected = [{'MOTIFB': ['putative', 'N', 'description']}]
     # eq_(result, expected)
+
+
+def test_get_motif_list():
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif': {
+                          'code': 'ab',
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         },
+        {'aa': 'R',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'code': 'ab',
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  {
+                          'code': 'aa',
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         },
+        {'aa': 'T',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'code': 'aa',
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  {
+                          'code': 'aa',
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         },
+        {'aa': 'T',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'code': 'aa',
+                          'name': 'aa',
+                          'regex': 'ST'}
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif': {
+                          'code': 'ab',
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         },
+        {'aa': 'R',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': {
+                          'code': 'ab',
+                          'name': 'ab',
+                          'regex': 'SR'}
+                      }
+         }
+    ]
+    ]
+    wild_seq = 'SR'
+    mutation_site = 1
+    encoded_alignment = ['>1', 'SAAAAabRAAAAab', '>2', 'SAAAAaaTAAAAaa',
+                         '>3', 'SAAAAaaTAAAAaa', '>4', 'SAAAAabRAAAAab']
+
+    from kmad_web.services.mutation_analysis import get_motif_list
+
+    result = get_motif_list(alignment, encoded_alignment, wild_seq,
+                            mutation_site)
+
+    eq_(result, set(['aa', 'ab']))

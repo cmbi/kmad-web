@@ -50,7 +50,8 @@ def codon_to_features(codon, feature_codemap):
                               feature_codemap['motifs']))[0])
         motif_name = feature_codemap['motifs'][motif_index][1]
         motif_regex = feature_codemap['motifs'][motif_index][2]
-        motif_dict = {'name': motif_name, 'regex': motif_regex}
+        motif_dict = {'name': motif_name, 'regex': motif_regex,
+                      'code': codon[5:]}
     else:
         motif_dict = {}
 
@@ -87,11 +88,13 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
         if ptm['level'] < 4:
             status_wild = 'certain'
         else:
-            # it is predicted, so now check if the conservation of annotated
+            # it is predicted, so now check if:
+            # - the conservation of annotated
             # ptms is above the threshold
-            conservation = 0
-            # check if all four sequences (after the query seq. have an
+            # or
+            # - if all four sequences (after the query seq. have an
             # annotated ptm of that type)
+            conservation = 0
             first_four = True
             for i in range(1, len(alignment)):
                 ptm_i = alignment[i][alignment_position]['features']['ptm']
@@ -105,31 +108,64 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
     if new_aa == alignment[0][alignment_position]['aa']:
         status_mut = 'Y'
     if status_wild:
-        # ptm_dict = {'position': mutation_site,
-        #             'ptms': [{'type': ptm['type'],
-        #                       'level': ptm['level'],
-        #                       'status_wild': status_wild,
-        #                       'status_mut': status_mut,
-        #                       'description': ''}]
-        #             }
-        # result.append(ptm_dict)
         result['ptms'][ptm['type']] = [status_wild, status_mut, 'description']
     return result
 
 
-def analyze_motifs(alignment, raw_alignment, wild_seq, mutant_seq,
-                   mutation_site, alignment_position, feature_codemap):
+def get_motif_list(alignment, encoded_alignment, wild_seq, mutation_site):
+    motifs = set()
+    start_pos = mutation_site - 5
+    end_pos = mutation_site + 5
+    if start_pos < 0:
+        start_pos = 0
+    if end_pos >= len(wild_seq):
+        end_pos = len(wild_seq) - 1
+
+    for i, seqI in enumerate(alignment):
+        real_start = get_real_position(encoded_alignment, start_pos, i)
+        real_end = get_real_position(encoded_alignment, end_pos, i)
+        for j in range(real_start, real_end):
+            if seqI[j]['features']['motif']:
+                motifs.add(alignment[i][j]['features']['motif']['code'])
+    return motifs
+
+
+
+def analyze_motifs(alignment, raw_alignment, encoded_alignment, wild_seq,
+                   mutant_seq, mutation_site, alignment_position,
+                   feature_codemap):
+    # 1. go through the alignment, in each sequence check all residues
+    # from -5 to +5 relative to the mutation position
+    # 2. get ALL the motifs annotated to these residues
+    # 3. Check their conservation - not by checking if their assigned to
+    # residues but by checking if the regex matches each sequence (-10 - +10)
+    # 4. For every motif that:
+    #       - has conservation above the threshold
+    #       - matches first sequence
+    #       - occurs in the 1st sequence on the mutation site
+    #   check if it still matches the sequence on the same position after the
+    #   mutation
+
+    # 1.
+    all_motifs = get_motif_list(alignment, encoded_alignment, wild_seq,
+                                mutation_site)
     pass
 
 
 def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
                         mutation_site, encoded_alignment):
     result = []
+    # missing - phosphorylations predicted in the wild seq, but in the mutant
+    # seq
     missing = set(pred_phosph_wild).difference(set(pred_phosph_mut))
+    # check if any of the missing phosph are 20 residues (or closer) upstream
+    # or downstream from the mutation site
     for i in missing:
         if i < mutation_site + 20 and i > mutation_site - 20:
-            real_pos = get_real_position(encoded_alignment, i)
+            real_pos = get_real_position(encoded_alignment, i, 0)
             ptm = alignment[0][real_pos]['features']['ptm']
+            # check if any of the changed predictions were annotated as
+            # phosphorylated
             if (ptm and ptm['type'] == 'phosphorylation' and ptm['level'] != 4):
                 new_entry = {'position': i,
                              'ptms': {
@@ -137,13 +173,6 @@ def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
                                                      'description']
                              }
                              }
-                # new_entry = {'position': i,
-                #              'ptms': [{'type': 'phosphorylation',
-                #                        'level': ptm['level'],
-                #                        'status_wild': 'certain',
-                #                        'status_mut': 'N'
-                #                        }]
-                #              }
                 result.append(new_entry)
         else:
             _log.debug("Prediction change more then 20 amino acids away from"
@@ -170,8 +199,8 @@ def create_mutant_sequence(sequence, mutation_site, new_aa):
     return new_sequence
 
 
-def get_real_position(encoded_alignment, mutation_site):
-    query_seq = encoded_alignment[1]
+def get_real_position(encoded_alignment, mutation_site, seq_no):
+    query_seq = encoded_alignment[2*seq_no + 1]
     query_seq = [query_seq[i] for i in range(0, len(query_seq), 7)]
     count = -1
     i = -1
