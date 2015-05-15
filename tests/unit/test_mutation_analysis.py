@@ -15,16 +15,12 @@ def test_create_mutant_sequence():
 
 def test_codon_to_features():
     codon = 'AAAAdaa'
-    feature_codemap = {'motifs': [['aa', 'SOMEMOTIF', 'SOMEREGEX']],
-                       'domains': []}
 
     from kmad_web.services.mutation_analysis import codon_to_features
 
     expected = {'ptm': {'type': 'phosphorylation', 'level': 4},
-                'motif': {'regex': 'SOMEREGEX',
-                          'code': 'aa',
-                          'name': 'SOMEMOTIF'}}
-    result = codon_to_features(codon, feature_codemap)
+                'motif': 'aa'}
+    result = codon_to_features(codon)
 
     eq_(result, expected)
 
@@ -48,22 +44,22 @@ def test_analyze_predictions():
     alignment = [[
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {}
+                      'motif':  ''
                       }
          },
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {}
+                      'motif':  ''
                       }
          },
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {}
+                      'motif': ''
                       }
          },
         {'aa': 'S',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif':  {}
+                      'motif': ''
                       }
          }
     ]]
@@ -92,24 +88,24 @@ def test_analyze_ptms():
     alignment = [[
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {}
+                      'motif':  ''
                       }
          },
         {'aa': 'S',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif':  {}
+                      'motif': ''
                       }
          }
     ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {}
+                      'motif':  ''
                       }
          },
         {'aa': 'S',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {}
+                      'motif': ''
                       }
          }
     ]]
@@ -148,72 +144,48 @@ def test_analyze_motifs():
     alignment = [[
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          },
         {'aa': 'R',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          }
     ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          },
         {'aa': 'T',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          }
     ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          },
         {'aa': 'T',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          }
     ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          },
         {'aa': 'R',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          }
     ]
@@ -223,7 +195,7 @@ def test_analyze_motifs():
     alignment_position = 1
     wild_seq = 'SR'
     mutant_seq = 'SK'
-    raw_alignment = [['>1', 'SR'], ['>2', 'ST'],
+    proc_alignment = [['>1', 'SR'], ['>2', 'ST'],
                      ['>3', 'ST'], ['>4', 'SR']]
     encoded_alignment = ['>1', 'SAAAAabRAAAAab', '>2', 'SAAAAaaTAAAAaa',
                          '>3', 'SAAAAaaTAAAAaa', '>4', 'SAAAAabRAAAAab']
@@ -233,7 +205,7 @@ def test_analyze_motifs():
 
     from kmad_web.services.mutation_analysis import analyze_motifs
 
-    result = analyze_motifs(alignment, raw_alignment, encoded_alignment,
+    result = analyze_motifs(alignment, proc_alignment, encoded_alignment,
                             wild_seq, mutant_seq, mutation_site,
                             alignment_position, feature_codemap)
 
@@ -245,72 +217,48 @@ def test_get_motif_list():
     alignment = [[
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          },
         {'aa': 'R',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          }
     ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          },
         {'aa': 'T',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          }
     ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif':  {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          },
         {'aa': 'T',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'aa',
-                          'name': 'aa',
-                          'regex': 'ST'}
+                      'motif': 'aa'
                       }
          }
     ],
         [
         {'aa': 'S',
          'features': {'ptm': {},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          },
         {'aa': 'R',
          'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
-                      'motif': {
-                          'code': 'ab',
-                          'name': 'ab',
-                          'regex': 'SR'}
+                      'motif': 'ab'
                       }
          }
     ]

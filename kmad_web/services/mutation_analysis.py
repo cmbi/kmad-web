@@ -1,5 +1,5 @@
-import itertools
 import logging
+import re
 
 
 logging.basicConfig()
@@ -38,30 +38,24 @@ PTM_CODES = {'N': {'type': 'phosphorylation', 'level': 0},
              }
 
 
-def codon_to_features(codon, feature_codemap):
+def codon_to_features(codon):
     if codon[4] in PTM_CODES.keys():
         ptm_dict = PTM_CODES[codon[4]]
     else:
         ptm_dict = {}
 
     if codon[5:] != 'AA':
-        motif_index = feature_codemap['motifs'].index(list(
-            itertools.ifilter(lambda x: x[0] == codon[5:],
-                              feature_codemap['motifs']))[0])
-        motif_name = feature_codemap['motifs'][motif_index][1]
-        motif_regex = feature_codemap['motifs'][motif_index][2]
-        motif_dict = {'name': motif_name, 'regex': motif_regex,
-                      'code': codon[5:]}
+        motif_code = codon[5:]
     else:
-        motif_dict = {}
+        motif_code = ''
 
     features = {'ptm': ptm_dict,
-                'motif': motif_dict
+                'motif': motif_code
                 }
     return features
 
 
-def preprocess_features(encoded_alignment, feature_codemap):
+def preprocess_features(encoded_alignment):
     aligned_sequences = []
     n = 7
     for i in encoded_alignment:
@@ -69,8 +63,7 @@ def preprocess_features(encoded_alignment, feature_codemap):
             aligned_sequences.append([])
             for j in range(0, len(i), n):
                 new_residue = {'aa': i[j],
-                               'features': codon_to_features(i[j: j + n],
-                                                             feature_codemap)}
+                               'features': codon_to_features(i[j: j + n])}
                 aligned_sequences[-1].append(new_residue)
     return aligned_sequences
 
@@ -126,12 +119,46 @@ def get_motif_list(alignment, encoded_alignment, wild_seq, mutation_site):
     for i, seqI in enumerate(alignment):
         for j in range(real_start, real_end):
             if seqI[j]['features']['motif']:
-                motifs.add(alignment[i][j]['features']['motif']['code'])
+                motifs.add(alignment[i][j]['features']['motif'])
     return motifs
 
 
+def filter_motifs_by_conservation(proc_alignment, all_motifs, motif_dict,
+                                  alignment_position):
+    filtered = []
+    threshold = 0.5
+    N = len(proc_alignment) / 2
+    start = alignment_position - 10
+    end = alignment_position + 10
+    if start < 10:
+        start = 0
+    if end > len(proc_alignment[1]) - 1:
+        end = len(proc_alignment[1])
 
-def analyze_motifs(alignment, raw_alignment, encoded_alignment, wild_seq,
+    for i in all_motifs:
+        regex = motif_dict[i]['regex']
+        count = 0
+        for j in proc_alignment:
+            match = re.search(regex, j[1][start:end])
+            if match:
+                count += 1
+        if float(count) / N > threshold:
+            filtered.append(i)
+    return filtered
+
+
+def process_codemap(feature_codemap):
+    result = dict()
+    for i in feature_codemap['motifs']:
+        result[i[0]] = {'name': i[1], 'regex': i[2]}
+    return result
+
+
+def get_first_seq_motifs(conserved_motifs, wild_seq, motif_dict, mutation_site):
+    pass
+
+
+def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
                    mutant_seq, mutation_site, alignment_position,
                    feature_codemap):
     # 1. go through the alignment, in each sequence check all residues
@@ -142,17 +169,19 @@ def analyze_motifs(alignment, raw_alignment, encoded_alignment, wild_seq,
     # 3. For every motif that:
     #       - has conservation above the threshold
     #       - matches first sequence
-    #       - occurs in the 1st sequence on the mutation site
+    #       - occurs in the 1st sequence on the position of mutation
     #   check if it still matches the sequence on the same position after the
     #   mutation
 
     # 1.
+    motif_dict = process_codemap(feature_codemap)
     all_motifs = get_motif_list(alignment, encoded_alignment, wild_seq,
                                 mutation_site)
-
-    motif_conservation = calculate_motif_conservation(raw_alignment, all_motifs,
-                                                      feature_codemap,
-                                                      alignment_position)
+    conserved_motifs = filter_motifs_by_conservation(proc_alignment, all_motifs,
+                                                     motif_dict,
+                                                     alignment_position)
+    final = get_first_seq_motifs(conserved_motifs, wild_seq, motif_dict,
+                                 mutation_site)
     pass
 
 

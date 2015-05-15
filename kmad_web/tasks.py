@@ -251,7 +251,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
                                               mutation_site, 0)
     predicted_phosph_wild = run_netphos(wild_seq_filename)
     predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
-    alignment = ma.preprocess_features(encoded_alignment, feature_codemap)
+    alignment = ma.preprocess_features(encoded_alignment)
 
     os.remove(mutant_seq_file.name)
 
