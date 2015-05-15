@@ -229,7 +229,7 @@ def test_get_id():
     from kmad_web.services.convert import get_id
 
     header = 'TEST_HEADER'
-    eq_(get_id(header), 'UNKNOWN_ID')
+    eq_(get_id(header), 'TEST_HEADER')
 
     header = 'test|HEADER|TEST_ID'
     eq_(get_id(header), 'TEST_ID')
