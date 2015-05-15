@@ -120,10 +120,10 @@ def get_motif_list(alignment, encoded_alignment, wild_seq, mutation_site):
         start_pos = 0
     if end_pos >= len(wild_seq):
         end_pos = len(wild_seq) - 1
+    real_start = get_real_position(encoded_alignment, start_pos, 0)
+    real_end = get_real_position(encoded_alignment, end_pos, 0)
 
     for i, seqI in enumerate(alignment):
-        real_start = get_real_position(encoded_alignment, start_pos, i)
-        real_end = get_real_position(encoded_alignment, end_pos, i)
         for j in range(real_start, real_end):
             if seqI[j]['features']['motif']:
                 motifs.add(alignment[i][j]['features']['motif']['code'])
@@ -136,10 +136,10 @@ def analyze_motifs(alignment, raw_alignment, encoded_alignment, wild_seq,
                    feature_codemap):
     # 1. go through the alignment, in each sequence check all residues
     # from -5 to +5 relative to the mutation position
-    # 2. get ALL the motifs annotated to these residues
-    # 3. Check their conservation - not by checking if their assigned to
+    #  & get ALL the motifs annotated to these residues
+    # 2. Check their conservation - not by checking if their assigned to
     # residues but by checking if the regex matches each sequence (-10 - +10)
-    # 4. For every motif that:
+    # 3. For every motif that:
     #       - has conservation above the threshold
     #       - matches first sequence
     #       - occurs in the 1st sequence on the mutation site
@@ -149,6 +149,10 @@ def analyze_motifs(alignment, raw_alignment, encoded_alignment, wild_seq,
     # 1.
     all_motifs = get_motif_list(alignment, encoded_alignment, wild_seq,
                                 mutation_site)
+
+    motif_conservation = calculate_motif_conservation(raw_alignment, all_motifs,
+                                                      feature_codemap,
+                                                      alignment_position)
     pass
 
 
