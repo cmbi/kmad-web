@@ -149,7 +149,8 @@ class TestEndpoints(object):
             {'feature_codemap': 'feature_map',
              'prediction': ['some_part', 'some_part', 'some_part'],
              'alignment': {'raw': 'raw_al', 'processed': 'proc_al',
-                           'encoded': 'encoded_al'}})
+                           'encoded': 'encoded_al'},
+             'annotated_motifs': []})
 
     @patch('kmad_web.tasks.postprocess.AsyncResult')
     def test_get_kmad_result_align(self, mock_result):
@@ -168,7 +169,8 @@ class TestEndpoints(object):
         eq_(response['result'],
             {'feature_codemap': 'feature_map',
              'alignment': {'raw': 'raw_al', 'processed': 'proc_al',
-                           'encoded': 'encoded_al'}})
+                           'encoded': 'encoded_al'},
+             'annotated_motifs': []})
 
     @patch('kmad_web.tasks.postprocess.AsyncResult')
     def test_get_kmad_status_predict_failed(self, mock_result):
