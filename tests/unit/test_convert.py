@@ -182,6 +182,12 @@ def test_filter_out_overlappig():
     ids = ['MOTIF1', 'MOTIF2']
     probs = [0.8, 0.7]
     expected = ([[1, 2], [3, 4]], ['MOTIF1', 'MOTIF2'], [0.8, 0.7])
+    result = filter_out_overlapping(lims, ids, probs)
+    eq_(result, expected)
+
+    lims = [[3, 4], [1, 2]]
+    expected = ([[3, 4], [1, 2]], ['MOTIF1', 'MOTIF2'], [0.8, 0.7])
+    result = filter_out_overlapping(lims, ids, probs)
     eq_(result, expected)
 
 
