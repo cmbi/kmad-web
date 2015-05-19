@@ -166,6 +166,13 @@ def test_search_elm(mock_request, mock_urlopen):
     result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
     eq_(result, expected)
 
+def test_search_elm_wo_mocks():
+
+    from kmad_web.services.convert import search_elm, get_uniprot_txt
+
+    go_terms_1 = get_uniprot_txt('SIAL_RAT')
+    go_terms_2 = get_uniprot_txt('SIAL_MOUSE')
+
 
 def test_filter_out_overlappig():
     from kmad_web.services.convert import filter_out_overlapping
