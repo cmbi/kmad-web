@@ -166,6 +166,13 @@ def test_search_elm(mock_request, mock_urlopen):
     result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
     eq_(result, expected)
 
+def test_search_elm_wo_mocks():
+
+    from kmad_web.services.convert import search_elm, get_uniprot_txt
+
+    go_terms_1 = get_uniprot_txt('SIAL_RAT')
+    go_terms_2 = get_uniprot_txt('SIAL_MOUSE')
+
 
 def test_filter_out_overlappig():
     from kmad_web.services.convert import filter_out_overlapping
@@ -175,6 +182,18 @@ def test_filter_out_overlappig():
     probs = [0.8, 0.7]
 
     expected = ([[1, 2]], ['MOTIF1'], [0.8])
+    result = filter_out_overlapping(lims, ids, probs)
+    eq_(result, expected)
+
+    lims = [[1, 2], [3, 4]]
+    ids = ['MOTIF1', 'MOTIF2']
+    probs = [0.8, 0.7]
+    expected = ([[1, 2], [3, 4]], ['MOTIF1', 'MOTIF2'], [0.8, 0.7])
+    result = filter_out_overlapping(lims, ids, probs)
+    eq_(result, expected)
+
+    lims = [[3, 4], [1, 2]]
+    expected = ([[3, 4], [1, 2]], ['MOTIF1', 'MOTIF2'], [0.8, 0.7])
     result = filter_out_overlapping(lims, ids, probs)
     eq_(result, expected)
 
@@ -229,7 +248,7 @@ def test_get_id():
     from kmad_web.services.convert import get_id
 
     header = 'TEST_HEADER'
-    eq_(get_id(header), 'UNKNOWN_ID')
+    eq_(get_id(header), 'TEST_HEADER')
 
     header = 'test|HEADER|TEST_ID'
     eq_(get_id(header), 'TEST_ID')

@@ -74,6 +74,12 @@ function show_prediction_alert() {
   }
 }
 
+function show_uniprot_id_alert() {
+  if (document.getElementById('uniprot_id_alert')){
+    document.getElementById('uniprot_id_alert').style.display = '';
+  }
+}
+
 $(document).ready( function() {
 
   document.getElementById("start_tour").style.display = '';
@@ -255,6 +261,7 @@ $(document).ready( function() {
   $('#prediction_method-2').change( function() {show_prediction_alert(); });
   $('#prediction_method-3').change( function() {show_prediction_alert(); });
   $('#prediction_method-4').change( function() {show_prediction_alert(); });
+  $('#sequence_div').change( function() {show_uniprot_id_alert();});
   
 
 });

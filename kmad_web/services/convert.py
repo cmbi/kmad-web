@@ -61,7 +61,7 @@ def get_id(sequence):
     if len(sequence.split('|')) >= 3:
         return sequence.split('|')[2].split(' ')[0]
     else:
-        return 'UNKNOWN_ID'
+        return sequence.lstrip('>')
 
 
 # PFAM
@@ -146,6 +146,17 @@ def get_uniprot_txt(uniprot_id):
     return {"features": features, "GO": go_terms}
 
 
+def get_uniprot_data(fastafile):
+    result = dict({"seq_data": dict({}), "GO": set([])})
+    for i in fastafile:
+        if i.startswith('>'):
+            seq_id = get_id(i.rstrip('\n'))
+            seq_data = get_uniprot_txt(seq_id)
+            result["seq_data"][seq_id] = seq_data
+            result["GO"] = result["GO"].union(seq_data["GO"])
+    return result
+
+
 def get_annotation_level(uni_features):
     levels_dict = {'269': 0, '314': 0, '353': 0, '315': 0, '316': 0, '270': 0,
                    '250': 1, '266': 1, '247': 1, '255': 1, '317': 1, '318': 1,
@@ -225,6 +236,7 @@ def filter_out_overlapping(lims, ids, probs):
         start = lims[i[0]][0]
         end = lims[i[0]][1]
         for j in new_lims:
+            print start, end, j[0], j[1]
             if ((start >= j[0] and start <= j[1])
                     or (end >= j[0] and end <= j[1])):
                 goed = False
@@ -455,6 +467,7 @@ def convert_to_7chars(filename):
     motifsDictionary = dict()
     motifProbsDict = dict()
     newfile = ""
+    uniprot_data = get_uniprot_data(seqFASTA)
     for i, seqI in enumerate(seqFASTA):
         if '>' not in seqI:
             seqI = seqI.rstrip("\n")
@@ -467,12 +480,14 @@ def convert_to_7chars(filename):
             if os.path.exists(tmp_filename):        # pragma: no cover
                 os.remove(tmp_filename)
             if check_id(seq_id, seqI):
-                uniprot_txt = get_uniprot_txt(seq_id)
-                uniprot_results = find_phosph_sites(uniprot_txt["features"])
+                # uniprot_txt = get_uniprot_txt(seq_id)
+                # uniprot_results = find_phosph_sites(uniprot_txt["features"])
+                uniprot_results = find_phosph_sites(
+                    uniprot_data["seq_data"][seq_id]["features"])
                 # elms - slims coordinates, motifs_ids, probs - probabilities
                 [elm, motifs_ids, probs] = search_elm(seq_id, seqI,
                                                       slims_all_classes,
-                                                      uniprot_txt["GO"])
+                                                      uniprot_data["GO"])
                 motifsDictionary = add_elements_to_dict(motifs_ids,
                                                         motifsDictionary,
                                                         'slims')
