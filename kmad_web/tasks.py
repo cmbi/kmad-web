@@ -134,7 +134,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
     else:
         fastafile = filename
     if multi_seq_input or blast_success:
-        toalign = convert_to_7chars(fastafile)  # .7c filename
+        toalign = convert_to_7chars(fastafile)['filename']  # .7c filename
         codon_length = 7
 
         al_outfile = "%s_al" % toalign
@@ -178,7 +178,7 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
 
 @celery_app.task
 def annotate(d2p2, filename):
-    encoded_filename = convert_to_7chars(filename)  # .7c filename
+    encoded_filename = convert_to_7chars(filename)['filename']  # .7c filename
     with open(filename.split('.')[0] + '.map') as a:
         feature_codemap = a.read().splitlines()
     # motifs = [i.split() for i in feature_codemap if i.startswith('motif')]

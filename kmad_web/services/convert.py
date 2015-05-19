@@ -236,7 +236,6 @@ def filter_out_overlapping(lims, ids, probs):
         start = lims[i[0]][0]
         end = lims[i[0]][1]
         for j in new_lims:
-            print start, end, j[0], j[1]
             if ((start >= j[0] and start <= j[1])
                     or (end >= j[0] and end <= j[1])):
                 goed = False
@@ -299,15 +298,17 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
 
 
 def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
-    limits, elms_ids, probabilities = get_annotated_motifs(uniprotID)
+    annotated = get_annotated_motifs(uniprotID)
     predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms)
-    limits.extend(predicted[0])
-    elms_ids.extend(predicted[1])
-    probabilities.extend(predicted[2])
+    limits = annotated[0] + predicted[0]
+    elms_ids = annotated[1] + predicted[1]
+    probabilities = annotated[2] + predicted[2]
+    # elms_ids.extend(predicted[1])
+    # probabilities.extend(predicted[2])
     limits, elms_ids, probabilities = filter_out_overlapping(limits,
                                                              elms_ids,
                                                              probabilities)
-    return [limits, elms_ids, probabilities]
+    return [limits, elms_ids, probabilities, annotated]
 
 
 # adds new domains/motifs to the dictionary
@@ -468,6 +469,8 @@ def convert_to_7chars(filename):
     motifProbsDict = dict()
     newfile = ""
     uniprot_data = get_uniprot_data(seqFASTA)
+    # annotated_motifs - all motifs annotated in the first seq
+    annotated_motifs = []
     for i, seqI in enumerate(seqFASTA):
         if '>' not in seqI:
             seqI = seqI.rstrip("\n")
@@ -485,9 +488,10 @@ def convert_to_7chars(filename):
                 uniprot_results = find_phosph_sites(
                     uniprot_data["seq_data"][seq_id]["features"])
                 # elms - slims coordinates, motifs_ids, probs - probabilities
-                [elm, motifs_ids, probs] = search_elm(seq_id, seqI,
-                                                      slims_all_classes,
-                                                      uniprot_data["GO"])
+                [elm, motifs_ids, probs, annotated] = search_elm(
+                    seq_id, seqI, slims_all_classes, uniprot_data["GO"])
+                if i == 1:
+                    annotated_motifs = annotated
                 motifsDictionary = add_elements_to_dict(motifs_ids,
                                                         motifsDictionary,
                                                         'slims')
@@ -530,4 +534,4 @@ def convert_to_7chars(filename):
     out.write(newfile)
     out.close()
 
-    return outname
+    return {'filename': outname, 'annotated_motifs': annotated_motifs}
