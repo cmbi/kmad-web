@@ -215,7 +215,6 @@ def find_phosph_sites(features):
 # (the ones with lower probabilities are removed)
 def filter_out_overlapping(lims, ids, probs):
     probs_with_indexes = [[i, probs[i]] for i in range(len(probs))]
-    print probs_with_indexes, lims
     probs_with_indexes.sort(key=itemgetter(1))
     probs_with_indexes.reverse()
     new_lims = []
@@ -229,7 +228,6 @@ def filter_out_overlapping(lims, ids, probs):
             print start, end, j[0], j[1]
             if ((start >= j[0] and start <= j[1])
                     or (end >= j[0] and end <= j[1])):
-                print "niet goed"
                 goed = False
         if goed:
             new_lims.append(lims[i[0]])
