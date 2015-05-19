@@ -139,7 +139,8 @@ def filter_motifs_by_conservation(proc_alignment, all_motifs, motif_dict,
         regex = motif_dict[i]['regex']
         count = 0
         for j in proc_alignment:
-            match = re.search(regex, j[1][start:end])
+            ungapped_segment = re.sub('-', '', j[1][start:end])
+            match = re.search(regex, ungapped_segment)
             if match:
                 count += 1
         if float(count) / N > threshold:
@@ -155,6 +156,17 @@ def process_codemap(feature_codemap):
 
 
 def get_first_seq_motifs(conserved_motifs, wild_seq, motif_dict, mutation_site):
+    result = []
+    for i in conserved_motifs:
+        matches = re.finditer(motif_dict[i]['regex'], wild_seq)
+        matches = [i.span() for i in list(matches)]
+        for j in matches:
+            if mutation_site in range(j[0] + 1, j[1] + 1):
+                result.append(i)
+    return result
+
+
+def process_motifs(motifs_list, motif_dict):
     pass
 
 
@@ -180,9 +192,10 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     conserved_motifs = filter_motifs_by_conservation(proc_alignment, all_motifs,
                                                      motif_dict,
                                                      alignment_position)
-    final = get_first_seq_motifs(conserved_motifs, wild_seq, motif_dict,
-                                 mutation_site)
-    pass
+    conserved_motifs = get_first_seq_motifs(conserved_motifs, wild_seq,
+                                            motif_dict, mutation_site)
+    final = process_motifs(conserved_motifs, motif_dict)
+    return final
 
 
 def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
