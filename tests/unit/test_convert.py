@@ -178,6 +178,12 @@ def test_filter_out_overlappig():
     result = filter_out_overlapping(lims, ids, probs)
     eq_(result, expected)
 
+    lims = [[1, 2], [3, 4]]
+    ids = ['MOTIF1', 'MOTIF2']
+    probs = [0.8, 0.7]
+    expected = ([[1, 2], [3, 4]], ['MOTIF1', 'MOTIF2'], [0.8, 0.7])
+    eq_(result, expected)
+
 
 @patch('kmad_web.services.convert.get_uniprot_txt')
 def test_find_phosph_sites(mock_uni_txt):
