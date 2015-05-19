@@ -94,17 +94,19 @@ def get_kmad_result(output_type, id):
     result = task.AsyncResult(id).get()
     if output_type == "predict_and_align":
         response = {'result': {'prediction': result[0:-1],
-                               'feature_codemap': result[-1][3],
-                               'alignment': {'raw': result[-1][0],
-                                             'processed': result[-1][1],
-                                             'encoded': result[-1][2]}}}
+                               'feature_codemap': result[-1]['alignments'][3],
+                               'alignment': {
+                                   'raw': result[-1]['alignments'][0],
+                                   'processed': result[-1]['alignments'][1],
+                                   'encoded': result[-1]['alignments'][2]}}}
     elif output_type == "predict":
         response = {'result': {'prediction': result}}
     elif output_type in ['align', 'refine', 'annotate']:
-        response = {'result': {'feature_codemap': result[-1][3],
-                               'alignment': {'raw': result[-1][0],
-                                             'processed': result[-1][1],
-                                             'encoded': result[-1][2]}}}
+        response = {'result': {'feature_codemap': result[-1]['alignments'][3],
+                               'alignment': {
+                                   'raw': result[-1]['alignments'][0],
+                                   'processed': result[-1]['alignments'][1],
+                                   'encoded': result[-1]['alignments'][2]}}}
     return jsonify(response)
 
 

@@ -30,8 +30,11 @@ class TestTasks(object):
         mock_call1.return_value = ['tests/unit/testdata/test.fasta', True]
         mock_call2.return_value = {'filename': 'tests/unit/testdata/test.7c',
                                    'annotated_motifs': [[], [], []]}
-        expected = [test.alignment_1c, test.alignment_1c_list,
-                    test.alignment_7c_list, {"domains": [], "motifs": []}]
+        expected = {'alignments': [test.alignment_1c,
+                                   test.alignment_1c_list,
+                                   test.alignment_7c_list,
+                                   {"domains": [], "motifs": []}],
+                    'annotated_motifs': [[], [], []]}
 
         from kmad_web.tasks import align
 

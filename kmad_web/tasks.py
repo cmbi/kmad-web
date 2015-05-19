@@ -134,7 +134,9 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
     else:
         fastafile = filename
     if multi_seq_input or blast_success:
-        toalign = convert_to_7chars(fastafile)['filename']  # .7c filename
+        convert_result = convert_to_7chars(fastafile)  # .7c filename
+        toalign = convert_result['filename']
+        annotated_motifs = convert_result['annotated_motifs']
         codon_length = 7
 
         al_outfile = "%s_al" % toalign
@@ -167,11 +169,13 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
         alignment_encoded = open(al_outfile).read().encode('ascii',
                                                            errors='ignore')
         alignment_processed = process_alignment(alignment_encoded, codon_length)
-        result = alignment_processed + [feature_codemap]
+        alignments = alignment_processed + [feature_codemap]
         _log.debug("feature codemap: {}".format(feature_codemap))
-
+        result = {'alignments': alignments,
+                  'annotated_motifs': annotated_motifs}
     else:
-        result = [[], [], [], []]
+        result = {'alignments': [[], [], [], []],
+                  'annotated_motifs': []}
     _log.debug("Finished alignment")
     return result
 
