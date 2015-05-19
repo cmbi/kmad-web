@@ -235,7 +235,7 @@ def filter_out_overlapping(lims, ids, probs):
     return new_lims, new_ids, new_probs
 
 
-def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
+def get_annotated_motifs(uniprotID):
     limits = []
     elms_ids = []
     probabilities = []
@@ -253,7 +253,13 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
             limits.append([start, end])
             probabilities.append(1)
             elms_ids.append(elm_id)
-    # now get predicted motifs
+    return [limits, elms_ids, probabilities]
+
+
+def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
+    limits = []
+    elms_ids = []
+    probabilities = []
     data = urllib.urlencode({'sequence': sequence})
     url = "http://elm.eu.org/start_search/"
     req = urllib2.Request(url, data)
@@ -277,6 +283,15 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
                             probabilities.append(prob)
             except KeyError:
                 _log.debug("Didn't find motif: {}".format(slim_id))
+    return [limits, elms_ids, probabilities]
+
+
+def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
+    limits, elms_ids, probabilities = get_annotated_motifs(uniprotID)
+    predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms)
+    limits.extend(predicted[0])
+    elms_ids.extend(predicted[1])
+    probabilities.extend(predicted[2])
     limits, elms_ids, probabilities = filter_out_overlapping(limits,
                                                              elms_ids,
                                                              probabilities)

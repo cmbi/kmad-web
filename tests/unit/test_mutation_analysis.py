@@ -69,14 +69,6 @@ def test_analyze_predictions():
     expected = [{'position': 3,
                  'ptms': {'phosphorylation': ['certain', 'N',
                                               'description']}}]
-    # expected = [{'position': 3,
-    #              'ptms': [{'type': 'phosphorylation',
-    #                        'level': 0,
-    #                        'status_wild': 'certain',
-    #                        'status_mut': 'N'
-    #                        }]
-    #              },
-    #             ]
 
     eq_(result, expected)
 
@@ -114,28 +106,13 @@ def test_analyze_ptms():
     new_aa = 'S'
     expected = {'position': 1,
                 'ptms': {'phosphorylation': ['certain', 'Y', 'description']}}
-    # expected = [{'position': 1,
-    #              'ptms': [{'type': 'phosphorylation',
-    #                        'level': 0,
-    #                        'status_wild': 'certain',
-    #                        'status_mut': 'Y',
-    #                        'description': ''
-    #                        }]
-    #              }]
+
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
     eq_(result, expected)
 
     new_aa = 'T'
     expected = {'position': 1,
                 'ptms': {'phosphorylation': ['certain', 'N', 'description']}}
-    # expected = [{'position': 1,
-    #              'ptms': [{'type': 'phosphorylation',
-    #                        'level': 0,
-    #                        'status_wild': 'certain',
-    #                        'status_mut': 'N',
-    #                        'description': ''
-    #                        }]
-    #              }]
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
     eq_(result, expected)
 
@@ -196,7 +173,7 @@ def test_analyze_motifs():
     wild_seq = 'SR'
     mutant_seq = 'SK'
     proc_alignment = [['>1', 'SR'], ['>2', 'ST'],
-                     ['>3', 'ST'], ['>4', 'SR']]
+                      ['>3', 'ST'], ['>4', 'SR']]
     encoded_alignment = ['>1', 'SAAAAabRAAAAab', '>2', 'SAAAAaaTAAAAaa',
                          '>3', 'SAAAAaaTAAAAaa', '>4', 'SAAAAabRAAAAab']
     feature_codemap = {'motifs': [['aa', 'SOMEMOTIF', 'ST'],
