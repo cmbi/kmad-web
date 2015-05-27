@@ -155,24 +155,32 @@ def process_codemap(feature_codemap):
     return result
 
 
-def get_first_seq_motifs(conserved_motifs, wild_seq, motif_dict, mutation_site):
-    result = []
+def get_wild_and_mut_motifs(conserved_motifs, wild_seq, motif_dict,
+                            mutation_site):
+    result = {}
+    print conserved_motifs
     for i in conserved_motifs:
-        matches = re.finditer(motif_dict[i]['regex'], wild_seq)
-        matches = [i.span() for i in list(matches)]
+        pattern = motif_dict[i]['regex']
+        p = re.compile(pattern)
+        matches = re.finditer(pattern, wild_seq)
+        matches = [j.span() for j in list(matches)]
         for j in matches:
             if mutation_site in range(j[0] + 1, j[1] + 1):
-                result.append(i)
+                mutant = False
+                if p.match(wild_seq[j[0]:j[1]]):
+                    mutant = True
+                result[i] = mutant
     return result
 
 
 def process_motifs(motifs_list, motif_dict, mutation_site, mutant_seq):
+
     pass
 
 
 def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
                    mutant_seq, mutation_site, alignment_position,
-                   feature_codemap):
+                   feature_codemap, annotated_motifs):
     motif_dict = process_codemap(feature_codemap)
     # find all motifs that appear in the alignment +5 and -5 residues from the
     # mutation site
@@ -183,11 +191,11 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
                                                      motif_dict,
                                                      alignment_position)
     # check which of the conserved motifs appear in the first sequence on the
-    # mutation site
-    conserved_motifs = get_first_seq_motifs(conserved_motifs, wild_seq,
-                                            motif_dict, mutation_site)
-    # process motifs will check if the motifs are still there after the mutation
-    # and return motifs in the final output format
+    # mutation site and check if they are still there after the mutation
+    conserved_motifs = get_wild_and_mut_motifs(conserved_motifs, wild_seq,
+                                               motif_dict, mutation_site)
+    # process motifs return motifs in the final output format
+    print "cons. motifs: \n", conserved_motifs
     final = process_motifs(conserved_motifs, motif_dict, mutation_site,
                            mutant_seq)
     return final

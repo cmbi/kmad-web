@@ -179,12 +179,14 @@ def test_analyze_motifs():
     feature_codemap = {'motifs': [['aa', 'SOMEMOTIF', 'ST'],
                                   ['ab', 'SOMEOTHERMOTIF', 'SR']],
                        'domains': []}
+    annotated_motifs = [[], [], []]
 
     from kmad_web.services.mutation_analysis import analyze_motifs
 
     result = analyze_motifs(alignment, proc_alignment, encoded_alignment,
                             wild_seq, mutant_seq, mutation_site,
-                            alignment_position, feature_codemap)
+                            alignment_position, feature_codemap,
+                            annotated_motifs)
 
     expected = [{'MOTIFB': ['putative', 'N', 'description']}]
     # eq_(result, expected)

@@ -242,9 +242,11 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
     wild_seq = processed_result[0]
 
     disorder_prediction = processed_result[-2]  # filtered consensus
-    encoded_alignment = processed_result[-1][2]
-    proc_alignment = processed_result[-1][1]
-    feature_codemap = processed_result[-1][3]
+    encoded_alignment = processed_result[-1]['alignments'][2]
+    proc_alignment = processed_result[-1]['alignments'][1]
+    feature_codemap = processed_result[-1]['alignments'][3]
+
+    annotated_motifs = processed_result[-1]['annotated_motifs']
 
     mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site, new_aa)
     mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
@@ -267,7 +269,8 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
                                new_aa)
     motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
                                    wild_seq, mutant_seq, mutation_site,
-                                   alignment_position, feature_codemap)
+                                   alignment_position, feature_codemap,
+                                   annotated_motifs)
 
     output = ma.combine_results(ptm_data, motif_data, surrounding_data,
                                 disorder_prediction)

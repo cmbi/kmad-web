@@ -181,12 +181,12 @@ class TestTasks(object):
         #                           {'testptm': ['val1', 'val2',
         #                                        'description']},
         #                           {}]
-        testdata = ['SEQ', [0, 1, 2], [[], [], ['>seq1',
-                                                'AAAAAAA-AAAAAATAAAdaa',
-                                                '>seq2',
-                                                'AAAAAAAAAAAAAAAAAAAAA'],
+        testdata = ['SEQ', [0, 1, 2], {'alignments': [
+            [], [], ['>seq1', 'AAAAAAA-AAAAAATAAAdaa',
+                     '>seq2', 'AAAAAAAAAAAAAAAAAAAAA'],
                                        {'motifs': [['aa', 'LIGBLA', 'REGEX']],
-                                        'domains': []}]]
+                                        'domains': []}],
+            'annotated_motifs': [[], [], []]}]
         mutation_site = 1
         new_aa = 'P'
         result = analyze_mutation(testdata, mutation_site, new_aa,
