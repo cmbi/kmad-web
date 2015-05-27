@@ -166,31 +166,60 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
         for j in matches:
             if mutation_site in range(j[0] + 1, j[1] + 1):
                 mutant = False
+                wild = False
                 if p.match(mut_seq[j[0]:j[1]]):
                     mutant = True
-                result[i] = mutant
+                if i in certain.keys():
+                    wild = True
+                # wild == False doesn't mean that the motif is not there, but
+                # that it's only predicted not annotated
+                result[i] = {'wild': wild, 'mut': mutant}
+    for i in certain:
+        if i not in result.keys():
+            start = certain[i]['coords'][0]
+            end = certain[i]['coords'][1]
+            mutant = False
+            pattern = certain[i]['regex']
+            p = re.compile(pattern)
+            if p.match(mut_seq[start:end]):
+                mutant = True
+            result[i] = {'wild': True, 'mut': mutant}
     return result
 
 
 def process_motifs(seq_motifs, motif_dict):
     result = {}
     mut_dict = {True: 'Y', False: 'N'}
+    wild_dict = {True: 'certain', False: 'putative'}
     for i in seq_motifs:
-        status_mutant = mut_dict[seq_motifs[i]]
+        status_mutant = mut_dict[seq_motifs[i]['mut']]
+        status_wild = wild_dict[seq_motifs[i]['wild']]
         motif_name = motif_dict[i]['name']
-        result[motif_name] = ['putative', status_mutant, 'description']
+        result[motif_name] = [status_wild, status_mutant, 'description']
     return result
 
 
-def process_annotated(annotated_motifs):
-    pass
+def process_annotated(annotated_motifs, motif_dict):
+    result = {}
+    for i in range(len(annotated_motifs[0])):
+        name = annotated_motifs[1][i]
+        coords = annotated_motifs[0][i]
+        code = ''
+        for j in motif_dict:
+            if motif_dict[j]['name'] == name:
+                code = j
+                break
+        regex = motif_dict[code]['regex']
+        # code = motif_dict[code]['name']
+        result[code] = {'name': name, 'coords': coords, 'regex': regex}
+    return result
 
 
 def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
                    mutant_seq, mutation_site, alignment_position,
                    feature_codemap, annotated_motifs):
-    certain = process_annotated(annotated_motifs)
     motif_dict = process_codemap(feature_codemap)
+    annotated_coords = process_annotated(annotated_motifs, motif_dict)
     # find all motifs that appear in the alignment +5 and -5 residues from the
     # mutation site
     all_motifs = get_motif_list(alignment, encoded_alignment, wild_seq,
@@ -203,7 +232,7 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     # mutation site and check if they are still there after the mutation
     conserved_motifs = get_wild_and_mut_motifs(conserved_motifs, wild_seq,
                                                mutant_seq, motif_dict,
-                                               mutation_site, certain)
+                                               mutation_site, annotated_coords)
     # process motifs return motifs in the final output format
     final = process_motifs(conserved_motifs, motif_dict)
     return final

@@ -174,12 +174,13 @@ def test_analyze_motifs():
     mutant_seq = 'SK'
     proc_alignment = [['>1', 'SR'], ['>2', 'ST'],
                       ['>3', 'ST'], ['>4', 'SR']]
+    annotated_motifs = [[[0, 2]], ['MOTIFC'], [1]]
     encoded_alignment = ['>1', 'SAAAAabRAAAAab', '>2', 'SAAAAaaTAAAAaa',
                          '>3', 'SAAAAaaTAAAAaa', '>4', 'SAAAAabRAAAAab']
     feature_codemap = {'motifs': [['aa', 'MOTIFA', 'ST'],
-                                  ['ab', 'MOTIFB', 'SR']],
+                                  ['ab', 'MOTIFB', 'SR'],
+                                  ['ac', 'MOTIFC', 'S.']],
                        'domains': []}
-    annotated_motifs = [[], [], []]
 
     from kmad_web.services.mutation_analysis import analyze_motifs
 
@@ -188,7 +189,8 @@ def test_analyze_motifs():
                             alignment_position, feature_codemap,
                             annotated_motifs)
 
-    expected = {'MOTIFB': ['putative', 'N', 'description']}
+    expected = {'MOTIFB': ['putative', 'N', 'description'],
+                'MOTIFC': ['certain', 'Y', 'description']}
     eq_(result, expected)
 
 
@@ -253,3 +255,20 @@ def test_get_motif_list():
                             mutation_site)
 
     eq_(result, set(['aa', 'ab']))
+
+
+def test_process_annotated():
+    annotated = [[[0, 1], [3, 4]], ['MOTIFA', 'MOTIFB'], [1, 1]]
+    expected = {'aa': {'coords': [0, 1], 'name': 'MOTIFA', 'regex': 'ST'},
+                'ab': {'coords': [3, 4], 'name': 'MOTIFB', 'regex': 'SR'}}
+    feature_codemap = {'motifs': [['aa', 'MOTIFA', 'ST'],
+                                  ['ab', 'MOTIFB', 'SR'],
+                                  ['ac', 'MOTIFC', 'S.']],
+                       'domains': []}
+
+    from kmad_web.services.mutation_analysis import (process_annotated,
+                                                     process_codemap)
+
+    motif_dict = process_codemap(feature_codemap)
+
+    eq_(process_annotated(annotated, motif_dict), expected)
