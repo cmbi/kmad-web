@@ -189,8 +189,10 @@ def test_analyze_motifs():
                             alignment_position, feature_codemap,
                             annotated_motifs)
 
-    expected = {'MOTIFB': ['putative', 'N', 'description'],
-                'MOTIFC': ['certain', 'Y', 'description']}
+    expected = {'position': 1,
+                'motifs': {'MOTIFB': ['putative', 'N', 'description'],
+                           'MOTIFC': ['certain', 'Y', 'description']}
+                }
     eq_(result, expected)
 
 

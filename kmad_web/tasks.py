@@ -273,7 +273,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
                                    annotated_motifs)
 
     output = ma.combine_results(ptm_data, motif_data, surrounding_data,
-                                disorder_prediction)
+                                disorder_prediction, mutation_site)
     # output = {
     #     'residues': [
     #         {

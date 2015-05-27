@@ -187,15 +187,17 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
     return result
 
 
-def process_motifs(seq_motifs, motif_dict):
-    result = {}
+def process_motifs(seq_motifs, motif_dict, mutation_site):
+    result = {'position': mutation_site,
+              'motifs': {}}
     mut_dict = {True: 'Y', False: 'N'}
     wild_dict = {True: 'certain', False: 'putative'}
     for i in seq_motifs:
         status_mutant = mut_dict[seq_motifs[i]['mut']]
         status_wild = wild_dict[seq_motifs[i]['wild']]
         motif_name = motif_dict[i]['name']
-        result[motif_name] = [status_wild, status_mutant, 'description']
+        result['motifs'][motif_name] = [status_wild, status_mutant,
+                                        'description']
     return result
 
 
@@ -234,7 +236,7 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
                                                mutant_seq, motif_dict,
                                                mutation_site, annotated_coords)
     # process motifs return motifs in the final output format
-    final = process_motifs(conserved_motifs, motif_dict)
+    final = process_motifs(conserved_motifs, motif_dict, mutation_site)
     return final
 
 
@@ -267,14 +269,20 @@ def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
 
 
 def combine_results(ptm_data, motif_data, surrounding_data,
-                    disorder_prediction):
-    output = {'residues': []}
-    # dis_dict = {2: 'Y', 1: 'M', 0: 'N'}
-    # disorder_txt = [dis_dict[i] for i in disorder_prediction]
+                    disorder_prediction, mutation_site):
+
+    dis_dict = {2: 'Y', 1: 'M', 0: 'N'}
+    disorder_txt = [dis_dict[i] for i in disorder_prediction]
+    output = {'residues': [{'position': mutation_site,
+                            'ptm': ptm_data['ptms'],
+                            'motifs': motif_data['motifs'],
+                            'disordered': disorder_txt[mutation_site - 1]}]}
+    for i in surrounding_data:
+        output['residues'].append(i)
     # for i in range(len(sequence)):
-    #     new_entry = {'ptms': ptm_data[i], 'motifs': motif_data[i],
-    #                  'disorder': disorder_txt[i]}
-    #     output['residues'].append(new_entry)
+    #      new_entry = {'ptms': ptm_data[i], 'motifs': motif_data[i],
+    #                   'disorder': disorder_txt[i]}
+    #      output['residues'].append(new_entry)
     return output
 
 

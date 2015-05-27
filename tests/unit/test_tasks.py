@@ -163,9 +163,7 @@ class TestTasks(object):
         eq_(result.get(),  expected)
 
     @patch('kmad_web.tasks.run_netphos')
-    @patch('kmad_web.tasks.ma.analyze_ptms')
-    @patch('kmad_web.tasks.ma.analyze_motifs')
-    def test_mutation_analysis(self, mock_motifs, mock_ptms, mock_netphos):
+    def test_analyze_mutation(self, mock_netphos):
 
         from kmad_web.tasks import analyze_mutation
 
@@ -181,9 +179,12 @@ class TestTasks(object):
         #                           {'testptm': ['val1', 'val2',
         #                                        'description']},
         #                           {}]
-        testdata = ['SEQ', [0, 1, 2], {'alignments': [
-            [], [], ['>seq1', 'AAAAAAA-AAAAAATAAAdaa',
-                     '>seq2', 'AAAAAAAAAAAAAAAAAAAAA'],
+        testdata = ['SEQ', [0, 1, 2], {'alignments': [[], [['>seq1', 'A-T'],
+                                                           ['>seq2', 'AAA']],
+                                                      ['>seq1',
+                                                       'AAAAAAA-AAAAAATAAAdaa',
+                                                       '>seq2',
+                                                       'AAAAAAAAAAAAAAAAAAAAA'],
                                        {'motifs': [['aa', 'LIGBLA', 'REGEX']],
                                         'domains': []}],
             'annotated_motifs': [[], [], []]}]
@@ -191,6 +192,7 @@ class TestTasks(object):
         new_aa = 'P'
         result = analyze_mutation(testdata, mutation_site, new_aa,
                                   'test_filename')
+        print result
         # expected = {'residues': [{'disorder': 'N',
         #                           'ptms': {'testptm': ['val1', 'val2',
         #                                                'description']},
