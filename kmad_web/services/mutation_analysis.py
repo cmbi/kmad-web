@@ -155,10 +155,9 @@ def process_codemap(feature_codemap):
     return result
 
 
-def get_wild_and_mut_motifs(conserved_motifs, wild_seq, motif_dict,
-                            mutation_site):
+def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
+                            mutation_site, certain):
     result = {}
-    print conserved_motifs
     for i in conserved_motifs:
         pattern = motif_dict[i]['regex']
         p = re.compile(pattern)
@@ -167,20 +166,30 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, motif_dict,
         for j in matches:
             if mutation_site in range(j[0] + 1, j[1] + 1):
                 mutant = False
-                if p.match(wild_seq[j[0]:j[1]]):
+                if p.match(mut_seq[j[0]:j[1]]):
                     mutant = True
                 result[i] = mutant
     return result
 
 
-def process_motifs(motifs_list, motif_dict, mutation_site, mutant_seq):
+def process_motifs(seq_motifs, motif_dict):
+    result = {}
+    mut_dict = {True: 'Y', False: 'N'}
+    for i in seq_motifs:
+        status_mutant = mut_dict[seq_motifs[i]]
+        motif_name = motif_dict[i]['name']
+        result[motif_name] = ['putative', status_mutant, 'description']
+    return result
 
+
+def process_annotated(annotated_motifs):
     pass
 
 
 def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
                    mutant_seq, mutation_site, alignment_position,
                    feature_codemap, annotated_motifs):
+    certain = process_annotated(annotated_motifs)
     motif_dict = process_codemap(feature_codemap)
     # find all motifs that appear in the alignment +5 and -5 residues from the
     # mutation site
@@ -193,11 +202,10 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     # check which of the conserved motifs appear in the first sequence on the
     # mutation site and check if they are still there after the mutation
     conserved_motifs = get_wild_and_mut_motifs(conserved_motifs, wild_seq,
-                                               motif_dict, mutation_site)
+                                               mutant_seq, motif_dict,
+                                               mutation_site, certain)
     # process motifs return motifs in the final output format
-    print "cons. motifs: \n", conserved_motifs
-    final = process_motifs(conserved_motifs, motif_dict, mutation_site,
-                           mutant_seq)
+    final = process_motifs(conserved_motifs, motif_dict)
     return final
 
 

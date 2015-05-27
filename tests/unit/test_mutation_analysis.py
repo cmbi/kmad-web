@@ -176,8 +176,8 @@ def test_analyze_motifs():
                       ['>3', 'ST'], ['>4', 'SR']]
     encoded_alignment = ['>1', 'SAAAAabRAAAAab', '>2', 'SAAAAaaTAAAAaa',
                          '>3', 'SAAAAaaTAAAAaa', '>4', 'SAAAAabRAAAAab']
-    feature_codemap = {'motifs': [['aa', 'SOMEMOTIF', 'ST'],
-                                  ['ab', 'SOMEOTHERMOTIF', 'SR']],
+    feature_codemap = {'motifs': [['aa', 'MOTIFA', 'ST'],
+                                  ['ab', 'MOTIFB', 'SR']],
                        'domains': []}
     annotated_motifs = [[], [], []]
 
@@ -188,8 +188,8 @@ def test_analyze_motifs():
                             alignment_position, feature_codemap,
                             annotated_motifs)
 
-    expected = [{'MOTIFB': ['putative', 'N', 'description']}]
-    # eq_(result, expected)
+    expected = {'MOTIFB': ['putative', 'N', 'description']}
+    eq_(result, expected)
 
 
 def test_get_motif_list():
