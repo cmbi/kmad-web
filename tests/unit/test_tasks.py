@@ -166,49 +166,37 @@ class TestTasks(object):
     def test_analyze_mutation(self, mock_netphos):
 
         from kmad_web.tasks import analyze_mutation
+        mock_netphos.return_value = []
 
-        # mock_motifs.return_value = [{'testmotif1': ['val1', 'val2',
-        #                                             'description'],
-        #                              'testmotif2': ['val1', 'val2',
-        #                                             'description']},
-        #                             {'testmotif1': ['val1', 'val2',
-        #                                             'description']},
-        #                             {}]
-        # mock_ptms.return_value = [{'testptm': ['val1', 'val2',
-        #                                        'description']},
-        #                           {'testptm': ['val1', 'val2',
-        #                                        'description']},
-        #                           {}]
-        testdata = ['SEQ', [0, 1, 2], {'alignments': [[], [['>seq1', 'A-T'],
-                                                           ['>seq2', 'AAA']],
+        testdata = ['AT', [0, 1], {'alignments': [[], [['>seq1', 'A-T'],
+                                                       ['>seq2', 'AAA']],
                                                       ['>seq1',
                                                        'AAAAAAA-AAAAAATAAAdaa',
                                                        '>seq2',
-                                                       'AAAAAAAAAAAAAAAAAAAAA'],
-                                       {'motifs': [['aa', 'LIGBLA', 'REGEX']],
-                                        'domains': []}],
-            'annotated_motifs': [[], [], []]}]
+                                                       'AAAAAAAAAAAAAATAAAAaa'],
+                                   {'motifs': [['aa', 'LIGBLA', 'T']],
+                                    'domains': []}],
+                                   'annotated_motifs': [[], [], []]}]
         mutation_site = 1
         new_aa = 'P'
         result = analyze_mutation(testdata, mutation_site, new_aa,
                                   'test_filename')
-        print result
-        # expected = {'residues': [{'disorder': 'N',
-        #                           'ptms': {'testptm': ['val1', 'val2',
-        #                                                'description']},
-        #                           'motifs': {'testmotif1': ['val1', 'val2',
-        #                                                     'description'],
-        #                                      'testmotif2': ['val1', 'val2',
-        #                                                     'description']}},
-        #                          {'disorder': 'M',
-        #                           'ptms': {'testptm': ['val1', 'val2',
-        #                                                'description']},
-        #                           'motifs': {'testmotif1': ['val1', 'val2',
-        #                                                     'description']}},
-        #                          {'disorder': 'Y',
-        #                           'ptms': {},
-        #                           'motifs': {}
-        #                           }
-        #                          ]
-        #             }
-        # eq_(result, expected)
+        expected = {'residues': [{'disorder': 'N',
+                                  'ptms': {'testptm': ['val1', 'val2',
+                                                       'description']},
+                                  'motifs': {'testmotif1': ['val1', 'val2',
+                                                            'description'],
+                                             'testmotif2': ['val1', 'val2',
+                                                            'description']}},
+                                 {'disorder': 'M',
+                                  'ptms': {'testptm': ['val1', 'val2',
+                                                       'description']},
+                                  'motifs': {'testmotif1': ['val1', 'val2',
+                                                            'description']}},
+                                 {'disorder': 'Y',
+                                  'ptms': {},
+                                  'motifs': {}
+                                  }
+                                 ]
+                    }
+        eq_(result, expected)

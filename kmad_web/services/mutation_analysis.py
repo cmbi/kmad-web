@@ -115,9 +115,8 @@ def get_motif_list(alignment, encoded_alignment, wild_seq, mutation_site):
         end_pos = len(wild_seq) - 1
     real_start = get_real_position(encoded_alignment, start_pos, 0)
     real_end = get_real_position(encoded_alignment, end_pos, 0)
-
     for i, seqI in enumerate(alignment):
-        for j in range(real_start, real_end):
+        for j in range(real_start, real_end + 1):
             if seqI[j]['features']['motif']:
                 motifs.add(alignment[i][j]['features']['motif'])
     return motifs
@@ -139,7 +138,7 @@ def filter_motifs_by_conservation(proc_alignment, all_motifs, motif_dict,
         regex = motif_dict[i]['regex']
         count = 0
         for j in proc_alignment:
-            ungapped_segment = re.sub('-', '', j[1][start:end])
+            ungapped_segment = re.sub('-', '', j[1][start:end + 1])
             match = re.search(regex, ungapped_segment)
             if match:
                 count += 1
@@ -226,6 +225,7 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     # mutation site
     all_motifs = get_motif_list(alignment, encoded_alignment, wild_seq,
                                 mutation_site)
+    print all_motifs
     # find which motifs are conserved +10 and -10 residues from the mutations
     conserved_motifs = filter_motifs_by_conservation(proc_alignment, all_motifs,
                                                      motif_dict,
@@ -235,6 +235,7 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     conserved_motifs = get_wild_and_mut_motifs(conserved_motifs, wild_seq,
                                                mutant_seq, motif_dict,
                                                mutation_site, annotated_coords)
+    print conserved_motifs
     # process motifs return motifs in the final output format
     final = process_motifs(conserved_motifs, motif_dict, mutation_site)
     return final
@@ -269,16 +270,39 @@ def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
 
 
 def combine_results(ptm_data, motif_data, surrounding_data,
-                    disorder_prediction, mutation_site):
+                    disorder_prediction, mutation_site, sequence):
 
     dis_dict = {2: 'Y', 1: 'M', 0: 'N'}
     disorder_txt = [dis_dict[i] for i in disorder_prediction]
-    output = {'residues': [{'position': mutation_site,
-                            'ptm': ptm_data['ptms'],
-                            'motifs': motif_data['motifs'],
-                            'disordered': disorder_txt[mutation_site - 1]}]}
-    for i in surrounding_data:
-        output['residues'].append(i)
+    output = {'residues': []}
+    for i in xrange(len(sequence)):
+        if (i != mutation_site - 1
+                and i not in [j['position'] for j in surrounding_data]):
+            output['residues'].append({'position': i + 1,
+                                       'ptm': {},
+                                       'motifs': {},
+                                       'disordered': disorder_txt[i]})
+        elif i == mutation_site - 1:
+            output['residues'].append({'position': mutation_site,
+                                       'ptm': ptm_data['ptms'],
+                                       'motifs': motif_data['motifs'],
+                                       'disordered':
+                                           disorder_txt[mutation_site - 1]})
+        else:
+            new_residue = {'position': i + 1}
+            for j in surrounding_data:
+                if j['position'] == i + 1:
+                    new_residue = j
+                    break
+            new_residue['disordered'] = disorder_txt[i]
+            output['residues'].append(new_residue)
+
+    # output = {'residues': [{'position': mutation_site,
+    #                         'ptm': ptm_data['ptms'],
+    #                         'motifs': motif_data['motifs'],
+    #                         'disordered': disorder_txt[mutation_site - 1]}]}
+    # for i in surrounding_data:
+    #     output['residues'].append(i)
     # for i in range(len(sequence)):
     #      new_entry = {'ptms': ptm_data[i], 'motifs': motif_data[i],
     #                   'disorder': disorder_txt[i]}
