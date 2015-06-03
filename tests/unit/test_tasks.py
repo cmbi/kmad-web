@@ -171,32 +171,31 @@ class TestTasks(object):
         testdata = ['AT', [0, 1], {'alignments': [[], [['>seq1', 'A-T'],
                                                        ['>seq2', 'AAA']],
                                                       ['>seq1',
-                                                       'AAAAAAA-AAAAAATAAAdaa',
+                                                       'AAAAAAA-AAAAAATAAANaa',
                                                        '>seq2',
                                                        'AAAAAAAAAAAAAATAAAAaa'],
                                    {'motifs': [['aa', 'LIGBLA', 'T']],
                                     'domains': []}],
                                    'annotated_motifs': [[], [], []]}]
-        mutation_site = 1
+        mutation_site = 2
         new_aa = 'P'
         result = analyze_mutation(testdata, mutation_site, new_aa,
                                   'test_filename')
-        expected = {'residues': [{'disorder': 'N',
-                                  'ptms': {'testptm': ['val1', 'val2',
-                                                       'description']},
-                                  'motifs': {'testmotif1': ['val1', 'val2',
-                                                            'description'],
-                                             'testmotif2': ['val1', 'val2',
-                                                            'description']}},
-                                 {'disorder': 'M',
-                                  'ptms': {'testptm': ['val1', 'val2',
-                                                       'description']},
-                                  'motifs': {'testmotif1': ['val1', 'val2',
-                                                            'description']}},
-                                 {'disorder': 'Y',
-                                  'ptms': {},
-                                  'motifs': {}
+        expected = {'residues': [{'position': 1,
+                                  'ptm': {},
+                                  'disordered': 'N',
+                                  'motifs': {}},
+                                 {'position': 2,
+                                  'ptm': {
+                                      'phosphorylation': ['certain', 'N',
+                                                          'description']},
+                                  'disordered': 'M',
+                                  'motifs': {
+                                      'LIGBLA': ['putative', 'Y',
+                                                 'description']
+                                  }
                                   }
                                  ]
                     }
+
         eq_(result, expected)

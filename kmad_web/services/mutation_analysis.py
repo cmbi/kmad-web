@@ -173,6 +173,12 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
                 # wild == False doesn't mean that the motif is not there, but
                 # that it's only predicted not annotated
                 result[i] = {'wild': wild, 'mut': mutant}
+        if not matches:
+            wild = False
+            if i in certain.keys():
+                wild = True
+            mutant = False
+            result[i] = {'wild': wild, 'mut': mutant}
     for i in certain:
         if i not in result.keys():
             start = certain[i]['coords'][0]
@@ -225,7 +231,6 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     # mutation site
     all_motifs = get_motif_list(alignment, encoded_alignment, wild_seq,
                                 mutation_site)
-    print all_motifs
     # find which motifs are conserved +10 and -10 residues from the mutations
     conserved_motifs = filter_motifs_by_conservation(proc_alignment, all_motifs,
                                                      motif_dict,
@@ -235,7 +240,6 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     conserved_motifs = get_wild_and_mut_motifs(conserved_motifs, wild_seq,
                                                mutant_seq, motif_dict,
                                                mutation_site, annotated_coords)
-    print conserved_motifs
     # process motifs return motifs in the final output format
     final = process_motifs(conserved_motifs, motif_dict, mutation_site)
     return final
