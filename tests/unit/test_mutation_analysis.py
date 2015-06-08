@@ -116,6 +116,34 @@ def test_analyze_ptms():
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
     eq_(result, expected)
 
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 4},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ]]
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
+    expected = {'position': 1,
+                'ptms': {'phosphorylation': ['putative', 'N', 'description']}}
+
 
 def test_analyze_motifs():
     alignment = [[
@@ -275,3 +303,25 @@ def test_process_annotated():
     motif_dict = process_codemap(feature_codemap)
 
     eq_(process_annotated(annotated, motif_dict), expected)
+
+
+# def test_calculate_segment_conservation():
+#     # sequences:
+#     # AAAAAAAA
+#     # AABAABAA
+#     # ABBAABAA
+#     # ABBABBAA
+#     alignment_position = 3
+#     alignment = [[{'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'},
+#                   {'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'}],
+#                  [{'aa': 'A'}, {'aa': 'A'}, {'aa': 'B'}, {'aa': 'A'},
+#                   {'aa': 'A'}, {'aa': 'B'}, {'aa': 'A'}, {'aa': 'A'}],
+#                  [{'aa': 'A'}, {'aa': 'B'}, {'aa': 'B'}, {'aa': 'A'},
+#                   {'aa': 'A'}, {'aa': 'B'}, {'aa': 'A'}, {'aa': 'A'}],
+#                  [{'aa': 'A'}, {'aa': 'B'}, {'aa': 'B'}, {'aa': 'A'},
+#                   {'aa': 'B'}, {'aa': 'B'}, {'aa': 'A'}, {'aa': 'A'}]]
+#
+#     from kmad_web.services.mutation_analysis import (
+#         calculate_segment_conservation)
+#
+#     calculate_segment_conservation(alignment, alignment_position)

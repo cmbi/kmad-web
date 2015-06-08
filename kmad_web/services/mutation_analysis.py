@@ -68,12 +68,51 @@ def preprocess_features(encoded_alignment):
     return aligned_sequences
 
 
+def similar_surrounding(alignment, alignment_position, ptm_type):
+    result = False
+    threshold = 0.5
+    k = 3
+    if alignment_position > 2:
+        start = alignment_position - k
+    else:
+        start = - alignment_position
+
+    if alignment_position + k < len(alignment[0]):
+        end = alignment_position + k
+    else:
+        end = len(alignment[0]) - 1
+
+    for i in alignment[1:]:
+        if i[alignment_position]['features']['ptm']['type'] == ptm_type:
+            identities = 0
+            norm = len(range(start, end + 1))
+            for j in range(start, end + 1):
+                if alignment[0][j]['aa'] == i[j]['aa']:
+                    identities += 1
+            if float(identities) / norm > threshold:
+                result = True
+                break
+    return result
+
+
+def check_if_annotated_aa(alignment, alignment_position, ptm_type):
+    aa = alignment[0][alignment_position]['aa']
+    result = False
+    for i in alignment:
+        resI = i[alignment_position]
+        if (resI['aa'] == aa
+                and resI['features']['ptm']
+                and resI['features']['ptm']['type'] == ptm_type):
+            result = True
+            break
+    return result
+
+
 def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
-    level_to_score = {0: 1., 1: 0.9, 2: 0.8, 3: 0.7, 4: 0.3}
     result = {'position': mutation_site,
               'ptms': {}}
     ptm = alignment[0][alignment_position]['features']['ptm']
-    threshold = 0.3
+    threshold = 0.5
     status_wild = ''
     status_mut = 'N'
     if ptm:
@@ -91,12 +130,21 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
             first_four = True
             for i in range(1, len(alignment)):
                 ptm_i = alignment[i][alignment_position]['features']['ptm']
-                if ptm_i and ptm['type'] == ptm_i['type']:
-                    conservation += level_to_score[ptm_i['level']]
+                if (ptm_i and ptm['type'] == ptm_i['type']
+                        and ptm_i['level'] < 4):
+                    conservation += 1
                 if i < 5 and (not ptm_i or ptm_i['level'] < 4):
                     first_four = False
             conservation = conservation / len(alignment)
-            if conservation > threshold or first_four:
+            surrounding_match = similar_surrounding(alignment,
+                                                    alignment_position,
+                                                    ptm['type'])
+            # annotated_aa == True if any residue on this position is of the
+            # same aa type and has the same ptm type
+            annotated_aa = check_if_annotated_aa(alignment, alignment_position,
+                                                 ptm['type'])
+            if (annotated_aa and surrounding_match
+                    and (conservation >= threshold or first_four)):
                 status_wild = 'putative'
     if new_aa == alignment[0][alignment_position]['aa']:
         status_mut = 'Y'
