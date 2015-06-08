@@ -54,6 +54,7 @@ def get_fasta_from_blast(blast_name, query_filename):
     with open(blast_name) as a:
         blastfile = a.read().splitlines()
     success = True
+    ids = set()
     if len(blastfile) > 1:
         newfasta = ""
         # take query sequence if it's different form the first seq. from blast
@@ -62,15 +63,19 @@ def get_fasta_from_blast(blast_name, query_filename):
         if query_fasta[1] != sequence[1]:
             newfasta += "{}\n{}\n".format(query_fasta[0], query_fasta[1])
 
-        for i, lineI in enumerate(blastfile[:35]):
+        for i, lineI in enumerate(blastfile):
             line_list = lineI.split(',')
             if float(line_list[-2]) < 0.0001:
                 uniprot_id = line_list[1].split("|")[1]
-                sequence = get_seq_from_uniprot(uniprot_id)
-                if len(sequence[0]) > 1:
-                    newfasta += "{}{}\n".format(sequence[0], sequence[1])
+                if uniprot_id not in ids:
+                    sequence = get_seq_from_uniprot(uniprot_id)
+                    if len(sequence[0]) > 1:
+                        newfasta += "{}{}\n".format(sequence[0], sequence[1])
+                    ids.add(uniprot_id)
             elif i % 10 == 0:     # pragma: no cover
                 time.sleep(3)
+            if len(ids) > 35:
+                break
         outfile.write(newfasta)
         outfile.close()
     else:
