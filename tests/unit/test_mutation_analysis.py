@@ -188,11 +188,12 @@ def test_analyze_motifs():
                             wild_seq, mutant_seq, mutation_site,
                             alignment_position, feature_codemap,
                             annotated_motifs)
-
+    # motif A is not present in the first sequence
     expected = {'position': 1,
                 'motifs': {'MOTIFB': ['putative', 'N', 'description'],
                            'MOTIFC': ['certain', 'Y', 'description']}
                 }
+
     eq_(result, expected)
 
 

@@ -238,8 +238,8 @@ def test_run_netphos(mock_subprocess):
        create=True)
 def test_run_pfam_scan():
     from kmad_web.services.convert import run_pfam_scan
-    expected = [[[560, 591], [592, 622], [623, 653], [654, 685]],
-                ['PF00418.14', 'PF00418.14', 'PF00418.14', 'PF00418.14']]
+    expected = [[[561, 591], [592, 622], [623, 653], [654, 685]],
+                ['PF00418.15', 'PF00418.15', 'PF00418.15', 'PF00418.15']]
 
     result = run_pfam_scan('test')
     eq_(result, expected)

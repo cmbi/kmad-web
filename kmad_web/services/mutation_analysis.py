@@ -126,7 +126,7 @@ def filter_motifs_by_conservation(proc_alignment, all_motifs, motif_dict,
                                   alignment_position):
     filtered = []
     threshold = 0.5
-    N = len(proc_alignment) / 2
+    N = len(proc_alignment)
     start = alignment_position - 10
     end = alignment_position + 10
     if start < 10:
@@ -142,7 +142,7 @@ def filter_motifs_by_conservation(proc_alignment, all_motifs, motif_dict,
             match = re.search(regex, ungapped_segment)
             if match:
                 count += 1
-        if float(count) / N > threshold:
+        if float(count) / N >= threshold:
             filtered.append(i)
     return filtered
 
@@ -165,20 +165,16 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
         for j in matches:
             if mutation_site in range(j[0] + 1, j[1] + 1):
                 mutant = False
-                wild = False
+                annotated = False
                 if p.match(mut_seq[j[0]:j[1]]):
                     mutant = True
                 if i in certain.keys():
-                    wild = True
-                # wild == False doesn't mean that the motif is not there, but
-                # that it's only predicted not annotated
-                result[i] = {'wild': wild, 'mut': mutant}
-        if not matches:
-            wild = False
-            if i in certain.keys():
-                wild = True
+                    annotated = True
+                result[i] = {'annotated': annotated, 'mut': mutant}
+        if not matches and i in certain.keys():
+            annotated = True
             mutant = False
-            result[i] = {'wild': wild, 'mut': mutant}
+            result[i] = {'annotated': annotated, 'mut': mutant}
     for i in certain:
         if i not in result.keys():
             start = certain[i]['coords'][0]
@@ -188,7 +184,7 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
             p = re.compile(pattern)
             if p.match(mut_seq[start:end]):
                 mutant = True
-            result[i] = {'wild': True, 'mut': mutant}
+            result[i] = {'annotated': True, 'mut': mutant}
     return result
 
 
@@ -199,7 +195,7 @@ def process_motifs(seq_motifs, motif_dict, mutation_site):
     wild_dict = {True: 'certain', False: 'putative'}
     for i in seq_motifs:
         status_mutant = mut_dict[seq_motifs[i]['mut']]
-        status_wild = wild_dict[seq_motifs[i]['wild']]
+        status_wild = wild_dict[seq_motifs[i]['annotated']]
         motif_name = motif_dict[i]['name']
         result['motifs'][motif_name] = [status_wild, status_mutant,
                                         'description']
@@ -235,6 +231,7 @@ def analyze_motifs(alignment, proc_alignment, encoded_alignment, wild_seq,
     conserved_motifs = filter_motifs_by_conservation(proc_alignment, all_motifs,
                                                      motif_dict,
                                                      alignment_position)
+
     # check which of the conserved motifs appear in the first sequence on the
     # mutation site and check if they are still there after the mutation
     conserved_motifs = get_wild_and_mut_motifs(conserved_motifs, wild_seq,
