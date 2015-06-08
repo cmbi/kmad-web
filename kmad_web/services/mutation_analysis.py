@@ -68,26 +68,28 @@ def preprocess_features(encoded_alignment):
     return aligned_sequences
 
 
-def similar_surrounding(alignment, alignment_position, ptm_type):
+def similar_surrounding(alignment, alignment_position, ptm_type, new_res):
+    ali = alignment[:]
+    ali[0][alignment_position]['aa'] = new_res
     result = False
     threshold = 0.5
-    k = 3
+    k = 2
     if alignment_position > 2:
         start = alignment_position - k
     else:
         start = - alignment_position
 
-    if alignment_position + k < len(alignment[0]):
+    if alignment_position + k < len(ali[0]):
         end = alignment_position + k
     else:
-        end = len(alignment[0]) - 1
+        end = len(ali[0]) - 1
 
-    for i in alignment[1:]:
+    for i in ali[1:]:
         if i[alignment_position]['features']['ptm']['type'] == ptm_type:
             identities = 0
             norm = len(range(start, end + 1))
             for j in range(start, end + 1):
-                if alignment[0][j]['aa'] == i[j]['aa']:
+                if ali[0][j]['aa'] == i[j]['aa']:
                     identities += 1
             if float(identities) / norm > threshold:
                 result = True
@@ -95,13 +97,18 @@ def similar_surrounding(alignment, alignment_position, ptm_type):
     return result
 
 
+# checks if any sequence (apart from the query sequence) has the 'aa' residue on
+# position 'alignment_position' which is annotated with 'ptm_type' and has
+# similar surrounding to the query sequence (surrounding identity > cutoff)
 def check_if_annotated_aa(alignment, alignment_position, ptm_type, aa):
     result = False
-    for i in alignment:
+    for i in alignment[1:]:
         resI = i[alignment_position]
         if (resI['aa'] == aa
                 and resI['features']['ptm']
-                and resI['features']['ptm']['type'] == ptm_type):
+                and resI['features']['ptm']['type'] == ptm_type
+                and similar_surrounding([alignment[0], i],
+                                        alignment_position, ptm_type, aa)):
             result = True
             break
     return result
@@ -137,9 +144,9 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                 if i < 5 and (not ptm_i or ptm_i['level'] < 4):
                     first_four = False
             conservation = conservation / len(alignment)
-            surrounding_match = similar_surrounding(alignment,
-                                                    alignment_position,
-                                                    ptm['type'])
+            surrounding_match = similar_surrounding(
+                alignment, alignment_position, ptm['type'],
+                alignment[0][alignment_position]['aa'])
             # annotated_aa == True if any residue on this position is of the
             # same aa type and has the same ptm type
             annotated_aa = check_if_annotated_aa(alignment, alignment_position,
