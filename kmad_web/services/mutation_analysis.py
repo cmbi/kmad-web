@@ -95,8 +95,7 @@ def similar_surrounding(alignment, alignment_position, ptm_type):
     return result
 
 
-def check_if_annotated_aa(alignment, alignment_position, ptm_type):
-    aa = alignment[0][alignment_position]['aa']
+def check_if_annotated_aa(alignment, alignment_position, ptm_type, aa):
     result = False
     for i in alignment:
         resI = i[alignment_position]
@@ -108,9 +107,11 @@ def check_if_annotated_aa(alignment, alignment_position, ptm_type):
     return result
 
 
-def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
+def analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                 predicted_phosph_mutant):
     result = {'position': mutation_site,
               'ptms': {}}
+    status_dict = {'certain': 'Y', 'putative': 'M'}
     ptm = alignment[0][alignment_position]['features']['ptm']
     threshold = 0.5
     status_wild = ''
@@ -142,12 +143,19 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa):
             # annotated_aa == True if any residue on this position is of the
             # same aa type and has the same ptm type
             annotated_aa = check_if_annotated_aa(alignment, alignment_position,
-                                                 ptm['type'])
+                ptm['type'], alignment[0][alignment_position]['aa'])
             if (annotated_aa and surrounding_match
                     and (conservation >= threshold or first_four)):
                 status_wild = 'putative'
-    if new_aa == alignment[0][alignment_position]['aa']:
-        status_mut = 'Y'
+    # (if new aa is the same as in the wild seq or if the new appears on this
+    # position with this ptm annotated) and there is a ptm prediction on this
+    # position
+    if ((new_aa == alignment[0][alignment_position]['aa']
+            or check_if_annotated_aa(alignment, alignment_position, ptm['type'],
+                                     new_aa))
+            and (ptm['type'] != 'phosphorylation'
+                 or mutation_site in predicted_phosph_mutant)):
+        status_mut = status_dict[status_wild]
     if status_wild:
         result['ptms'][ptm['type']] = [status_wild, status_mut, 'description']
     return result
@@ -366,6 +374,8 @@ def create_mutant_sequence(sequence, mutation_site, new_aa):
     return new_sequence
 
 
+# takes 1-based position in the sequence; returns 0-based position in the
+# alignment
 def get_real_position(encoded_alignment, mutation_site, seq_no):
     query_seq = encoded_alignment[2*seq_no + 1]
     query_seq = [query_seq[i] for i in range(0, len(query_seq), 7)]

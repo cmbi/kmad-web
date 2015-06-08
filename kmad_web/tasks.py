@@ -266,7 +266,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
                                               alignment, mutation_site,
                                               encoded_alignment)
     ptm_data = ma.analyze_ptms(alignment, mutation_site, alignment_position,
-                               new_aa)
+                               new_aa, predicted_phosph_mutant)
     motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
                                    wild_seq, mutant_seq, mutation_site,
                                    alignment_position, feature_codemap,

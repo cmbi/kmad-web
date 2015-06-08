@@ -107,13 +107,17 @@ def test_analyze_ptms():
     expected = {'position': 1,
                 'ptms': {'phosphorylation': ['certain', 'Y', 'description']}}
 
-    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
+    predicted_phosph_mutant = [1, 2]
+
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
     eq_(result, expected)
 
     new_aa = 'T'
     expected = {'position': 1,
                 'ptms': {'phosphorylation': ['certain', 'N', 'description']}}
-    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
     eq_(result, expected)
 
     alignment = [[
@@ -140,7 +144,8 @@ def test_analyze_ptms():
                       }
          }
     ]]
-    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa)
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
     expected = {'position': 1,
                 'ptms': {'phosphorylation': ['putative', 'N', 'description']}}
 

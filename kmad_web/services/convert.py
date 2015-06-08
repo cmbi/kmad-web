@@ -103,6 +103,7 @@ def run_pfam_scan(filename):
 
 
 # NETPHOS
+# result: list of 1-based positions of predicted phosphorylations
 def run_netphos(filename):
     phosphorylations = set([])
     args = ['netphos', filename]
