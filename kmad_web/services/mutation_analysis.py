@@ -120,7 +120,8 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
               'ptms': {}}
     status_dict = {'certain': 'Y', 'putative': 'M'}
     ptm = alignment[0][alignment_position]['features']['ptm']
-    threshold = 0.5
+    threshold = 0.3
+    high_threshold = 0.6
     status_wild = ''
     status_mut = 'N'
     if ptm:
@@ -151,9 +152,11 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
             # same aa type and has the same ptm type
             annotated_aa = check_if_annotated_aa(alignment, alignment_position,
                 ptm['type'], alignment[0][alignment_position]['aa'])
-            if (annotated_aa and surrounding_match
-                    and (conservation >= threshold or first_four)):
-                status_wild = 'putative'
+            if (annotated_aa and surrounding_match):
+                if conservation >= high_threshold:
+                    status_wild = 'certain'
+                elif conservation >= threshold or first_four:
+                    status_wild = 'putative'
     # (if new aa is the same as in the wild seq or if the new appears on this
     # position with this ptm annotated) and there is a ptm prediction on this
     # position
