@@ -240,6 +240,7 @@ def query_d2p2(filename, output_type, multi_seq_input):
 @celery_app.task
 def analyze_mutation(processed_result, mutation_site, new_aa,
                      wild_seq_filename):
+    mutation_site_0 = mutation_site - 1  # 0-based mutation site position
     wild_seq = processed_result[0]
 
     disorder_prediction = processed_result[-2]  # filtered consensus
@@ -249,13 +250,13 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
 
     annotated_motifs = processed_result[-1]['annotated_motifs']
 
-    mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site, new_aa)
+    mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
     mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
     with mutant_seq_file as f:
         f.write(mutant_seq)
 
     alignment_position = ma.get_real_position(encoded_alignment,
-                                              mutation_site, 0)
+                                              mutation_site_0, 0)
     predicted_phosph_wild = run_netphos(wild_seq_filename)
     predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
     alignment = ma.preprocess_features(encoded_alignment)
@@ -264,17 +265,17 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
 
     surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
                                               predicted_phosph_mutant,
-                                              alignment, mutation_site,
+                                              alignment, mutation_site_0,
                                               encoded_alignment)
-    ptm_data = ma.analyze_ptms(alignment, mutation_site, alignment_position,
+    ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
                                new_aa, predicted_phosph_mutant)
     motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
-                                   wild_seq, mutant_seq, mutation_site,
+                                   wild_seq, mutant_seq, mutation_site_0,
                                    alignment_position, feature_codemap,
                                    annotated_motifs)
 
     output = ma.combine_results(ptm_data, motif_data, surrounding_data,
-                                disorder_prediction, mutation_site, wild_seq)
+                                disorder_prediction, mutation_site_0, wild_seq)
     # output = {
     #     'residues': [
     #         {

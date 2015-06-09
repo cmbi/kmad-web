@@ -30,18 +30,17 @@ def test_get_real_position():
                          '>seq2', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA']
     from kmad_web.services.mutation_analysis import get_real_position
 
-    eq_(get_real_position(encoded_alignment, 1, 0), 0)
-    eq_(get_real_position(encoded_alignment, 2, 0), 2)
-    eq_(get_real_position(encoded_alignment, 3, 0), 5)
+    eq_(get_real_position(encoded_alignment, 1, 0), 2)
+    eq_(get_real_position(encoded_alignment, 2, 0), 5)
 
 
 def test_analyze_predictions():
 
     from kmad_web.services.mutation_analysis import analyze_predictions
 
-    encoded_alignment = ['>seq1', 'SAAAAAASAAAAAASAAAAAASAAA']
-    pred_wild = [1, 2, 3]
-    pred_mut = [1, 2]
+    encoded_alignment = ['>seq1', 'SAAAAAASAAAAAASAAAAAASAAAAAA']
+    pred_wild = [2, 3, 4]
+    pred_mut = [2, 3]
     alignment = [[
         {'aa': 'S',
          'features': {'ptm': {},
@@ -67,7 +66,7 @@ def test_analyze_predictions():
     mutation_site = 0
     result = analyze_predictions(pred_wild, pred_mut, alignment, mutation_site,
                                  encoded_alignment)
-    expected = [{'position': 3,
+    expected = [{'position': 4,
                  'ptms': {'phosphorylation': ['Y', 'N', 'description']}}]
 
     eq_(result, expected)
@@ -104,7 +103,7 @@ def test_analyze_ptms():
     mutation_site = 1
     alignment_position = 1
     new_aa = 'S'
-    expected = {'position': 1,
+    expected = {'position': 2,
                 'ptms': {'phosphorylation': ['Y', 'Y', 'description']}}
 
     predicted_phosph_mutant = [1, 2]
@@ -114,7 +113,7 @@ def test_analyze_ptms():
     eq_(result, expected)
 
     new_aa = 'T'
-    expected = {'position': 1,
+    expected = {'position': 2,
                 'ptms': {'phosphorylation': ['Y', 'N', 'description']}}
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                           predicted_phosph_mutant)
@@ -147,7 +146,7 @@ def test_analyze_ptms():
 
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                           predicted_phosph_mutant)
-    expected = {'position': 1,
+    expected = {'position': 2,
                 'ptms': {'phosphorylation': ['M', 'N', 'description']}}
     eq_(result, expected)
 
@@ -177,7 +176,7 @@ def test_analyze_ptms():
     ]]
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                           predicted_phosph_mutant)
-    expected = {'position': 1,
+    expected = {'position': 2,
                 'ptms': {'hydroxylation': ['Y', 'N', 'description']}}
     eq_(result, expected)
 
@@ -208,7 +207,7 @@ def test_analyze_ptms():
     ]]
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                           predicted_phosph_mutant)
-    expected = {'position': 1,
+    expected = {'position': 2,
                 'ptms': {'hydroxylation': ['M', 'N', 'description']}}
     eq_(result, expected)
 
@@ -238,7 +237,7 @@ def test_analyze_ptms():
     ]]
     new_aa = 'T'
     predicted_phosph_mutant = [1]
-    expected = {'position': 1,
+    expected = {'position': 2,
                 'ptms': {'phosphorylation': ['N', 'M', 'description']}}
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                           predicted_phosph_mutant)
@@ -317,7 +316,7 @@ def test_analyze_motifs():
                             alignment_position, feature_codemap,
                             annotated_motifs)
     # motif A is not present in the first sequence
-    expected = {'position': 1,
+    expected = {'position': 2,
                 'motifs': {'MOTIFB': ['M', 'N', 'description'],
                            'MOTIFC': ['Y', 'Y', 'description']}
                 }

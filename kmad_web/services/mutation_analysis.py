@@ -153,7 +153,7 @@ def feature_conservation(alignment, alignment_position, ptm_type):
 
 def analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                  predicted_phosph_mutant):
-    result = {'position': mutation_site,
+    result = {'position': mutation_site + 1,
               'ptms': {}}
     ptm = alignment[0][alignment_position]['features']['ptm']
     threshold = 0.3
@@ -284,7 +284,7 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
 
 
 def process_motifs(seq_motifs, motif_dict, mutation_site):
-    result = {'position': mutation_site,
+    result = {'position': mutation_site + 1,
               'motifs': {}}
     mut_dict = {True: 'Y', False: 'N'}
     wild_dict = {True: 'Y', False: 'M'}
@@ -342,6 +342,7 @@ def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
     result = []
     # missing - phosphorylations predicted in the wild seq, but in the mutant
     # seq
+    #  1-BASED!!! #
     missing = set(pred_phosph_wild).difference(set(pred_phosph_mut))
     # check if any of the missing phosph are 20 residues (or closer) upstream
     # or downstream from the mutation site
@@ -373,13 +374,13 @@ def combine_results(ptm_data, motif_data, surrounding_data,
     output = {'residues': []}
     for i in xrange(len(sequence)):
         if (i != mutation_site - 1
-                and i not in [j['position'] for j in surrounding_data]):
+                and i + 1 not in [j['position'] for j in surrounding_data]):
             output['residues'].append({'position': i + 1,
                                        'ptm': {},
                                        'motifs': {},
                                        'disordered': disorder_txt[i]})
-        elif i == mutation_site - 1:
-            output['residues'].append({'position': mutation_site,
+        elif i == mutation_site:
+            output['residues'].append({'position': mutation_site + 1,
                                        'ptm': ptm_data['ptms'],
                                        'motifs': motif_data['motifs'],
                                        'disordered':
@@ -403,7 +404,7 @@ def create_mutant_sequence(sequence, mutation_site, new_aa):
     return new_sequence
 
 
-# takes 1-based position in the sequence; returns 0-based position in the
+# takes 0-based position in the sequence; returns 0-based position in the
 # alignment
 def get_real_position(encoded_alignment, mutation_site, seq_no):
     query_seq = encoded_alignment[2*seq_no + 1]
