@@ -88,8 +88,7 @@ def similar_surrounding(alignment, alignment_position, ptm_type, new_res):
         end = len(ali[0]) - 1
 
     for i in ali[1:]:
-        ptm = i[alignment_position]['features']['ptm']
-        if ptm and ptm['type'] == ptm_type:
+        if i[alignment_position]['features']['ptm']['type'] == ptm_type:
             identities = 0
             norm = len(range(start, end + 1))
             for j in range(start, end + 1):
@@ -121,17 +120,10 @@ def check_if_annotated_aa(alignment, alignment_position, ptm_type, aa):
 def count_seqs_with_feature(alignment, ptm_type):
     result = 0
     if ptm_type == 'phosphorylation':
-        dont_check_level = False
-    else:
-        dont_check_level = True
+        check_level = True
     for seq in alignment:
         for res in seq:
-            if (res['features']['ptm'] and res['features']['ptm']['type']
-                    and (dont_check_level
-                         or res['features']['ptm']['level'] < 4)):
-                result += 1
-                break
-    return result
+            if (res['features']['ptm'] and res['feature']['ptm']['type']
 
 
 def feature_conservation(alignment, alignment_position, ptm_type):
@@ -139,15 +131,14 @@ def feature_conservation(alignment, alignment_position, ptm_type):
     first_four = False  # is it present in the first four sequences
     norm = count_seqs_with_feature(alignment, ptm_type)
     # norm - number of sequences with this feature annotated
-    if norm > 0:
-        for i in range(0, len(alignment)):
-            ptm_i = alignment[i][alignment_position]['features']['ptm']
-            if (ptm_i and ptm_type == ptm_i['type']
-                    and ptm_i['level'] < 4):
-                conservation += 1
-            if i < 5 and i > 0 and (not ptm_i or ptm_i['level'] < 4):
-                first_four = False
-        conservation = float(conservation) / len(alignment)
+    for i in range(0, len(alignment)):
+        ptm_i = alignment[i][alignment_position]['features']['ptm']
+        if (ptm_i and ptm['type'] == ptm_i['type']
+                and ptm_i['level'] < 4):
+            conservation += 1
+        if i < 5 and i > 0 and (not ptm_i or ptm_i['level'] < 4):
+            first_four = False
+    conservation = float(conservation) / len(alignment)
     return conservation, first_four
 
 
@@ -158,10 +149,10 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
     ptm = alignment[0][alignment_position]['features']['ptm']
     threshold = 0.3
     high_threshold = 0.6
+    status_wild = 'N'
+    status_mut = 'N'
 
     for ptm_typeI in PTMS:
-        status_wild = 'N'
-        status_mut = 'N'
         conservation, first_four = feature_conservation(alignment,
                                                         alignment_position,
                                                         ptm_typeI)
@@ -175,28 +166,23 @@ def analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
             status_wild = 'Y'
         elif ptm_typeI != 'phosphorylation' or (ptm and ptm['level'] == 4):
             annotated_aa = check_if_annotated_aa(alignment, alignment_position,
-                ptm_typeI, alignment[0][alignment_position]['aa'])
+                ptm['type'], alignment[0][alignment_position]['aa'])
             if (annotated_aa and surrounding_match):
                 if conservation >= high_threshold:
                     status_wild = 'Y'
                 elif conservation >= threshold or first_four:
                     status_wild = 'M'
         # now determine mutant status
-        if (check_if_annotated_aa(alignment, alignment_position, ptm_typeI,
-                                  new_aa)
-                and similar_surrounding(alignment, alignment_position,
-                                        ptm_typeI, new_aa)
-                and (ptm_typeI != 'phosphorylation'
-                     or mutation_site in predicted_phosph_mutant)):
-            if status_wild in ['Y', 'M']:
-                status_mut = status_wild
-            elif conservation >= high_threshold:
-                status_mut = 'Y'
-            elif conservation >= threshold:
-                status_mut = 'M'
-        if status_wild != 'N' or status_mut != 'N':
-            result['ptms'][ptm_typeI] = [status_wild, status_mut,
-                                         'description']
+         if check_if_annotated_aa(alignment, alignment_position, ptm['type'],
+                               new_aa))
+    # if ((new_aa == alignment[0][alignment_position]['aa']
+    #         or check_if_annotated_aa(alignment, alignment_position, ptm['type'],
+    #                                  new_aa))
+    #         and (ptm['type'] != 'phosphorylation'
+    #              or mutation_site in predicted_phosph_mutant)):
+    #     status_mut = status_wild
+    # if status_wild:
+    #     result['ptms'][ptm['type']] = [status_wild, status_mut, 'description']
     return result
 
 
@@ -393,6 +379,16 @@ def combine_results(ptm_data, motif_data, surrounding_data,
             new_residue['disordered'] = disorder_txt[i]
             output['residues'].append(new_residue)
 
+    # output = {'residues': [{'position': mutation_site,
+    #                         'ptm': ptm_data['ptms'],
+    #                         'motifs': motif_data['motifs'],
+    #                         'disordered': disorder_txt[mutation_site - 1]}]}
+    # for i in surrounding_data:
+    #     output['residues'].append(i)
+    # for i in range(len(sequence)):
+    #      new_entry = {'ptms': ptm_data[i], 'motifs': motif_data[i],
+    #                   'disorder': disorder_txt[i]}
+    #      output['residues'].append(new_entry)
     return output
 
 

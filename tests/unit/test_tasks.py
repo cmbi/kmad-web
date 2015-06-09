@@ -187,11 +187,11 @@ class TestTasks(object):
                                   'motifs': {}},
                                  {'position': 2,
                                   'ptm': {
-                                      'phosphorylation': ['certain', 'N',
+                                      'phosphorylation': ['Y', 'N',
                                                           'description']},
                                   'disordered': 'M',
                                   'motifs': {
-                                      'LIGBLA': ['putative', 'Y',
+                                      'LIGBLA': ['M', 'Y',
                                                  'description']
                                   }
                                   }

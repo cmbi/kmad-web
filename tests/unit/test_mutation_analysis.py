@@ -30,8 +30,9 @@ def test_get_real_position():
                          '>seq2', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA']
     from kmad_web.services.mutation_analysis import get_real_position
 
-    eq_(get_real_position(encoded_alignment, 1, 0), 2)
-    eq_(get_real_position(encoded_alignment, 2, 0), 5)
+    eq_(get_real_position(encoded_alignment, 1, 0), 0)
+    eq_(get_real_position(encoded_alignment, 2, 0), 2)
+    eq_(get_real_position(encoded_alignment, 3, 0), 5)
 
 
 def test_analyze_predictions():
@@ -67,8 +68,7 @@ def test_analyze_predictions():
     result = analyze_predictions(pred_wild, pred_mut, alignment, mutation_site,
                                  encoded_alignment)
     expected = [{'position': 3,
-                 'ptms': {'phosphorylation': ['certain', 'N',
-                                              'description']}}]
+                 'ptms': {'phosphorylation': ['Y', 'N', 'description']}}]
 
     eq_(result, expected)
 
@@ -105,7 +105,7 @@ def test_analyze_ptms():
     alignment_position = 1
     new_aa = 'S'
     expected = {'position': 1,
-                'ptms': {'phosphorylation': ['certain', 'Y', 'description']}}
+                'ptms': {'phosphorylation': ['Y', 'Y', 'description']}}
 
     predicted_phosph_mutant = [1, 2]
 
@@ -115,7 +115,7 @@ def test_analyze_ptms():
 
     new_aa = 'T'
     expected = {'position': 1,
-                'ptms': {'phosphorylation': ['certain', 'N', 'description']}}
+                'ptms': {'phosphorylation': ['Y', 'N', 'description']}}
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                           predicted_phosph_mutant)
     eq_(result, expected)
@@ -144,10 +144,105 @@ def test_analyze_ptms():
                       }
          }
     ]]
+
     result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
                           predicted_phosph_mutant)
     expected = {'position': 1,
-                'ptms': {'phosphorylation': ['putative', 'N', 'description']}}
+                'ptms': {'phosphorylation': ['M', 'N', 'description']}}
+    eq_(result, expected)
+
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'hydroxylation', 'level': 3},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'hydroxylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ]]
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
+    expected = {'position': 1,
+                'ptms': {'hydroxylation': ['Y', 'N', 'description']}}
+    eq_(result, expected)
+
+
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'hydroxylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ]]
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
+    expected = {'position': 1,
+                'ptms': {'hydroxylation': ['M', 'N', 'description']}}
+    eq_(result, expected)
+
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'T',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ]]
+    new_aa = 'T'
+    predicted_phosph_mutant = [1]
+    expected = {'position': 1,
+                'ptms': {'phosphorylation': ['N', 'M', 'description']}}
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
+    eq_(result, expected)
 
 
 def test_analyze_motifs():
@@ -223,8 +318,8 @@ def test_analyze_motifs():
                             annotated_motifs)
     # motif A is not present in the first sequence
     expected = {'position': 1,
-                'motifs': {'MOTIFB': ['putative', 'N', 'description'],
-                           'MOTIFC': ['certain', 'Y', 'description']}
+                'motifs': {'MOTIFB': ['M', 'N', 'description'],
+                           'MOTIFC': ['Y', 'Y', 'description']}
                 }
 
     eq_(result, expected)
@@ -309,24 +404,3 @@ def test_process_annotated():
 
     eq_(process_annotated(annotated, motif_dict), expected)
 
-
-# def test_calculate_segment_conservation():
-#     # sequences:
-#     # AAAAAAAA
-#     # AABAABAA
-#     # ABBAABAA
-#     # ABBABBAA
-#     alignment_position = 3
-#     alignment = [[{'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'},
-#                   {'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'}, {'aa': 'A'}],
-#                  [{'aa': 'A'}, {'aa': 'A'}, {'aa': 'B'}, {'aa': 'A'},
-#                   {'aa': 'A'}, {'aa': 'B'}, {'aa': 'A'}, {'aa': 'A'}],
-#                  [{'aa': 'A'}, {'aa': 'B'}, {'aa': 'B'}, {'aa': 'A'},
-#                   {'aa': 'A'}, {'aa': 'B'}, {'aa': 'A'}, {'aa': 'A'}],
-#                  [{'aa': 'A'}, {'aa': 'B'}, {'aa': 'B'}, {'aa': 'A'},
-#                   {'aa': 'B'}, {'aa': 'B'}, {'aa': 'A'}, {'aa': 'A'}]]
-#
-#     from kmad_web.services.mutation_analysis import (
-#         calculate_segment_conservation)
-#
-#     calculate_segment_conservation(alignment, alignment_position)

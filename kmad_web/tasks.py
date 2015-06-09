@@ -236,6 +236,7 @@ def query_d2p2(filename, output_type, multi_seq_input):
     return [found_it, prediction]
 
 
+# mutation_site - 1-based position
 @celery_app.task
 def analyze_mutation(processed_result, mutation_site, new_aa,
                      wild_seq_filename):
