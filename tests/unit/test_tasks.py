@@ -166,12 +166,14 @@ class TestTasks(object):
     def test_analyze_mutation(self, mock_netphos):
 
         from kmad_web.tasks import analyze_mutation
-        mock_netphos.return_value = []
+        netphos_calls = [[1, 2], []]
+        mock_netphos.side_effect = lambda x: netphos_calls.pop(0)
+        # mock_netphos.return_value = []
 
-        testdata = ['ATG', [0, 1, 2], {'alignments': [[], [['>seq1', 'A-TG'],
-                                                          ['>seq2', 'AAA-']],
+        testdata = ['STG', [0, 1, 2], {'alignments': [[], [['>seq1', 'S-TG'],
+                                                           ['>seq2', 'AAA-']],
                                                          ['>seq1',
-                                                          'AAAAAAA-AAAAAATAAANaaGAAAAAA',
+                                                          'SAAANAA-AAAAAATAAANaaGAAAAAA',
                                                           '>seq2',
                                                           'AAAAAAAAAAAAAATAAAAaa-AAAAAA'],
                                    {'motifs': [['aa', 'LIGBLA', 'T']],
@@ -182,7 +184,8 @@ class TestTasks(object):
         result = analyze_mutation(testdata, mutation_site, new_aa,
                                   'test_filename')
         expected = {'residues': [{'position': 1,
-                                  'ptm': {},
+                                  'ptm': {'phosphorylation': ['Y', 'N',
+                                                              'description']},
                                   'disordered': 'N',
                                   'motifs': {}},
                                  {'position': 2,

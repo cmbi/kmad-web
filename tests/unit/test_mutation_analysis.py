@@ -67,7 +67,7 @@ def test_analyze_predictions():
     result = analyze_predictions(pred_wild, pred_mut, alignment, mutation_site,
                                  encoded_alignment)
     expected = [{'position': 4,
-                 'ptms': {'phosphorylation': ['Y', 'N', 'description']}}]
+                 'ptm': {'phosphorylation': ['Y', 'N', 'description']}}]
 
     eq_(result, expected)
 
@@ -322,6 +322,33 @@ def test_analyze_motifs():
                 }
 
     eq_(result, expected)
+
+    feature_codemap = {'motifs': [['aa', 'MOTIFA', 'ST'],
+                                  ['ab', 'MOTIFB', 'SR'],
+                                  ['ac', 'MOTIFC', 'SR']],
+                       'domains': []}
+    expected = {'position': 2,
+                'motifs': {'MOTIFB': ['M', 'N', 'description'],
+                           'MOTIFC': ['Y', 'N', 'description']}
+                }
+    result = analyze_motifs(alignment, proc_alignment, encoded_alignment,
+                            wild_seq, mutant_seq, mutation_site,
+                            alignment_position, feature_codemap,
+                            annotated_motifs)
+    eq_(result, expected)
+
+    feature_codemap = {'motifs': [['aa', 'MOTIFA', 'ST'],
+                                  ['ab', 'MOTIFB', 'S.'],
+                                  ['ac', 'MOTIFC', 'SR']],
+                       'domains': []}
+    result = analyze_motifs(alignment, proc_alignment, encoded_alignment,
+                            wild_seq, mutant_seq, mutation_site,
+                            alignment_position, feature_codemap,
+                            annotated_motifs)
+    expected = {'position': 2,
+                'motifs': {'MOTIFB': ['M', 'M', 'description'],
+                           'MOTIFC': ['Y', 'N', 'description']}
+                }
 
 
 def test_get_motif_list():

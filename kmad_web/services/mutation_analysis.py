@@ -266,10 +266,6 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
                 if i in certain.keys():
                     annotated = True
                 result[i] = {'annotated': annotated, 'mut': mutant}
-        if not matches and i in certain.keys():
-            annotated = True
-            mutant = False
-            result[i] = {'annotated': annotated, 'mut': mutant}
     for i in certain:
         if i not in result.keys():
             start = certain[i]['coords'][0]
@@ -354,7 +350,7 @@ def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
             # phosphorylated
             if (ptm and ptm['type'] == 'phosphorylation' and ptm['level'] != 4):
                 new_entry = {'position': i,
-                             'ptms': {
+                             'ptm': {
                                  'phosphorylation': ['Y', 'N',
                                                      'description']
                              }
@@ -392,8 +388,8 @@ def combine_results(ptm_data, motif_data, surrounding_data,
                     new_residue = j
                     break
             new_residue['disordered'] = disorder_txt[i]
+            new_residue['motifs'] = {}
             output['residues'].append(new_residue)
-
     return output
 
 
