@@ -49,14 +49,13 @@ class PredictStrategy(object):
         for pred_name in prediction_methods:
             tasks_to_run += [run_single_predictor.s(single_fasta_filename,
                                                     pred_name)]
-        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
-                                 multi_seq_input),
-                    group(tasks_to_run),
-                    postprocess.s(single_fasta_filename, align_fasta_filename,
-                                  conffilename, self.output_type))()
-        task_id = job.id
-
-        return task_id
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                      multi_seq_input),
+                         group(tasks_to_run),
+                         postprocess.s(single_fasta_filename,
+                                       align_fasta_filename,
+                                       conffilename, self.output_type))
+        return workflow
 
 
 class PredictAndAlignStrategy(object):
@@ -99,13 +98,13 @@ class PredictAndAlignStrategy(object):
                                  ptm_score, domain_score, motif_score,
                                  multi_seq_input, conffilename, output_type,
                                  first_seq_gapped)]
-        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
-                                 multi_seq_input),
-                    group(tasks_to_run),
-                    postprocess.s(single_fasta_filename, align_fasta_filename,
-                                  conffilename, self.output_type))()
-        task_id = job.id
-        return task_id
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                      multi_seq_input),
+                         group(tasks_to_run),
+                         postprocess.s(single_fasta_filename,
+                                       align_fasta_filename,
+                                       conffilename, self.output_type))
+        return workflow
 
 
 class AlignStrategy(object):
@@ -142,13 +141,13 @@ class AlignStrategy(object):
                                 ptm_score, domain_score, motif_score,
                                 multi_seq_input, conffilename, output_type,
                                 first_seq_gapped)]
-        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
-                                 multi_seq_input),
-                    group(tasks_to_run),
-                    postprocess.s(single_fasta_filename, align_fasta_filename,
-                                  conffilename, self.output_type))()
-        task_id = job.id
-        return task_id
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                      multi_seq_input),
+                         group(tasks_to_run),
+                         postprocess.s(single_fasta_filename,
+                                       align_fasta_filename,
+                                       conffilename, self.output_type))
+        return workflow
 
 
 class AnnotateStrategy(object):
@@ -170,10 +169,10 @@ class AnnotateStrategy(object):
         single_fasta_filename = files.write_single_fasta(fasta_seq)
         tasks_to_run = [get_seq.s(fasta_seq),
                         annotate.s(multi_fasta_filename)]
-        job = chain(query_d2p2.s(single_fasta_filename, self.output_type,
-                                 True),
-                    group(tasks_to_run),
-                    postprocess.s(single_fasta_filename, multi_fasta_filename,
-                                  "dummyname", self.output_type))()
-        task_id = job.id
-        return task_id
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                      True),
+                         group(tasks_to_run),
+                         postprocess.s(single_fasta_filename,
+                                       multi_fasta_filename,
+                                       "dummyname", self.output_type))
+        return workflow
