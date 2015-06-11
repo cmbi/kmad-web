@@ -5,7 +5,7 @@ from flask import abort
 from flask import (Blueprint, render_template,
                    request, redirect, url_for, send_file)
 
-from kmad_web.services import txtproc, fieldlist_helper
+from kmad_web.services import files, fieldlist_helper
 from kmad_web.frontend.dashboard.forms import KmanForm
 from kmad_web.services.kmad import KmanStrategyFactory
 
@@ -27,16 +27,22 @@ def index():
         _log.debug("validation")
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
+
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
-        multi_seq_input = txtproc.check_if_multi(seq_data)  # bool
+
+        single_fasta_filename, multi_fasta_filename, multi_seq_input = (
+            files.write_fasta(seq_data))
+
         if form.output_type.data == "predict":
-            job = strategy(seq_data, form.prediction_method.data,
+            job = strategy(seq_data, single_fasta_filename,
+                           multi_fasta_filename, form.prediction_method.data,
                            multi_seq_input)()
             celery_id = job.id
             _log.debug(form.prediction_method.data)
         elif (form.output_type.data == 'align'
               or form.output_type.data == 'refine'):
-            job = strategy(seq_data, form.gap_open_p.data,
+            job = strategy(seq_data, single_fasta_filename,
+                           multi_fasta_filename, form.gap_open_p.data,
                            form.gap_ext_p.data, form.end_gap_p.data,
                            form.ptm_score.data, form.domain_score.data,
                            form.motif_score.data, multi_seq_input,
@@ -45,10 +51,12 @@ def index():
             celery_id = job.id
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
         elif form.output_type.data == 'annotate':
-            job = strategy(seq_data)()
+            job = strategy(seq_data, single_fasta_filename,
+                           multi_fasta_filename)()
             celery_id = job.id
         elif form.output_type.data == 'predict_and_align':
-            job = strategy(seq_data, form.gap_open_p.data,
+            job = strategy(seq_data, single_fasta_filename,
+                           multi_fasta_filename, form.gap_open_p.data,
                            form.gap_ext_p.data, form.end_gap_p.data,
                            form.ptm_score.data, form.domain_score.data,
                            form.motif_score.data,

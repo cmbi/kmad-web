@@ -127,3 +127,21 @@ def write_conf_file(usr_features):
         _log.debug("Writing data to '{}'".format(tmp_file.name))
         f.write(parsed_features)
     return tmp_file.name
+
+
+def write_fasta(seq_data):
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    fasta_seq = txtproc.process_fasta(seq_data)
+    _log.debug("Created tmp file '{}'".format(tmp_file.name))
+    with tmp_file as f:
+        _log.debug("Writing data to '{}'".format(tmp_file.name))
+        f.write(fasta_seq)
+
+    multi_seq_input = txtproc.check_if_multi(seq_data)  # bool
+    multi_fasta_filename = tmp_file.name
+
+    if multi_seq_input:
+        single_fasta_filename = write_single_fasta(fasta_seq)
+    else:
+        single_fasta_filename = tmp_file.name
+    return single_fasta_filename, multi_fasta_filename, multi_seq_input

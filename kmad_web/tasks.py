@@ -120,6 +120,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 _log.error("Error: {}".format(e))
         return data
 
+
 @celery_app.task
 def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
@@ -181,7 +182,8 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
 
 @celery_app.task
 def annotate(d2p2, filename):
-    encoded_filename = convert_to_7chars(filename)['filename']  # .7c filename
+    convert_result = convert_to_7chars(filename)
+    encoded_filename = convert_result['filename']
     with open(filename.split('.')[0] + '.map') as a:
         feature_codemap = a.read().splitlines()
     # motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
@@ -198,7 +200,9 @@ def annotate(d2p2, filename):
                                                    errors='ignore')
     codon_length = 7
     processed = process_alignment(encoded, codon_length)
-    result = processed + [feature_codemap]
+    alignments = processed + [feature_codemap]
+    result = {'alignments': alignments,
+              'annotated_motifs': convert_result['annotated_motifs']}
     return result
 
 
