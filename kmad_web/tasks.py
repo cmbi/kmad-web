@@ -337,7 +337,16 @@ def update_elmdb(output_filename):
 @celery_app.task
 def filter_blast(blast_result):
     _log.debug('Filtering blast result')
-    return blast_result
+    with open(paths.MAMMAL_IDS) as a:
+        mammal_ids = a.read().splitlines()
+    if blast_result[0].split('|')[2].split('_')[1] in mammal_ids:
+        filtered_blast = []
+        for i in blast_result:
+            if i.split('|')[2].split('_')[1] in mammal_ids:
+                filtered_blast.append(i)
+    else:
+        filtered_blast = blast_result
+    return filtered_blast
 
 
 def get_task(output_type):
