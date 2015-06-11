@@ -356,7 +356,7 @@ def analyze_predictions(pred_phosph_wild, pred_phosph_mut, alignment,
                              }
                              }
                 result.append(new_entry)
-        else:
+        else:  # pragma: no cover
             _log.debug("Prediction change more then 20 amino acids away from"
                        "the mutation site")
     return result

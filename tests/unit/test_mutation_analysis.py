@@ -244,6 +244,94 @@ def test_analyze_ptms():
     eq_(result, expected)
 
 
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 4},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ]]
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
+    expected = {'position': 2,
+                'ptms': {'phosphorylation': ['Y', 'N', 'description']}}
+    eq_(result, expected)
+
+    alignment = [[
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'M',
+         'features': {'ptm': {},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ],
+        [
+        {'aa': 'S',
+         'features': {'ptm': {},
+                      'motif':  ''
+                      }
+         },
+        {'aa': 'S',
+         'features': {'ptm': {'type': 'phosphorylation', 'level': 0},
+                      'motif': ''
+                      }
+         }
+    ]]
+    new_aa = 'S'
+    predicted_phosph_mutant = [1]
+
+    expected = {'position': 2,
+                'ptms': {'phosphorylation': ['N', 'Y', 'description']}}
+    result = analyze_ptms(alignment, mutation_site, alignment_position, new_aa,
+                          predicted_phosph_mutant)
+    eq_(result, expected)
+
+
 def test_analyze_motifs():
     alignment = [[
         {'aa': 'S',
