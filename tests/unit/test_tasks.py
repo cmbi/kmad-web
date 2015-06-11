@@ -168,15 +168,15 @@ class TestTasks(object):
         from kmad_web.tasks import analyze_mutation
         mock_netphos.return_value = []
 
-        testdata = ['AT', [0, 1], {'alignments': [[], [['>seq1', 'A-T'],
-                                                       ['>seq2', 'AAA']],
-                                                      ['>seq1',
-                                                       'AAAAAAA-AAAAAATAAANaa',
-                                                       '>seq2',
-                                                       'AAAAAAAAAAAAAATAAAAaa'],
+        testdata = ['ATG', [0, 1, 2], {'alignments': [[], [['>seq1', 'A-TG'],
+                                                          ['>seq2', 'AAA-']],
+                                                         ['>seq1',
+                                                          'AAAAAAA-AAAAAATAAANaaGAAAAAA',
+                                                          '>seq2',
+                                                          'AAAAAAAAAAAAAATAAAAaa-AAAAAA'],
                                    {'motifs': [['aa', 'LIGBLA', 'T']],
                                     'domains': []}],
-                                   'annotated_motifs': [[], [], []]}]
+                                    'annotated_motifs': [[], [], []]}]
         mutation_site = 2
         new_aa = 'P'
         result = analyze_mutation(testdata, mutation_site, new_aa,
@@ -194,6 +194,11 @@ class TestTasks(object):
                                       'LIGBLA': ['M', 'N',
                                                  'description']
                                   }
+                                  },
+                                 {'position': 3,
+                                  'ptm': {},
+                                  'disordered': 'Y',
+                                  'motifs': {}
                                   }
                                  ]
                     }
