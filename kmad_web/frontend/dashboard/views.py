@@ -5,9 +5,9 @@ from flask import abort
 from flask import (Blueprint, render_template,
                    request, redirect, url_for, send_file)
 
+from kmad_web.services import txtproc, fieldlist_helper
 from kmad_web.frontend.dashboard.forms import KmanForm
 from kmad_web.services.kmad import KmanStrategyFactory
-from kmad_web.services import txtproc, fieldlist_helper
 
 
 _log = logging.getLogger(__name__)
@@ -95,28 +95,7 @@ def help():
     return render_template('dashboard/help.html')
 
 
-@bp.route("/examples/alignment1_1", endpoint="alignment1_1", methods=['GET'],
-          defaults={"filename": "alignment1_1"})
-@bp.route("/examples/alignment1_2", endpoint="alignment1_2", methods=['GET'],
-          defaults={"filename": "alignment1_2"})
-@bp.route("/examples/alignment1_3", endpoint="alignment1_3", methods=['GET'],
-          defaults={"filename": "alignment1_3"})
-@bp.route("/examples/alignment1_4", endpoint="alignment1_4", methods=['GET'],
-          defaults={"filename": "alignment1_4"})
-@bp.route("/examples/alignment2_1", endpoint="alignment2_1", methods=['GET'],
-          defaults={"filename": "alignment2_1"})
-@bp.route("/examples/alignment2_2", endpoint="alignment2_2", methods=['GET'],
-          defaults={"filename": "alignment2_2"})
-@bp.route("/examples/alignment2_3", endpoint="alignment2_3", methods=['GET'],
-          defaults={"filename": "alignment2_3"})
-@bp.route("/examples/alignment2_4", endpoint="alignment2_4", methods=['GET'],
-          defaults={"filename": "alignment2_4"})
-@bp.route("/examples/alignment2_5", endpoint="alignment2_5", methods=['GET'],
-          defaults={"filename": "alignment2_5"})
-@bp.route("/examples/example1", endpoint="example1", methods=['GET'],
-          defaults={"filename": "example1"})
-@bp.route("/examples/example2", endpoint="example2", methods=['GET'],
-          defaults={"filename": "example2"})
+@bp.route('/examples/<filename>', methods=['GET'])
 def alignment_example(filename):
     return render_template('dashboard/examples/{}.html'.format(filename))
 
