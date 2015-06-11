@@ -37,9 +37,8 @@ class PredictStrategy(object):
         for pred_name in prediction_methods:
             tasks_to_run += [run_single_predictor.s(single_fasta_filename,
                                                     pred_name)]
-        workflow = chain(run_blast.s(single_fasta_filename),
-                         query_d2p2.si(single_fasta_filename, self.output_type,
-                                       multi_seq_input),
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                      multi_seq_input),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,
                                        multi_fasta_filename,
@@ -77,8 +76,7 @@ class PredictAndAlignStrategy(object):
                                  ptm_score, domain_score, motif_score,
                                  multi_seq_input, conffilename, output_type,
                                  first_seq_gapped)]
-        workflow = chain(run_blast.s(single_fasta_filename),
-                         query_d2p2.si(single_fasta_filename, self.output_type,
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                        multi_seq_input),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,
@@ -111,9 +109,8 @@ class AlignStrategy(object):
                                 ptm_score, domain_score, motif_score,
                                 multi_seq_input, conffilename, output_type,
                                 first_seq_gapped)]
-        workflow = chain(run_blast.s(single_fasta_filename),
-                         query_d2p2.si(single_fasta_filename, self.output_type,
-                                       multi_seq_input),
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                      multi_seq_input),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,
                                        multi_fasta_filename,
@@ -133,9 +130,8 @@ class AnnotateStrategy(object):
 
         tasks_to_run = [get_seq.s(fasta_seq),
                         annotate.s(multi_fasta_filename)]
-        workflow = chain(run_blast.s(single_fasta_filename),
-                         query_d2p2.si(single_fasta_filename, self.output_type,
-                                       True),
+        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+                                      True),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,
                                        multi_fasta_filename,

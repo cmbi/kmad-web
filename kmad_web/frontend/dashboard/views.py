@@ -32,37 +32,46 @@ def index():
 
         single_fasta_filename, multi_fasta_filename, multi_seq_input = (
             files.write_fasta(seq_data))
+        from celery import chain
+        from kmad_web.tasks import run_blast
 
         if form.output_type.data == "predict":
-            job = strategy(seq_data, single_fasta_filename,
-                           multi_fasta_filename, form.prediction_method.data,
-                           multi_seq_input)()
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename,
+                                form.prediction_method.data,
+                                multi_seq_input)
+            job = chain(run_blast.s(single_fasta_filename), workflow)()
             celery_id = job.id
             _log.debug(form.prediction_method.data)
         elif (form.output_type.data == 'align'
               or form.output_type.data == 'refine'):
-            job = strategy(seq_data, single_fasta_filename,
-                           multi_fasta_filename, form.gap_open_p.data,
-                           form.gap_ext_p.data, form.end_gap_p.data,
-                           form.ptm_score.data, form.domain_score.data,
-                           form.motif_score.data, multi_seq_input,
-                           form.usr_features.data, form.output_type.data,
-                           form.first_seq_gapped.data)()
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename, form.gap_open_p.data,
+                                form.gap_ext_p.data, form.end_gap_p.data,
+                                form.ptm_score.data, form.domain_score.data,
+                                form.motif_score.data, multi_seq_input,
+                                form.usr_features.data, form.output_type.data,
+                                form.first_seq_gapped.data)
+            job = chain(run_blast.s(single_fasta_filename), workflow)()
             celery_id = job.id
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
         elif form.output_type.data == 'annotate':
-            job = strategy(seq_data, single_fasta_filename,
-                           multi_fasta_filename)()
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename)
+            job = chain(run_blast.s(single_fasta_filename), workflow)()
             celery_id = job.id
         elif form.output_type.data == 'predict_and_align':
-            job = strategy(seq_data, single_fasta_filename,
-                           multi_fasta_filename, form.gap_open_p.data,
-                           form.gap_ext_p.data, form.end_gap_p.data,
-                           form.ptm_score.data, form.domain_score.data,
-                           form.motif_score.data,
-                           form.prediction_method.data, multi_seq_input,
-                           form.usr_features.data,
-                           form.first_seq_gapped.data)()
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename, form.gap_open_p.data,
+                                form.gap_ext_p.data, form.end_gap_p.data,
+                                form.ptm_score.data, form.domain_score.data,
+                                form.motif_score.data,
+                                form.prediction_method.data, multi_seq_input,
+                                form.usr_features.data,
+                                form.first_seq_gapped.data)
+
+            job = chain(run_blast.s(single_fasta_filename), workflow)()
+
             celery_id = job.id
             # IDEA: Could have the strategies (AlignStrategy and
             # PredictStrategy) return the celery workflow (without running it).

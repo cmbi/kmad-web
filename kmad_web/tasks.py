@@ -31,7 +31,6 @@ _log = logging.getLogger(__name__)
 def postprocess(result, single_filename, multi_filename, conffilename,
                 output_type):
     # process result and remove tmp files
-    _log.debug("Postprocessing the results")
     files.remove_files(single_filename)
     files.remove_files(multi_filename)
     if conffilename:
@@ -66,8 +65,8 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 @celery_app.task
 def run_single_predictor(prev_result, fasta_file, pred_name):
     _log.debug("Run single predictor: {}".format(pred_name))
-    if prev_result[0]:
-        return prev_result[1]
+    if prev_result[1][0]:
+        return prev_result[1][1]
     else:
         if pred_name == "dummy":    # pragma: no cover
             sequence = open(fasta_file).readlines()[1:]
@@ -122,14 +121,12 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 
 
 @celery_app.task
-def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
+def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
           multi_seq_input, conffilename, output_type, first_seq_gapped):
-    # blast result file already created in "query_d2p2"
     if not multi_seq_input:
-        out_blast = filename.split(".")[0]+".blastp"
-        # fasta filename
-        fastafile, blast_success = get_fasta_from_blast(out_blast, filename)
+        blast_result = prev_tasks[0]
+        fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
         _log.debug("BLAST success: {}".format(blast_success))
     else:
         fastafile = filename
@@ -170,7 +167,6 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
                                                            errors='ignore')
         alignment_processed = process_alignment(alignment_encoded, codon_length)
         alignments = alignment_processed + [feature_codemap]
-        _log.debug("feature codemap: {}".format(feature_codemap))
         result = {'alignments': alignments,
                   'annotated_motifs': annotated_motifs}
     else:
@@ -221,14 +217,17 @@ def run_blast(filename):
         subprocess.call(args)
     except subprocess.CalledProcessError as e:
         _log.error("Error: {}".format(e.output))
+    with open(out_blast) as a:
+        output = a.read().splitlines()
+    return output
 
 
 @celery_app.task
-def query_d2p2(filename, output_type, multi_seq_input):
+def query_d2p2(blast_result, filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
     if not (multi_seq_input and output_type == 'align'):
-        out_blast = filename.split(".")[0]+".blastp"
+        # out_blast = filename.split(".")[0]+".blastp"
         # args = ["blastp", "-query", filename, "-evalue", "1e-5",
         #         "-num_threads", "15", "-db", paths.SWISSPROT_DB,
         #         "-out", out_blast, '-outfmt', '10']
@@ -237,19 +236,19 @@ def query_d2p2(filename, output_type, multi_seq_input):
         # except subprocess.CalledProcessError as e:
         #     _log.error("Error: {}".format(e.output))
         # if output_type != 'align':
-        if os.path.exists(out_blast):
-            [found_it, seq_id] = find_seqid_blast(out_blast)
-            if found_it:
-                data = 'seqids=["%s"]' % seq_id
-                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-                response = json.loads(urllib2.urlopen(request).read())
-                if response[seq_id]:
-                    pred_result = \
-                        response[seq_id][0][2]['disorder']['consensus']
-                    prediction = process_d2p2(pred_result)
-                else:
-                    found_it = False
-    return [found_it, prediction]
+        # if os.path.exists(out_blast):
+        [found_it, seq_id] = find_seqid_blast(blast_result)
+        if found_it:
+            data = 'seqids=["%s"]' % seq_id
+            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+            response = json.loads(urllib2.urlopen(request).read())
+            if response[seq_id]:
+                pred_result = \
+                    response[seq_id][0][2]['disorder']['consensus']
+                prediction = process_d2p2(pred_result)
+            else:
+                found_it = False
+    return [blast_result, [found_it, prediction]]
 
 
 # mutation_site - 1-based position
