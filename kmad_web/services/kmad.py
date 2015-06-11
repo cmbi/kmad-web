@@ -28,9 +28,9 @@ class PredictStrategy(object):
         self.output_type = output_type
 
     def __call__(self, fasta_seq, prediction_methods, multi_seq_input):
-        from kmad_web.tasks import query_d2p2
         from celery import chain, group
-        from kmad_web.tasks import run_single_predictor, postprocess, get_seq
+        from kmad_web.tasks import (query_d2p2, run_single_predictor,
+                                    postprocess, get_seq, run_blast)
         _log.debug("Called it")
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
@@ -49,7 +49,8 @@ class PredictStrategy(object):
         for pred_name in prediction_methods:
             tasks_to_run += [run_single_predictor.s(single_fasta_filename,
                                                     pred_name)]
-        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+        workflow = chain(run_blast.si(single_fasta_filename),
+                         query_d2p2.si(single_fasta_filename, self.output_type,
                                       multi_seq_input),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,
@@ -67,7 +68,8 @@ class PredictAndAlignStrategy(object):
                  prediction_methods, multi_seq_input, usr_features,
                  first_seq_gapped):
         from kmad_web.tasks import (query_d2p2, align,
-                                    run_single_predictor, postprocess, get_seq)
+                                    run_single_predictor, run_blast,
+                                    postprocess, get_seq)
         from celery import chain, group
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         fasta_seq = txtproc.process_fasta(fasta_seq)
@@ -98,7 +100,8 @@ class PredictAndAlignStrategy(object):
                                  ptm_score, domain_score, motif_score,
                                  multi_seq_input, conffilename, output_type,
                                  first_seq_gapped)]
-        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+        workflow = chain(run_blast.si(single_fasta_filename),
+                         query_d2p2.si(single_fasta_filename, self.output_type,
                                       multi_seq_input),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,
@@ -114,7 +117,7 @@ class AlignStrategy(object):
     def __call__(self, fasta_seq, gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  multi_seq_input, usr_features, output_type, first_seq_gapped):
-        from kmad_web.tasks import (query_d2p2, align,
+        from kmad_web.tasks import (query_d2p2, align, run_blast,
                                     postprocess, get_seq)
         from celery import chain, group
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
@@ -141,7 +144,8 @@ class AlignStrategy(object):
                                 ptm_score, domain_score, motif_score,
                                 multi_seq_input, conffilename, output_type,
                                 first_seq_gapped)]
-        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+        workflow = chain(run_blast.si(single_fasta_filename),
+                         query_d2p2.si(single_fasta_filename, self.output_type,
                                       multi_seq_input),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,
@@ -155,7 +159,7 @@ class AnnotateStrategy(object):
         self.output_type = output_type
 
     def __call__(self, fasta_seq):
-        from kmad_web.tasks import (query_d2p2, annotate,
+        from kmad_web.tasks import (query_d2p2, annotate, run_blast,
                                     postprocess, get_seq)
         from celery import chain, group
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
@@ -169,7 +173,8 @@ class AnnotateStrategy(object):
         single_fasta_filename = files.write_single_fasta(fasta_seq)
         tasks_to_run = [get_seq.s(fasta_seq),
                         annotate.s(multi_fasta_filename)]
-        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
+        workflow = chain(run_blast.si(single_fasta_filename),
+                         query_d2p2.si(single_fasta_filename, self.output_type,
                                       True),
                          group(tasks_to_run),
                          postprocess.s(single_fasta_filename,

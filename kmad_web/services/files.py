@@ -47,34 +47,35 @@ def get_e_val(textline):
 # query_filename - path to the file with the original sequence
 
 def get_fasta_from_blast(blast_name, query_filename):
+    success = False
     outfile_name = blast_name.split(".")[0]+"_toalign.fasta"
     outfile = open(outfile_name, 'w')
-    with open(query_filename) as a:
-        query_fasta = a.read().splitlines()
-    with open(blast_name) as a:
-        blastfile = a.read().splitlines()
-    success = True
-    if len(blastfile) > 1:
-        newfasta = ""
-        # take query sequence if it's different form the first seq. from blast
-        uniprot_id = blastfile[0].split(',')[1].split("|")[1]
-        sequence = get_seq_from_uniprot(uniprot_id)
-        if query_fasta[1] != sequence[1]:
-            newfasta += "{}\n{}\n".format(query_fasta[0], query_fasta[1])
+    if os.path.exists(query_filename) and os.path.exists(blast_name):
+        with open(query_filename) as a:
+            query_fasta = a.read().splitlines()
+        with open(blast_name) as a:
+            blastfile = a.read().splitlines()
+        success = True
+        if len(blastfile) > 1:
+            newfasta = ""
+            # take query sequence if it's different form the
+            # first seq. from blast
+            uniprot_id = blastfile[0].split(',')[1].split("|")[1]
+            sequence = get_seq_from_uniprot(uniprot_id)
+            if query_fasta[1] != sequence[1]:
+                newfasta += "{}\n{}\n".format(query_fasta[0], query_fasta[1])
 
-        for i, lineI in enumerate(blastfile[:35]):
-            line_list = lineI.split(',')
-            if float(line_list[-2]) < 0.0001:
-                uniprot_id = line_list[1].split("|")[1]
-                sequence = get_seq_from_uniprot(uniprot_id)
-                if len(sequence[0]) > 1:
-                    newfasta += "{}{}\n".format(sequence[0], sequence[1])
-            elif i % 10 == 0:     # pragma: no cover
-                time.sleep(3)
-        outfile.write(newfasta)
-        outfile.close()
-    else:
-        success = False
+            for i, lineI in enumerate(blastfile[:35]):
+                line_list = lineI.split(',')
+                if float(line_list[-2]) < 0.0001:
+                    uniprot_id = line_list[1].split("|")[1]
+                    sequence = get_seq_from_uniprot(uniprot_id)
+                    if len(sequence[0]) > 1:
+                        newfasta += "{}{}\n".format(sequence[0], sequence[1])
+                elif i % 10 == 0:     # pragma: no cover
+                    time.sleep(3)
+            outfile.write(newfasta)
+            outfile.close()
     return outfile_name, success
 
 

@@ -120,7 +120,6 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 _log.error("Error: {}".format(e))
         return data
 
-
 @celery_app.task
 def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
@@ -209,19 +208,32 @@ def get_seq(d2p2, fasta_file):
 
 
 @celery_app.task
+def run_blast(filename):
+    out_blast = filename.split(".")[0]+".blastp"
+    args = ["blastp", "-query", filename, "-evalue", "1e-5",
+            "-num_threads", "15", "-db", paths.SWISSPROT_DB,
+            "-out", out_blast, '-outfmt', '10']
+    try:
+        subprocess.call(args)
+    except subprocess.CalledProcessError as e:
+        _log.error("Error: {}".format(e.output))
+
+
+@celery_app.task
 def query_d2p2(filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
     if not (multi_seq_input and output_type == 'align'):
         out_blast = filename.split(".")[0]+".blastp"
-        args = ["blastp", "-query", filename, "-evalue", "1e-5",
-                "-num_threads", "15", "-db", paths.SWISSPROT_DB,
-                "-out", out_blast, '-outfmt', '10']
-        try:
-            subprocess.call(args)
-        except subprocess.CalledProcessError as e:
-            _log.error("Error: {}".format(e.output))
-        if output_type != 'align':
+        # args = ["blastp", "-query", filename, "-evalue", "1e-5",
+        #         "-num_threads", "15", "-db", paths.SWISSPROT_DB,
+        #         "-out", out_blast, '-outfmt', '10']
+        # try:
+        #     subprocess.call(args)
+        # except subprocess.CalledProcessError as e:
+        #     _log.error("Error: {}".format(e.output))
+        # if output_type != 'align':
+        if os.path.exists(out_blast):
             [found_it, seq_id] = find_seqid_blast(out_blast)
             if found_it:
                 data = 'seqids=["%s"]' % seq_id
