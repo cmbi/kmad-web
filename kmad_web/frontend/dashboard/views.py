@@ -33,7 +33,7 @@ def index():
         single_fasta_filename, multi_fasta_filename, multi_seq_input = (
             files.write_fasta(seq_data))
         from celery import chain
-        from kmad_web.tasks import run_blast
+        from kmad_web.tasks import run_blast, filter_blast
 
         if form.output_type.data == "predict":
             workflow = strategy(seq_data, single_fasta_filename,
@@ -70,7 +70,8 @@ def index():
                                 form.usr_features.data,
                                 form.first_seq_gapped.data)
 
-            job = chain(run_blast.s(single_fasta_filename), workflow)()
+            job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+                        workflow)()
 
             celery_id = job.id
             # IDEA: Could have the strategies (AlignStrategy and

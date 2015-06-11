@@ -334,6 +334,12 @@ def update_elmdb(output_filename):
     out.close()
 
 
+@celery_app.task
+def filter_blast(blast_result):
+    _log.debug('Filtering blast result')
+    return blast_result
+
+
 def get_task(output_type):
     """
     Get the task for the given output_type.
