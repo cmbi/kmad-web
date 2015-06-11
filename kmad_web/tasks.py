@@ -273,7 +273,6 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
                                    wild_seq, mutant_seq, mutation_site_0,
                                    alignment_position, feature_codemap,
                                    annotated_motifs)
-
     output = ma.combine_results(ptm_data, motif_data, surrounding_data,
                                 disorder_prediction, mutation_site_0, wild_seq)
     # output = {

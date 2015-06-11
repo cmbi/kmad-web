@@ -191,7 +191,7 @@ class TestTasks(object):
                                                           'description']},
                                   'disordered': 'M',
                                   'motifs': {
-                                      'LIGBLA': ['M', 'Y',
+                                      'LIGBLA': ['M', 'N',
                                                  'description']
                                   }
                                   }

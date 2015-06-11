@@ -258,7 +258,7 @@ def get_wild_and_mut_motifs(conserved_motifs, wild_seq, mut_seq, motif_dict,
         matches = re.finditer(pattern, wild_seq)
         matches = [j.span() for j in list(matches)]
         for j in matches:
-            if mutation_site in range(j[0] + 1, j[1] + 1):
+            if mutation_site in range(j[0], j[1]):
                 mutant = False
                 annotated = False
                 if p.match(mut_seq[j[0]:j[1]]):
@@ -373,18 +373,18 @@ def combine_results(ptm_data, motif_data, surrounding_data,
     disorder_txt = [dis_dict[i] for i in disorder_prediction]
     output = {'residues': []}
     for i in xrange(len(sequence)):
-        if (i != mutation_site - 1
+        if (i != mutation_site
                 and i + 1 not in [j['position'] for j in surrounding_data]):
             output['residues'].append({'position': i + 1,
                                        'ptm': {},
                                        'motifs': {},
                                        'disordered': disorder_txt[i]})
         elif i == mutation_site:
-            output['residues'].append({'position': mutation_site + 1,
+            output['residues'].append({'position': i + 1,
                                        'ptm': ptm_data['ptms'],
                                        'motifs': motif_data['motifs'],
                                        'disordered':
-                                           disorder_txt[mutation_site - 1]})
+                                           disorder_txt[i]})
         else:
             new_residue = {'position': i + 1}
             for j in surrounding_data:
