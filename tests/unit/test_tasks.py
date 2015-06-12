@@ -19,8 +19,8 @@ class TestTasks(object):
 
         from kmad_web.tasks import get_seq
 
-        result = get_seq.delay('d2p2', '>test\nSEQ\n')
-        eq_(result.get(), output)
+        result = get_seq('d2p2', '>test\nSEQ\n')
+        eq_(result, output)
 
     @patch('kmad_web.tasks.convert_to_7chars')
     @patch('kmad_web.tasks.get_fasta_from_blast')
@@ -38,9 +38,9 @@ class TestTasks(object):
 
         from kmad_web.tasks import align
 
-        result = align.delay('d2p2', filename, -5, -1, -1, 10, 3, 3, False, "",
-                             'align', False)
-        eq_(result.get(), expected)
+        result = align('d2p2', filename, -5, -1, -1, 10, 3, 3, False, "",
+                       'align', False)
+        eq_(result, expected)
 
     def test_postprocess(self):
         filename = 'testdata/test.fasta'
@@ -51,17 +51,17 @@ class TestTasks(object):
         func_input = [test.seq, test.d2p2_result]
         expected = func_input[:]
 
-        result = postprocess.delay(func_input, filename, filename, '',
-                                   'predict')
-        eq_(result.get(), expected)
+        result = postprocess(func_input, filename, filename, '',
+                             'predict')
+        eq_(result, expected)
 
         # check predictors' result and output type 'predict'
         func_input = [test.seq] + test.pred_result
         expected = [test.seq] + test.processed_pred_result
 
-        result = postprocess.delay(func_input, filename, filename, '',
-                                   'predict')
-        eq_(result.get(), expected)
+        result = postprocess(func_input, filename, filename, '',
+                             'predict')
+        eq_(result, expected)
 
         # check d2p2 results and output type 'predict_and_align'
         func_input = [test.seq] \
@@ -69,9 +69,9 @@ class TestTasks(object):
             + [[test.alignment_1c, test.alignment_1c_list]]
         expected = func_input[:]
 
-        result = postprocess.delay(func_input, filename, filename, '',
-                                   'predict_and_align')
-        eq_(result.get(), expected)
+        result = postprocess(func_input, filename, filename, '',
+                             'predict_and_align')
+        eq_(result, expected)
 
         # check predictors' results and output type 'predict_and_align'
         func_input = [test.seq] \
@@ -81,9 +81,9 @@ class TestTasks(object):
             + test.processed_pred_result \
             + [[test.alignment_1c, test.alignment_1c_list]]
 
-        result = postprocess.delay(func_input, filename, filename, '',
-                                   'predict_and_align')
-        eq_(result.get(), expected)
+        result = postprocess(func_input, filename, filename, '',
+                             'predict_and_align')
+        eq_(result, expected)
 
     def test_get_task(self):
         output_type = 'predict'
@@ -103,64 +103,66 @@ class TestTasks(object):
         get_task(output_type)
 
     @patch('kmad_web.tasks.find_seqid_blast')
-    @patch('subprocess.call')
-    def test_query_d2p2(self, mock_subprocess, mock_call):
+    def test_query_d2p2(self, mock_call):
         filename = 'testdata/test.fasta'
-        mock_subprocess.return_value = 'testdata/test.blastp'
+        # mock_subprocess.return_value = 'testdata/test.blastp'
+        with open('tests/unit/testdata/test.blastp') as a:
+            blast_result = a.read().splitlines()
 
         from kmad_web.tasks import query_d2p2
 
         # check: sequence not found in swissprot
         mock_call.return_value = [False, '']
-        expected = [False, []]
+        expected = [blast_result, [False, []]]
 
-        result = query_d2p2.delay(filename, 'predict', False)
-        eq_(result.get(), expected)
+        result = query_d2p2(blast_result, filename, 'predict', False)
+        eq_(result, expected)
 
         # check: sequence found in swissprot, but not found in d2p2
         mock_call.return_value = [True, 'P01542']
-        expected = [False, []]
 
-        result = query_d2p2.delay(filename, 'predict', False)
-        eq_(result.get(), expected)
+        result = query_d2p2(blast_result, filename, 'predict', False)
+        eq_(result, expected)
 
         # check: sequence found in d2p2
         mock_call.return_value = [True, 'P10636']
 
-        result = query_d2p2.delay(filename, 'predict', False).get()
-        eq_(result[0], True)
+        result = query_d2p2(blast_result, filename,
+                            'predict', False)
+        eq_(result[1][0], True)
 
+    @patch('kmad_web.tasks.os.path.exists')
     @patch('kmad_web.tasks.preprocess')
     @patch('subprocess.call')
     @patch('kmad_web.tasks.open',
            mock_open(read_data='prediction_out'),
            create=True)
-    def test_run_single_predictor(self, mock_subprocess, mock_call):
+    def test_run_single_predictor(self, mock_subprocess, mock_call, mock_os):
         filename = 'testdata/test.fasta'
-        # methods = ['psipred', 'predisorder', 'disopred', 'spine', 'globplot']
-        # pred = [0, 0, 0]
-        methods = ["dummy"]
+        methods = ['psipred', 'predisorder', 'disopred', 'spine', 'globplot']
+
         pred = []
+        mock_os.return_value = True
 
         from kmad_web.tasks import run_single_predictor
 
         # check when there is no result from d2p2
-        d2p2_result = [False, []]
+        d2p2_result = [[], [False, []]]
         for pred_name in methods:
             expected = [pred_name, pred]
             mock_call.return_value = expected[:]
 
-            result = run_single_predictor.delay(d2p2_result,
-                                                filename,
-                                                pred_name)
-            eq_(result.get(), expected)
+            result = run_single_predictor(d2p2_result,
+                                          filename,
+                                          pred_name)
+            eq_(result, expected)
 
         # check when there is result from d2p2
-        d2p2_result = [True, ['D2P2', [0, 0, 0]]]
-        expected = d2p2_result[1]
+        d2p2_result = [[], [True, ['D2P2', [0, 0, 0]]]]
+        expected = d2p2_result[1][1]
 
-        result = run_single_predictor.delay(d2p2_result, filename, pred_name)
-        eq_(result.get(),  expected)
+        result = run_single_predictor(d2p2_result, filename, pred_name)
+        eq_(result,  expected)
 
     @patch('kmad_web.tasks.run_netphos')
     def test_analyze_mutation(self, mock_netphos):

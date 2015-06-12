@@ -1,4 +1,3 @@
-from mock import patch
 from nose.tools import eq_, ok_
 
 
@@ -59,21 +58,21 @@ def test_preprocess():
     eq_(result, expected)
 
 
-@patch('kmad_web.services.txtproc.open', create=True)
-def test_find_seqid_blast(mock_open):
-    m_file = mock_open.return_value.__enter__.return_value
+def test_find_seqid_blast():
 
     from kmad_web.services.txtproc import find_seqid_blast
 
-    # check found
-    m_file.read.return_value = open('tests/unit/testdata/test.blastp').read()
+    # check -> found
+    with open('tests/unit/testdata/test.blastp') as a:
+        blast = a.read().splitlines()
     expected = [True, 'test']
-    result = find_seqid_blast('testname')
+    result = find_seqid_blast(blast)
     eq_(expected, result)
-    # check not found
-    m_file.read.return_value = open('tests/unit/testdata/test2.blastp').read()
+    # check -> not found
+    with open('tests/unit/testdata/test2.blastp') as a:
+        blast = a.read().splitlines()
     expected = [False, '']
-    result = find_seqid_blast('testname')
+    result = find_seqid_blast(blast)
     eq_(expected, result)
 
 

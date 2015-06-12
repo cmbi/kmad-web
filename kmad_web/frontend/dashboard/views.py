@@ -1,6 +1,7 @@
 import logging
 import StringIO
 
+from celery import chain
 from flask import abort
 from flask import (Blueprint, render_template,
                    request, redirect, url_for, send_file)
@@ -32,7 +33,6 @@ def index():
 
         single_fasta_filename, multi_fasta_filename, multi_seq_input = (
             files.write_fasta(seq_data))
-        from celery import chain
         from kmad_web.tasks import run_blast, filter_blast
 
         if form.output_type.data == "predict":
