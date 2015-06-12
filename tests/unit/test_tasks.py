@@ -207,3 +207,20 @@ class TestTasks(object):
                     }
 
         eq_(result, expected)
+
+    def test_filter_blast(self):
+        from kmad_web.tasks import filter_blast
+
+        with open('tests/unit/testdata/test_filter_blast_in1.blastp') as a:
+            blast_result = a.read().splitlines()
+        with open('tests/unit/testdata/test_filter_blast_out1.blastp') as a:
+            expected = a.read().splitlines()
+
+        eq_(filter_blast(blast_result), expected)
+
+        with open('tests/unit/testdata/test_filter_blast_in2.blastp') as a:
+            blast_result = a.read().splitlines()
+
+        # first one is not a mammal so expecting a non-filtered result
+        expected = blast_result
+        eq_(filter_blast(blast_result), expected)

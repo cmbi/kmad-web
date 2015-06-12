@@ -339,10 +339,12 @@ def filter_blast(blast_result):
     _log.debug('Filtering blast result')
     with open(paths.MAMMAL_IDS) as a:
         mammal_ids = a.read().splitlines()
-    if blast_result[0].split('|')[2].split('_')[1] in mammal_ids:
+
+    first_id = blast_result[0].split('|')[4].split('_')[1].split(',')[0]
+    if first_id in mammal_ids:
         filtered_blast = []
         for i in blast_result:
-            if i.split('|')[2].split('_')[1] in mammal_ids:
+            if i.split('|')[4].split('_')[1].split(',')[0] in mammal_ids:
                 filtered_blast.append(i)
     else:
         filtered_blast = blast_result
