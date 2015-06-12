@@ -90,10 +90,10 @@ def create_kmad(output_type):
                             end_gap_p, ptm_score, domain_score, motif_score,
                             methods, multi_seq_input, usr_features,
                             first_seq_gapped)
-        job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
-                    workflow, analyze_mutation.s(int(form['mutation_site']),
-                                                 form['new_aa'],
-                                                 single_fasta_filename))()
+        # job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+        #             workflow, analyze_mutation.s(int(form['mutation_site']),
+        #                                          form['new_aa'],
+        #                                          single_fasta_filename))()
 
         celery_id = job.id
 
@@ -131,6 +131,7 @@ def get_kmad_result(output_type, id):
     :return: The output of the job. If the job status is not SUCCESS, this
              method returns an error.
     """
+    _log.debug('outputtype {}'.format(output_type))
     from kmad_web.tasks import get_task
     task = get_task(output_type)
     _log.debug("task is {}".format(task.__name__))
@@ -155,6 +156,7 @@ def get_kmad_result(output_type, id):
                 'processed': result[-1]['alignments'][1],
                 'encoded': result[-1]['alignments'][2]}}}
     elif output_type == 'hope':
+        _log.debug('Analyze mutation output: {}'.format(result))
         response = {'result': result}
     return jsonify(response)
 

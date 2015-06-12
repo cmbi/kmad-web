@@ -367,7 +367,11 @@ def combine_results(ptm_data, motif_data, surrounding_data,
 
     dis_dict = {2: 'Y', 1: 'M', 0: 'N'}
     _log.debug(disorder_prediction)
-    disorder_txt = [dis_dict[i] for i in disorder_prediction]
+    if isinstance(disorder_prediction[-1][0], int):
+        disorder_txt = [dis_dict[i] for i in disorder_prediction[1]]
+    else:
+        disorder_txt = [dis_dict[i] for i in disorder_prediction[-1][1]]
+
     output = {'residues': []}
     for i in xrange(len(sequence)):
         if (i != mutation_site
@@ -404,7 +408,7 @@ def create_mutant_sequence(sequence, mutation_site, new_aa):
 # takes 0-based position in the sequence; returns 0-based position in the
 # alignment
 def get_real_position(encoded_alignment, mutation_site, seq_no):
-    query_seq = encoded_alignment[2*seq_no + 1]
+    query_seq = encoded_alignment[seq_no][1]
     query_seq = [query_seq[i] for i in range(0, len(query_seq), 7)]
     count = -1
     i = -1

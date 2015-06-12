@@ -53,12 +53,10 @@ def postprocess(result, single_filename, multi_filename, conffilename,
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
-    elif output_type == 'predict_and_align':
+    elif output_type in ['predict_and_align', 'hope']:
         result = [result[0]] + result[-2:]
     elif output_type == 'predict':
         result = result[:2]
-    # else: output_type = 'align' or 'annotate' -> then there is no need to
-    # change the result
     return result
 
 
@@ -255,7 +253,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
     mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
     mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
     with mutant_seq_file as f:
-        f.write(mutant_seq)
+        f.write('>mutant\n{}\n'.format(mutant_seq))
 
     alignment_position = ma.get_real_position(encoded_alignment,
                                               mutation_site_0, 0)

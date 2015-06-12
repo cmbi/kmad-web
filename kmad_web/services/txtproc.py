@@ -101,7 +101,6 @@ def find_length(lines):
 def find_seqid_blast(blast_result):
     found = False
     seqID = ""
-    _log.debug(blast_result)
     if len(blast_result) > 0:
         firstline = blast_result[0].split(',')
         if (firstline[2] == "100.00"
