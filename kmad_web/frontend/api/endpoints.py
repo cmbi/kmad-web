@@ -90,10 +90,10 @@ def create_kmad(output_type):
                             end_gap_p, ptm_score, domain_score, motif_score,
                             methods, multi_seq_input, usr_features,
                             first_seq_gapped)
-        # job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
-        #             workflow, analyze_mutation.s(int(form['mutation_site']),
-        #                                          form['new_aa'],
-        #                                          single_fasta_filename))()
+        job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+                    workflow, analyze_mutation.s(int(form['mutation_site']),
+                                                 form['new_aa'],
+                                                 single_fasta_filename))()
 
         celery_id = job.id
 
