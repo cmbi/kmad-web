@@ -87,12 +87,6 @@ def process_fasta(fastafile):
         new_fasta = '\n'.join(new_list)
     else:
         new_fasta = '>fasta_header\n{}'.format(''.join(fasta_list))
-    # if fastafile.startswith('>'):
-    #     sequence = ''.join(fasta_list[1:])
-    #     new_fasta = fasta_list[0]+'\n'+sequence
-    # else:
-    #     sequence = ''.join(fasta_list)
-    #     new_fasta = '>fasta_header\n{}'.format(sequence)
     return new_fasta
 
 

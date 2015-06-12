@@ -100,7 +100,6 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 _log.debug(args)
             try:
                 if pred_name == 'globplot':
-                    # data = run_globplot(fasta_file)
                     data = subprocess.check_output(args)
                 else:
                     _log.info("Ran command: {}".format(
@@ -182,8 +181,6 @@ def annotate(d2p2, filename):
     encoded_filename = convert_result['filename']
     with open(filename.split('.')[0] + '.map') as a:
         feature_codemap = a.read().splitlines()
-    # motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
-    # domains = [i.split() for i in feature_codemap if i.startswith('domain')]
     motifs = [[i.split()[0].split('_')[1]] + i.split()[1:]
               for i in feature_codemap if i.startswith('motif')]
 
@@ -286,12 +283,12 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
     #             'position': 1,  # 1-based!
     #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
     #             'ptm': [{
-    #                 'phosrel': ['certain/putative', 'N', 'description'],
-    #                 'glycosylation': ['certain/putative', 'N', 'description']
+    #                 'phosrel': ['Y', 'N', 'description'],
+    #                 'glycosylation': ['M', 'N', 'description']
     #             }],
     #             'motifs': [{
-    #                 'motif-a': ['certain/putative', 'M', 'description'],
-    #                 'motif-b': ['certain/putative', 'M', 'description']
+    #                 'motif-a': ['Y', 'M', 'description'],
+    #                 'motif-b': ['Y', 'M', 'description']
     #             }],
     #         }
     #     ]
