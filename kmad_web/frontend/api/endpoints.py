@@ -3,11 +3,12 @@ import inspect
 import logging
 import re
 
+from celery import chain
 from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
 from kmad_web.services.kmad import KmanStrategyFactory
-from kmad_web.services import txtproc
+from kmad_web.services import txtproc, files
 
 
 _log = logging.getLogger(__name__)
@@ -24,35 +25,77 @@ def create_kmad(output_type):
 
     """
     form = request.form
+    from kmad_web.tasks import filter_blast, run_blast
     strategy = KmanStrategyFactory.create(output_type)
     _log.debug("Using '{}'".format(strategy.__class__.__name__))
-    multi_seq_input = txtproc.check_if_multi(form['seq_data'])  # bool
+
+    single_fasta_filename, multi_fasta_filename, multi_seq_input = (
+        files.write_fasta(form['seq_data']))
+
     if output_type == "predict":
         methods = form['prediction_methods'].split()
-        celery_id = strategy(request.form['seq_data'],
-                             methods,
-                             multi_seq_input)
+        workflow = strategy(form['seq_data'], single_fasta_filename,
+                            multi_fasta_filename, methods, multi_seq_input)
+        job = chain(run_blast.s(single_fasta_filename), workflow)()
+        celery_id = job.id
     elif output_type in ['align', 'refine']:
         usr_features = []
-        celery_id = strategy(form['seq_data'], float(form['gap_open_p']),
-                             float(form['gap_ext_p']), float(form['end_gap_p']),
-                             float(form['ptm_score']),
-                             float(form['domain_score']),
-                             float(form['motif_score']), multi_seq_input,
-                             usr_features, form['output_type'],
-                             ast.literal_eval(form['first_seq_gapped']))
+        workflow = strategy(form['seq_data'], single_fasta_filename,
+                            multi_fasta_filename,
+                            float(form['gap_open_p']),
+                            float(form['gap_ext_p']), float(form['end_gap_p']),
+                            float(form['ptm_score']),
+                            float(form['domain_score']),
+                            float(form['motif_score']), multi_seq_input,
+                            usr_features, form['output_type'],
+                            ast.literal_eval(form['first_seq_gapped']))
+        job = chain(run_blast.s(single_fasta_filename), workflow)()
+        celery_id = job.id
     elif output_type == 'annotate':
-        celery_id = strategy(form['seq_data'])
-    else:
+        workflow = strategy(form['seq_data'], single_fasta_filename,
+                            multi_fasta_filename)
+        job = chain(run_blast.s(single_fasta_filename), workflow)()
+        celery_id = job.id
+    elif output_type == 'predict_and_align':
         methods = form['prediction_methods'].split()
         usr_features = []
-        celery_id = strategy(form['seq_data'], float(form['gap_open_p']),
-                             float(form['gap_ext_p']), float(form['end_gap_p']),
-                             float(form['ptm_score']),
-                             float(form['domain_score']),
-                             float(form['motif_score']), methods,
-                             multi_seq_input, usr_features,
-                             ast.literal_eval(form['first_seq_gapped']))
+        workflow = strategy(form['seq_data'], single_fasta_filename,
+                            multi_fasta_filename,
+                            float(form['gap_open_p']),
+                            float(form['gap_ext_p']), float(form['end_gap_p']),
+                            float(form['ptm_score']),
+                            float(form['domain_score']),
+                            float(form['motif_score']), methods,
+                            multi_seq_input, usr_features,
+                            ast.literal_eval(form['first_seq_gapped']))
+        job = chain(run_blast.s(single_fasta_filename),
+                    workflow)()
+
+        celery_id = job.id
+    elif output_type == 'hope':
+
+        from kmad_web.tasks import analyze_mutation
+
+        methods = ['globplot']
+        usr_features = []
+        gap_open_p = -12
+        end_gap_p = -1.2
+        gap_ext_p = -1.2
+        ptm_score = 12
+        motif_score = 3
+        domain_score = 3
+        first_seq_gapped = True
+        workflow = strategy(form['seq_data'], single_fasta_filename,
+                            multi_fasta_filename, gap_open_p, gap_ext_p,
+                            end_gap_p, ptm_score, domain_score, motif_score,
+                            methods, multi_seq_input, usr_features,
+                            first_seq_gapped)
+        job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+                    workflow, analyze_mutation.s(int(form['mutation_site']),
+                                                 form['new_aa'],
+                                                 single_fasta_filename))()
+
+        celery_id = job.id
 
     _log.info("Task created with id '{}'".format(celery_id))
     return jsonify({'id': celery_id}), 202
@@ -111,6 +154,8 @@ def get_kmad_result(output_type, id):
                 'raw': result[-1]['alignments'][0],
                 'processed': result[-1]['alignments'][1],
                 'encoded': result[-1]['alignments'][2]}}}
+    elif output_type == 'hope':
+        response = {'result': result}
     return jsonify(response)
 
 
@@ -118,7 +163,6 @@ def get_kmad_result(output_type, id):
 def create():
     import tempfile
 
-    import txtproc
     from kmad_web.tasks import (query_d2p2, align,
                                 run_single_predictor, postprocess, get_seq,
                                 analyze_mutation)

@@ -61,13 +61,13 @@ def codon_to_features(codon):
 def preprocess_features(encoded_alignment):
     aligned_sequences = []
     n = 7
-    for i in encoded_alignment:
-        if not i.startswith('>'):
-            aligned_sequences.append([])
-            for j in range(0, len(i), n):
-                new_residue = {'aa': i[j],
-                               'features': codon_to_features(i[j: j + n])}
-                aligned_sequences[-1].append(new_residue)
+    for item in encoded_alignment:
+        aligned_sequences.append([])
+        seq = item[1]
+        for j in range(0, len(seq), n):
+            new_residue = {'aa': seq[j],
+                           'features': codon_to_features(seq[j: j + n])}
+            aligned_sequences[-1].append(new_residue)
     return aligned_sequences
 
 
@@ -366,6 +366,7 @@ def combine_results(ptm_data, motif_data, surrounding_data,
                     disorder_prediction, mutation_site, sequence):
 
     dis_dict = {2: 'Y', 1: 'M', 0: 'N'}
+    _log.debug(disorder_prediction)
     disorder_txt = [dis_dict[i] for i in disorder_prediction]
     output = {'residues': []}
     for i in xrange(len(sequence)):
