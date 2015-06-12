@@ -33,7 +33,7 @@ def index():
 
         single_fasta_filename, multi_fasta_filename, multi_seq_input = (
             files.write_fasta(seq_data))
-        from kmad_web.tasks import run_blast, filter_blast
+        from kmad_web.tasks import run_blast, filter_blast, analyze_mutation
 
         if form.output_type.data == "predict":
             workflow = strategy(seq_data, single_fasta_filename,
@@ -43,8 +43,7 @@ def index():
             job = chain(run_blast.s(single_fasta_filename), workflow)()
             celery_id = job.id
             _log.debug(form.prediction_method.data)
-        elif (form.output_type.data == 'align'
-              or form.output_type.data == 'refine'):
+        elif form.output_type.data in ['align', 'refine']:
             workflow = strategy(seq_data, single_fasta_filename,
                                 multi_fasta_filename, form.gap_open_p.data,
                                 form.gap_ext_p.data, form.end_gap_p.data,
@@ -70,7 +69,7 @@ def index():
                                 form.usr_features.data,
                                 form.first_seq_gapped.data)
 
-            job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+            job = chain(run_blast.s(single_fasta_filename),
                         workflow)()
 
             celery_id = job.id
@@ -79,6 +78,21 @@ def index():
             # The workflow would be run here. For this specific elif block,
             # you'd first chain the workflows together.
         elif form.output_type.data == 'hope':
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename, form.gap_open_p.data,
+                                form.gap_ext_p.data, form.end_gap_p.data,
+                                form.ptm_score.data, form.domain_score.data,
+                                form.motif_score.data,
+                                form.prediction_method.data, multi_seq_input,
+                                form.usr_features.data,
+                                form.first_seq_gapped.data)
+
+            job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+                        workflow, analyze_mutation.s(form.mutation_site,
+                                                     form.new_aa,
+                                                     single_fasta_filename))()
+
+            celery_id = job.id
             # 0. Blast
             # 0.1 Filter Blast result
             # 2. Call PredictAndAlign

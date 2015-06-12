@@ -12,7 +12,7 @@ class KmanStrategyFactory(object):
     def create(cls, output_type):
         if output_type == 'predict':
             return PredictStrategy(output_type)
-        elif output_type == 'predict_and_align':
+        elif output_type in ['predict_and_align', 'hope']:
             return PredictAndAlignStrategy(output_type)
         elif output_type in ['align', 'refine']:
             return AlignStrategy(output_type)
