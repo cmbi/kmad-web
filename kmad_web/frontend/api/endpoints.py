@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
 from kmad_web.services.kmad import KmanStrategyFactory
-from kmad_web.services import txtproc, files
+from kmad_web.services import files
 
 
 _log = logging.getLogger(__name__)
@@ -134,7 +134,6 @@ def get_kmad_result(output_type, id):
     _log.debug('outputtype {}'.format(output_type))
     from kmad_web.tasks import get_task
     task = get_task(output_type)
-    _log.debug("task is {}".format(task.__name__))
     result = task.AsyncResult(id).get()
     if output_type == "predict_and_align":
         response = {'result': {
@@ -156,79 +155,7 @@ def get_kmad_result(output_type, id):
                 'processed': result[-1]['alignments'][1],
                 'encoded': result[-1]['alignments'][2]}}}
     elif output_type == 'hope':
-        _log.debug('Analyze mutation output: {}'.format(result))
         response = {'result': result}
-    return jsonify(response)
-
-
-@bp.route('/create/', methods=['POST'])
-def create():
-    import tempfile
-
-    from kmad_web.tasks import (query_d2p2, align,
-                                run_single_predictor, postprocess, get_seq,
-                                analyze_mutation)
-    from celery import chain, group
-
-    form = request.form
-    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    fasta_seq = txtproc.process_fasta(form['seq_data'])
-    _log.debug("Created tmp file '{}'".format(tmp_file.name))
-    with tmp_file as f:
-        _log.debug("Writing data to '{}'".format(tmp_file.name))
-        f.write(fasta_seq)
-    conffilename = ''
-    tasks_to_run = [get_seq.s(fasta_seq)]
-    output_type = "predict_and_align"
-    multi_seq_input = False
-    first_seq_gapped = False
-    for pred_name in form['prediction_methods'].split():
-        tasks_to_run += [run_single_predictor.s(tmp_file.name,
-                                                pred_name)]
-    tasks_to_run += [align.s(tmp_file.name, form['gap_opening_p'],
-                             form['gap_ext_p'], form['end_gap_p'],
-                             float(form['ptm_score']), float(['domain_score']),
-                             float(['motif_score']),
-                             multi_seq_input, conffilename, output_type,
-                             first_seq_gapped)]
-    job = chain(query_d2p2.s(tmp_file.name, output_type,
-                             multi_seq_input),
-                group(tasks_to_run),
-                postprocess.s(tmp_file.name, 'dummy_filename',
-                              conffilename, output_type),
-                analyze_mutation.s(int(form['mutation_site']),
-                                   form['new_aa'], tmp_file.name))()
-    task_id = job.id
-    return task_id
-
-
-@bp.route('/result/<id>/', methods=['GET'])
-def get_result(id):
-
-    from kmad_web.tasks import get_task
-
-    task = get_task('hope')
-
-    _log.debug("task is {}".format(task.__name__))
-    response = task.AsyncResult(id).get()
-
-    # TODO: Turn result into output...write unit tests! be happy!
-    # output = {
-    #     'residues': [
-    #         {
-    #             'position': 1,  # 1-based!
-    #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
-    #             'ptm': [{
-    #                 'phosrel': ['certain/putative', 'N', 'description'],
-    #                 'glycosylation': ['certain/putative', 'N', 'description']
-    #             }],
-    #             'motifs': [{
-    #                 'motif-a': ['certain/putative', 'M', 'description'],
-    #                 'motif-b': ['certain/putative', 'M', 'description']
-    #             }],
-    #         }
-    #     ]
-    # }
     return jsonify(response)
 
 
