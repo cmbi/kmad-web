@@ -221,77 +221,80 @@ def run_blast(filename):
 def query_d2p2(blast_result, filename, output_type, multi_seq_input):
     found_it = False
     prediction = []
-    if not (multi_seq_input and output_type == 'align'):
-        [found_it, seq_id] = find_seqid_blast(blast_result)
-        if found_it:
-            data = 'seqids=["%s"]' % seq_id
-            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-            response = json.loads(urllib2.urlopen(request).read())
-            if response[seq_id]:
-                pred_result = \
-                    response[seq_id][0][2]['disorder']['consensus']
-                prediction = process_d2p2(pred_result)
-            else:
-                found_it = False
+    try:
+        if not (multi_seq_input and output_type == 'align'):
+            [found_it, seq_id] = find_seqid_blast(blast_result)
+            if found_it:
+                data = 'seqids=["%s"]' % seq_id
+                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+                response = json.loads(urllib2.urlopen(request).read())
+                if response[seq_id]:
+                    pred_result = \
+                        response[seq_id][0][2]['disorder']['consensus']
+                    prediction = process_d2p2(pred_result)
+                else:
+                    found_it = False
+    except urllib2.HTTPError and urllib2.URLError:
+        _log.debug("D2P2 HTTP/URL Error")
     return [blast_result, [found_it, prediction]]
 
 
-# mutation_site - 1-based position
 @celery_app.task
 def analyze_mutation(processed_result, mutation_site, new_aa,
                      wild_seq_filename):
-    mutation_site_0 = mutation_site - 1  # 0-based mutation site position
-    wild_seq = processed_result[0]
+    # mutation_site_0 = mutation_site - 1  # 0-based mutation site position
+    # wild_seq = processed_result[0]
 
-    disorder_prediction = processed_result[-2]  # filtered consensus
-    encoded_alignment = processed_result[-1]['alignments'][2]
-    proc_alignment = processed_result[-1]['alignments'][1]
-    feature_codemap = processed_result[-1]['alignments'][3]
+    # disorder_prediction = processed_result[-2]  # filtered consensus
+    # encoded_alignment = processed_result[-1]['alignments'][2]
+    # proc_alignment = processed_result[-1]['alignments'][1]
+    # feature_codemap = processed_result[-1]['alignments'][3]
 
-    annotated_motifs = processed_result[-1]['annotated_motifs']
+    # annotated_motifs = processed_result[-1]['annotated_motifs']
 
-    mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
-    mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    with mutant_seq_file as f:
-        f.write('>mutant\n{}\n'.format(mutant_seq))
+    # mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
+    # mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    # with mutant_seq_file as f:
+    #     f.write('>mutant\n{}\n'.format(mutant_seq))
 
-    alignment_position = ma.get_real_position(encoded_alignment,
-                                              mutation_site_0, 0)
-    predicted_phosph_wild = run_netphos(wild_seq_filename)
-    predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
-    alignment = ma.preprocess_features(encoded_alignment)
+    # alignment_position = ma.get_real_position(encoded_alignment,
+    #                                           mutation_site_0, 0)
+    # predicted_phosph_wild = run_netphos(wild_seq_filename)
+    # predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
+    # alignment = ma.preprocess_features(encoded_alignment)
 
-    os.remove(mutant_seq_file.name)
+    # os.remove(mutant_seq_file.name)
 
-    surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
-                                              predicted_phosph_mutant,
-                                              alignment, mutation_site_0,
-                                              encoded_alignment)
-    ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
-                               new_aa, predicted_phosph_mutant)
-    motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
-                                   wild_seq, mutant_seq, mutation_site_0,
-                                   alignment_position, feature_codemap,
-                                   annotated_motifs)
-    output = ma.combine_results(ptm_data, motif_data, surrounding_data,
-                                disorder_prediction, mutation_site_0, wild_seq)
-    # output = {
-    #     'residues': [
-    #         {
-    #             'position': 1,  # 1-based!
-    #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
-    #             'ptm': [{
-    #                 'phosrel': ['Y', 'N', 'description'],
-    #                 'glycosylation': ['M', 'N', 'description']
-    #             }],
-    #             'motifs': [{
-    #                 'motif-a': ['Y', 'M', 'description'],
-    #                 'motif-b': ['Y', 'M', 'description']
-    #             }],
-    #         }
-    #     ]
-    # }
-    return output
+    # surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
+    #                                           predicted_phosph_mutant,
+    #                                           alignment, mutation_site_0,
+    #                                           encoded_alignment)
+    # ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
+    #                            new_aa, predicted_phosph_mutant)
+    # motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
+    #                                wild_seq, mutant_seq, mutation_site_0,
+    #                                alignment_position, feature_codemap,
+    #                                annotated_motifs)
+    # output = ma.combine_results(ptm_data, motif_data, surrounding_data,
+    #                             disorder_prediction, mutation_site_0, wild_seq)
+    # # output = {
+    # #     'residues': [
+    # #         {
+    # #             'position': 1,  # 1-based!
+    # #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
+    # #             'ptm': [{
+    # #                 'phosrel': ['Y', 'N', 'description'],
+    # #                 'glycosylation': ['M', 'N', 'description']
+    # #             }],
+    # #             'motifs': [{
+    # #                 'motif-a': ['Y', 'M', 'description'],
+    # #                 'motif-b': ['Y', 'M', 'description']
+    # #             }],
+    # #         }
+    # #     ]
+    # # }
+    # return output
+    return 'analyze_mutation result'
 
 
 @celery_app.task
@@ -334,6 +337,11 @@ def filter_blast(blast_result):
     else:
         filtered_blast = blast_result
     return filtered_blast
+
+
+@celery_app.task
+def stupid_task(prev_result, arg1, arg2, arg3):
+    return "stupid result: {}".format(prev_result)
 
 
 def get_task(output_type):
