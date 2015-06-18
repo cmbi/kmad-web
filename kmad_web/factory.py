@@ -2,7 +2,7 @@ import logging
 from logging.handlers import SMTPHandler
 
 from celery import Celery
-from flask import Flask
+from flask import Flask, render_template
 
 
 _log = logging.getLogger(__name__)
@@ -82,6 +82,10 @@ def create_app(settings=None):
     from kmad_web.frontend.dashboard.views import bp as dashboard_bp
     app.register_blueprint(api_bp)
     app.register_blueprint(dashboard_bp)
+
+    def page_not_found(error):
+        return render_template('dashboard/404.html'), 404
+    app.error_handler_spec[None][404] = page_not_found
 
     return app
 
