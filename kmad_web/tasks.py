@@ -4,6 +4,7 @@ import os
 import subprocess
 import re
 import tempfile
+import time
 import urllib2
 
 from celery import current_app as celery_app
@@ -30,6 +31,8 @@ _log = logging.getLogger(__name__)
 @celery_app.task
 def postprocess(result, single_filename, multi_filename, conffilename,
                 output_type):
+
+    _log.info("Running postprocess")
     # process result and remove tmp files
     files.remove_files(single_filename)
     files.remove_files(multi_filename)
@@ -62,7 +65,7 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 
 @celery_app.task
 def run_single_predictor(prev_result, fasta_file, pred_name):
-    _log.debug("Run single predictor: {}".format(pred_name))
+    _log.info("Run single predictor: {}".format(pred_name))
     if prev_result[1][0]:
         return prev_result[1][1]
     else:
@@ -121,8 +124,11 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
           multi_seq_input, conffilename, output_type, first_seq_gapped):
+    _log.info("Running align")
+
     if not multi_seq_input:
         blast_result = prev_tasks[0]
+        _log.info("prev result: {}".format(prev_tasks))
         fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
         _log.debug("BLAST success: {}".format(blast_success))
     else:
@@ -175,6 +181,8 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
 
 @celery_app.task
 def annotate(d2p2, filename):
+    _log.info("Running annotate")
+
     convert_result = convert_to_7chars(filename)
     encoded_filename = convert_result['filename']
     with open(filename.split('.')[0] + '.map') as a:
@@ -199,11 +207,17 @@ def annotate(d2p2, filename):
 
 @celery_app.task
 def get_seq(d2p2, fasta_file):
+    # TODO: Does this need to be a task?
+
+    _log.info("Running get seq")
+
     return fasta_file.splitlines()[1].encode('ascii', errors='ignore')
 
 
 @celery_app.task
 def run_blast(filename):
+    _log.info("Running blast")
+
     out_blast = filename.split(".")[0]+".blastp"
     args = ["blastp", "-query", filename, "-evalue", "1e-5",
             "-num_threads", "15", "-db", paths.SWISSPROT_DB,
@@ -219,27 +233,33 @@ def run_blast(filename):
 
 @celery_app.task
 def query_d2p2(blast_result, filename, output_type, multi_seq_input):
+    _log.info("Running query_d2p2")
+
     found_it = False
     prediction = []
-    if not (multi_seq_input and output_type == 'align'):
-        [found_it, seq_id] = find_seqid_blast(blast_result)
-        if found_it:
-            data = 'seqids=["%s"]' % seq_id
-            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-            response = json.loads(urllib2.urlopen(request).read())
-            if response[seq_id]:
-                pred_result = \
-                    response[seq_id][0][2]['disorder']['consensus']
-                prediction = process_d2p2(pred_result)
-            else:
-                found_it = False
+    try:
+        if not (multi_seq_input and output_type == 'align'):
+            [found_it, seq_id] = find_seqid_blast(blast_result)
+            if found_it:
+                data = 'seqids=["%s"]' % seq_id
+                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+                response = json.loads(urllib2.urlopen(request).read())
+                if response[seq_id]:
+                    pred_result = \
+                        response[seq_id][0][2]['disorder']['consensus']
+                    prediction = process_d2p2(pred_result)
+                else:
+                    found_it = False
+    except urllib2.HTTPError and urllib2.URLError:
+        _log.debug("D2P2 HTTP/URL Error")
     return [blast_result, [found_it, prediction]]
 
 
-# mutation_site - 1-based position
 @celery_app.task
 def analyze_mutation(processed_result, mutation_site, new_aa,
                      wild_seq_filename):
+    _log.info("Running analyse mutation")
+
     mutation_site_0 = mutation_site - 1  # 0-based mutation site position
     wild_seq = processed_result[0]
 
@@ -297,6 +317,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
 @celery_app.task
 def update_elmdb(output_filename):
     _log.info("Running elm update")
+
     elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
     go_url = "http://geneontology.org/ontology/go-basic.obo"
     elm_list = elm.get_data_from_url(elm_url)
@@ -322,6 +343,7 @@ def update_elmdb(output_filename):
 @celery_app.task
 def filter_blast(blast_result):
     _log.debug('Filtering blast result')
+
     with open(paths.MAMMAL_IDS) as a:
         mammal_ids = a.read().splitlines()
 
@@ -333,7 +355,13 @@ def filter_blast(blast_result):
                 filtered_blast.append(i)
     else:
         filtered_blast = blast_result
+    _log.info('Filtered blast: {}'.format(filtered_blast))
     return filtered_blast
+
+
+@celery_app.task
+def stupid_task(prev_result):
+    return prev_result
 
 
 def get_task(output_type):

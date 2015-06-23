@@ -3,7 +3,8 @@ import inspect
 import logging
 import re
 
-from celery import chain
+from celery import chain, group
+
 from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
@@ -33,12 +34,14 @@ def create_kmad(output_type):
         files.write_fasta(form['seq_data']))
 
     if output_type == "predict":
+        _log.debug('IF1')
         methods = form['prediction_methods'].split()
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename, methods, multi_seq_input)
         job = chain(run_blast.s(single_fasta_filename), workflow)()
         celery_id = job.id
     elif output_type in ['align', 'refine']:
+        _log.debug('IF2')
         usr_features = []
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename,
@@ -52,11 +55,13 @@ def create_kmad(output_type):
         job = chain(run_blast.s(single_fasta_filename), workflow)()
         celery_id = job.id
     elif output_type == 'annotate':
+        _log.debug('IF3')
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename)
         job = chain(run_blast.s(single_fasta_filename), workflow)()
         celery_id = job.id
     elif output_type == 'predict_and_align':
+        _log.debug('IF4')
         methods = form['prediction_methods'].split()
         usr_features = []
         workflow = strategy(form['seq_data'], single_fasta_filename,
@@ -73,9 +78,6 @@ def create_kmad(output_type):
 
         celery_id = job.id
     elif output_type == 'hope':
-
-        from kmad_web.tasks import analyze_mutation
-
         methods = ['globplot']
         usr_features = []
         gap_open_p = -12
@@ -85,15 +87,42 @@ def create_kmad(output_type):
         motif_score = 3
         domain_score = 3
         first_seq_gapped = True
-        workflow = strategy(form['seq_data'], single_fasta_filename,
-                            multi_fasta_filename, gap_open_p, gap_ext_p,
-                            end_gap_p, ptm_score, domain_score, motif_score,
-                            methods, multi_seq_input, usr_features,
-                            first_seq_gapped)
-        job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
-                    workflow, analyze_mutation.s(int(form['mutation_site']),
-                                                 form['new_aa'],
-                                                 single_fasta_filename))()
+
+        from kmad_web.tasks import (align, analyze_mutation, get_seq,
+                                    postprocess, query_d2p2,
+                                    run_single_predictor,
+                                    stupid_task)
+        conffilename = ""
+
+        tasks_to_run = [get_seq.s(form['seq_data'])]
+        # output_type = "predict_and_align"
+        for pred_name in methods:
+            tasks_to_run += [run_single_predictor.s(single_fasta_filename,
+                                                    pred_name)]
+        tasks_to_run += [align.s(multi_fasta_filename, gap_open_p,
+                                 gap_ext_p, end_gap_p,
+                                 ptm_score, domain_score, motif_score,
+                                 multi_seq_input, conffilename,
+                                 output_type,
+                                 first_seq_gapped)]
+
+        # TODO: stupid task is a VERY WRONG temporary solution
+        # without celery gives back the result of the postprocess task instead
+        # of analyze-mutation
+        workflow = chain(run_blast.s(single_fasta_filename),
+                         filter_blast.s(),
+                         query_d2p2.s(single_fasta_filename, output_type,
+                                      multi_seq_input),
+                         group(tasks_to_run),
+                         postprocess.s(single_fasta_filename,
+                                       multi_fasta_filename,
+                                       conffilename, output_type),
+                         stupid_task.s(),
+                         analyze_mutation.s(int(form['mutation_site']),
+                                            form['new_aa'],
+                                            single_fasta_filename))
+
+        job = workflow()
 
         celery_id = job.id
 
@@ -131,10 +160,12 @@ def get_kmad_result(output_type, id):
     :return: The output of the job. If the job status is not SUCCESS, this
              method returns an error.
     """
-    _log.debug('outputtype {}'.format(output_type))
+
     from kmad_web.tasks import get_task
+
     task = get_task(output_type)
     result = task.AsyncResult(id).get()
+    _log.debug("Result: {}".format(result))
     if output_type == "predict_and_align":
         response = {'result': {
             'prediction': result[0:-1],
