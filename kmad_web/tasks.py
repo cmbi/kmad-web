@@ -4,6 +4,7 @@ import os
 import subprocess
 import re
 import tempfile
+import time
 import urllib2
 
 from celery import current_app as celery_app
@@ -30,6 +31,8 @@ _log = logging.getLogger(__name__)
 @celery_app.task
 def postprocess(result, single_filename, multi_filename, conffilename,
                 output_type):
+
+    _log.info("Running postprocess")
     # process result and remove tmp files
     files.remove_files(single_filename)
     files.remove_files(multi_filename)
@@ -62,7 +65,7 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 
 @celery_app.task
 def run_single_predictor(prev_result, fasta_file, pred_name):
-    _log.debug("Run single predictor: {}".format(pred_name))
+    _log.info("Run single predictor: {}".format(pred_name))
     if prev_result[1][0]:
         return prev_result[1][1]
     else:
@@ -121,8 +124,11 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
           multi_seq_input, conffilename, output_type, first_seq_gapped):
+    _log.info("Running align")
+
     if not multi_seq_input:
         blast_result = prev_tasks[0]
+        _log.info("prev result: {}".format(prev_tasks))
         fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
         _log.debug("BLAST success: {}".format(blast_success))
     else:
@@ -175,6 +181,8 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
 
 @celery_app.task
 def annotate(d2p2, filename):
+    _log.info("Running annotate")
+
     convert_result = convert_to_7chars(filename)
     encoded_filename = convert_result['filename']
     with open(filename.split('.')[0] + '.map') as a:
@@ -199,11 +207,17 @@ def annotate(d2p2, filename):
 
 @celery_app.task
 def get_seq(d2p2, fasta_file):
+    # TODO: Does this need to be a task?
+
+    _log.info("Running get seq")
+
     return fasta_file.splitlines()[1].encode('ascii', errors='ignore')
 
 
 @celery_app.task
 def run_blast(filename):
+    _log.info("Running blast")
+
     out_blast = filename.split(".")[0]+".blastp"
     args = ["blastp", "-query", filename, "-evalue", "1e-5",
             "-num_threads", "15", "-db", paths.SWISSPROT_DB,
@@ -219,6 +233,8 @@ def run_blast(filename):
 
 @celery_app.task
 def query_d2p2(blast_result, filename, output_type, multi_seq_input):
+    _log.info("Running query_d2p2")
+
     found_it = False
     prediction = []
     try:
@@ -242,64 +258,66 @@ def query_d2p2(blast_result, filename, output_type, multi_seq_input):
 @celery_app.task
 def analyze_mutation(processed_result, mutation_site, new_aa,
                      wild_seq_filename):
-    # mutation_site_0 = mutation_site - 1  # 0-based mutation site position
-    # wild_seq = processed_result[0]
+    _log.info("Running analyse mutation")
 
-    # disorder_prediction = processed_result[-2]  # filtered consensus
-    # encoded_alignment = processed_result[-1]['alignments'][2]
-    # proc_alignment = processed_result[-1]['alignments'][1]
-    # feature_codemap = processed_result[-1]['alignments'][3]
+    mutation_site_0 = mutation_site - 1  # 0-based mutation site position
+    wild_seq = processed_result[0]
 
-    # annotated_motifs = processed_result[-1]['annotated_motifs']
+    disorder_prediction = processed_result[-2]  # filtered consensus
+    encoded_alignment = processed_result[-1]['alignments'][2]
+    proc_alignment = processed_result[-1]['alignments'][1]
+    feature_codemap = processed_result[-1]['alignments'][3]
 
-    # mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
-    # mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    # with mutant_seq_file as f:
-    #     f.write('>mutant\n{}\n'.format(mutant_seq))
+    annotated_motifs = processed_result[-1]['annotated_motifs']
 
-    # alignment_position = ma.get_real_position(encoded_alignment,
-    #                                           mutation_site_0, 0)
-    # predicted_phosph_wild = run_netphos(wild_seq_filename)
-    # predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
-    # alignment = ma.preprocess_features(encoded_alignment)
+    mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
+    mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    with mutant_seq_file as f:
+        f.write('>mutant\n{}\n'.format(mutant_seq))
 
-    # os.remove(mutant_seq_file.name)
+    alignment_position = ma.get_real_position(encoded_alignment,
+                                              mutation_site_0, 0)
+    predicted_phosph_wild = run_netphos(wild_seq_filename)
+    predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
+    alignment = ma.preprocess_features(encoded_alignment)
 
-    # surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
-    #                                           predicted_phosph_mutant,
-    #                                           alignment, mutation_site_0,
-    #                                           encoded_alignment)
-    # ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
-    #                            new_aa, predicted_phosph_mutant)
-    # motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
-    #                                wild_seq, mutant_seq, mutation_site_0,
-    #                                alignment_position, feature_codemap,
-    #                                annotated_motifs)
-    # output = ma.combine_results(ptm_data, motif_data, surrounding_data,
-    #                             disorder_prediction, mutation_site_0, wild_seq)
-    # # output = {
-    # #     'residues': [
-    # #         {
-    # #             'position': 1,  # 1-based!
-    # #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
-    # #             'ptm': [{
-    # #                 'phosrel': ['Y', 'N', 'description'],
-    # #                 'glycosylation': ['M', 'N', 'description']
-    # #             }],
-    # #             'motifs': [{
-    # #                 'motif-a': ['Y', 'M', 'description'],
-    # #                 'motif-b': ['Y', 'M', 'description']
-    # #             }],
-    # #         }
-    # #     ]
-    # # }
-    # return output
-    return 'analyze_mutation result'
+    os.remove(mutant_seq_file.name)
+
+    surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
+                                              predicted_phosph_mutant,
+                                              alignment, mutation_site_0,
+                                              encoded_alignment)
+    ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
+                               new_aa, predicted_phosph_mutant)
+    motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
+                                   wild_seq, mutant_seq, mutation_site_0,
+                                   alignment_position, feature_codemap,
+                                   annotated_motifs)
+    output = ma.combine_results(ptm_data, motif_data, surrounding_data,
+                                disorder_prediction, mutation_site_0, wild_seq)
+    # output = {
+    #     'residues': [
+    #         {
+    #             'position': 1,  # 1-based!
+    #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
+    #             'ptm': [{
+    #                 'phosrel': ['Y', 'N', 'description'],
+    #                 'glycosylation': ['M', 'N', 'description']
+    #             }],
+    #             'motifs': [{
+    #                 'motif-a': ['Y', 'M', 'description'],
+    #                 'motif-b': ['Y', 'M', 'description']
+    #             }],
+    #         }
+    #     ]
+    # }
+    return output
 
 
 @celery_app.task
 def update_elmdb(output_filename):
     _log.info("Running elm update")
+
     elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
     go_url = "http://geneontology.org/ontology/go-basic.obo"
     elm_list = elm.get_data_from_url(elm_url)
@@ -325,6 +343,7 @@ def update_elmdb(output_filename):
 @celery_app.task
 def filter_blast(blast_result):
     _log.debug('Filtering blast result')
+
     with open(paths.MAMMAL_IDS) as a:
         mammal_ids = a.read().splitlines()
 
@@ -336,12 +355,13 @@ def filter_blast(blast_result):
                 filtered_blast.append(i)
     else:
         filtered_blast = blast_result
+    _log.info('Filtered blast: {}'.format(filtered_blast))
     return filtered_blast
 
 
 @celery_app.task
-def stupid_task(prev_result, arg1, arg2, arg3):
-    return "stupid result: {}".format(prev_result)
+def stupid_task(prev_result):
+    return prev_result
 
 
 def get_task(output_type):

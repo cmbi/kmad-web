@@ -3,8 +3,7 @@ import inspect
 import logging
 import re
 
-from celery import chain
-from celery import group
+from celery import chain, group
 
 from flask import Blueprint, render_template, request
 from flask.json import jsonify
@@ -107,18 +106,9 @@ def create_kmad(output_type):
                                  output_type,
                                  first_seq_gapped)]
 
-        # workflow = chain(run_blast.s(single_fasta_filename),
-        #                  filter_blast.s(),
-        #                  query_d2p2.s(single_fasta_filename, output_type,
-        #                               multi_seq_input),
-        #                  group(tasks_to_run),
-        #                  postprocess.s(single_fasta_filename,
-        #                                multi_fasta_filename,
-        #                                conffilename, output_type),
-        #                  stupid_task.s(1, 2, 3),
-        #                  analyze_mutation.s(int(form['mutation_site']),
-        #                                     form['new_aa'],
-        #                                     single_fasta_filename))
+        # TODO: stupid task is a VERY WRONG temporary solution
+        # without celery gives back the result of the postprocess task instead
+        # of analyze-mutation
         workflow = chain(run_blast.s(single_fasta_filename),
                          filter_blast.s(),
                          query_d2p2.s(single_fasta_filename, output_type,
@@ -127,21 +117,12 @@ def create_kmad(output_type):
                          postprocess.s(single_fasta_filename,
                                        multi_fasta_filename,
                                        conffilename, output_type),
+                         stupid_task.s(),
                          analyze_mutation.s(int(form['mutation_site']),
                                             form['new_aa'],
                                             single_fasta_filename))
 
         job = workflow()
-        # workflow = strategy(form['seq_data'], single_fasta_filename,
-        #                     multi_fasta_filename, gap_open_p, gap_ext_p,
-        #                     end_gap_p, ptm_score, domain_score, motif_score,
-        #                     methods, multi_seq_input, usr_features,
-        #                     first_seq_gapped)
-
-        # job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
-        #             workflow, analyze_mutation.s(int(form['mutation_site']),
-        #                                          form['new_aa'],
-        #                                          single_fasta_filename))()
 
         celery_id = job.id
 
