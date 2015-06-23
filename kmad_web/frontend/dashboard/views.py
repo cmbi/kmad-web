@@ -132,6 +132,11 @@ def alignment_example(filename):
     return render_template('dashboard/examples/{}.html'.format(filename))
 
 
+@bp.route('/disprot_examples', methods=['GET'])
+def disprot_examples():
+    return render_template('dashboard/disprot_examples.html')
+
+
 @bp.route('/methods', methods=['GET'])
 def methods():
     return render_template('dashboard/methods.html')
