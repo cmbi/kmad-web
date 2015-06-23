@@ -1,12 +1,14 @@
 import logging
 import StringIO
 
+from celery import chain
+from flask import abort
 from flask import (Blueprint, render_template,
                    request, redirect, url_for, send_file)
 
+from kmad_web.services import files, fieldlist_helper
 from kmad_web.frontend.dashboard.forms import KmanForm
 from kmad_web.services.kmad import KmanStrategyFactory
-from kmad_web.services import txtproc, fieldlist_helper
 
 
 _log = logging.getLogger(__name__)
@@ -26,31 +28,78 @@ def index():
         _log.debug("validation")
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
+
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
-        multi_seq_input = txtproc.check_if_multi(seq_data)  # bool
+
+        single_fasta_filename, multi_fasta_filename, multi_seq_input = (
+            files.write_fasta(seq_data))
+        from kmad_web.tasks import run_blast, filter_blast, analyze_mutation
+
         if form.output_type.data == "predict":
-            celery_id = strategy(seq_data, form.prediction_method.data,
-                                 multi_seq_input)
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename,
+                                form.prediction_method.data,
+                                multi_seq_input)
+            job = chain(run_blast.s(single_fasta_filename), workflow)()
+            celery_id = job.id
             _log.debug(form.prediction_method.data)
-        elif (form.output_type.data == 'align'
-              or form.output_type.data == 'refine'):
-            celery_id = strategy(seq_data, form.gap_open_p.data,
-                                 form.gap_ext_p.data, form.end_gap_p.data,
-                                 form.ptm_score.data, form.domain_score.data,
-                                 form.motif_score.data, multi_seq_input,
-                                 form.usr_features.data, form.output_type.data,
-                                 form.first_seq_gapped.data)
+        elif form.output_type.data in ['align', 'refine']:
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename, form.gap_open_p.data,
+                                form.gap_ext_p.data, form.end_gap_p.data,
+                                form.ptm_score.data, form.domain_score.data,
+                                form.motif_score.data, multi_seq_input,
+                                form.usr_features.data, form.output_type.data,
+                                form.first_seq_gapped.data)
+            job = chain(run_blast.s(single_fasta_filename), workflow)()
+            celery_id = job.id
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
         elif form.output_type.data == 'annotate':
-            celery_id = strategy(seq_data)
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename)
+            job = chain(run_blast.s(single_fasta_filename), workflow)()
+            celery_id = job.id
+        elif form.output_type.data == 'predict_and_align':
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename, form.gap_open_p.data,
+                                form.gap_ext_p.data, form.end_gap_p.data,
+                                form.ptm_score.data, form.domain_score.data,
+                                form.motif_score.data,
+                                form.prediction_method.data, multi_seq_input,
+                                form.usr_features.data,
+                                form.first_seq_gapped.data)
+
+            job = chain(run_blast.s(single_fasta_filename),
+                        workflow)()
+
+            celery_id = job.id
+            # IDEA: Could have the strategies (AlignStrategy and
+            # PredictStrategy) return the celery workflow (without running it).
+            # The workflow would be run here. For this specific elif block,
+            # you'd first chain the workflows together.
+        elif form.output_type.data == 'hope':
+            workflow = strategy(seq_data, single_fasta_filename,
+                                multi_fasta_filename, form.gap_open_p.data,
+                                form.gap_ext_p.data, form.end_gap_p.data,
+                                form.ptm_score.data, form.domain_score.data,
+                                form.motif_score.data,
+                                form.prediction_method.data, multi_seq_input,
+                                form.usr_features.data,
+                                form.first_seq_gapped.data)
+
+            job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+                        workflow, analyze_mutation.s(form.mutation_site,
+                                                     form.new_aa,
+                                                     single_fasta_filename))()
+
+            celery_id = job.id
+            # 0. Blast
+            # 0.1 Filter Blast result
+            # 2. Call PredictAndAlign
+            # 4. Run workflows in a chain
+            pass
         else:
-            celery_id = strategy(seq_data, form.gap_open_p.data,
-                                 form.gap_ext_p.data, form.end_gap_p.data,
-                                 form.ptm_score.data, form.domain_score.data,
-                                 form.motif_score.data,
-                                 form.prediction_method.data, multi_seq_input,
-                                 form.usr_features.data,
-                                 form.first_seq_gapped.data)
+            abort(500, description='Unknown output type')
         _log.info("Job has id '{}'".format(celery_id))
         _log.info("Redirecting to output page")
         return redirect(url_for('dashboard.output',
@@ -78,28 +127,7 @@ def help():
     return render_template('dashboard/help.html')
 
 
-@bp.route("/examples/alignment1_1", endpoint="alignment1_1", methods=['GET'],
-          defaults={"filename": "alignment1_1"})
-@bp.route("/examples/alignment1_2", endpoint="alignment1_2", methods=['GET'],
-          defaults={"filename": "alignment1_2"})
-@bp.route("/examples/alignment1_3", endpoint="alignment1_3", methods=['GET'],
-          defaults={"filename": "alignment1_3"})
-@bp.route("/examples/alignment1_4", endpoint="alignment1_4", methods=['GET'],
-          defaults={"filename": "alignment1_4"})
-@bp.route("/examples/alignment2_1", endpoint="alignment2_1", methods=['GET'],
-          defaults={"filename": "alignment2_1"})
-@bp.route("/examples/alignment2_2", endpoint="alignment2_2", methods=['GET'],
-          defaults={"filename": "alignment2_2"})
-@bp.route("/examples/alignment2_3", endpoint="alignment2_3", methods=['GET'],
-          defaults={"filename": "alignment2_3"})
-@bp.route("/examples/alignment2_4", endpoint="alignment2_4", methods=['GET'],
-          defaults={"filename": "alignment2_4"})
-@bp.route("/examples/alignment2_5", endpoint="alignment2_5", methods=['GET'],
-          defaults={"filename": "alignment2_5"})
-@bp.route("/examples/example1", endpoint="example1", methods=['GET'],
-          defaults={"filename": "example1"})
-@bp.route("/examples/example2", endpoint="example2", methods=['GET'],
-          defaults={"filename": "example2"})
+@bp.route('/examples/<filename>', methods=['GET'])
 def alignment_example(filename):
     return render_template('dashboard/examples/{}.html'.format(filename))
 

@@ -46,24 +46,24 @@ def get_e_val(textline):
 # blast name - path to the file with blast results
 # query_filename - path to the file with the original sequence
 
-def get_fasta_from_blast(blast_name, query_filename):
-    outfile_name = blast_name.split(".")[0]+"_toalign.fasta"
+def get_fasta_from_blast(blast_result, query_filename):
+    success = False
+    outfile_name = query_filename.split(".")[0]+"_toalign.fasta"
     outfile = open(outfile_name, 'w')
     with open(query_filename) as a:
         query_fasta = a.read().splitlines()
-    with open(blast_name) as a:
-        blastfile = a.read().splitlines()
     success = True
     ids = set()
-    if len(blastfile) > 1:
+    if len(blast_result) > 1:
         newfasta = ""
-        # take query sequence if it's different form the first seq. from blast
-        uniprot_id = blastfile[0].split(',')[1].split("|")[1]
+        # take query sequence if it's different form the
+        # first seq. from blast
+        uniprot_id = blast_result[0].split(',')[1].split("|")[1]
         sequence = get_seq_from_uniprot(uniprot_id)
         if query_fasta[1] != sequence[1]:
             newfasta += "{}\n{}\n".format(query_fasta[0], query_fasta[1])
 
-        for i, lineI in enumerate(blastfile):
+        for i, lineI in enumerate(blast_result):
             line_list = lineI.split(',')
             if float(line_list[-2]) < 0.0001:
                 uniprot_id = line_list[1].split("|")[1]
@@ -78,8 +78,6 @@ def get_fasta_from_blast(blast_name, query_filename):
                 break
         outfile.write(newfasta)
         outfile.close()
-    else:
-        success = False
     return outfile_name, success
 
 
@@ -131,3 +129,21 @@ def write_conf_file(usr_features):
         _log.debug("Writing data to '{}'".format(tmp_file.name))
         f.write(parsed_features)
     return tmp_file.name
+
+
+def write_fasta(seq_data):
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    fasta_seq = txtproc.process_fasta(seq_data)
+    _log.debug("Created tmp file '{}'".format(tmp_file.name))
+    with tmp_file as f:
+        _log.debug("Writing data to '{}'".format(tmp_file.name))
+        f.write(fasta_seq)
+
+    multi_seq_input = txtproc.check_if_multi(seq_data)  # bool
+    multi_fasta_filename = tmp_file.name
+
+    if multi_seq_input:
+        single_fasta_filename = write_single_fasta(fasta_seq)
+    else:
+        single_fasta_filename = tmp_file.name
+    return single_fasta_filename, multi_fasta_filename, multi_seq_input

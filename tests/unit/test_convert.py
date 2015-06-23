@@ -34,7 +34,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     expected_data = '>1\nSAAAAAAEAAAAAAQAAAAAA\n' \
         + '## PROBABILITIES\n'
     mock_run_pfam_scan.return_value = [[], []]
-    mock_search_elm.return_value = [[], [], []]
+    mock_search_elm.return_value = [[], [], [], [[], [], []]]
     mock_run_netphos.return_value = []
     mock_find_phosph_sites.return_value = [[], [], [], [], [], [], []]
     mock_tmp_fasta.return_value = 'tmp_filename'
@@ -64,7 +64,8 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
 
     # check: encoded motif
     mock_run_pfam_scan.return_value = [[], []]
-    mock_search_elm.return_value = [[[1, 2]], ['some_motif'], [0.9]]
+    mock_search_elm.return_value = [[[1, 2]], ['some_motif'], [0.9],
+                                    [[], [], []]]
     expected_data = '>1\nSAAAAaaEAAAAaaQAAAAAA\n' \
         + '## PROBABILITIES\n' \
         + 'aa 0.9\n'
@@ -76,7 +77,7 @@ def test_convert_to_7chars(mock_out_open, mock_run_pfam_scan,
     eq_(expected_calls, handle.write.call_args_list)
 
     # check: encoded PTMs
-    mock_search_elm.return_value = [[], [], []]
+    mock_search_elm.return_value = [[], [], [], [[], [], []]]
     mock_find_phosph_sites.return_value = [[[1]], [[2]], [[3]], [], [], [], []]
     expected_data = '>1\nSAAAZAAEAAAVAAQAAARAA\n' \
         + '## PROBABILITIES\n'
@@ -140,7 +141,7 @@ def test_search_elm(mock_request, mock_urlopen):
 
     # check: no motifs found
     mock_urlopen.return_value = MockResponse('')
-    expected = [[], [], []]
+    expected = [[], [], [], [[], [], []]]
     slims_classes = dict()
     seq_go_terms = ["007"]
 
@@ -153,7 +154,7 @@ def test_search_elm(mock_request, mock_urlopen):
     data = "description\nMOTIF 1 1 False False False\n"
     mock_urlopen.return_value = MockResponse(data)
     slims_classes = dict({'MOTIF': {"prob": 1e-5, "GO": ["007"]}})
-    expected = [[[1, 1]], ['MOTIF'], [0.8]]
+    expected = [[[1, 1]], ['MOTIF'], [0.8], [[], [], []]]
     result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
     eq_(result, expected)
 
@@ -161,7 +162,7 @@ def test_search_elm(mock_request, mock_urlopen):
     data = "description\nMOTIF 1 1 False False False\n"
     mock_urlopen.return_value = MockResponse(data)
     slims_classes = dict({'MOTIF': {"prob": 1e-5, "GO": ["008"]}})
-    expected = [[], [], []]
+    expected = [[], [], [], [[], [], []]]
 
     result = search_elm('TAU_HUMAN', test_vars.seq, slims_classes, seq_go_terms)
     eq_(result, expected)
@@ -237,8 +238,8 @@ def test_run_netphos(mock_subprocess):
        create=True)
 def test_run_pfam_scan():
     from kmad_web.services.convert import run_pfam_scan
-    expected = [[[560, 591], [592, 622], [623, 653], [654, 685]],
-                ['PF00418.14', 'PF00418.14', 'PF00418.14', 'PF00418.14']]
+    expected = [[[561, 591], [592, 622], [623, 653], [654, 685]],
+                ['PF00418.15', 'PF00418.15', 'PF00418.15', 'PF00418.15']]
 
     result = run_pfam_scan('test')
     eq_(result, expected)

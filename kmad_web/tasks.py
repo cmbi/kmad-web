@@ -3,17 +3,20 @@ import logging
 import os
 import subprocess
 import re
+import tempfile
+import time
 import urllib2
 
 from celery import current_app as celery_app
 
 from kmad_web import paths
 from kmad_web.services import files
+from kmad_web.services import mutation_analysis as ma
 from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
 from kmad_web.services.consensus import (find_consensus_disorder,
                                          filter_out_short_stretches)
-from kmad_web.services.convert import convert_to_7chars
+from kmad_web.services.convert import convert_to_7chars, run_netphos
 from kmad_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
@@ -28,8 +31,9 @@ _log = logging.getLogger(__name__)
 @celery_app.task
 def postprocess(result, single_filename, multi_filename, conffilename,
                 output_type):
+
+    _log.info("Running postprocess")
     # process result and remove tmp files
-    _log.debug("Postprocessing the results")
     files.remove_files(single_filename)
     files.remove_files(multi_filename)
     if conffilename:
@@ -52,20 +56,18 @@ def postprocess(result, single_filename, multi_filename, conffilename,
         consensus = find_consensus_disorder(result[1:])
         result += [consensus]
         result += [filter_out_short_stretches(consensus[1])]
-    elif output_type == 'predict_and_align':
+    elif output_type in ['predict_and_align', 'hope']:
         result = [result[0]] + result[-2:]
     elif output_type == 'predict':
         result = result[:2]
-    # else: output_type = 'align' or 'annotate' -> then there is no need to
-    # change the result
     return result
 
 
 @celery_app.task
 def run_single_predictor(prev_result, fasta_file, pred_name):
-    _log.debug("Run single predictor: {}".format(pred_name))
-    if prev_result[0]:
-        return prev_result[1]
+    _log.info("Run single predictor: {}".format(pred_name))
+    if prev_result[1][0]:
+        return prev_result[1][1]
     else:
         if pred_name == "dummy":    # pragma: no cover
             sequence = open(fasta_file).readlines()[1:]
@@ -99,20 +101,19 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 _log.debug(args)
             try:
                 if pred_name == 'globplot':
-                    # data = run_globplot(fasta_file)
                     data = subprocess.check_output(args)
                 else:
                     _log.info("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
                     subprocess.call(args)
                     _log.info("out file name: {}; exists: {}".format(out_file,
-                        os.path.exists(out_file)))
+                              os.path.exists(out_file)))
                     if os.path.exists(out_file):
                         with open(out_file) as f:
                             data = f.read()
                     else:
                         _log.info(
-                            "Ouput file {} doesn't exist".format(out_file))
+                            "Output file {} doesn't exist".format(out_file))
                 data = preprocess(data, pred_name)
             except (subprocess.CalledProcessError, OSError) as e:
                 _log.error("Error: {}".format(e))
@@ -120,19 +121,22 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 
 
 @celery_app.task
-def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
+def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
           multi_seq_input, conffilename, output_type, first_seq_gapped):
-    # blast result file already created in "query_d2p2"
+    _log.info("Running align")
+
     if not multi_seq_input:
-        out_blast = filename.split(".")[0]+".blastp"
-        # fasta filename
-        fastafile, blast_success = get_fasta_from_blast(out_blast, filename)
+        blast_result = prev_tasks[0]
+        _log.info("prev result: {}".format(prev_tasks))
+        fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
         _log.debug("BLAST success: {}".format(blast_success))
     else:
         fastafile = filename
     if multi_seq_input or blast_success:
-        toalign = convert_to_7chars(fastafile)['filename']  # .7c filename
+        convert_result = convert_to_7chars(fastafile)  # .7c filename
+        toalign = convert_result['filename']
+        annotated_motifs = convert_result['annotated_motifs']
         codon_length = 7
 
         al_outfile = "%s_al" % toalign
@@ -165,20 +169,24 @@ def align(d2p2, filename, gap_opening_penalty, gap_extension_penalty,
         alignment_encoded = open(al_outfile).read().encode('ascii',
                                                            errors='ignore')
         alignment_processed = process_alignment(alignment_encoded, codon_length)
-        result = alignment_processed + [feature_codemap]
+        alignments = alignment_processed + [feature_codemap]
+        result = {'alignments': alignments,
+                  'annotated_motifs': annotated_motifs}
     else:
-        result = [[], [], [], []]
+        result = {'alignments': [[], [], [], []],
+                  'annotated_motifs': []}
     _log.debug("Finished alignment")
     return result
 
 
 @celery_app.task
 def annotate(d2p2, filename):
-    encoded_filename = convert_to_7chars(filename)  # .7c filename
+    _log.info("Running annotate")
+
+    convert_result = convert_to_7chars(filename)
+    encoded_filename = convert_result['filename']
     with open(filename.split('.')[0] + '.map') as a:
         feature_codemap = a.read().splitlines()
-    # motifs = [i.split() for i in feature_codemap if i.startswith('motif')]
-    # domains = [i.split() for i in feature_codemap if i.startswith('domain')]
     motifs = [[i.split()[0].split('_')[1]] + i.split()[1:]
               for i in feature_codemap if i.startswith('motif')]
 
@@ -191,30 +199,47 @@ def annotate(d2p2, filename):
                                                    errors='ignore')
     codon_length = 7
     processed = process_alignment(encoded, codon_length)
-    result = processed + [feature_codemap]
+    alignments = processed + [feature_codemap]
+    result = {'alignments': alignments,
+              'annotated_motifs': convert_result['annotated_motifs']}
     return result
 
 
 @celery_app.task
 def get_seq(d2p2, fasta_file):
+    # TODO: Does this need to be a task?
+
+    _log.info("Running get seq")
+
     return fasta_file.splitlines()[1].encode('ascii', errors='ignore')
 
 
 @celery_app.task
-def query_d2p2(filename, output_type, multi_seq_input):
+def run_blast(filename):
+    _log.info("Running blast")
+
+    out_blast = filename.split(".")[0]+".blastp"
+    args = ["blastp", "-query", filename, "-evalue", "1e-5",
+            "-num_threads", "15", "-db", paths.SWISSPROT_DB,
+            "-out", out_blast, '-outfmt', '10']
+    try:
+        subprocess.call(args)
+    except subprocess.CalledProcessError as e:
+        _log.error("Error: {}".format(e.output))
+    with open(out_blast) as a:
+        output = a.read().splitlines()
+    return output
+
+
+@celery_app.task
+def query_d2p2(blast_result, filename, output_type, multi_seq_input):
+    _log.info("Running query_d2p2")
+
     found_it = False
     prediction = []
-    if not (multi_seq_input and output_type == 'align'):
-        out_blast = filename.split(".")[0]+".blastp"
-        args = ["blastp", "-query", filename, "-evalue", "1e-5",
-                "-num_threads", "15", "-db", paths.SWISSPROT_DB,
-                "-out", out_blast, '-outfmt', '10']
-        try:
-            subprocess.call(args)
-        except subprocess.CalledProcessError as e:
-            _log.error("Error: {}".format(e.output))
-        if output_type != 'align':
-            [found_it, seq_id] = find_seqid_blast(out_blast)
+    try:
+        if not (multi_seq_input and output_type == 'align'):
+            [found_it, seq_id] = find_seqid_blast(blast_result)
             if found_it:
                 data = 'seqids=["%s"]' % seq_id
                 request = urllib2.Request('http://d2p2.pro/api/seqid', data)
@@ -225,12 +250,74 @@ def query_d2p2(filename, output_type, multi_seq_input):
                     prediction = process_d2p2(pred_result)
                 else:
                     found_it = False
-    return [found_it, prediction]
+    except urllib2.HTTPError and urllib2.URLError:
+        _log.debug("D2P2 HTTP/URL Error")
+    return [blast_result, [found_it, prediction]]
+
+
+@celery_app.task
+def analyze_mutation(processed_result, mutation_site, new_aa,
+                     wild_seq_filename):
+    _log.info("Running analyse mutation")
+
+    mutation_site_0 = mutation_site - 1  # 0-based mutation site position
+    wild_seq = processed_result[0]
+
+    disorder_prediction = processed_result[-2]  # filtered consensus
+    encoded_alignment = processed_result[-1]['alignments'][2]
+    proc_alignment = processed_result[-1]['alignments'][1]
+    feature_codemap = processed_result[-1]['alignments'][3]
+
+    annotated_motifs = processed_result[-1]['annotated_motifs']
+
+    mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
+    mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    with mutant_seq_file as f:
+        f.write('>mutant\n{}\n'.format(mutant_seq))
+
+    alignment_position = ma.get_real_position(encoded_alignment,
+                                              mutation_site_0, 0)
+    predicted_phosph_wild = run_netphos(wild_seq_filename)
+    predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
+    alignment = ma.preprocess_features(encoded_alignment)
+
+    os.remove(mutant_seq_file.name)
+
+    surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
+                                              predicted_phosph_mutant,
+                                              alignment, mutation_site_0,
+                                              encoded_alignment)
+    ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
+                               new_aa, predicted_phosph_mutant)
+    motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
+                                   wild_seq, mutant_seq, mutation_site_0,
+                                   alignment_position, feature_codemap,
+                                   annotated_motifs)
+    output = ma.combine_results(ptm_data, motif_data, surrounding_data,
+                                disorder_prediction, mutation_site_0, wild_seq)
+    # output = {
+    #     'residues': [
+    #         {
+    #             'position': 1,  # 1-based!
+    #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
+    #             'ptm': [{
+    #                 'phosrel': ['Y', 'N', 'description'],
+    #                 'glycosylation': ['M', 'N', 'description']
+    #             }],
+    #             'motifs': [{
+    #                 'motif-a': ['Y', 'M', 'description'],
+    #                 'motif-b': ['Y', 'M', 'description']
+    #             }],
+    #         }
+    #     ]
+    # }
+    return output
 
 
 @celery_app.task
 def update_elmdb(output_filename):
     _log.info("Running elm update")
+
     elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
     go_url = "http://geneontology.org/ontology/go-basic.obo"
     elm_list = elm.get_data_from_url(elm_url)
@@ -253,6 +340,30 @@ def update_elmdb(output_filename):
     out.close()
 
 
+@celery_app.task
+def filter_blast(blast_result):
+    _log.debug('Filtering blast result')
+
+    with open(paths.MAMMAL_IDS) as a:
+        mammal_ids = a.read().splitlines()
+
+    first_id = blast_result[0].split('|')[4].split('_')[1].split(',')[0]
+    if first_id in mammal_ids:
+        filtered_blast = []
+        for i in blast_result:
+            if i.split('|')[4].split('_')[1].split(',')[0] in mammal_ids:
+                filtered_blast.append(i)
+    else:
+        filtered_blast = blast_result
+    _log.info('Filtered blast: {}'.format(filtered_blast))
+    return filtered_blast
+
+
+@celery_app.task
+def stupid_task(prev_result):
+    return prev_result
+
+
 def get_task(output_type):
     """
     Get the task for the given output_type.
@@ -263,6 +374,8 @@ def get_task(output_type):
     if output_type in ['predict', 'predict_and_align', 'align', 'refine',
                        'annotate']:
         task = postprocess
+    elif output_type == 'hope':
+        task = analyze_mutation
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
 

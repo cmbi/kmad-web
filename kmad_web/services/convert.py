@@ -68,37 +68,42 @@ def get_id(sequence):
 def run_pfam_scan(filename):
     domain_coords = []
     domain_accessions = []
+    '''
     with open(filename) as a:
         fastafile = re.sub('-', '', a.read())
     values = {'seq': fastafile, 'output': 'xml'}
     data = urllib.urlencode(values)
-    request = urllib2.Request('http://pfam.xfam.org/search/sequence', data)
-    reply = urllib2.urlopen(request).read()
-    pfam_server_error = False
     try:
-        tree = ET.fromstring(reply)
-    except ET.ParseError:
-        pfam_server_error = True
-    if not pfam_server_error:
-        result_url = tree[0][1].text
-        count = 0
-        finished = False
-        while count < 20 and not finished:
-            time.sleep(6)
-            try:
-                request = urllib2.Request(result_url)
-                result = urllib2.urlopen(request).read()
-                root = ET.fromstring(result)
-                if len(root[0]):
-                    for child in root[0][0][0][0]:
-                        for g in child:
-                            domain_accessions += [child.attrib['accession']]
-                            domain_coords += [[int(g.attrib['start']),
-                                               int(g.attrib['end'])]]
-                finished = True
-            except ET.ParseError:
-                _log.debug("The result is not yet there")
-            count += 1
+        request = urllib2.Request('http://pfam.xfam.org/search/sequence', data)
+        reply = urllib2.urlopen(request).read()
+        pfam_server_error = False
+        try:
+            tree = ET.fromstring(reply)
+        except ET.ParseError:
+            pfam_server_error = True
+        if not pfam_server_error:
+            result_url = tree[0][1].text
+            count = 0
+            finished = False
+            while count < 20 and not finished:
+                time.sleep(6)
+                try:
+                    request = urllib2.Request(result_url)
+                    result = urllib2.urlopen(request).read()
+                    root = ET.fromstring(result)
+                    if len(root[0]):
+                        for child in root[0][0][0][0]:
+                            for g in child:
+                                domain_accessions += [child.attrib['accession']]
+                                domain_coords += [[int(g.attrib['start']),
+                                                   int(g.attrib['end'])]]
+                    finished = True
+                except ET.ParseError:
+                    _log.debug("The result is not yet there")
+                count += 1
+    except urllib2.HTTPError:
+        _log.debug('Pfam scan HTTPError')
+    '''
     return [domain_coords, domain_accessions]
 
 
@@ -252,7 +257,7 @@ def get_annotated_motifs(uniprotID):
     elms_ids = []
     probabilities = []
     # get annotated motifs first
-    url = "http://elm.eu.org/elms/browse_instances.gff?q="+uniprotID
+    url = "http://elm.eu.org/elms/browse_instances.gff?q={}".format(uniprotID)
     try:
         req = urllib2.Request(url)
         response = urllib2.urlopen(req)
@@ -267,7 +272,7 @@ def get_annotated_motifs(uniprotID):
                 probabilities.append(1)
                 elms_ids.append(elm_id)
     except urllib2.HTTPError:
-        _log.debug("HTTP error in get_annotated_motifs (url: {})".format(url))
+        _log.debug('get_annotated_motifs: HTTPError')
     return [limits, elms_ids, probabilities]
 
 
@@ -275,9 +280,9 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
     limits = []
     elms_ids = []
     probabilities = []
-    data = urllib.urlencode({'sequence': sequence})
-    url = "http://elm.eu.org/start_search/"
     try:
+        data = urllib.urlencode({'sequence': sequence})
+        url = "http://elm.eu.org/start_search/"
         req = urllib2.Request(url, data)
         response = urllib2.urlopen(req)
         features = response.read()
@@ -300,23 +305,23 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
                 except KeyError:
                     _log.debug("Didn't find motif: {}".format(slim_id))
     except urllib2.HTTPError:
-        _log.debug("HTTP error in get_predicted_motifs (url: {})".format(url))
-
+        _log.debug('get_predicted_motifs: HTTPError')
     return [limits, elms_ids, probabilities]
 
 
 def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
-    annotated = get_annotated_motifs(uniprotID)
-    predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms)
-    limits = annotated[0] + predicted[0]
-    elms_ids = annotated[1] + predicted[1]
-    probabilities = annotated[2] + predicted[2]
-    # elms_ids.extend(predicted[1])
-    # probabilities.extend(predicted[2])
-    limits, elms_ids, probabilities = filter_out_overlapping(limits,
-                                                             elms_ids,
-                                                             probabilities)
-    return [limits, elms_ids, probabilities, annotated]
+    # annotated = get_annotated_motifs(uniprotID)
+    # predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms)
+    # limits = annotated[0] + predicted[0]
+    # elms_ids = annotated[1] + predicted[1]
+    # probabilities = annotated[2] + predicted[2]
+    # # elms_ids.extend(predicted[1])
+    # # probabilities.extend(predicted[2])
+    # limits, elms_ids, probabilities = filter_out_overlapping(limits,
+    #                                                          elms_ids,
+    #                                                          probabilities)
+    # return [limits, elms_ids, probabilities, annotated]
+    return [[], [], [], [[], [], []]]
 
 
 # adds new domains/motifs to the dictionary
@@ -478,7 +483,7 @@ def convert_to_7chars(filename):
     newfile = ""
     uniprot_data = get_uniprot_data(seqFASTA)
     # annotated_motifs - all motifs annotated in the first seq
-    annotated_motifs = []
+    annotated_motifs = [[], [], []]
     for i, seqI in enumerate(seqFASTA):
         if '>' not in seqI:
             seqI = seqI.rstrip("\n")

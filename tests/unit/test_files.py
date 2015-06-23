@@ -9,11 +9,10 @@ from testdata import test_variables as test_vars
 @patch('kmad_web.services.files.open', create=True)
 def test_get_fasta_from_blast(mock_open, test_get_seq):
     m_file = mock_open.return_value.__enter__.return_value
-    test_blast = open('tests/unit/testdata/test.blastp').read()
+    test_blast = open('tests/unit/testdata/test.blastp').read().splitlines()
 
     # check: query sequence the same as the first blast hit
-    reads = ['>testseq1\nSEQ\n', test_blast]
-    m_file.read.side_effect = lambda: reads.pop(0)
+    m_file.read.return_value = '>testseq1\nSEQ\n'
     seq_calls = [['>testseq1\n', 'SEQ'], ['>testseq1\n', 'SEQ'],
                  ['>testseq2\n', 'SE']]
     test_get_seq.side_effect = lambda x: seq_calls.pop(0)
@@ -21,19 +20,19 @@ def test_get_fasta_from_blast(mock_open, test_get_seq):
 
     from kmad_web.services.files import get_fasta_from_blast
 
-    get_fasta_from_blast('blastname', 'fastaname')
+    get_fasta_from_blast(test_blast, 'fastaname')
     handle = mock_open()
     handle.write.assert_called_once_with(expected_data)
     a = handle.write.call_args
 
     # check: query sequence different than teh first blast hit
-    reads = ['>testseq0\nSEQSEQ\n', test_blast]
-    seq_calls = [['>testseq1\n', 'SEQ'],['>testseq1\n', 'SEQ'],
+    seq_calls = [['>testseq1\n', 'SEQ'], ['>testseq1\n', 'SEQ'],
                  ['>testseq2\n', 'SE']]
+    m_file.read.return_value = '>testseq0\nSEQSEQ\n'
     expected_data = '>testseq0\nSEQSEQ\n>testseq1\nSEQ\n>testseq2\nSE\n'
     handle.reset_mock()
 
-    get_fasta_from_blast('blastname', 'fastaname')
+    get_fasta_from_blast(test_blast, 'fastaname')
     handle.write.assert_called_once_with(expected_data)
 
 

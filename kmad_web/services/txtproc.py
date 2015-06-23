@@ -87,12 +87,6 @@ def process_fasta(fastafile):
         new_fasta = '\n'.join(new_list)
     else:
         new_fasta = '>fasta_header\n{}'.format(''.join(fasta_list))
-    # if fastafile.startswith('>'):
-    #     sequence = ''.join(fasta_list[1:])
-    #     new_fasta = fasta_list[0]+'\n'+sequence
-    # else:
-    #     sequence = ''.join(fasta_list)
-    #     new_fasta = '>fasta_header\n{}'.format(sequence)
     return new_fasta
 
 
@@ -104,15 +98,14 @@ def find_length(lines):
     return length
 
 
-def find_seqid_blast(filename):
-    with open(filename) as a:
-        infile = a.read().splitlines()
+def find_seqid_blast(blast_result):
     found = False
     seqID = ""
-    if len(infile) > 0:
-        firstline = infile[0].split(',')
+    if len(blast_result) > 0:
+        firstline = blast_result[0].split(',')
         if (firstline[2] == "100.00"
-                and firstline[4] == "0" and firstline[5] == "0"):
+                and firstline[4] == "0" and firstline[5] == "0"
+                and firstline[6:8] == firstline[8:10]):
             found = True
             seqID = firstline[1].split('|')[1]
     return [found, seqID]

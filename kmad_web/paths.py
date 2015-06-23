@@ -6,6 +6,7 @@ GLOBPLOT_PATH  = "GlobPipe.py"
 PSIPRED_PATH = "/usr/local/src/psipred/runpsipred"
 SWISSPROT_DB = "/data/blast/sprot"
 ELM_DB_GO_COMPLETE = "kmad_web/frontend/static/dbs/elm_complete.txt"
+MAMMAL_IDS = "kmad_web/frontend/static/dbs/mammal_ids.txt"
 
 UNIPROT_DAT_DIR = "/home/joanna/data/uniprot_dat/"
 extension = {"disopred": ".diso", "psipred": ".ss2", "predisorder": ".predisorder", "spine": ".spd"}
