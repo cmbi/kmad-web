@@ -68,7 +68,6 @@ def get_id(sequence):
 def run_pfam_scan(filename):
     domain_coords = []
     domain_accessions = []
-    '''
     with open(filename) as a:
         fastafile = re.sub('-', '', a.read())
     values = {'seq': fastafile, 'output': 'xml'}
@@ -103,7 +102,6 @@ def run_pfam_scan(filename):
                 count += 1
     except urllib2.HTTPError:
         _log.debug('Pfam scan HTTPError')
-    '''
     return [domain_coords, domain_accessions]
 
 
@@ -127,7 +125,7 @@ def check_id(uniprot_id, seq):
                           + uniprot_id + ".fasta")
     try:
         uni_seq = urllib2.urlopen(req).read()
-    except urllib2.HTTPError:
+    except urllib2.HTTPError or urllib2.URLError:
         _log.info("No entry with ID: {}".format(uniprot_id))
     else:
         uni_seq = ''.join(uni_seq.splitlines()[1:])
@@ -143,12 +141,15 @@ def get_uniprot_txt(uniprot_id):
     go_terms = []
     req = urllib2.Request("http://www.uniprot.org/uniprot/{}.txt".format(
         uniprot_id))
-    uniprot_dat = urllib2.urlopen(req).read().splitlines()
-    for lineI in uniprot_dat:
-        if lineI.startswith('FT'):
-            features += [lineI]
-        elif lineI.startswith('DR   GO;'):
-            go_terms += [lineI.split(';')[1].split(':')[1]]
+    try:
+        uniprot_dat = urllib2.urlopen(req).read().splitlines()
+        for lineI in uniprot_dat:
+            if lineI.startswith('FT'):
+                features += [lineI]
+            elif lineI.startswith('DR   GO;'):
+                go_terms += [lineI.split(';')[1].split(':')[1]]
+    except urllib2.HTTPError or urllib2.URLError:
+        _log.debug("Uniprot error")
     return {"features": features, "GO": go_terms}
 
 
