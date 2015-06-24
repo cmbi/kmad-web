@@ -178,6 +178,7 @@ def get_kmad_result(output_type, id):
     elif output_type == "predict":
         response = {'result': {'prediction': result}}
     elif output_type in ['align', 'refine', 'annotate']:
+        _log.debug("Result: {}".format(result))
         response = {'result': {
             'feature_codemap': result[-1]['alignments'][3],
             'annotated_motifs': result[-1]['annotated_motifs'],
