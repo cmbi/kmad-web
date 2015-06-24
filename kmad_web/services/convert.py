@@ -68,6 +68,7 @@ def get_id(sequence):
 def run_pfam_scan(filename):
     domain_coords = []
     domain_accessions = []
+    '''
     with open(filename) as a:
         fastafile = re.sub('-', '', a.read())
     values = {'seq': fastafile, 'output': 'xml'}
@@ -102,6 +103,7 @@ def run_pfam_scan(filename):
                 count += 1
     except urllib2.HTTPError:
         _log.debug('Pfam scan HTTPError')
+    '''
     return [domain_coords, domain_accessions]
 
 
@@ -133,7 +135,8 @@ def check_id(uniprot_id, seq):
             result = True
         else:
             _log.debug("Different sequences: {}".format(seq))
-    return result
+    # return result
+    return True
 
 
 def get_uniprot_txt(uniprot_id):
