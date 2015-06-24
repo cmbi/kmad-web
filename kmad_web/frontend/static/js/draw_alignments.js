@@ -110,7 +110,7 @@ draw_alignment = function(container_id, data) {
          downloadCanvasFromStage(this, "alignment.png", stage);
   }, false);
   console.debug("draw_alignment");
-  console.debug(Date.now() - start);
+  // console.debug(data[0][0]);
 }
 
 
@@ -198,24 +198,25 @@ create_tooltip = function(feature_coords, feature_names, shapes_layer, t_layer,
 }
 
 
-group_coords = function(feature_coords, feature_names) {
-  var single_width = feature_coords[0][2];
+group_coords = function(feature_coords, feature_names, single_width) {
   var new_coords = [];
   var new_names = [];
-  var new_block = feature_coords[0];
-  for (var i = 1; i < feature_coords.length; i++) {
-    if (feature_names[i] == feature_names[i - 1] 
-        && feature_coords[i][0] == feature_coords[i - 1][0] + single_width
-        && feature_coords[i][1] == feature_coords[i - 1][1]) {
-      new_block[2] += single_width;
-    } else {
-      new_coords.push(new_block);
-      new_names.push(feature_names[i - 1]);
-      new_block = feature_coords[i];
+  if (feature_coords.length > 0) {
+    var new_block = feature_coords[0];
+    for (var i = 1; i < feature_coords.length; i++) {
+      if (feature_names[i] == feature_names[i - 1] 
+          && feature_coords[i][0] == feature_coords[i - 1][0] + single_width
+          && feature_coords[i][1] == feature_coords[i - 1][1]) {
+        new_block[2] += single_width;
+      } else {
+        new_coords.push(new_block);
+        new_names.push(feature_names[i - 1]);
+        new_block = feature_coords[i];
+      }
     }
+    new_coords.push(new_block);
+    new_names.push(feature_names[feature_names.length - 1]);
   }
-  new_coords.push(new_block);
-  new_names.push(feature_names[feature_names.length - 1]);
   return [new_coords, new_names];
 }
 
@@ -335,13 +336,12 @@ draw_alignment_with_features = function(container_id, data, codon_length,
       x += 10;
     }
   }
-  coords_and_names =  group_coords(feature_coords, feature_names);
+  coords_and_names =  group_coords(feature_coords, feature_names, rect_width);
   feature_coords = coords_and_names[0];
   feature_names = coords_and_names[1];
   create_tooltip(feature_coords, feature_names, shapes_layer,
       tooltip_layer, feature_type, container_id);
   console.debug("draw_alignmenti_with_features " + feature_type);
-  console.debug(Date.now() - start);
 
   document.getElementById('download_' + feature_type + "_canvas_button").addEventListener('click',
       function() {
