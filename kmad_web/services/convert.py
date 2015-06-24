@@ -134,7 +134,7 @@ def check_id(uniprot_id, seq):
         if uni_seq == seq:
             result = True
         else:
-            _log.debug("Different sequences")
+            _log.debug("Different sequences: {}".format(seq))
     return result
 
 
@@ -489,20 +489,21 @@ def convert_to_7chars(filename):
             seqI = seqI.rstrip("\n")
             seq_id = get_id(seqFASTA[i-1]).rstrip('\n')
             header = seqFASTA[i-1].rstrip('\n')
-
-            tmp_filename = tmp_fasta(seq_id, seqI)
+            _log.debug("Annotating sequence: {}".format(seq_id))
+            ungapped = re.sub('-', '', seqI)
+            tmp_filename = tmp_fasta(seq_id, ungapped)
             [pfam, domains] = run_pfam_scan(tmp_filename)
             predicted_phosph = run_netphos(tmp_filename)
             if os.path.exists(tmp_filename):        # pragma: no cover
                 os.remove(tmp_filename)
-            if check_id(seq_id, seqI):
+            if check_id(seq_id, ungapped):
                 # uniprot_txt = get_uniprot_txt(seq_id)
                 # uniprot_results = find_phosph_sites(uniprot_txt["features"])
                 uniprot_results = find_phosph_sites(
                     uniprot_data["seq_data"][seq_id]["features"])
                 # elms - slims coordinates, motifs_ids, probs - probabilities
                 [elm, motifs_ids, probs, annotated] = search_elm(
-                    seq_id, seqI, slims_all_classes, uniprot_data["GO"])
+                    seq_id, ungapped, slims_all_classes, uniprot_data["GO"])
                 if i == 1:
                     annotated_motifs = annotated
                 motifsDictionary = add_elements_to_dict(motifs_ids,
