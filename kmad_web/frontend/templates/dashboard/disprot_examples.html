@@ -28,7 +28,7 @@ Disprot examples
     <span class="panel-body-custom">
     In this example the turquoise motif
     <a
-      href="http://http://elm.eu.org/elmPages/LIG_BIR_II_1.html">LIG_BIR_II_1</a>
+      href="http://elm.eu.org/elmPages/LIG_BIR_II_1.html">LIG_BIR_II_1</a>
     at the N-terminus  
     is clearly conserved, but is not very well aligned in the Clustal Omega
     alignment. KMAD lines up all of its instances together. An alignment like
@@ -63,10 +63,14 @@ Disprot examples
     <br>
     <strong>Protein EMB-1</strong>
     <br>
+    <span class="panel-body-custom">
     In this example there are two incorrectly aligned motifs - one is the same
-    motif as in the previous example, LIG_BIR_II_1 (now highlighted in orange)
+    motif as in the previous example, 
+    <a
+      href="http://elm.eu.org/elmPages/LIG_BIR_II_1.html">LIG_BIR_II_1</a>
+    (now highlighted in orange)
     - and KMAD also aligns it better now. Second motif here is the 
-    <a hred="http://elm.eu.org/elmPages/TRG_ENDOCYTIC_2">TRG_ENDOCYTIC_2</a>
+    <a href="http://elm.eu.org/elmPages/TRG_ENDOCYTIC_2.html">TRG_ENDOCYTIC_2</a>
       motif (highlighted in slightly lighter orange) beginning in the first
       sequence at position 65 and ending at position 129. In the KMAD alignment
       the motifs form the left side are shifted to the right, which shows how
@@ -75,6 +79,7 @@ Disprot examples
       this region is actually much higher than what it seemed from the
       Clustal alignment.
       the first
+    </span>
     <div class="row">
       <br>
       <div class="col-md-12">
@@ -105,6 +110,19 @@ Disprot examples
     </div>
     <br>
     <strong>Eukaryotic translation initiation factor 4E-binding protein 1</strong>
+    <br>
+    <span class="panel-body-custom">
+    This is another example of an incorrectly aligned
+    <a
+      href="http://elm.eu.org/elmPages/LIG_BIR_II_1.html">LIG_BIR_II_1</a>
+    motif. In the KMAD alignment only in the 6th sequence the moitf is not
+    lined up with the conserved column - but this is actually a desired result.
+    Aligning it with all the other instances of the motif would break other
+    similarities. For exmaple the identity of the 5 residue segment (positions
+    3 - 7) between sequences 6 and 3 or 4 is 80%, but if the motif from the 6th
+    sequence started on position 3 like in other sequences this identity would
+    drop down to 40%.
+    </span>
     <div class="row">
       <br>
       <div class="col-md-12">
@@ -141,6 +159,20 @@ Disprot examples
   <div class="panel-body">
     <br>
     <strong>Kappa-casein</strong>
+    <br>
+    <span class="panel-body-custom">
+
+    <a
+      href="http://elm.eu.org/elmPages/DEG_SCF_FBW7_1.html">DEG_SCF_FBW7_1</a>
+    highlighted in neon green is split up in two parts in the Clustal Omega
+    alignment. Such an alignment could lead to an (most probably) incorrect
+    conclusion that the 'PTTE' segment in the lower sequences is an insertion.
+    The KMAD alignment doesn't align the motif perfectly, because the
+    similarities in the segment on positions 151 - 158 are too strong,
+    therefore forcing the motif to be lined up even more would decrease the
+    quality of the alignment.
+
+    </span>
     <div class="row">
       <br>
       <div class="col-md-6">
@@ -166,6 +198,21 @@ Disprot examples
       </div>
     </div>
     <strong>Myelin basic protein</strong>
+    <br>
+    <span class="panel-body-custom">
+      At first sight it seems like the
+    <a
+      href="http://elm.eu.org/elmPages/MOD_PKA_2.html">MOD_PKA_2</a>
+    motif (purple) should be shifted by 6 residues to the right to be aligned
+    with the conserved column having the same motif in other sequences.
+    The similarity amino acid-wise would not be increased but at leats the
+    motif would be aligned well. But when we look at the KMAD alignment we can
+    see that the mistake Clustal made is even worse - KMAD shifts the whole
+    'GRDSRS' segment to the right side of the gap, where it fits perfectly,
+    having 100% identity with the first 8 sequences. We show the same examples
+    in the PTMs section, as the KMAD alignment also improves PTM alignment in
+    these sequences.
+    </span>
     <div class="row">
       <br>
       <div class="col-md-12">
