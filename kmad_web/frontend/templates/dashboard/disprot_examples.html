@@ -24,6 +24,17 @@ Disprot examples
   <div class="panel-body">
     <br>
     <strong>60S acidic ribosomal protein P1-B</strong>
+    <br>
+    <span class="panel-body-custom">
+    In this example the turquoise motif
+    <a
+      href="http://http://elm.eu.org/elmPages/LIG_BIR_II_1.html">LIG_BIR_II_1</a>
+    at the N-terminus  
+    is clearly conserved, but is not very well aligned in the Clustal Omega
+    alignment. KMAD lines up all of its instances together. An alignment like
+    this tells us more about the reliability of the motif prediction.
+
+    </span>
     <div class="row">
       <br>
       <div class="col-md-12">
@@ -36,6 +47,7 @@ Disprot examples
         <img src="{{ url_for('static', filename="images/disprot_examples/terminal_motifs/DP00001_e2_rand_kmad10.png")}}">
       </div>
     </div>
+    <br>
     <div class="row">
       <div class="col-md-12">
         <div class="jumbotron">
@@ -50,6 +62,19 @@ Disprot examples
     </div>
     <br>
     <strong>Protein EMB-1</strong>
+    <br>
+    In this example there are two incorrectly aligned motifs - one is the same
+    motif as in the previous example, LIG_BIR_II_1 (now highlighted in orange)
+    - and KMAD also aligns it better now. Second motif here is the 
+    <a hred="http://elm.eu.org/elmPages/TRG_ENDOCYTIC_2">TRG_ENDOCYTIC_2</a>
+      motif (highlighted in slightly lighter orange) beginning in the first
+      sequence at position 65 and ending at position 129. In the KMAD alignment
+      the motifs form the left side are shifted to the right, which shows how
+      well the motif is conserved. The whole gap between positions 65 - 125 is
+      much 'cleaner' now and shows that the similarity of these proteins in
+      this region is actually much higher than what it seemed from the
+      Clustal alignment.
+      the first
     <div class="row">
       <br>
       <div class="col-md-12">
