@@ -33,7 +33,6 @@ Disprot examples
       is clearly conserved, but is not very well aligned in the Clustal Omega
       alignment. KMAD lines up all of its instances together. An alignment like
       this tells us more about the reliability of the motif prediction.
-
     </span>
     <div class="row">
       <br>
@@ -161,7 +160,6 @@ Disprot examples
     <strong>Kappa-casein</strong>
     <br>
     <span class="panel-body-custom">
-
       <a
         href="http://elm.eu.org/elmPages/DEG_SCF_FBW7_1.html">DEG_SCF_FBW7_1</a>
       highlighted in neon green is split up in two parts in the Clustal Omega
@@ -171,7 +169,6 @@ Disprot examples
       similarities in the segment on positions 151 - 158 are too strong,
       therefore forcing the motif to be lined up even more would decrease the
       quality of the alignment.
-
     </span>
     <div class="row">
       <br>
@@ -243,12 +240,12 @@ Disprot examples
     <strong>Basic salivary proline-rich protein 4</strong>
     <br>
     <span class="panel-body-custom">
-    In this case both alignments are quite messy - to the extent that when
-    looking on the Clustal alignment it is hard to say what and how should be
-    improved. While KMAD alignment is also messy, it brings a little bit more
-    order, and now we can see that for example the
-    <a
-      href="http://elm.eu.org/elmPages/MOD_N-GLC_1.html">MOD_N-GLC_1</a>
+      In this case both alignments are quite messy - to the extent that when
+      looking on the Clustal alignment it is hard to say what and how should be
+      improved. While KMAD alignment is also messy, it brings a little bit more
+      order, and now we can see that for example the
+      <a
+        href="http://elm.eu.org/elmPages/MOD_N-GLC_1.html">MOD_N-GLC_1</a>
       motif is highly conserved in all sequences.
     </span>
     <div class="row"> 
@@ -298,10 +295,10 @@ Disprot examples
     <strong>Microtubule-associated protein 2</strong>
     <br>
     <span class="panel-body-custom">
-    In the Clustal alignment in sequences 7 and 8 the 'GDYTL' segment is
-    shifted two residues to the right, which results in the phosphorylated
-    tyrosines not lined up together. KMAD lines them up, which also better
-    shows the high similarity of this segment between sequences.
+      In the Clustal alignment in sequences 7 and 8 the 'GDYTL' segment is
+      shifted two residues to the right, which results in the phosphorylated
+      tyrosines not lined up together. KMAD lines them up, which also better
+      shows the high similarity of this segment between sequences.
     </span>
     <div class="row">
       <br>
@@ -349,6 +346,11 @@ Disprot examples
     <hr>
     <strong>Stathmin</strong>
     <br>
+    The conserved phosphorylated serines in the Clustal alignment are spread over
+    two positions - 85 and 86, while in the KMAD alignment they are all lined
+    up in one column, which seems to be the more biologically relevant solution
+    here.
+    <br>
     <span class="panel-body-custom">
 
     </span>
@@ -372,6 +374,10 @@ Disprot examples
     <strong>Osteopontin</strong>
     <br>
     <span class="panel-body-custom">
+      This example is not a large improvement, but th alignment is slightly
+      better. The two hydroxylated threonines from sequences 5 and 6 are in
+      KMAD alignment lined up with 5 other hydroxylated threonines, instead of
+      3 like in the Clustal alignment.
     </span>
     <div class="row">
       <br>
@@ -393,6 +399,15 @@ Disprot examples
     <strong>Bone sialoprotein 1</strong>
     <br>
     <span class="panel-body-custom">
+      Here Clustal Omega made several mistakes. First, the phosphorylated
+      serines in the first sequence at position 3919 and 3920 are shifted one
+      residue to the left relative to the column of conserved phosphorylated
+      serines from other sequences. Second, the phosphorylated serines in
+      sequences 1 - 5 between positions 3951 and 3958, could be all lined up
+      together, especially considering their very similar, low complexity,
+      "N,D,Q,E-rich" surrounding. Last but not least, N-glycosylated
+      asparagines at position 3985 in sequences 1-3 and at position 3983 in
+      the CLustal alignment are lined up together in the KMAD alignment.
     </span>
     <div class="row">
       <br>
@@ -415,6 +430,14 @@ Disprot examples
     <strong>Alpha-S1-casein</strong>
     <br>
     <span class="panel-body-custom">
+      This is an example of a misplacement of a whole block of phosphorylated
+      serines - the 'SISSS' segment in the last sequence is shifted to the left
+      in the Clustal alignment, while it's correctly aligned in the KMAD
+      alignment. KMAD also exposes repetitivenes of the 'SISSS' pattern - which
+      was not clear from the Clustal alignment, with the isoleucines being
+      placed at 3 different positions.
+      KMAD also introduces a minor improvement indicated with a lighter gray
+      box - the alignment reveals more similarity here than Clustal Omega does.
     </span>
     <div class="row">
       <br>
@@ -437,6 +460,13 @@ Disprot examples
     <strong>Genome polyprotein</strong>
     <br>
     <span class="panel-body-custom">
+      This is an example of incorrectly aligned N-glycosylated asparagines,
+      wich are indicated with a gray box.
+      The alignment in this short region is very chaotic in both cases, but
+      KMAD stresses the importance of lining up the modified residues together, 
+      sacrificing the alignment of surrounding residues. Cosnidering that the
+      surrounding is very divergent between sequences while the asparagines are highly
+      conserved, it seems like KMAD's alignemnt is the better solution here.
     </span>
     <div class="row">
       <br>
@@ -458,11 +488,18 @@ Disprot examples
     <strong>Prothymosin alpha</strong>
     <br>
     <span class="panel-body-custom">
+      This is another example of a phosphorylation misalignment. The gap
+      at position 111 in the KMAD alignment, so that the phosphothreonines are
+      aligned together clearly increases the alignment quality. Another two
+      minor improvements are indicated with light gray boxes - in the first box 
+      a segment from 6th sequence is better aligned, and in the second box the
+      aspartate in the last sequence is shifted to the right side of the gap,
+      where it's almost fully conserved.
     </span>
     <div class="row">
       <br>
       <div class="col-md-12">
-        <div style="overflow:auto">
+        <div style="overflow:auto" id="DP00058">
           Clustal Omega
           <br>
           <img src="{{ url_for('static',
@@ -480,6 +517,14 @@ Disprot examples
     <strong>Myelin basic protein</strong>
     <br>
     <span class="panel-body-custom">
+      This is an example that was already shown in the 'other motifs' section,
+      but there are also improvements considering the PTMs.
+      The methylated arginine in sequence 11 is shifted by one residue to the
+      right, while it is conserved in the first 9 sequences. KMAD aligns it
+      correctly with the other aginines. Moreover, it better aligns the 'SRS'
+      segment, which Clustal aligned at 3 different positions.
+      A less important improvement is alignment of the 'ADYKS' segment in sequence 7
+      (light gray box).
     </span>
     <div class="row">
       <br>
@@ -498,6 +543,54 @@ Disprot examples
       </div>
     </div>
   </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>Where KMAD goes wrong</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+    <strong>Eukaryotic translation initiation factor 4E-binding protein 1</strong>
+    <br>
+    <span class="panel-body-custom">
+    </span>
+    <div class="row">
+      <br>
+      <div class="col-md-12">
+        <div style="overflow:auto">
+          Clustal Omega
+          <br>
+          <img src="{{ url_for('static',
+          filename="images/disprot_examples/worse/DP00028_clustal.png")}}">
+          <br>
+          KMAD
+          <br>
+          <img src="{{ url_for('static',
+          filename="images/disprot_examples/worse/DP00028_kmad.png")}}">
+        </div>
+      </div>
+    </div>
+    <hr>
+    <strong>Non-histone chromosomal protein HMG-14</strong>
+    <br>
+    <span class="panel-body-custom">
+    </span>
+    <div class="row">
+      <br>
+      <div class="col-md-12">
+        <div style="overflow:auto">
+          Clustal Omega
+          <br>
+          <img src="{{ url_for('static',
+          filename="images/disprot_examples/worse/DP00038_clustal.png")}}">
+          <br>
+          KMAD
+          <br>
+          <img src="{{ url_for('static',
+          filename="images/disprot_examples/worse/DP00038_kmad.png")}}">
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 {% block js %}
@@ -505,5 +598,8 @@ Disprot examples
 var dp00119 = $("#DP00119");
 var scrollto = dp00119.offset().left + (dp00119.width() / 2) + 170;
 dp00119.animate({ scrollLeft: scrollto});
+vlar dp00058 = $("#DP00058");
+// var scrollto = dp00058.offset().left + (dp00058.width() / 2) + 170;
+dp00058.animate({ scrollLeft: dp00058.width()});
 </script>
 {% endblock %}
