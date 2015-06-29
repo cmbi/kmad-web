@@ -52,9 +52,22 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
       <li><a href="{{ url_for('dashboard.about') }}">About</a></li>
-      <li><a href="{{ url_for('dashboard.disprot_examples') }}">Examples</a></li>
       <li><a href="{{ url_for('dashboard.methods') }}">Methods</a></li>
       <li><a href="{{ url_for('dashboard.standalone') }}">Download</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+          Examples
+          <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="{{ url_for('dashboard.disprot_clustal_examples') }}">Clustal examples</a>
+            </li>
+            <li>
+              <a href="{{ url_for('dashboard.disprot_tcoffee_examples') }}">T-coffee examples</a>
+            </li>
+          </ul>
+        </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">

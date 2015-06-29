@@ -132,9 +132,14 @@ def alignment_example(filename):
     return render_template('dashboard/examples/{}.html'.format(filename))
 
 
-@bp.route('/disprot_examples', methods=['GET'])
-def disprot_examples():
-    return render_template('dashboard/disprot_examples.html')
+@bp.route('/disprot_clustal_examples', methods=['GET'])
+def disprot_clustal_examples():
+    return render_template('dashboard/disprot_clustal_examples.html')
+
+
+@bp.route('/disprot_tcoffee_examples', methods=['GET'])
+def disprot_tcoffee_examples():
+    return render_template('dashboard/disprot_tcoffee_examples.html')
 
 
 @bp.route('/methods', methods=['GET'])
