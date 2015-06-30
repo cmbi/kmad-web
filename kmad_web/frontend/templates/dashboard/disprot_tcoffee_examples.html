@@ -15,6 +15,15 @@ T-coffee examples
   <div class="panel-body">
     <div class="row">
       <div class="col-md-12">
+        <span class="panel-body-custom">
+          While T-coffee alignments cope much better with PTM alignments than
+          Clustal Omega, they suffer from other issues, especially in the very
+          divergent regions (e.g. Alignment 1 and 5). We suppose the reason for it
+          might be T-coffee's focus on local similarities between
+          sequences and use of the Gibbs sampler to identify repetitive patterns.
+          <br>
+        </span>
+  <br>
         <a href="{{ url_for('static',
           filename="alignments/t_coffee/dp00006.html")}}"
           class="btn btn-primary active" id="btn1" onClick=activate("btn1") target="alignment_frame">Alignment 1</a>
@@ -34,6 +43,8 @@ T-coffee examples
           filename="alignments/t_coffee/dp00069.html")}}"
           class="btn btn-primary" id="btn5" onClick=activate("btn5")
           target="alignment_frame">Alignment 5</a>
+  <br>
+  <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
           filename="alignments/t_coffee/dp00006.html") }}"
           height="100%"

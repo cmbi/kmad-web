@@ -155,11 +155,15 @@ align, unless knowledge about the presence of sequence motifs is used to guide t
 <h4>Visual inspection</h4>
 <P ALIGN="JUSTIFY">
 The visual inspection of the alignments showed that KMAD often
-manages to overcome problems encountered by Clustal. 
-<a href="{{url_for('dashboard.disprot_examples')}}">Here</a>
-we present several
+manages to overcome problems encountered by Clustal and T-coffee. 
+Here we present several
 representative examples of what are the usual problems and how KMAD solves
-them.
+them:
+<ul>
+<li><a href="{{url_for('dashboard.disprot_clustal_examples')}}">Clustal</a></li>
+<li><a
+  href="{{url_for('dashboard.disprot_tcoffee_examples')}}">T-Coffee</a></li>
+</ul>
 {#<br>
   <a href="{{ url_for('dashboard.alignment_example', filename='example1') }}"
     class="btn btn-primary btn-xs" >SIAL_HUMAN</a>
@@ -264,6 +268,34 @@ scores only in several cases.
   <a href="{{ url_for('dashboard.alignment_example', filename='alignment2_4') }}" class="btn
     btn-primary" >Alignment 4</a>
 </div>
+<H4>Comparison with other tools</H4>
+We chose 4 popular alignment methods, i.e. MUSCLE, MAFFT, T-Coffee,
+and Clustal Omega for the comparison. For each of the methods we refined its alignments with KMAD.
+In all cases, except for T-Coffee, KMAD improves the alignment score (both the
+general one and the motif score).
+T-Coffee gets the best scores, but we have to keep in mind that still - these
+proteins are mostly structured. After visual inspection of T-Coffee alignments
+of completely disordered proteins, we conclude that Clustal coupled with KMAD
+very often produces better alignments. (Examples of T-Coffee mistakes are
+presented 
+<a
+href="{{ url_for('dashboard.disprot_tcoffee_examples') }}">here</a>)
+<br>
+<figure>
+  <div class="row">
+    <div class="col-md-12">
+      <img style="max-width:100%;max-height:100%;" 
+      src="{{ url_for('static',
+      filename='files/plots/boxplot_bali_score.png') }}"/>
+      <br>
+      <br>
+      <img style="max-width:100%;max-height:100%;" 
+      src="{{ url_for('static',
+      filename='files/plots/boxplot_bali_motif_score.png') }}"/>
+    </div>
+  </div>
+  <br>
+</figure>
 
 </P>
 </div>
