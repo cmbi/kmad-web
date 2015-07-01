@@ -142,6 +142,11 @@ def disprot_tcoffee_examples():
     return render_template('dashboard/disprot_tcoffee_examples.html')
 
 
+@bp.route('/reviewer_comments', methods=['GET'])
+def reviewer_comments():
+    return render_template('dashboard/reviewer_comments.html')
+
+
 @bp.route('/methods', methods=['GET'])
 def methods():
     return render_template('dashboard/methods.html')
