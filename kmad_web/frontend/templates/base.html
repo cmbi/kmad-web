@@ -12,7 +12,7 @@
     <script src="{{ url_for('static', filename='libs/jquery-ui/jquery-ui.js') }}"></script>
     <script src="{{ url_for('static', filename='libs/bootstrap/dist/js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static',
-      filename='libs/bootstrap-validator/dist/validator.js') }}"></script>
+filename='libs/bootstrap-validator/dist/validator.js') }}"></script>
     <script src="{{ url_for('static', filename='libs/bootstrap-tour/build/js/bootstrap-tour.js') }}"></script>
     <script src="{{ url_for('static', filename='libs/kineticjs/kinetic.js') }}"></script>
     <script src="{{ url_for('static', filename='js/joseq.js') }}"></script>
@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/dist/css/bootstrap-theme.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='libs/bootstrap/dist/css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',
-                                            filename='libs/bootstrap-tour/build/css/bootstrap-tour.css') }}">
+    filename='libs/bootstrap-tour/build/css/bootstrap-tour.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-navbar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-panel.css') }}">
@@ -35,93 +35,93 @@
   </head>
 
   <body>
-  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a id="KMADlogo" class="navbar-brand" href="{{ url_for('dashboard.index') }}"><strong>K<span>M<span>A<span>D</span></span></span></strong></a>
-    </div>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a id="KMADlogo" class="navbar-brand" href="{{ url_for('dashboard.index') }}"><strong>K<span>M<span>A<span>D</span></span></span></strong></a>
+        </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-      <li><a href="{{ url_for('dashboard.about') }}">About</a></li>
-      <li><a href="{{ url_for('dashboard.methods') }}">Methods</a></li>
-      <li><a href="{{ url_for('dashboard.standalone') }}">Download</a></li>
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-          Examples
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('dashboard.about') }}">About</a></li>
+            <li><a href="{{ url_for('dashboard.methods') }}">Methods</a></li>
+            <li><a href="{{ url_for('dashboard.standalone') }}">Download</a></li>
+            <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+              Examples
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li>
               <a href="{{ url_for('dashboard.disprot_clustal_examples') }}">Clustal examples</a>
-            </li>
-            <li>
+              </li>
+              <li>
               <a href="{{ url_for('dashboard.disprot_tcoffee_examples') }}">T-Coffee examples</a>
+              </li>
+            </ul>
             </li>
           </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-          API
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+              API
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li>
               <a href="{{ url_for('kmad.api_docs') }}">API documentation</a>
-            </li>
-            <li>
+              </li>
+              <li>
               <a href="{{ url_for('kmad.api_example') }}">API example</a>
+              </li>
+            </ul>
             </li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-          Help
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li>
+            <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+              Help
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li>
               <a id="start_tour" href="#" style="display:none;">Tour</a>
               <a id="start_tour2" href={{ url_for('dashboard.index')
-              }}#start_tour>Tour</a>
-            </li>
-            <li>
+                }}#start_tour>Tour</a>
+              </li>
+              <li>
               <a href="{{ url_for('dashboard.help') }}">Help page</a>
+              </li>
+            </ul>
             </li>
           </ul>
-        </li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
     <br>
     <br>
     <br>
     <br>
     {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="container">
-          <div class="alert alert-dismissable alert-success">
-            <button type="button" class="close" data-dismiss="alert"
-                    aria-hidden="true">&times;</button>
-            {% for message in messages %}
-              <p>{{ message }}</p>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
+    {% if messages %}
+    <div class="container-fluid">
+      <div class="alert alert-dismissable alert-success">
+        <button type="button" class="close" data-dismiss="alert"
+          aria-hidden="true">&times;</button>
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
     {% endwith %}
-    <div class="container">
+    <div class="container-fluid">
       {% block content %}
       {% endblock %}
     </div>
