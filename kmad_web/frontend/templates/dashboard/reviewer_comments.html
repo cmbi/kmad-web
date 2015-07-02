@@ -16,47 +16,98 @@ Reviewer comments
     <div class="row">
       <div class="col-md-12">
         <span class="panel-body-custom">
-          I counted gaps and gap characters in 120 alignments of proteins from Disprot (a total of
+          We counted gaps and gap characters in 120 alignments of proteins from Disprot (a total of
           26881 sequences).
           In the gap count each segment of gap characters was counted as a
           single gap., So, for example sequence 'A--A-A' has two gaps, but
           three gap characters.
-          Terminal gaps were not included.
           <br>
           <strong>Gap characters</strong>
           <br>
-          In 63 cases KMAD alignment had more gap characters than Clustal
-          Omega, while Clustal had more gap characters in 23 cases.
-          In 34 cases there was a tie.
-          <br>
-          Mean number of gaps in KMAD alignments: 4430.10
-          <br>
-          Mean number of gaps in Clustal alignments: 3829.40
-          <br>
-          <br>
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/plot_nonterm_chars.png')}}">
-
-          <br>
+          <div class="row">
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>Without terminal gaps</strong>
+              <br>
+              <div style="margin-right:300px;">
+                In 63 cases KMAD alignment had more gap characters than Clustal
+                Omega,
+                while Clustal had more gap characters in 23 cases.
+                In 34 cases there was a tie.
+                <br>
+                Mean number of gap characters in KMAD alignments: 4430.10
+                <br>
+                Mean number of gaps characters Clustal alignments: 3829.40
+              </div>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_nonterm_chars.png')}}">
+              <br>
+            </div>
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>With terminal gaps</strong>
+              <br>
+              <div style="margin-right:300px;">
+                KMAD alignments had more gap characters in 35 cases. Clustal
+                alignments had more gap characters in 19 cases. There was a tie
+                in 66 cases.
+                <br>
+                Mean number of gap characters in KMAD alignments: 12287.18
+                <br>
+                Mean number of gaps characters Clustal alignments: 12120.50
+              </div>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_term_chars.png')}}">
+            </div>
+          </div>
           <br>
           <strong>Gaps</strong>
           <br>
-          In case of gap count the tendency was opposite than with gap
-          characters count - KMAD alignment had more often fewer gaps than
-          Clustal alignments. In 35 cases KMAD alignments had more gaps, in 59
-          cases Clustal alignments had more gaps, and there was a tie in 26
-          cases.
           <br>
-          Mean number of gaps in KMAD alignments: 344.88
-          <br>
-          Mean number of gaps in Clustal alignments: 392.24
-          <br>
-          <br>
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/plot_nonterm_gaps.png')}}">
-          <br>
-          <br>
-          
+          <div class="row">
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>Without terminal gaps</strong>
+              <div style="margin-right:300px;">
+                In case of gap count the tendency was opposite than with gap
+                characters 
+                count - KMAD alignment had more often fewer gaps than
+                Clustal alignments.
+                In 35 cases KMAD alignments had more gaps, in 59
+                cases Clustal alignments
+                had more gaps, and there was a tie in 26
+                cases.
+                <br>
+                Mean number of gaps in KMAD alignments: 344.88
+                <br>
+                Mean number of gaps in Clustal alignments: 392.24
+              </div>
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_nonterm_gaps.png')}}">
+              <br>
+              <br>
+            </div>
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>With terminal gaps</strong>
+              <br>
+              <div style="margin-right:300px;">
+                KMAD alignments had more gaps in 31 cases, Clustal alignments
+                had more gaps in 63 cases. 26 cases where a tie.
+                <br>
+                Mean number of gaps in KMAD alignments: 429.66
+                <br>
+                Mean number of gaps in Clustal alignments: 380.53
+              </div>
+              <br>
+              <br>
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_term_gaps.png')}}">
+            </div>
+          </div>
+
           This result is caused by the fact that Clustal alignments more
           often have long terminal gaps, which are later changed by KMAD to
           non-terminal gaps - this causes a large increase in the gap character
@@ -64,7 +115,8 @@ Reviewer comments
           give hundreds of points to the gap character count, while it will
           only change the gap count by one point. KMAD tends to insert less
           gaps in general (one of the results of Clustal not removing once
-          inserted gaps), therefore the gap count is lower.
+          inserted gaps), therefore the gap count is lower, but the
+          non-terminal gaps are slightly longer than in case of Clustal. 
         </span>
       </div>
     </div>
@@ -128,23 +180,18 @@ Reviewer comments
       <br>
       <br>
       <div class="row">
-      <div class="col-md-6">
-      Figure from the Holt et al. article:
-      <br>
-      <img src="{{ url_for('static',
-      filename='images/reviewer_comments/ubx_holt.jpg')}}">
+        <div class="col-md-12">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/ubx_al.png')}}">
+        </div>
       </div>
-      <div class="col-md-6">
-      KMAD alignment:
-      <br>
-      <br>
-      <br>
-      <img src="{{ url_for('static',
-      filename='images/reviewer_comments/ubx_kmad.png')}}">
-      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <br>
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/conservation.png')}}">
+        </div>
       </div>
-      </div>
-
     </span>
   </div>
 </div>
