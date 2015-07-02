@@ -22,29 +22,79 @@ T-Coffee examples
           might be T-coffee's focus on local similarities between
           sequences and use of the Gibbs sampler to identify repetitive patterns.
           <br>
-        </span>
-  <br>
+          <hr>
         <a href="{{ url_for('static',
           filename="alignments/t_coffee/dp00006.html")}}"
-          class="btn btn-primary active" id="btn1" onClick=activate("btn1") target="alignment_frame">Alignment 1</a>
+          class="btn btn-primary active" id="btn1" onClick="activate('btn1',
+          'alignment1')" target="alignment_frame">Alignment 1</a>
         <a href="{{ url_for('static',
           filename="alignments/t_coffee/dp00022.html")}}"
-          class="btn btn-primary" id="btn2" onClick=activate("btn2")
+          class="btn btn-primary" id="btn2" onClick="activate('btn2',
+          'alignment2')"
           target="alignment_frame">Alignment 2</a>
         <a href="{{ url_for('static',
           filename="alignments/t_coffee/dp00047.html")}}"
-          class="btn btn-primary" id="btn3" onClick=activate("btn3")
+          class="btn btn-primary" id="btn3" onClick="activate('btn3',
+          'alignment3')"
           target="alignment_frame">Alignment 3</a>
         <a href="{{ url_for('static',
           filename="alignments/t_coffee/dp00058.html")}}"
-          class="btn btn-primary" id="btn4" onClick=activate("btn4")
+          class="btn btn-primary" id="btn4" onClick="activate('btn4',
+          'alignment4')"
           target="alignment_frame">Alignment 4</a>
         <a href="{{ url_for('static',
           filename="alignments/t_coffee/dp00069.html")}}"
-          class="btn btn-primary" id="btn5" onClick=activate("btn5")
+          class="btn btn-primary" id="btn5" onClick="activate('btn5', 'alignment5')"
           target="alignment_frame">Alignment 5</a>
-  <br>
-  <br>
+        <br>
+        <br>
+        <div id="alignment1">
+          This alignment is an example of how T-Coffee finds too many
+          meaningless similarities, and inserts useless gaps - for example
+          aligning for alanines on position 65 doesn't give any information,
+          only adds more gaps to the alignment.
+          KMAD manages to improve the T-Coffee alignment a little bit, but
+          still the alignment is not very good - there where already conserved
+          methionines on first position in the profile, so that's why KMAD now
+          aligns them there again.
+          Clustal alignment in this case is much better than T-Coffee, and KMAD
+          manages to improve it even more.
+        </div>
+        <div id="alignment2" style="display:none;">
+          In this case both T-Coffee and Clustal have a problem with aligning
+          the terminal motif LIG_BIR_II_1 (blue), although T-Coffee manages it much
+          better than Clustal.
+          T-Coffee doesn't make the Clustal's mistake with the
+          CLV_C14_Caspase3-7 (neon green), but it once again inserts useless
+          gaps - positions 160 - 175. For example, aligning creating a big gap
+          to align a threonine only with 4 lysines is clearly a mistake.
+        </div>
+        <div id="alignment3" style="display:none;">
+          This is an example of a phosphorylation shift. The segment 'SRS' for
+          sequences 1-8 and 11 should be aligned on the irght side of the gap.
+          KMAD doesn't manage to correct T-Coffee's alignment, because the
+          profile is too strong, but it does manage to correct this mistake in
+          Clustal's alignment.
+          Here once again Clustal refined with KMAD gave the best result.
+        </div>
+        <div id="alignment4" style="display:none;">
+          In this case T-Coffee doesn;t make such a big mmistake as Clustal did
+          with incorrectly aligned phosphothreonines at position 111, but still
+          KMAD manages to introduce minor improvements, indicated with light
+          gray boxes.
+          Both KMAD refinements (of the Clustal and T-Coffee alignments) are of comparable quality.
+        </div>
+        <div id="alignment5" style="display:none;">
+          This is a similar case as example 1 - T-Coffee cannot cope very well
+          with more divergent sequences, and inserts too many gaps.  
+          For example the neon green motif at positions 173 - 181, in first 10 
+          sequences is unnecessarily split up by 3 gaps. KMAD cleans up the
+          alignment, and removes the unnecessary gaps. Nevertheless, Clustal
+          Omega alignment and its KMAD refinement seemed more biologically
+          relevant.
+        </div>
+        </span>
+        <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
           filename="alignments/t_coffee/dp00006.html") }}"
           height="100%"
@@ -60,8 +110,19 @@ $(function(){
     var height = window.innerHeight;
     $('iframe').css('height', height);
     });
-activate = function(button_id) {
+activate = function(button_id, alignment_id) {
+// activate = function(button_id) {
   var btn_ids = ["btn1", "btn2", "btn3", "btn4", "btn5"];
+  var alignment_ids = ["alignment1", "alignment2", "alignment3", "alignment4", "alignment5"];
+  for (var i = 0; i < alignment_ids.length; i++) {
+    if (alignment_ids[i] == alignment_id) {
+      console.debug(alignment_id);
+      document.getElementById(alignment_id).style.display = "";
+    } else {
+      console.debug(alignment_ids[i]);
+      document.getElementById(alignment_ids[i]).style.display = "none";
+    }
+  }
   for (var i = 0; i < btn_ids.length; i++) {
     var btn = document.getElementById(button_id);
     if (btn_ids[i] == button_id) {
