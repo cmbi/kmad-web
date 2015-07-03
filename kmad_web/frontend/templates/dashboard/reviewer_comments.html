@@ -149,11 +149,21 @@ Reviewer comments
       </div>
       <br>
       Only the last two sequences don't belong to the same family.
-      But if we have a closer look at them, we see that they cover only a very
-      short part of the query protein with quite low identity.
+      But if we have a closer look at them, we see that the match between them
+      and our query protein is of very low quality.
+      Here is a KMAD alignment of the whole set of 53 proteins:
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/RLA3_CANAX_large.png')}}">
+      </div>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/RLA3_CANAX_legend.png')}}">
+      </div>
 
 
-      Performance of KMAD on more diverged proteins is performed in the
+
+      Performance of KMAD on more diverged proteins is tested in the
       BAliBASE validation - out of 220 sequence sets 51 have average identity
       lower than 20%.
     </span>
@@ -246,80 +256,49 @@ Reviewer comments
   </div>
   <div class="panel-body" id="performance">
     <span class="panel-body-custom">
-      We performed the performance tests in two modes - one with multithreading
-      enabled for methods that support it (on a 24-core server), and second - with every method
-      running only on a single core. Among the tested methods only KMAD and
-      MUSCLE don't have an option to use multiple cores.
+      Because KMAD and MUSCLE don't have an option to run on multiple cores,
+      we ran all methods with disabled multithreading. The multithreading
+      methods would show much higher performance on a server, but it doesn't
+      change much for a casual user - personal computers still usually use just
+      a couple of cores.
 
       The tools were tested on a random sample of 22 alignments from the
       BAliBASE set.
       We present plots of the methods' runtime vs. average sequence length,
       number of sequence, and number of sequences times average sequence length
       (LxN).
-      T-coffee is the slowest method in the set, it even takes longer than KMAD
-      and MUSCLE when multithreading is enabled.
-      KMAD is the second slowest, probbaly because it has more operations to
+      T-coffee is the slowest method in the set (it even takes longer than KMAD
+      and MUSCLE when multithreading is enabled).
+      KMAD is the second slowest, probably because it has more operations to
       perform with every aligned residue - check all features and calculate
       scores for them.
-      We suppose that after implementation of multithreading in KMAD it will be
-      able to compete (in terms of performance times) with faster methods, e.g. Clustal.
+      In the future we plan a general optimization of the software, including  
+      implementation of multithreading.
+
+      However, the alignment part is not the bottleneck in the whole process
+      for KMAD. The preparation of the sequence - that is annotation with
+      information from multiple databases is much slower than the alignment
+      itself. However, this doesn't depend on the creators of KMAD, but on the
+      scripts maintained by the database authors (ELM and Pfam).
+
     </span>
     <br>
-      <strong>Multicore</strong>
-    <div class="row">
     <br>
+    <div class="row">
       <div class="col-md-4">
           <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_lengths_plotmulti.png')}}">
+          filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
       </div>
       <div class="col-md-4">
           <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_numbers_plotmulti.png')}}">
+          filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
       </div>
       <div class="col-md-4">
           <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_multi_plotmulti.png')}}">
+          filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
       </div>
     </div>
     <hr>
-    <strong>Singlecore</strong>
-    <br>
-    <div class="row">
-      <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_numbers_plotsingle.png')}}">
-      </div>
-      <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_lengths_plotsingle.png')}}">
-      </div>
-      <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_multi_plotsingle.png')}}">
-      </div>
-    </div>
-    <hr>
-    <strong>Singlecore without T-Coffee</strong>
-    <br>
-    <span class="panel-body-custom">
-      These are the same plots as in the 'Singlecore' section only with
-      T-Coffee excluded for the sake of clarity.
-    </span>
-    <br>
-    <div class="row">
-      <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_numbers_plotsingle_wo_tcoffee.png')}}">
-      </div>
-      <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_lengths_plotsingle_wo_tcoffee.png')}}">
-      </div>
-      <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_multi_plotsingle_wo_tcoffee.png')}}">
-      </div>
-    </div>
   </div>
 </div>
 {% endblock %}
