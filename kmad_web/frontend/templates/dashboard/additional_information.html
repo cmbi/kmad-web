@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-Why KMAD
+Additional information
 {% endblock %}
 {% block content %}
 <div class='panel panel-default' style="width:100%;">
@@ -12,46 +12,221 @@ Why KMAD
     </div>
   </div>
   <div class="panel-body panel-body-custom">
-      <div class="row">
+    <div class="row">
       <div class="col-md-12">
-      <div id="more_methods">
-        We chose 5 popular alignment methods, i.e. MUSCLE, MAFFT, T-Coffee,
-        ClustalW, and Clustal Omega for the comparison. For each of the methods we refined its alignments with KMAD.
-        In all cases, except for T-Coffee, KMAD improves the alignment score (both the
-        general one and the motif score).
-        T-Coffee gets the best scores, but we have to keep in mind that still - these
-        proteins are mostly structured. After visual inspection of T-Coffee alignments
-        of completely disordered proteins, we conclude that Clustal coupled with KMAD
-        very often produces better alignments. (Examples of T-Coffee mistakes are
-        presented 
-        <a
-          href="{{ url_for('dashboard.disprot_tcoffee_examples') }}">here</a>)
-        <br>
-        <figure>
+        <div id="more_methods">
+          We chose 5 popular alignment methods, i.e. MUSCLE, MAFFT, T-Coffee,
+          ClustalW, and Clustal Omega for the comparison. For each of the methods we refined its alignments with KMAD.
+          In all cases, except for T-Coffee, KMAD improves the alignment score (both the
+          general one and the motif score).
+          T-Coffee gets the best scores, but we have to keep in mind that still - these
+          proteins are mostly structured. After visual inspection of T-Coffee alignments
+          of completely disordered proteins, we conclude that Clustal coupled with KMAD
+          very often produces better alignments. (Examples of T-Coffee mistakes are
+          presented 
+          <a
+            href="{{ url_for('dashboard.disprot_tcoffee_examples') }}">here</a>)
+          <br>
           <div class="row">
             <div class="col-md-6">
               <img style="max-width:100%;max-height:100%;" 
               src="{{ url_for('static',
               filename='files/plots/boxplot_bali_score.png') }}"/>
+            </div>
+            <div class="col-md-6">
               <br>
               <br>
+              <table class="table table-condensed table-striped">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Mean</th>
+                    <th>3rd quartile</th>
+                    <th>1st quartile</th>
+                    <th>Median</th>
+                  </tr> 
+                </thead>
+                <tbody>
+                  <tr >
+                    <td>MAFFT</td>
+                    <td>0.702</td>
+                    <td>0.813</td>
+                    <td>0.533</td>
+                    <td>0.659</td>
+                  </tr>
+                  <tr >
+                    <td>MAFFT + KMAD</td>
+                    <td>0.706</td>
+                    <td>0.8235</td>
+                    <td>0.5405</td>
+                    <td>0.663</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE</td>
+                    <td>0.714</td>
+                    <td>0.831</td>
+                    <td>0.536</td>
+                    <td>0.677</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE + KMAD</td>
+                    <td>0.712</td>
+                    <td>0.8305</td>
+                    <td>0.5375</td>
+                    <td>0.672</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW</td>
+                    <td>0.689</td>
+                    <td>0.82</td>
+                    <td>0.5105</td>
+                    <td>0.656</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW + KMAD</td>
+                    <td>0.714</td>
+                    <td>0.835</td>
+                    <td>0.5425</td>
+                    <td>0.676</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega</td>
+                    <td>0.734</td>
+                    <td>0.8445</td>
+                    <td>0.567</td>
+                    <td>0.683</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega + KMAD</td>
+                    <td>0.736</td>
+                    <td>0.8495</td>
+                    <td>0.5595</td>
+                    <td>0.686</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee</td>
+                    <td>0.738</td>
+                    <td>0.857</td>
+                    <td>0.5795</td>
+                    <td>0.702</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee + KMAD</td>
+                    <td>0.725</td>
+                    <td>0.843</td>
+                    <td>0.559</td>
+                    <td>0.688</td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
               <img style="max-width:100%;max-height:100%;" 
               src="{{ url_for('static',
               filename='files/plots/boxplot_bali_motif_score.png') }}"/>
             </div>
+            <div class="col-md-6">
+              <br>
+              <br>
+              <table class="table table-condensed table-striped">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Mean</th>
+                    <th>3rd quartile</th>
+                    <th>1st quartile</th>
+                    <th>Median</th>
+                  </tr> 
+                </thead>
+                <tbody>
+                  <tr >
+                    <td>MAFFT</td>
+                    <td>0.84</td>
+                    <td>1.0</td>
+                    <td>0.5275</td>
+                    <td>0.712</td>
+                  </tr>
+                  <tr >
+                    <td>MAFFT + KMAD</td>
+                    <td>0.893</td>
+                    <td>1.0</td>
+                    <td>0.617</td>
+                    <td>0.757</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE</td>
+                    <td>0.846</td>
+                    <td>1.0</td>
+                    <td>0.546</td>
+                    <td>0.717</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE + KMAD</td>
+                    <td>0.86</td>
+                    <td>1.0</td>
+                    <td>0.6125</td>
+                    <td>0.743</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW</td>
+                    <td>0.64</td>
+                    <td>1.0</td>
+                    <td>0.2225</td>
+                    <td>0.596</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW + KMAD</td>
+                    <td>0.773</td>
+                    <td>1.0</td>
+                    <td>0.3995</td>
+                    <td>0.661</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega</td>
+                    <td>0.743</td>
+                    <td>1.0</td>
+                    <td>0.2305</td>
+                    <td>0.631</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega + KMAD</td>
+                    <td>0.855</td>
+                    <td>1.0</td>
+                    <td>0.4725</td>
+                    <td>0.704</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee</td>
+                    <td>0.946</td>
+                    <td>1.0</td>
+                    <td>0.6</td>
+                    <td>0.782</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee + KMAD</td>
+                    <td>0.915</td>
+                    <td>1.0</td>
+                    <td>0.6</td>
+                    <td>0.767</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <br>
-        </figure>
 
-        </P>
+          </P>
+        </div>
       </div>
-      </div>
-      </div>
+    </div>
   </div>
   <div class="panel-heading">
     <div class="panel-title">
       <span class="panel-title-text">
-      <strong>More examples from visual inspection</strong>
+        <strong>More examples from visual inspection</strong>
       </span>
     </div>
   </div>
@@ -69,7 +244,7 @@ Why KMAD
   <div class="panel-heading">
     <div class="panel-title">
       <span class="panel-title-text">
-      <strong>Example of BLAST results</strong>
+        <strong>Example of BLAST results</strong>
       </span>
     </div>
   </div>
@@ -90,8 +265,8 @@ Why KMAD
 
       As an example, here is a blast result for the RLA3_CANAX protein:
       <div style="overflow:auto;">
-      <img src="{{ url_for('static',
-      filename='images/reviewer_comments/blast_rla3_canax_all.png')}}">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/blast_rla3_canax_all.png')}}">
       </div>
       <br>
       Only the last two sequences don't belong to the same family.
@@ -99,12 +274,12 @@ Why KMAD
       and our query protein is of very low quality.
       Here is a KMAD alignment of the whole set of 53 proteins:
       <div style="overflow:auto;">
-      <img src="{{ url_for('static',
-      filename='images/reviewer_comments/RLA3_CANAX_large.png')}}">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/RLA3_CANAX_large.png')}}">
       </div>
       <div style="overflow:auto;">
-      <img src="{{ url_for('static',
-      filename='images/reviewer_comments/RLA3_CANAX_legend.png')}}">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/RLA3_CANAX_legend.png')}}">
       </div>
       <br>
       Performance of KMAD on more diverged proteins is tested in the
@@ -116,7 +291,7 @@ Why KMAD
   <div class="panel-heading">
     <div class="panel-title" id="phosph">
       <span class="panel-title-text">
-      <strong>Phosphorylation conservation</strong>
+        <strong>Phosphorylation conservation</strong>
       </span>
     </div>
   </div>
@@ -143,18 +318,18 @@ Why KMAD
       <div class="row">
         <div class="col-md-12">
           <div style="overflow:auto;">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/ubx_al.png')}}">
-        </div>
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/ubx_al.png')}}">
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <br>
           <div style="overflow:auto;">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/conservation.png')}}">
-        </div>
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/conservation.png')}}">
+          </div>
         </div>
       </div>
       <br>
@@ -164,18 +339,18 @@ Why KMAD
         <div class="col-md-6">
           <strong>Holt</strong>
           <div style="overflow:auto;">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/holt_raxml_tree.png')}}"
-          style="width:100%">
-        </div>
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/holt_raxml_tree.png')}}"
+            style="width:100%">
+          </div>
         </div>
         <div class="col-md-6">
           <strong>KMAD</strong>
           <div style="overflow:auto;">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/kmad_raxml_tree.png')}}"
-          style="width:100%">
-        </div>
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/kmad_raxml_tree.png')}}"
+            style="width:100%">
+          </div>
         </div>
       </div>
     </span>
@@ -183,7 +358,7 @@ Why KMAD
   <div class="panel-heading">
     <div class="panel-title" id="phosph">
       <span class="panel-title-text">
-      <strong>Performance</strong>
+        <strong>Performance</strong>
       </span>
     </div>
   </div>
@@ -219,16 +394,16 @@ Why KMAD
     <br>
     <div class="row">
       <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
       </div>
       <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
       </div>
       <div class="col-md-4">
-          <img src="{{ url_for('static',
-          filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
       </div>
     </div>
     <hr>
