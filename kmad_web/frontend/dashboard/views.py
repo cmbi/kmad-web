@@ -50,7 +50,8 @@ def index():
                                 form.ptm_score.data, form.domain_score.data,
                                 form.motif_score.data, multi_seq_input,
                                 form.usr_features.data, form.output_type.data,
-                                form.first_seq_gapped.data)
+                                form.first_seq_gapped.data,
+                                form.alignment_method.data)
             job = chain(run_blast.s(single_fasta_filename), workflow)()
             celery_id = job.id
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))

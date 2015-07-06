@@ -22,6 +22,7 @@ from kmad_web.services.files import (get_fasta_from_blast,
                                      predisorder_outfilename,
                                      psipred_outfilename)
 from kmad_web.services import update_elm as elm
+from kmad_web.services import msa_tools
 
 
 logging.basicConfig()
@@ -123,7 +124,8 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 @celery_app.task
 def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
-          multi_seq_input, conffilename, output_type, first_seq_gapped):
+          multi_seq_input, conffilename, output_type, first_seq_gapped,
+          alignment_method):
     _log.info("Running align")
 
     if not multi_seq_input:
@@ -133,6 +135,9 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
         _log.debug("BLAST success: {}".format(blast_success))
     else:
         fastafile = filename
+    if output_type == 'refine' and alignment_method != 'none':
+        fastafile = msa_tools.run_preliminary_alignment(fastafile,
+                                                        alignment_method)
     if multi_seq_input or blast_success:
         convert_result = convert_to_7chars(fastafile)  # .7c filename
         toalign = convert_result['filename']

@@ -127,9 +127,13 @@ class KmanForm(Form):
         check_if_fasta(seq_list)
         # if output type == refine check if multiple sequences are provided
         # and if seq lengths are equal
-        if form.output_type.data in ['refine', 'annotate']:
+        if (form.output_type.data == 'annotate'
+                or (form.output_type.data == 'refine'
+                    and form.alignment_method == 'none')):
             if field.data.count('>') < 2:
-                raise validators.ValidationError('In the refinement and \
+                raise validators.ValidationError('In the refinement (if no \
+                                                 method for initial alignment \
+                                                 is specified) and \
                                                  annotation modes \
                                                  the input should \
                                                  be a multiple \
@@ -207,7 +211,27 @@ class KmanForm(Form):
                                            ('gapped', 'with gaps')],
                                   default='ungapped')
 
-
+    alignment_method = RadioField(
+        u'Alignment method:',
+        choices=[('clustalw', 'ClustalW'),
+                 ('clustalo', 'Clustal Omega'),
+                 ('t_coffee', 'T-Coffee'),
+                 ('muscle', 'MUSCLE'),
+                 ('mafft', 'MAFFT'),
+                 ('none', 'Provide your own alignment for refinement')])
+    # alignment_method = SelectField(
+    #     u'Alignment method:',
+    #     choices=[('clustalw', 'ClustalW'),
+    #              ('clustalo', 'CLustal Omega'),
+    #              ('t_coffee', 'T-Coffee'),
+    #              ('muscle', 'MUSCLE'),
+    #              ('mafft', 'MAFFT'),
+    #              ('myown', 'My own')],
+    #     default=['clustalo'],
+    #     option_widget=widgets.CheckboxInput(),
+    #     widget=MyListWidget(
+    #         html_tag='collist',
+    #         prefix_label=False))
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
         choices=[('globplot', 'GlobPlot'),

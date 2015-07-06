@@ -4,19 +4,27 @@ function show_sequence_input() {
 function show_forms_predict() {
   $('#predictionMethod').removeClass('hidden');
   $('#alignment_options_div').addClass('hidden');
+  $('#alignmentMethod').addClass('hidden');
+}
+function show_forms_refine() {
+  $('#alignmentMethod').removeClass('hidden');
+  $('#predictionMethod').addClass('hidden');
 }
 function show_forms_panda() {
   $('#predictionMethod').removeClass('hidden');
   $('#alignment_options_div').removeClass('hidden');
+  $('#alignmentMethod').addClass('hidden');
 }
 function show_forms_align() {
   $('#predictionMethod').addClass('hidden');
   $('#alignment_options_div').removeClass('hidden');
+  $('#alignmentMethod').addClass('hidden');
 }
 function hide_forms() {
   console.debug("hejehej");
   $('#predictionMethod').addClass('hidden');
   $('#alignment_options_div').addClass('hidden');
+  $('#alignmentMethod').addClass('hidden');
 }
 function show_forms() {
   var selected = $('#output_type').children(":selected").attr('value');
@@ -29,6 +37,7 @@ function show_forms() {
       break;
     case 'refine':
       show_forms_align();
+      show_forms_refine();
       break;
     case 'predict_and_align':
       show_forms_panda();
