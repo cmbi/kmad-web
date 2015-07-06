@@ -129,7 +129,8 @@ class KmanForm(Form):
         # and if seq lengths are equal
         if (form.output_type.data == 'annotate'
                 or (form.output_type.data == 'refine'
-                    and form.alignment_method == 'none')):
+                    and form.alignment_method.data == 'none')):
+            _log.debug("I'm here!")
             if field.data.count('>') < 2:
                 raise validators.ValidationError('In the refinement (if no \
                                                  method for initial alignment \
@@ -156,7 +157,12 @@ class KmanForm(Form):
                                                      the input should be \
                                                      a multiple \
                                                      sequence alignment in \
-                                                     FASTA format')
+                                                     FASTA format (unless you \
+                                                     specify  a method for \
+                                                     preliminary alignment - \
+                                                     then the provided input \
+                                                     should be just plain \
+                                                     sequences in FASTA format)')
 
     def validate_gap_open_p(form, field):
         if field.data >= 0:
