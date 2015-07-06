@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block title %}
+Why KMAD
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">
+        Comparison with other tools
+      </span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+      <div class="row">
+      <div class="col-md-12">
+      <div id="more_methods">
+        We chose 5 popular alignment methods, i.e. MUSCLE, MAFFT, T-Coffee,
+        ClustalW, and Clustal Omega for the comparison. For each of the methods we refined its alignments with KMAD.
+        In all cases, except for T-Coffee, KMAD improves the alignment score (both the
+        general one and the motif score).
+        T-Coffee gets the best scores, but we have to keep in mind that still - these
+        proteins are mostly structured. After visual inspection of T-Coffee alignments
+        of completely disordered proteins, we conclude that Clustal coupled with KMAD
+        very often produces better alignments. (Examples of T-Coffee mistakes are
+        presented 
+        <a
+          href="{{ url_for('dashboard.disprot_tcoffee_examples') }}">here</a>)
+        <br>
+        <figure>
+          <div class="row">
+            <div class="col-md-6">
+              <img style="max-width:100%;max-height:100%;" 
+              src="{{ url_for('static',
+              filename='files/plots/boxplot_bali_score.png') }}"/>
+              <br>
+              <br>
+              <img style="max-width:100%;max-height:100%;" 
+              src="{{ url_for('static',
+              filename='files/plots/boxplot_bali_motif_score.png') }}"/>
+            </div>
+          </div>
+          <br>
+        </figure>
+
+        </P>
+      </div>
+      </div>
+      </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">
+      <strong>More examples from visual inspection</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      Apart from the BAliBASE validation we also visually inspected the
+      alignments. 
+      Here are examples of problems encountered by T-Coffee and Clustal Omega:
+      <ul>
+        <li><a href={{ url_for('dashboard.disprot_tcoffee_examples') }}>T-Coffee</a></li>
+        <li><a href={{ url_for('dashboard.disprot_clustal_examples') }}>Clustal Omega</a></li>
+      </ul>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">
+      <strong>Example of BLAST results</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      To the 1st reviewer's comment ("What is more, in the provided example,
+      all the proteins have names (RLA) that indicate that they belong to the
+      same gene family. It would be more convincing if they provided an
+      alignment of proteins that diverged more and this method perhaps could
+      help the discovery of new members of a protein family.")
+
+      This is a problem for two reasons. First of all for many proteins from
+      Disprot we could find with BLAST either only very closely realted
+      proteins (e.g. from the same family) or very distantly related.
+      What's more, with more diverged proteins manual inspection is much
+      harder, and it would be very difficult to spot mistakes and improvements
+      in the alignments.
+
+      As an example, here is a blast result for the RLA3_CANAX protein:
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/blast_rla3_canax_all.png')}}">
+      </div>
+      <br>
+      Only the last two sequences don't belong to the same family.
+      But if we have a closer look at them, we see that the match between them
+      and our query protein is of very low quality.
+      Here is a KMAD alignment of the whole set of 53 proteins:
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/RLA3_CANAX_large.png')}}">
+      </div>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/RLA3_CANAX_legend.png')}}">
+      </div>
+      <br>
+      Performance of KMAD on more diverged proteins is tested in the
+      BAliBASE validation - out of 220 sequence sets 51 have average identity
+      lower than 20%.
+    </span>
+
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+      <strong>Phosphorylation conservation</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      In the Science 2009 article "Global Analysis of Cdk1 Substrate
+      Phosphorylation Sites Provides Insights into Evolution", Holt, et al.,
+      show an alignment to illustrate the low conservation of phosphorylation
+      positions. While it is true, that the exact position of the
+      phosphorylations is not conserved, their presence is conserved. This
+      example shows exactly what KMAD was designed for: to stress conservation
+      of the presence of functional sites in disordered regions where amino
+      acid conservation is very low, but disorder itself and the presence of
+      motifs in the region are conserved. 
+      From the two presented alignments, KMAD alignment has more information
+      about the actual presence of phosphorylation sites, and thus gives better
+      insight into their functional importance. Actually, a phylogenetic tree
+      made with RaXML from the KMAD alignment has the same shape as the tree
+      given in Holt et al. So we have gained functional information at no loss
+      of phylogenetic information. This is obvious because highly variable
+      regions seldom contribute much to the phylogenic tree.
+      <br>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/ubx_al.png')}}">
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <br>
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/conservation.png')}}">
+        </div>
+        </div>
+      </div>
+      <br>
+      We calculated phylogenetic trees with RaXML based on the two alignments.
+      <br>
+      <div class="row">
+        <div class="col-md-6">
+          <strong>Holt</strong>
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/holt_raxml_tree.png')}}"
+          style="width:100%">
+        </div>
+        </div>
+        <div class="col-md-6">
+          <strong>KMAD</strong>
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/kmad_raxml_tree.png')}}"
+          style="width:100%">
+        </div>
+        </div>
+      </div>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+      <strong>Performance</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="performance">
+    <span class="panel-body-custom">
+      Because KMAD, MUSCLE, and ClustalW don't have an option to run on multiple cores,
+      we ran all methods with disabled multithreading. The multithreading
+      methods would show much higher performance on a server, but it doesn't
+      change much for a casual user - personal computers still usually use just
+      a couple of cores.
+
+      The tools were tested on a random sample of 22 alignments from the
+      BAliBASE set.
+      We present plots of the methods' runtime vs. average sequence length,
+      number of sequence, and number of sequences times average sequence length
+      (LxN).
+      T-coffee is the slowest method in the set (it even takes longer than KMAD
+      and MUSCLE when multithreading is enabled).
+      KMAD is the second slowest, probably because it has more operations to
+      perform with every aligned residue - check all features and calculate
+      scores for them.
+      In the future we plan a general optimization of the software, including  
+      implementation of multithreading.
+
+      However, the alignment part is not the bottleneck in the whole process
+      for KMAD. The preparation of the sequence - that is annotation with
+      information from multiple databases is much slower than the alignment
+      itself. However, this doesn't depend on the creators of KMAD, but on the
+      scripts maintained by the database authors (ELM and Pfam).
+
+    </span>
+    <br>
+    <br>
+    <div class="row">
+      <div class="col-md-4">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+      </div>
+      <div class="col-md-4">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+      </div>
+      <div class="col-md-4">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+      </div>
+    </div>
+    <hr>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

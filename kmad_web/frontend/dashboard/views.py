@@ -162,6 +162,11 @@ def standalone():
     return render_template('dashboard/standalone.html')
 
 
+@bp.route('/additional_information', methods=['GET'])
+def additional_information():
+    return render_template('dashboard/additional_information.html')
+
+
 @bp.route('/why', methods=['GET'])
 def why():
     return render_template('dashboard/why.html')
