@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}
+Why KMAD
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">Why did we develop KMAD?</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+      <div class="row">
+      <div class="col-md-12">
+        The reason for developing KMAD was our opinion that
+        sometimes, in case of disordered (and less often, but structured as
+        well) proteins plain amino acid sequence is not enough to create a
+        biologically relevant sequence alignment.
+        Here is a very simple example to visualize the problem that we want
+        deal with (red residues are phosphoserines):
+              <br>
+              <strong>bad alignment:</strong>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/bad_alignment.png')}}">
+              <br>
+              <strong>good alignment:</strong>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/good_alignment.png')}}">
+              <br>
+              The first alignment is what all methods that don't take into
+              account any other information than amino acid sequence would
+              produce and in terms of the amino acid of the amino acid
+              similarity it is the most optimal one.
+              However, we should remember that the best alignment is the one
+              that represents the biology the best, and not the one that is the
+              best solution to a mathematical equation.
+      </div>
+      </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">What can it help you with?</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+  </div>
+
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

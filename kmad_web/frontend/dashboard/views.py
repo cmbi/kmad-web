@@ -162,6 +162,11 @@ def standalone():
     return render_template('dashboard/standalone.html')
 
 
+@bp.route('/why', methods=['GET'])
+def why():
+    return render_template('dashboard/why.html')
+
+
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
