@@ -23,7 +23,7 @@ def run_preliminary_alignment(fastafile, method):
         subprocess.call(args)
     else:
         output = subprocess.check_output(args)
-        out = open(fastafile + '_prel_al')
+        out = open(fastafile + '_prel_al', 'w')
         out.write(''.join(output))
         out.close()
     return fastafile + '_prel_al'
