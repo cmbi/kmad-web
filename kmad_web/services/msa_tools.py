@@ -14,7 +14,7 @@ def run_preliminary_alignment(fastafile, method):
     elif method == "clustalo":
         args = ["clustalo", "-i", fastafile, "-o", fastafile + '_prel_al']
     elif method == "mafft":
-        args = [os.path.join(p.KMAD_WEB_BIN, "mafft"), fastafile]
+        args = ["mafft", fastafile]
     elif method == "clustalw":
         args = ["clustalw2", "-INFILE={}".format(fastafile),
                 "-OUTFILE={}_prel_al".format(fastafile), "-OUTPUT=FASTA",
