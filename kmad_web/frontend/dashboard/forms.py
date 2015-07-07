@@ -223,17 +223,9 @@ class KmanForm(Form):
                  ('clustalo', 'Clustal Omega'),
                  ('t_coffee', 'T-Coffee'),
                  ('muscle', 'MUSCLE'),
+                 ('mafft', 'MAFFT'),
                  ('none', 'Provide your own alignment for refinement')],
         default='clustalo')
-    # alignment_method = RadioField(
-    #     u'Alignment method:',
-    #     choices=[('clustalw', 'ClustalW'),
-    #              ('clustalo', 'Clustal Omega'),
-    #              ('t_coffee', 'T-Coffee'),
-    #              ('muscle', 'MUSCLE'),
-    #              ('mafft', 'MAFFT'),
-    #              ('none', 'Provide your own alignment for refinement')],
-    #     default='clustalo')
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
         choices=[('globplot', 'GlobPlot'),
