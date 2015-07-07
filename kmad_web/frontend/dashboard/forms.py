@@ -209,8 +209,8 @@ class KmanForm(Form):
     gap_ext_p = FloatField(u'gap extension penalty', default=-1.2)
     end_gap_p = FloatField(u'end gap penalty', default=-1.2)
     ptm_score = FloatField(u'PTM score', default=10)
-    domain_score = FloatField(u'domain score', default=3)
-    motif_score = FloatField(u'motif score', default=3)
+    domain_score = FloatField(u'domain score', default=4)
+    motif_score = FloatField(u'motif score', default=4)
 
     first_seq_gapped = RadioField(u'First sequence:',
                                   choices=[('ungapped', 'without gaps'),
