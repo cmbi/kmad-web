@@ -413,7 +413,10 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
     r_up = r.toUpperCase(); 
     letter_col = aa_to_hex['gray'];
     ptm_code = data[seq_num][1].charAt(res_num + 4);
-    if (ptm_code == 'A') {
+    if (r == '-') {
+      letter_col = '#FFFFFF';
+    }
+    else if (ptm_code == 'A') {
       letter_col = aa_to_hex[r_up];
     }
     else {
