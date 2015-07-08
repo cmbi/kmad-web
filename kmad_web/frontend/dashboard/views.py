@@ -173,6 +173,11 @@ def why():
     return render_template('dashboard/why.html')
 
 
+@bp.route('/cram', methods=['GET'])
+def cram():
+    return render_template('dashboard/cram.html')
+
+
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])

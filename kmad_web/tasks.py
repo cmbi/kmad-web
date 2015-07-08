@@ -139,7 +139,8 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
         fastafile = msa_tools.run_preliminary_alignment(fastafile,
                                                         alignment_method)
     if multi_seq_input or blast_success:
-        convert_result = convert_to_7chars(fastafile)  # .7c filename
+        convert_result = convert_to_7chars(fastafile)  # .7c filenameA
+
         toalign = convert_result['filename']
         annotated_motifs = convert_result['annotated_motifs']
         codon_length = 7
@@ -189,6 +190,11 @@ def annotate(d2p2, filename):
     _log.info("Running annotate")
 
     convert_result = convert_to_7chars(filename)
+
+    import subprocess
+    subprocess.call(['cp', convert_result['filename'],
+                     convert_result['filename'] + '2'])
+
     encoded_filename = convert_result['filename']
     with open(filename.split('.')[0] + '.map') as a:
         feature_codemap = a.read().splitlines()
