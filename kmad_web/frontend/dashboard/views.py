@@ -173,6 +173,11 @@ def why():
     return render_template('dashboard/why.html')
 
 
+@bp.route('/comparison', methods=['GET'])
+def comparison():
+    return render_template('dashboard/comparison.html')
+
+
 @bp.route('/cram', methods=['GET'])
 def cram():
     return render_template('dashboard/cram.html')
