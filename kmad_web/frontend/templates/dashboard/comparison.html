@@ -9,7 +9,7 @@ Crambin alignments
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
-      <strong>Crambin</strong>
+      <strong>Crambin, KMAD vs HSSP</strong>
     </div>
   </div>
   <div class="panel-body">
@@ -21,7 +21,7 @@ Crambin alignments
           KMAD
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/comparison/1crn_kmad_multi.html") }}"
+          filename="alignments/comparison/1crn_kmad.html") }}"
           height="100%"
           width="100%"></iframe>
         </div>
@@ -29,70 +29,45 @@ Crambin alignments
           HSSP
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/comparison/1crn_hssp_multi.html") }}"
+          filename="alignments/comparison/1crn_hssp.html") }}"
           height="100%"
           width="100%"></iframe>
         </div>
         </div>
+      </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>Crambin, KMAD vs 3DM</strong>
+    </div>
+  </div>
+  <div class="panel-body">
       <div class="row">
+        <div class="col-md-4">
+          KMAD (bridged cysteines highlighted)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/comparison/1crn_kmad_cys.html") }}"
+          height="100%"
+          width="100%"></iframe>
+        </div>
         <div class="col-md-4">
           KMAD
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/comparison/1crn_kmad_single.html") }}"
+          filename="alignments/comparison/1crn_kmad.html") }}"
           height="100%"
           width="100%"></iframe>
         </div>
         <div class="col-md-4">
-          HSSP
+          3DM
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/comparison/1crn_hssp_single.html") }}"
+          filename="alignments/comparison/1crn_3dm.html") }}"
           height="100%"
           width="100%"></iframe>
         </div>
         </div>
-        {#
-    <div class="row">
-      <div class="col-md-12">
-        <span class="panel-body-custom">
-          <br>
-          <hr>
-        <a href="{{ url_for('static',
-          filename="alignments/crambin/1crn_kmad_gapped.html")}}"
-          class="btn btn-primary active" id="btn1" onClick="activate('btn1',
-          'alignment1')" target="alignment_frame">KMAD</a>
-        <a href="{{ url_for('static',
-          filename="alignments/crambin/1crn_kmad.html")}}"
-          class="btn btn-primary" id="btn2" onClick="activate('btn2',
-          'alignment2')"
-          target="alignment_frame">KMAD gapped</a>
-        <a href="{{ url_for('static',
-          filename="alignments/crambin/1crn_hssp.html")}}"
-          class="btn btn-primary" id="btn3" onClick="activate('btn3',
-          'alignment3')"
-          target="alignment_frame">HSSP</a>
-        <br>
-        <br>
-        <div id="alignment1">
-        </div>
-        <div id="alignment2" style="display:none;">
-        </div>
-        <div id="alignment3" style="display:none;">
-        </div>
-        <div id="alignment4" style="display:none;">
-        </div>
-        <div id="alignment5" style="display:none;">
-        </div>
-        </span>
-        <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/crambin/1crn_kmad.html") }}"
-          height="100%"
-          width="100%"></iframe>
-        #}
-      </div>
-    </div>
+  </div>
   </div>
 </div>
 {% endblock %}
