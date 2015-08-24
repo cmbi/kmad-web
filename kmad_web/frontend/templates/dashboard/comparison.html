@@ -9,6 +9,40 @@ Crambin alignments
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
+      <strong>RV913_BOX012</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+      <div class="row" style="height:50px;">
+        <div class="col-md-12">
+          clustal
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/comparison/RV913_BOX012.clustalo_col.html") }}"
+          width="100%"></iframe>
+          <br>
+          clustal refined with kmad
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/comparison/RV913_BOX012.kmad14_col.html") }}"
+          width="100%"></iframe>
+          <br>
+          whatif
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/comparison/RV913_BOX012.whatif_col.html") }}"
+          width="100%"></iframe>
+          <br>
+          tcoffee
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/comparison/RV913_BOX012.tcoffee_col.html") }}"
+          width="100%"></iframe>
+        </div>
+        </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
       <strong>Crambin, KMAD vs HSSP</strong>
     </div>
   </div>
@@ -74,8 +108,9 @@ Crambin alignments
 {% block js %}
 <script>
 $(function(){
-    var height = window.innerHeight;
-    $('iframe').css('height', height);
+    // var height = window.innerHeight;
+    var height = 200;
+     $('iframe').css('height', height);
     });
 activate = function(button_id, alignment_id) {
 // activate = function(button_id) {
