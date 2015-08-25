@@ -178,6 +178,11 @@ def comparison():
     return render_template('dashboard/comparison.html')
 
 
+@bp.route('/balibase', methods=['GET'])
+def balibase():
+    return render_template('dashboard/balibase.html')
+
+
 @bp.route('/cram', methods=['GET'])
 def cram():
     return render_template('dashboard/cram.html')

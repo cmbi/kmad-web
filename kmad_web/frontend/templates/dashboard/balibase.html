@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}
+BAliBASE
+{% endblock %}
+{% block additional_imports %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/disprot_examples.css') }}">
+{% endblock %}
+{% block content %}
+<div class="panel panel-default" style="width=100%;" id="panel0">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>BB5005</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+      <div class="row" style="height:50px;">
+        <div class="col-md-12">
+          T-Coffee (SP: 0.976, TC: 0.88)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase/BB50005_tcoffee.html") }}"
+          width="100%"></iframe>
+          <br>
+          T-Coffee + KMAD (SP: 0.977, TC: 0.89)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase/BB50005_kmad.html") }}"
+          width="100%"></iframe>
+          <br>
+          <br>
+          BAliBASE refrence alignment
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase/BB50005_bali.html") }}"
+          width="100%"></iframe>
+
+        </div>
+        </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>BB12007</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+      <div class="row">
+        <div class="col-md-12">
+          T-Coffee (SP: 0.908, TC: 0.79)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase/BB12007_tcoffee.html") }}"
+          width="100%"></iframe>
+          <br>
+          T-Coffee + KMAD (SP: 0.909, TC: 0.79)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase/BB12007_kmad.html") }}"
+          width="100%"></iframe>
+          <br>
+          <br>
+          BAliBASE refrence alignment 
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase/BB12007_bali.html") }}"
+          width="100%"></iframe>
+
+        </div>
+       </div>
+  </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+$(function(){
+    // var height = window.innerHeight;
+    var height = 300;
+     $('iframe').css('height', height);
+    });
+activate = function(button_id, alignment_id) {
+// activate = function(button_id) {
+  var btn_ids = ["btn1", "btn2", "btn3", "btn4", "btn5"];
+  var alignment_ids = ["alignment1", "alignment2", "alignment3", "alignment4", "alignment5"];
+  for (var i = 0; i < alignment_ids.length; i++) {
+    if (alignment_ids[i] == alignment_id) {
+      console.debug(alignment_id);
+      document.getElementById(alignment_id).style.display = "";
+    } else {
+      console.debug(alignment_ids[i]);
+      document.getElementById(alignment_ids[i]).style.display = "none";
+    }
+  }
+  for (var i = 0; i < btn_ids.length; i++) {
+    var btn = document.getElementById(button_id);
+    if (btn_ids[i] == button_id) {
+      $('#'+btn_ids[i]).addClass('active');
+    } else {
+      $('#'+btn_ids[i]).removeClass('active');
+    }
+  }
+
+}
+</script>
+{% endblock %}
