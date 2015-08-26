@@ -9,63 +9,39 @@ BAliBASE
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
-      <strong>BB5005</strong>
+      <strong>BBS12034</strong>
     </div>
   </div>
   <div class="panel-body">
       <div class="row" style="height:50px;">
         <div class="col-md-12">
-          T-Coffee (SP: 0.976, TC: 0.88)
+          Clustal Omega (SP: 0.928, TC: 0.86)
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB50005_tcoffee.html") }}"
+          filename="alignments/balibase/BBS12034_clustalo.html") }}"
           width="100%"></iframe>
           <br>
-          T-Coffee + KMAD (SP: 0.977, TC: 0.89)
+          KMAD alone, strct score = 5 (SP: 0.904, TC: 0.81)
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB50005_kmad.html") }}"
+          filename="alignments/balibase/BBS12034_kmad5.html") }}"
+          width="100%"></iframe>
+          <br>
+          KMAD alone, strct score = 40 (SP: 0.885, TC: 0.78)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase/BBS12034_kmad40.html") }}"
           width="100%"></iframe>
           <br>
           <br>
           BAliBASE refrence alignment
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB50005_bali.html") }}"
+          filename="alignments/balibase/BBS12034_bali.html") }}"
           width="100%"></iframe>
 
         </div>
         </div>
-  </div>
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>BB12007</strong>
-    </div>
-  </div>
-  <div class="panel-body">
-      <div class="row">
-        <div class="col-md-12">
-          T-Coffee (SP: 0.908, TC: 0.79)
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB12007_tcoffee.html") }}"
-          width="100%"></iframe>
-          <br>
-          T-Coffee + KMAD (SP: 0.909, TC: 0.79)
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB12007_kmad.html") }}"
-          width="100%"></iframe>
-          <br>
-          <br>
-          BAliBASE refrence alignment 
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB12007_bali.html") }}"
-          width="100%"></iframe>
-
-        </div>
-       </div>
   </div>
   </div>
 </div>
@@ -74,7 +50,7 @@ BAliBASE
 <script>
 $(function(){
     // var height = window.innerHeight;
-    var height = 300;
+    var height = 150;
      $('iframe').css('height', height);
     });
 activate = function(button_id, alignment_id) {
