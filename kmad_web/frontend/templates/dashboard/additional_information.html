@@ -549,11 +549,21 @@ Additional information
 
       Most of the alignment programs available accentuate the most the
       evolutionary information, but this is not necessarily beneficious when we
-      need analyze just one protein. Then we need an alignment only to transfer
+      need to analyze just one protein. Then we need an alignment only to transfer
       metadata from its homologues. Alignment format in the HSSP database was
       optimized exactly for this purpose - by not putting gaps in the query
       sequence it maximizes the information that can be transferred to
       query sequence from homologuous proteins.
+
+      The fact that most (or maybe even all) alignment benchmarks are based
+      on the structural alignments does not mean that they all represent 'perfect' 
+      alignments. First, because a proper validation of a benchmark is
+      practically impossible - to do that we would need to use another
+      benchmark, but again - we don't know if the other one is correct.
+      Second - structural relationships don't always represent evolutionary realtionships.
+      So if two proteins developed similar structures independently,
+      the structure alignment might lead to false conclusions in terms
+      of phylogenetics.
     <hr>
 
   </div>
