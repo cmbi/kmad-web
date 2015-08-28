@@ -183,6 +183,11 @@ def balibase():
     return render_template('dashboard/balibase.html')
 
 
+@bp.route('/prefab', methods=['GET'])
+def prefab():
+    return render_template('dashboard/prefab.html')
+
+
 @bp.route('/cram', methods=['GET'])
 def cram():
     return render_template('dashboard/cram.html')
