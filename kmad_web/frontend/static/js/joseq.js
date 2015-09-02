@@ -26,7 +26,7 @@ ProteinSequences = function(container_id, data) {
   }
   var container_height = ROWS * ROW_HEIGHT;
   document.getElementById(container_id).style.height = (container_height + 60).toString() + 'px';
-  var cont_width = 150 + this.disorder[0][1].length * 10;
+  var cont_width = 350 + this.disorder[0][1].length * 10;
   if (cont_width < 650) {
     cont_width = 650;
   }

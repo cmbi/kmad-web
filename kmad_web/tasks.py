@@ -250,6 +250,11 @@ def query_d2p2(blast_result, filename, output_type, multi_seq_input):
     try:
         if not (multi_seq_input and output_type == 'align'):
             [found_it, seq_id] = find_seqid_blast(blast_result)
+            # seq_length -> temporary solution, until D2P2 fixes their bug
+            #               (that sometimes predictions can be too short -
+            #                than annotate missing residues as 'ambiguous
+            #                disorder prediction'(code 5)
+            seq_length = int(blast_result[0].split(',')[3])
             if found_it:
                 data = 'seqids=["%s"]' % seq_id
                 request = urllib2.Request('http://d2p2.pro/api/seqid', data)
@@ -257,6 +262,9 @@ def query_d2p2(blast_result, filename, output_type, multi_seq_input):
                 if response[seq_id]:
                     pred_result = \
                         response[seq_id][0][2]['disorder']['consensus']
+                    if len(pred_result) < seq_length:
+                        pred_result.extend([5 for i in range(len(pred_result),
+                                                             seq_length + 1)])
                     prediction = process_d2p2(pred_result)
                 else:
                     found_it = False
