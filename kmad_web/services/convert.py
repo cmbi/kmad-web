@@ -10,6 +10,8 @@ import urllib
 import urllib2
 
 from operator import itemgetter
+from socket import error as SocketError
+from httplib import BadStatusLine
 import xml.etree.ElementTree as ET
 
 from kmad_web import paths
@@ -127,8 +129,9 @@ def check_id(uniprot_id, seq):
                           + uniprot_id + ".fasta")
     try:
         uni_seq = urllib2.urlopen(req).read()
-    except urllib2.HTTPError or urllib2.URLError:
-        _log.info("No entry with ID: {}".format(uniprot_id))
+    except (urllib2.HTTPError or urllib2.URLError
+            or SocketError or BadStatusLine):
+        _log.info("didn't find ID: {}".format(uniprot_id))
     else:
         uni_seq = ''.join(uni_seq.splitlines()[1:])
         if uni_seq == seq:

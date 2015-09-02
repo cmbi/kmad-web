@@ -68,7 +68,8 @@ def index():
                                 form.motif_score.data,
                                 form.prediction_method.data, multi_seq_input,
                                 form.usr_features.data,
-                                form.first_seq_gapped.data)
+                                form.first_seq_gapped.data,
+                                form.alignment_method.data)
 
             job = chain(run_blast.s(single_fasta_filename),
                         workflow)()

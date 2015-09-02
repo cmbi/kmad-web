@@ -30,7 +30,7 @@ class PredictStrategy(object):
                  prediction_methods, multi_seq_input):
         from celery import chain, group
         from kmad_web.tasks import (query_d2p2, run_single_predictor,
-                                    postprocess, get_seq, run_blast)
+                                    postprocess, get_seq)
 
         conffilename = ""
         tasks_to_run = [get_seq.s(fasta_seq)]
@@ -54,9 +54,8 @@ class PredictAndAlignStrategy(object):
                  gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  prediction_methods, multi_seq_input, usr_features,
-                 first_seq_gapped):
-        from kmad_web.tasks import (analyze_mutation, query_d2p2, align,
-                                    run_single_predictor, run_blast,
+                 first_seq_gapped, alignment_method):
+        from kmad_web.tasks import (query_d2p2, align, run_single_predictor,
                                     postprocess, get_seq)
         from celery import chain, group
 
@@ -74,8 +73,8 @@ class PredictAndAlignStrategy(object):
                                  gap_extension_penalty, end_gap_penalty,
                                  ptm_score, domain_score, motif_score,
                                  multi_seq_input, conffilename,
-                                 self.output_type,
-                                 first_seq_gapped)]
+                                 self.output_type, first_seq_gapped,
+                                 alignment_method)]
 
         workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                       multi_seq_input),
@@ -96,8 +95,7 @@ class AlignStrategy(object):
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  multi_seq_input, usr_features, output_type, first_seq_gapped,
                  alignment_method):
-        from kmad_web.tasks import (query_d2p2, align, run_blast,
-                                    postprocess, get_seq)
+        from kmad_web.tasks import (query_d2p2, align, postprocess, get_seq)
         from celery import chain, group
 
         usr_features = txtproc.remove_empty(usr_features)
@@ -126,8 +124,7 @@ class AnnotateStrategy(object):
         self.output_type = output_type
 
     def __call__(self, fasta_seq, single_fasta_filename, multi_fasta_filename):
-        from kmad_web.tasks import (query_d2p2, annotate, run_blast,
-                                    postprocess, get_seq)
+        from kmad_web.tasks import (query_d2p2, annotate, postprocess, get_seq)
         from celery import chain, group
         fasta_seq = txtproc.process_fasta(fasta_seq)
 
