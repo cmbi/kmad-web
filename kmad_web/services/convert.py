@@ -154,7 +154,8 @@ def get_uniprot_txt(uniprot_id):
                 features += [lineI]
             elif lineI.startswith('DR   GO;'):
                 go_terms += [lineI.split(';')[1].split(':')[1]]
-    except urllib2.HTTPError or urllib2.URLError:
+    except (urllib2.HTTPError or urllib2.URLError
+            or SocketError or BadStatusLine):
         _log.debug("Uniprot error")
     return {"features": features, "GO": go_terms}
 
@@ -278,7 +279,8 @@ def get_annotated_motifs(uniprotID):
                 limits.append([start, end])
                 probabilities.append(1)
                 elms_ids.append(elm_id)
-    except urllib2.HTTPError:
+    except (urllib2.HTTPError or urllib2.URLError
+            or SocketError or BadStatusLine):
         _log.debug('get_annotated_motifs: HTTPError')
     return [limits, elms_ids, probabilities]
 
@@ -311,7 +313,8 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
                                 probabilities.append(prob)
                 except KeyError:
                     _log.debug("Didn't find motif: {}".format(slim_id))
-    except urllib2.HTTPError:
+    except (urllib2.HTTPError or urllib2.URLError
+            or SocketError or BadStatusLine):
         _log.debug('get_predicted_motifs: HTTPError')
     return [limits, elms_ids, probabilities]
 
