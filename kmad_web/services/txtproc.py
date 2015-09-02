@@ -18,6 +18,17 @@ def preprocess_spine(pred_out):
     return disorder_list
 
 
+def unwrap(seq_data):
+    new = []
+    for i in seq_data:
+        if i.startswith('>'):
+            new.append(i)
+            new.append("")
+        else:
+            new[-1] += i
+    return new
+
+
 def preprocess_disopred_psipred(pred_out, pred_name):
     disorder_list = []
     if pred_name == "disopred":
@@ -76,7 +87,7 @@ def preprocess(pred_out, pred_name):
 
 
 def process_fasta(fastafile):
-    fasta_list = fastafile.splitlines()
+    fasta_list = unwrap(fastafile.splitlines())
     new_list = []
     if fastafile.startswith('>'):
         for i in fasta_list:
@@ -105,6 +116,7 @@ def find_seqid_blast(blast_result):
         firstline = blast_result[0].split(',')
         if (firstline[2] == "100.00"
                 and firstline[4] == "0" and firstline[5] == "0"
+                and firstline[10] == "0.0"
                 and firstline[6:8] == firstline[8:10]):
             found = True
             seqID = firstline[1].split('|')[1]

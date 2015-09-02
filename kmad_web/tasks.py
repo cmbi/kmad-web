@@ -4,13 +4,12 @@ import os
 import subprocess
 import re
 import tempfile
-import time
 import urllib2
 
 from celery import current_app as celery_app
 
 from kmad_web import paths
-from kmad_web.services import files
+from kmad_web.services import files, txtproc
 from kmad_web.services import mutation_analysis as ma
 from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
@@ -35,8 +34,8 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 
     _log.info("Running postprocess")
     # process result and remove tmp files
-    files.remove_files(single_filename)
-    files.remove_files(multi_filename)
+    # files.remove_files(single_filename)
+    # files.remove_files(multi_filename)
     if conffilename:
         files.remove_files(conffilename)
 
@@ -130,7 +129,6 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
 
     if not multi_seq_input:
         blast_result = prev_tasks[0]
-        _log.info("prev result: {}".format(prev_tasks))
         fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
         _log.debug("BLAST success: {}".format(blast_success))
     else:
@@ -221,8 +219,8 @@ def get_seq(d2p2, fasta_file):
     # TODO: Does this need to be a task?
 
     _log.info("Running get seq")
-
-    return fasta_file.splitlines()[1].encode('ascii', errors='ignore')
+    result = txtproc.unwrap(fasta_file.splitlines())[1]
+    return result
 
 
 @celery_app.task
