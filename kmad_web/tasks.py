@@ -34,8 +34,8 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 
     _log.info("Running postprocess")
     # process result and remove tmp files
-    # files.remove_files(single_filename)
-    # files.remove_files(multi_filename)
+    files.remove_files(single_filename)
+    files.remove_files(multi_filename)
     if conffilename:
         files.remove_files(conffilename)
 
