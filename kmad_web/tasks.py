@@ -231,7 +231,7 @@ def run_blast(filename, seq_limit):
     args = ["blastp", "-query", filename, "-evalue", "1e-5",
             "-num_threads", "15", "-db", paths.SWISSPROT_DB,
             "-out", out_blast, '-outfmt', '10', '-max_target_seqs',
-            seq_limit]
+            str(seq_limit)]
     try:
         subprocess.call(args)
     except subprocess.CalledProcessError as e:
