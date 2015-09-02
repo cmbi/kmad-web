@@ -457,7 +457,7 @@ PTMsLegend = function(container_id) {
 
 register_link = function(src, name, feature_type, canvas_id) {
   if (feature_type == "motif") {
-    var url = 'http://elm.eu.org/elmPages/'+name+'.html';
+    var url = 'http://elm.eu.org/elms/'+name+'.html';
   } else {
     var url = 'http://pfam.xfam.org/family/'+name;
   }  

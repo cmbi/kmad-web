@@ -38,7 +38,8 @@ def create_kmad(output_type):
         methods = form['prediction_methods'].split()
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename, methods, multi_seq_input)
-        job = chain(run_blast.s(single_fasta_filename), workflow)()
+        job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
+                    workflow)()
         celery_id = job.id
     elif output_type in ['align', 'refine']:
         _log.debug('IF2')
@@ -52,13 +53,15 @@ def create_kmad(output_type):
                             float(form['motif_score']), multi_seq_input,
                             usr_features, form['output_type'],
                             ast.literal_eval(form['first_seq_gapped']))
-        job = chain(run_blast.s(single_fasta_filename), workflow)()
+        job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
+                    workflow)()
         celery_id = job.id
     elif output_type == 'annotate':
         _log.debug('IF3')
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename)
-        job = chain(run_blast.s(single_fasta_filename), workflow)()
+        job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
+                    workflow)()
         celery_id = job.id
     elif output_type == 'predict_and_align':
         _log.debug('IF4')
@@ -73,7 +76,7 @@ def create_kmad(output_type):
                             float(form['motif_score']), methods,
                             multi_seq_input, usr_features,
                             ast.literal_eval(form['first_seq_gapped']))
-        job = chain(run_blast.s(single_fasta_filename),
+        job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
                     workflow)()
 
         celery_id = job.id
@@ -109,7 +112,7 @@ def create_kmad(output_type):
         # TODO: stupid task is a VERY WRONG temporary solution
         # without celery gives back the result of the postprocess task instead
         # of analyze-mutation
-        workflow = chain(run_blast.s(single_fasta_filename),
+        workflow = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
                          filter_blast.s(),
                          query_d2p2.s(single_fasta_filename, output_type,
                                       multi_seq_input),

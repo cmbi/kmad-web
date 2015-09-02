@@ -19,7 +19,7 @@ from lxml import html
 
 
 def get_motif_go_terms(elm_id):
-    page = requests.get("http://elm.eu.org/elms/elmPages/{}.html".format(
+    page = requests.get("http://elm.eu.org/elms/{}.html".format(
         elm_id))
     tree = html.fromstring(page.text)
     go_terms = []

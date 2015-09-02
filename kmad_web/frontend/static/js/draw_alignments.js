@@ -118,7 +118,7 @@ register_tooltip = function(src, x, y, message, t_layer, feature_type,
     canvas_id) {
   var tooltip;
   if (feature_type == "motif") {
-    var url = 'http://elm.eu.org/elmPages/'+message+'.html';
+    var url = 'http://elm.eu.org/elms/'+message+'.html';
   } else {
     var url = 'http://pfam.xfam.org/family/'+message;
   }  

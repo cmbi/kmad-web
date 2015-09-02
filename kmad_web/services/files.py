@@ -74,8 +74,6 @@ def get_fasta_from_blast(blast_result, query_filename):
                     ids.add(uniprot_id)
             elif i % 10 == 0:     # pragma: no cover
                 time.sleep(3)
-            if len(ids) > 35:
-                break
         outfile.write(newfasta)
         outfile.close()
     return outfile_name, success

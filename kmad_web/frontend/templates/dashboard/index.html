@@ -150,6 +150,23 @@ KMAD
                       <div class="help-block with-errors"></div>
                       </div>
                     </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-6">
+                      <div id = "seq_limit_div" class="form-group" style="margin:20px;">
+                        <div class="row">
+                          <div class="col-md-8">{{ form.seq_limit.label }}</div>
+                          <div class="col-md-4">{{
+                            form.seq_limit(class_='form-control gap-form',
+                            pattern="^[1-9]\d*$", title="max sequence limit
+                            has to be an intiger higher than 0")}}</div>
+                        </div>
+                      <div class="help-block with-errors"></div>
+                      </div>
+                    <div class="col-md-6">
+                      </div>
+                    </div>
+                    </div>
                     <div class="help-block with-errors"></div>
                   </div>
                   <div class="row">

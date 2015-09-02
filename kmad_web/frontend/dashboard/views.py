@@ -24,7 +24,7 @@ def index():
             and form.gap_open_p.data and form.gap_ext_p.data
             and form.end_gap_p.data and form.ptm_score.data
             and form.domain_score.data and form.motif_score.data
-            and form.first_seq_gapped):
+            and form.first_seq_gapped and form.seq_limit.data):
         _log.debug("validation")
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
         strategy = KmanStrategyFactory.create(form.output_type.data)
@@ -40,7 +40,8 @@ def index():
                                 multi_fasta_filename,
                                 form.prediction_method.data,
                                 multi_seq_input)
-            job = chain(run_blast.s(single_fasta_filename), workflow)()
+            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
+                        workflow)()
             celery_id = job.id
             _log.debug(form.prediction_method.data)
         elif form.output_type.data in ['align', 'refine']:
@@ -52,13 +53,15 @@ def index():
                                 form.usr_features.data, form.output_type.data,
                                 form.first_seq_gapped.data,
                                 form.alignment_method.data)
-            job = chain(run_blast.s(single_fasta_filename), workflow)()
+            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
+                        workflow)()
             celery_id = job.id
             _log.debug("UsrFeatures: {}".format(form.usr_features.data))
         elif form.output_type.data == 'annotate':
             workflow = strategy(seq_data, single_fasta_filename,
                                 multi_fasta_filename)
-            job = chain(run_blast.s(single_fasta_filename), workflow)()
+            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
+                        workflow)()
             celery_id = job.id
         elif form.output_type.data == 'predict_and_align':
             workflow = strategy(seq_data, single_fasta_filename,
@@ -71,7 +74,7 @@ def index():
                                 form.first_seq_gapped.data,
                                 form.alignment_method.data)
 
-            job = chain(run_blast.s(single_fasta_filename),
+            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
                         workflow)()
 
             celery_id = job.id
@@ -89,7 +92,8 @@ def index():
                                 form.usr_features.data,
                                 form.first_seq_gapped.data)
 
-            job = chain(run_blast.s(single_fasta_filename), filter_blast.s(),
+            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
+                        filter_blast.s(),
                         workflow, analyze_mutation.s(form.mutation_site,
                                                      form.new_aa,
                                                      single_fasta_filename))()
