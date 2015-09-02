@@ -18,6 +18,17 @@ def is_empty(s1):
         return False
 
 
+def unwrap(seq_data):
+    new = []
+    for i in seq_data:
+        if i.startswith('>'):
+            new.append(i)
+            new.append("")
+        else:
+            new[-1] += i
+    return new
+
+
 def get_seq_from_uniprot(uniprot_id):
     req = urllib2.Request(
         "http://www.uniprot.org/uniprot/{}.fasta".format(uniprot_id))
@@ -133,6 +144,7 @@ def write_conf_file(usr_features):
 
 def write_fasta(seq_data):
     tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    seq_data = unwrap(seq_data)
     fasta_seq = txtproc.process_fasta(seq_data)
     _log.debug("Created tmp file '{}'".format(tmp_file.name))
     with tmp_file as f:

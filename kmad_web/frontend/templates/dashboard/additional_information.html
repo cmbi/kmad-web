@@ -530,71 +530,95 @@ Additional information
   <div class="panel-heading">
     <div class="panel-title" id="phosph">
       <span class="panel-title-text">
+        <strong>MSA benchamrks</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+          "We conclude that there is currently no universally applicable means
+          of benchmarking MSA, and that developers and users of alignment tools
+          should base their choice of benchmark depending on the context of
+          application—with a keen awareness of the assumptions underlying each 
+          benchmarking strategy."
+          (<i>Who Watches the Watchmen? An Appraisal of Benchmarks
+            for Multiple Sequence Alignment</i>, Iantorno S, et al., 2013)
+          </p>
+        </div>
+      </div>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
         <strong>PREFAB</strong>
       </span>
     </div>
   </div>
   <div class="panel-body" id="prefab">
     <span class="panel-body-custom">
-    <div class="row">
-      <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_kmad_prefab.png')}}">
+      <div class="row">
+        <div class="col-md-6">
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_kmad_prefab.png')}}">
+        </div>
+        <div class="col-md-6">
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_tcoffee_prefab.png')}}">
+        </div>
       </div>
-      <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_tcoffee_prefab.png')}}">
+      <div class="row">
+        <div class="col-md-6">
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_all_methods_prefab.png')}}">
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_all_methods_prefab.png')}}">
+      <div class="row">
+        <div class="col-md-6">
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_kmad_prefab_abc.png')}}">
+        </div>
+        <div class="col-md-6">
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_tcoffee_prefab_abc.png')}}">
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_kmad_prefab_abc.png')}}">
+      <div class="row">
+        <div class="col-md-6">
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_all_methods_prefab_abc.png')}}">
+        </div>
       </div>
-      <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_tcoffee_prefab_abc.png')}}">
+      <div class="row">
+        <div class="col-md-4">
+          <strong>A)</strong> KMAD without features,
+          <strong>B)</strong> KMAD with features
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_kmad_prefab_abc_small.png')}}">
+        </div>
+        <div class="col-md-4">
+          <strong>A)</strong> T-Coffee,
+          <strong>B)</strong> T-Coffee Expresso
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_tcoffee_prefab_abc_small.png')}}">
+        </div>
+        <div class="col-md-4">
+          <strong>A)</strong> KMAD without features,
+          <strong>B)</strong> ClustalW2,
+          <strong>C)</strong> MUSCLE,
+          <strong>D)</strong> T-Coffee,
+          <strong>E)</strong> Clustal Omega,
+          <strong>F)</strong> MAFFT,
+          <strong>G)</strong> T-Coffee Expresso,
+          <strong>H)</strong> KMAD with features
+          <img src="{{ url_for('static',
+          filename='files/plots/boxplot_all_methods_prefab_abc_small.png')}}">
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_all_methods_prefab_abc.png')}}">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <strong>A)</strong> KMAD without features,
-        <strong>B)</strong> KMAD with features
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_kmad_prefab_abc_small.png')}}">
-      </div>
-      <div class="col-md-4">
-        <strong>A)</strong> T-Coffee,
-        <strong>B)</strong> T-Coffee Expresso
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_tcoffee_prefab_abc_small.png')}}">
-      </div>
-      <div class="col-md-4">
-        <strong>A)</strong> KMAD without features,
-        <strong>B)</strong> ClustalW2,
-        <strong>C)</strong> MUSCLE,
-        <strong>D)</strong> T-Coffee,
-        <strong>E)</strong> Clustal Omega,
-        <strong>F)</strong> MAFFT,
-        <strong>G)</strong> T-Coffee Expresso,
-        <strong>H)</strong> KMAD with features
-        <img src="{{ url_for('static',
-        filename='files/plots/boxplot_all_methods_prefab_abc_small.png')}}">
-      </div>
-    </div>
-    
+
 
     </span>
 
