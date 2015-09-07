@@ -56,7 +56,8 @@ def process_slims_all_classes(classes):
         slim_probability = float(lineI[2])
         go_terms = lineI[3:]
         result[slim_id] = {"prob": slim_probability, "GO": go_terms,
-                           "regex": slim_regex}
+                           "regex": slim_regex,
+                           "comp_reg": re.compile(slim_regex)}
     return result
 
 
@@ -267,7 +268,7 @@ def get_annotated_motifs(uniprotID):
     elms_ids = []
     probabilities = []
     # get annotated motifs first
-    url = "http://elm.eu.org/elms/browse_instances.gff?q={}".format(uniprotID)
+    url = "http://elm.eu.org/instances.gff?q={}".format(uniprotID)
     try:
         req = urllib2.Request(url)
         response = urllib2.urlopen(req)
@@ -291,34 +292,51 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
     limits = []
     elms_ids = []
     probabilities = []
-    try:
-        data = urllib.urlencode({'sequence': sequence})
-        url = "http://elm.eu.org/start_search/"
-        req = urllib2.Request(url, data)
-        response = urllib2.urlopen(req)
-        features = response.read()
-        features = features.splitlines()
-        for line in features[1:]:
-            entry = line.split()
-            prob = 1
-            if entry:
-                slim_id = entry[0]
-                try:
-                    slim_go_terms = slims_all_classes[slim_id]["GO"]
-                    if set(seq_go_terms).intersection(set(slim_go_terms)):
-                        if entry[3] == "False":
-                            prob = 1 + 1/math.log(
-                                slims_all_classes[slim_id]["prob"], 10)
-                            if prob > 0:
-                                limits.append([int(entry[1]), int(entry[2])])
-                                elms_ids.append(entry[0])
-                                probabilities.append(prob)
-                except KeyError:
-                    _log.debug("Didn't find motif: {}".format(slim_id))
-    except (urllib2.HTTPError,  urllib2.URLError,
-            SocketError, BadStatusLine):
-        _log.debug('get_predicted_motifs: HTTPError')
+    for i in slims_all_classes.keys():
+        slimI = slims_all_classes[i]
+        if set(slimI["GO"]).intersection(seq_go_terms):
+            reg = slimI["comp_reg"]
+            for match in reg.finditer(sequence):
+                m_sp = (match.span())
+                prob = 1 + 1/math.log(slimI["prob"], 10)
+                limits.append([m_sp[0] + 1, m_sp[1] + 1])
+                elms_ids.append(i)
+                probabilities.append(prob)
     return [limits, elms_ids, probabilities]
+
+
+# def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
+#     limits = []
+#     elms_ids = []
+#     probabilities = []
+#     try:
+#         data = urllib.urlencode({'sequence': sequence})
+#         url = "http://elm.eu.org/start_search/"
+#         req = urllib2.Request(url, data)
+#         response = urllib2.urlopen(req)
+#         features = response.read()
+#         features = features.splitlines()
+#         for line in features[1:]:
+#             entry = line.split()
+#             prob = 1
+#             if entry:
+#                 slim_id = entry[0]
+#                 try:
+#                     slim_go_terms = slims_all_classes[slim_id]["GO"]
+#                     if set(seq_go_terms).intersection(set(slim_go_terms)):
+#                         if entry[3] == "False":
+#                             prob = 1 + 1/math.log(
+#                                 slims_all_classes[slim_id]["prob"], 10)
+#                             if prob > 0:
+#                                 limits.append([int(entry[1]), int(entry[2])])
+#                                 elms_ids.append(entry[0])
+#                                 probabilities.append(prob)
+#                 except KeyError:
+#                     _log.debug("Didn't find motif: {}".format(slim_id))
+#     except (urllib2.HTTPError,  urllib2.URLError,
+#             SocketError, BadStatusLine):
+#         _log.debug('get_predicted_motifs: HTTPError')
+#     return [limits, elms_ids, probabilities]
 
 
 def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
