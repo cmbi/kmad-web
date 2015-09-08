@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-BAliBASE
+BAliBASE questions
 {% endblock %}
 {% block additional_imports %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/disprot_examples.css') }}">
@@ -9,90 +9,193 @@ BAliBASE
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
+      <strong>How is it determined which motifs are true positives? </strong>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="panel-body panel-body-custom">
+    <div class="row" style="height:50px;">
+      <div class="col-md-12">
+        <p align="justify">
+        <div class="row">
+        <div class="col-md-6">
+        <strong>Alignment BOX230 from the reference 9, subset RV921</strong>
+        <br>
+        <strong>Motif:</strong> <a href="http://elm.eu.org/elms/LIG_FHA_2">LIG_FHA_2</a>
+        <br>
+        <strong>Regex:</strong> "..(T)..[DE]."
+        <br>
+        <strong>1.</strong>The LIG_FHA_2 motif is annotated only in the first sequence, and it is predicted in the other sequences.
+        When there are multiple occurences of the motif in other sequences how is it decided
+        which of them should be aligned with the one in the top sequence? 
+        <br>
+        <strong>2.</strong> Why is the motif in the 5th sequence shifted to the left?
+        If we assume that all of them are true positives, shouldn't they all be lined up?
+        <br>
+        <strong>3.</strong>
+        Concerning the false negative motif in the 9th sequence.
+        Why do you assume that the prediction (or actually lack of prediction)
+        is wrong and it's not just a case of a motif changing it's position?
+        Motifs very often 'move around' in the disordered regions.
+        <br>
+        {#
+       "A false negative motif is defined as a sequence segment that can be
+       aligned unambiguously in the region of the motif instance, but that does
+       not match the ELM regular expression"
+       #}
+        <br>
+        </p>
+        <br>
+        </div>
+        </div>
+        BAliBASE alignment (RV921_BOX230) with scored motifs highlighted
+        (only the one in the first sequence is annotated)
+        <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase_issues/RV921_BOX230_bali_ref_motifs.html") }}"
+          width="100%"></iframe>
+        <br>
+        BAliBASE alignment with all instances of the LIG_FHA_2 motif highlighted
+        <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase_issues/RV921_BOX230_bali_predicted_motifs.html") }}"
+          width="100%"></iframe>
+        <br>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<div class="panel panel-default" style="width=100%;" id="panel0">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>How is the alignment curated when there are no structures available for any of the sequences? (BB11037)</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="panel-body panel-body-custom">
+    <div class="row" style="height:50px;">
+      <div class="col-md-12">
+        <br>
+        <p align="justify">
+        <strong>Alignment BB11037 from reference 1 (RV911)</strong>
+        <br>
+        <div class="row">
+        <div class="col-md-6">
+        For any of the sequences from this alignment there isn't any structure available.
+        The closest structure was found for the 4th sequence (YB00_YEAST),
+        with a very high e-value of 3e-04. And even this structure doesn't
+        cover the area where the sequences are aligned.
+        <br>
+        <strong>1.</strong> How was this alignment determined?
+        <br>
+        <strong>2.</strong> How where the 'coreblocks' determined?
+        <br>
+      </div>
+    </div>
+
+        Reference BAliBASE alignment (highlighted coreblocks are the parts of the alignment for which BAliBASE gives points)
+        <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase_issues/BB11037_coreblocks.html") }}"
+          width="100%"></iframe>
+        <br>
+        The closest structure was found for the YB00_YEAST sequence (BLAST e-value: 3e-04),
+        so first - it's very distant, second - it doesn't even cover the "coreblocks" area
+
+        <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase_issues/BB11037_closest_structure_aln.html") }}"
+          width="100%"></iframe>
+        <br>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="panel panel-default" style="width=100%;" id="panel0">
+  <div class="panel-heading">
+    <div class="panel-title">
       <strong>BBS12034</strong>
     </div>
   </div>
   <div class="panel-body">
+    <div class="panel-body panel-body-custom">
       <div class="row" style="height:50px;">
         <div class="col-md-12">
+        <p align="justify">
+        <strong>Alignment BB12034 from reference 1 (RV912)</strong>
+        <br>
+        <div class="row">
+        <div class="col-md-6">
+          BAliBASE is said to use SAP structure alignment as the base for
+          the sequence alignment, but there are some discrepancies between the
+          SAP and BAliBASE alignments. 
+          T-Coffee Expresso uses SAP to produce a structure based alignment
+          and the result is also different then the reference alignment.
+          For example the "DRTG"
+          segment is at position 33 in the Expresso and SAP alignments,
+          while in the reference alignment it is shifted to the left.
+          <br>
+          <strong>1.</strong> Why was it decided that this segment should
+          be shifted to the left, although it is aligned differently in the
+          structure alignment?
+          <br>
+
+
+        {#
           Clustal Omega (SP: 0.928, TC: 0.86)
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BBS12034_clustalo.html") }}"
+          filename="alignments/balibase_issues/BB12034_clustalo.html") }}"
           width="100%"></iframe>
           <br>
-          KMAD alone, strct score = 5 (SP: 0.904, TC: 0.81)
+          KMAD alone, strct score = 5 (SP: 0.899, TC: 0.81)
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BBS12034_kmad5.html") }}"
+          filename="alignments/balibase_issues/BB12034_kmad5.html") }}"
           width="100%"></iframe>
           <br>
-          KMAD alone, strct score = 40 (SP: 0.885, TC: 0.78)
+          #}
+        {#
+          Structure based KMAD (structure alignment performed with Dali)
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BBS12034_kmad40.html") }}"
+          filename="alignments/balibase_issues/BB12034_kmad40.html") }}"
           width="100%"></iframe>
           <br>
+          #}
+          </div>
+          </div>
           <br>
+          Expresso (structure alignment performed with SAP)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase_issues/BB12034_expresso.html") }}"
+          width="100%"></iframe>
+          <br>
+        {#
+          T-Coffee (SP: 0.914, TC: 0.84)
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase_issues/BB12034_tcoffee.html") }}"
+          width="100%"></iframe>
+          <br>
+          #}
           BAliBASE refrence alignment
           <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BBS12034_bali.html") }}"
+          filename="alignments/balibase_issues/BB12034_bali.html") }}"
+          width="100%"></iframe>
+          <br>
+          SAP structure alignment
+          <br>
+        <iframe name="alignment_frame" src="{{ url_for('static',
+          filename="alignments/balibase_issues/BB12034_sap.html") }}"
           width="100%"></iframe>
 
-        </div>
-        </div>
-  </div>
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>BB11001</strong>
-    </div>
-  </div>
-  <div class="panel-body">
-      <div class="row" style="height:50px;">
-        <div class="col-md-12">
-          Clustal Omega (SP: 0.956, TC: 0.91)
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB11001_clustalo.html") }}"
-          width="100%"></iframe>
-          <br>
-          KMAD alone, strct score = 3 (SP: 1, TC: 1)
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB11001_kmad3.html") }}"
-          width="100%"></iframe>
-          <br>
-          ClustalW (SP: 1, TC: 1)
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB11001_clustalw.html") }}"
-          width="100%"></iframe>
-          <br>
-          T-Coffee
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB11001_tcoffee.html") }}"
-          width="100%"></iframe>
-          <br>
-          MUSCLE (SP: 0.988, TC: 0.98)
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB11001_muscle.html") }}"
-          width="100%"></iframe>
-          <br>
-          MAFFT (SP: 0.892, TC: 0.82)
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB11001_mafft.html") }}"
-          width="100%"></iframe>
-          <br>
-          <br>
-          BAliBASE refrence alignment
-          <br>
-        <iframe name="alignment_frame" src="{{ url_for('static',
-          filename="alignments/balibase/BB11001_bali.html") }}"
-          width="100%"></iframe>
+        </p>
         </div>
         </div>
   </div>
@@ -103,11 +206,11 @@ BAliBASE
 <script>
 $(function(){
     // var height = window.innerHeight;
-    var height = 150;
-     $('iframe').css('height', height);
+    var height = 300;
+    $('iframe').css('height', height);
     });
 activate = function(button_id, alignment_id) {
-// activate = function(button_id) {
+  // activate = function(button_id) {
   var btn_ids = ["btn1", "btn2", "btn3", "btn4", "btn5"];
   var alignment_ids = ["alignment1", "alignment2", "alignment3", "alignment4", "alignment5"];
   for (var i = 0; i < alignment_ids.length; i++) {

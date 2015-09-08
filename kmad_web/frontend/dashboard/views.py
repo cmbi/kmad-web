@@ -188,11 +188,6 @@ def balibase():
     return render_template('dashboard/balibase.html')
 
 
-@bp.route('/balibase_issues', methods=['GET'])
-def balibase_issues():
-    return render_template('dashboard/balibase_issues.html')
-
-
 @bp.route('/prefab', methods=['GET'])
 def prefab():
     return render_template('dashboard/prefab.html')
