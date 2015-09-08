@@ -299,7 +299,7 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
             for match in reg.finditer(sequence):
                 m_sp = (match.span())
                 prob = 1 + 1/math.log(slimI["prob"], 10)
-                limits.append([m_sp[0] + 1, m_sp[1] + 1])
+                limits.append([m_sp[0] + 1, m_sp[1]])
                 elms_ids.append(i)
                 probabilities.append(prob)
     return [limits, elms_ids, probabilities]
