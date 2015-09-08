@@ -262,10 +262,17 @@ def query_d2p2(blast_result, filename, output_type, multi_seq_input):
                 if response[seq_id]:
                     pred_result = \
                         response[seq_id][0][2]['disorder']['consensus']
+                    '''
                     if len(pred_result) < seq_length:
                         pred_result.extend([5 for i in range(len(pred_result),
                                                              seq_length + 1)])
-                    prediction = process_d2p2(pred_result)
+                    elif len(pred_result) > seq_length:
+                        pred_result = pred_result[:seq_length]
+                    '''
+                    if len(pred_result) == seq_length:
+                        prediction = process_d2p2(pred_result)
+                    else:
+                        found_it = False
                 else:
                     found_it = False
     except urllib2.HTTPError and urllib2.URLError:
