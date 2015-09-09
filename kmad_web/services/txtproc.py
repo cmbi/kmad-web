@@ -72,6 +72,17 @@ def preprocess_globplot(outlist):
     return disorder_list
 
 
+def preprocess_iupred(pred_out):
+    disorder_list = []
+    for i in pred_out[9:]:
+        dis_val = float(i.split()[-1])
+        if dis_val >= 0.5:
+            disorder_list.append(2)
+        else:
+            disorder_list.append(0)
+    return disorder_list
+
+    
 def preprocess(pred_out, pred_name):
     pred_out_list = pred_out.splitlines()
     # 0 - structured, 2 - disordered
@@ -83,6 +94,8 @@ def preprocess(pred_out, pred_name):
         disorder_list = preprocess_predisorder(pred_out_list)
     elif pred_name == "globplot":
         disorder_list = preprocess_globplot(pred_out_list)
+    elif pred_name == "iupred":
+        disorder_list = preprocess_iupred(pred_out_list)
     return [pred_name, disorder_list]
 
 

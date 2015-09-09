@@ -9,7 +9,7 @@ import urllib2
 from celery import current_app as celery_app
 
 from kmad_web import paths
-from kmad_web.services import files, txtproc, espritz
+from kmad_web.services import files, txtproc
 from kmad_web.services import mutation_analysis as ma
 from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
@@ -101,10 +101,20 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 args = [method, '10', '8', '75', '8', '8',
                         fasta_file, '>', out_file]
                 _log.debug(args)
-            try:
-                if pred_name == 'globplot':
+                try:
                     data = subprocess.check_output(args)
-                else:
+                except (subprocess.CalledProcessError, OSError) as e:
+                    _log.error("Error: {}".format(e))
+            elif pred_name == 'iupred':
+                method = os.path.join(paths.IUPRED_DIR, 'iupred')
+                args = [method, fasta_file, 'long']
+                env = {"IUPred_PATH": paths.IUPRED_DIR}
+                try:
+                    data = subprocess.check_output(args, env=env)
+                except (subprocess.CalledProcessError, OSError) as e:
+                    _log.error("Error: {}".format(e))
+            try:
+                if pred_name not in ['globplot', 'iupred']:
                     _log.info("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
                     subprocess.call(args)
@@ -140,9 +150,10 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
                                                         alignment_method)
     if multi_seq_input or blast_success:
         dis_predictions = []
+        '''
         if filter_motifs:
-            dis_predictions = espritz.get_predictions(fastafile)
-
+            dis_predictions = iupred.get_predictions(fastafile)
+        '''
         convert_result = convert_to_7chars(fastafile, filter_motifs,
                                            dis_predictions)
 

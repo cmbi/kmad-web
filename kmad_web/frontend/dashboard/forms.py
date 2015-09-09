@@ -246,7 +246,7 @@ class KmanForm(Form):
                                 choices=[('True',
                                           'filter out motifs in structured regions'),
                                          ('False', 'use all motifs')],
-                                default='false')
+                                default='False')
 
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")
