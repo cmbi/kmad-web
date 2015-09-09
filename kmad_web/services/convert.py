@@ -289,7 +289,7 @@ def get_annotated_motifs(uniprotID):
 
 
 def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
-                         filter_motifs, prediction):
+                         filter_motifs, prediction, seq_index):
     limits = []
     elms_ids = []
     probabilities = []
@@ -304,7 +304,7 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
                 end = m_sp[1]
                 # check if no residue is predicted as structured
                 if filter_motifs:
-                     segment_pred = [(j != 0) for j in prediction[start:end]]
+                     segment_pred = [(j != 0) for j in predictions[seq_index][start:end]]
                 if not filter_motifs or all(segment_pred):
                     limits.append([start, end])
                     elms_ids.append(i)
@@ -347,10 +347,10 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
 
 
 def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms,
-               filter_motifs, predictions):
+               filter_motifs, predictions, seq_index):
     annotated = get_annotated_motifs(uniprotID)
     predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
-                                     filter_motifs, predictions)
+                                     filter_motifs, predictions, seq_index)
     limits = annotated[0] + predicted[0]
     elms_ids = annotated[1] + predicted[1]
     probabilities = annotated[2] + predicted[2]
@@ -540,7 +540,7 @@ def convert_to_7chars(filename, filter_motifs, predictions):
                 # elms - slims coordinates, motifs_ids, probs - probabilities
                 [elm, motifs_ids, probs, annotated] = search_elm(
                     seq_id, ungapped, slims_all_classes, uniprot_data["GO"],
-                    filter_motifs, predictions[i / 2])
+                    filter_motifs, predictions, i / 2)
                 if i == 1:
                     annotated_motifs = annotated
                 motifsDictionary = add_elements_to_dict(motifs_ids,
