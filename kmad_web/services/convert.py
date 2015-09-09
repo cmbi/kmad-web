@@ -503,7 +503,7 @@ def elm_db():
 
 
 # MAIN
-def convert_to_7chars(filename):
+def convert_to_7chars(filename, filter_motifs, predictions):
     slims_all_classes = elm_db()
     seqFASTA = read_fasta(filename)
     outname = filename.split(".")[0]+".7c"

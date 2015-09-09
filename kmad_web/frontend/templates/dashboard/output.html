@@ -54,21 +54,21 @@ KMAD {{ output_type | replace('_', ' ')}}
             <span class="panel-title-text">Coloring
               mode:&#160;&#160;&#160;&#160;</span>
             <div class="btn-group" data-toggle="buttons">
-              <button type="submit" id="regular_mode_button" class="btn btn-regular
+              <button type="submit" id="regular_mode_button" class="btn btn-primary
                 btn-s disabled" onclick="changeMode('regular')">
                 <strong>Regular</strong>
               </button>
-              <button type="submit" id="ptm_mode_button" class="btn btn-ptms
+              <button type="submit" id="ptm_mode_button" class="btn btn-primary
                 btn-s" onclick="changeMode('ptm')">
                 <strong>PTMs</strong>
               </button>
               <button type="submit" id="motif_mode_button" class="btn
-                btn-motifs btn-s" onclick="changeMode('motif')">
+                btn-primary btn-s" onclick="changeMode('motif')">
                 <strong>Motifs</strong>
               </button>
+              </button>
               <button type="submit" id="domain_mode_button" class="btn
-                btn-domains
-                btn-s" onclick="changeMode('domain')">
+                btn-primary btn-s" onclick="changeMode('domain')">
                 <strong>Domains</strong>
               </button>
             </div>
@@ -119,6 +119,7 @@ KMAD {{ output_type | replace('_', ' ')}}
                     overflow:auto;
                     height:auto; width:100%; display:none;">
                   </div>
+                  </div>
                   <div id="legend_canvas_domain" style="position:absolute;
                     left:0px; top:0px; overflow:auto;
                     height:auto; width:100%; display:none;">
@@ -153,8 +154,8 @@ KMAD {{ output_type | replace('_', ' ')}}
     }
     else if ("{{ output_type }}" == 'align' || "{{ output_type }}" == 'refine'
         || "{{ output_type }}" == 'annotate'){
-       document.getElementById('panel1').style.display = 'none';
-    }
+        document.getElementById('panel1').style.display = 'none';
+    } 
     var intervalId = setInterval(function(){
         $.getJSON(
           "{{ url_for('kmad.get_kmad_status', output_type=output_type, id=celery_id) }}",
@@ -205,6 +206,21 @@ KMAD {{ output_type | replace('_', ' ')}}
                         var feature_codemap = data['result']['feature_codemap'];
                         draw_alignment('canvas_regular', processed_alignment);
                         var codon_length = 7;
+                        // if ("{{ output_type }}" == 'predict_and_align') {
+                        //   var disorder_predictions = data['result']['prediction'];
+                        //   var filtered_motifs_alignment = data['result']['alignment']['filtered_motifs'];
+                        //   // draw_filtered_motifs('canvas_filtered_motif', 
+                        //   //     encoded_alignment, codon_length,
+                        //   //     feature_codemap['motifs'],
+                        //   //     disorder_predictions);
+                        //   draw_alignment_with_features('canvas_motif', 
+                        //       filtered_motifs_alignment, codon_length,
+                        //       feature_codemap['motifs'], 'motif');
+                        //   var filtered_motif_legend = new MotifsLegend(
+                        //       'legend_canvas_filtered_motif',
+                        //       feature_codemap['motifs']);
+                        //   filtered_motif_legend.update();
+                        // }
                         draw_alignment_ptms('canvas_ptm', encoded_alignment, 
                             codon_length);
                         draw_alignment_with_features('canvas_motif', 

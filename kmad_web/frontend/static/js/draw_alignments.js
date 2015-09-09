@@ -221,6 +221,133 @@ group_coords = function(feature_coords, feature_names, single_width) {
 }
 
 
+draw_filtered_motifs = function(container_id, data, codon_length,
+    feature_codemap, disorder_predictions) {
+  var start = Date.now();
+  const ROW_HEIGHT = 15;
+  const ROWS = data.length;
+  const FONT_SIZE = 13;
+  const FONT_FAMILY = "Monospace";
+  var dis_length = disorder_predictions.length;
+  var disorder = disorder_predictions[dis_length - 1][1];
+  console.debug("pred: " + disorder);
+
+  var container_width = data[0][1].length * 1.5 + 180;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
+
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    width: container_width,
+    height: container_height,
+    listening: true
+  });
+
+  var tooltip_layer = new Kinetic.Layer();
+  var shapes_layer = new Kinetic.Layer();
+  var native_layer = new Kinetic.Layer();
+
+  stage.add(native_layer);
+  stage.add(tooltip_layer);
+  stage.add(shapes_layer);
+
+  document.getElementById(container_id).style.width = container_width;
+  document.getElementById(container_id).style.height = container_height + 10;
+  
+
+  var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
+                       'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
+                       'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
+                       'white':'#FFFFFF'};
+  aa_to_hex ={};
+  for (key in aa_to_color) {
+    aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
+  }
+  // color spectrum for features
+  var feature_colors = ColorRange(feature_codemap.length);
+  var ctx = native_layer.getContext()._context;
+
+  ctx.fillStyle = '#EEEEEE';
+  ctx.fillRect(0, 0, container_width, container_height);
+
+  var index_add = 3;
+  var char_index = 6;
+  var feature_code;
+  var r;
+  var r_up;
+  var letter_col;
+  var rect_width = 10;
+  var rect_height = 15;
+  var is_feature;
+  var feature_coords = [];
+  var feature_names = [];
+  draw_residue = function(res_num, seq_num, x, y) {
+    feature_code = data[seq_num][1].substring(res_num + 2 + index_add,
+                                              res_num + 4 + index_add);
+    r = data[seq_num][1].charAt(res_num);
+
+    letter_col = color_to_hex['gray'];
+    if (feature_code == 'AA') {
+      letter_col = aa_to_hex[r.toUpperCase()];
+    }
+    else {
+        var feat_number = 0;
+        for (var i = 0; i < feature_codemap.length; i++) {
+          if (feature_codemap[i][0] == feature_code) {
+            feat_number = i;
+            break;    
+          }
+        }
+        feature_coords = feature_coords.concat([[x, y, rect_width, rect_height]]);
+        feature_names = feature_names.concat(feature_codemap[feat_number][1]);
+        letter_col = feature_colors[feat_number];
+    }
+      ctx.fillStyle = letter_col;
+      ctx.fillRect(x, y, rect_width, rect_height);
+      ctx.fillStyle = "#000000";
+      ctx.fillText(r, x + 1, y + 10)
+  }
+  // 
+  var x = 10;
+  var y = 30;
+  ctx.fillStyle = "#515454";
+  // draw headers
+  for (var i = 0; i < data.length; i++) {
+    y = 30 + i * ROW_HEIGHT;
+    ctx.fillText(data[i][0], x, y)
+  }
+
+  // draw numbering
+  x = 160;
+  y = 10;
+  for (var i = 0; i < data[0][1].length / codon_length; i++) {
+    if (i % 5 == 0) {
+      ctx.fillText(i.toString(), x, y)
+      ctx.fillText('I', x, y + 10)
+      x += 50;
+    }
+  }
+
+  for (var i = 0; i < data.length; i++) {
+    x = 160;
+    y = 20+(i * ROW_HEIGHT);
+    for (var j = 0; j < data[i][1].length; j+=codon_length) {
+      draw_residue(j, i, x, y);
+      x += 10;
+    }
+  }
+  coords_and_names =  group_coords(feature_coords, feature_names, rect_width);
+  feature_coords = coords_and_names[0];
+  feature_names = coords_and_names[1];
+  create_tooltip(feature_coords, feature_names, shapes_layer,
+      tooltip_layer, 'motif', container_id);
+
+  document.getElementById("download_filtered_motif_canvas_button").addEventListener('click',
+      function() {
+         downloadCanvasFromStage(this, "alignment_"+feature_type+".png", stage);
+  }, false);
+
+}
+
 draw_alignment_with_features = function(container_id, data, codon_length,
     feature_codemap, feature_type) {
   var start = Date.now();

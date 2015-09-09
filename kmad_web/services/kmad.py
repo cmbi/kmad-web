@@ -54,7 +54,7 @@ class PredictAndAlignStrategy(object):
                  gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  prediction_methods, multi_seq_input, usr_features,
-                 first_seq_gapped, alignment_method):
+                 first_seq_gapped, alignment_method, filter_out_methods):
         from kmad_web.tasks import (query_d2p2, align, run_single_predictor,
                                     postprocess, get_seq)
         from celery import chain, group
@@ -74,7 +74,7 @@ class PredictAndAlignStrategy(object):
                                  ptm_score, domain_score, motif_score,
                                  multi_seq_input, conffilename,
                                  self.output_type, first_seq_gapped,
-                                 alignment_method)]
+                                 alignment_method, filter_out_motifs)]
 
         workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                       multi_seq_input),
@@ -94,7 +94,7 @@ class AlignStrategy(object):
                  gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  multi_seq_input, usr_features, output_type, first_seq_gapped,
-                 alignment_method):
+                 alignment_method, filter_out_motifs):
         from kmad_web.tasks import (query_d2p2, align, postprocess, get_seq)
         from celery import chain, group
 
@@ -109,7 +109,8 @@ class AlignStrategy(object):
                                 gap_extension_penalty, end_gap_penalty,
                                 ptm_score, domain_score, motif_score,
                                 multi_seq_input, conffilename, output_type,
-                                first_seq_gapped, alignment_method)]
+                                first_seq_gapped, alignment_method,
+                                filter_out_motifs)]
         workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
                                       multi_seq_input),
                          group(tasks_to_run),

@@ -248,3 +248,21 @@ def remove_empty(usr_features):
                 del new_features[i]
                 break
     return new_features
+
+
+def filter_motifs(motif_aln, disorder):
+    '''
+    result = []
+    if '0' in disorder:
+
+    else:
+        result = motif_aln[:]
+    '''
+    pass
+
+
+
+
+
+
+

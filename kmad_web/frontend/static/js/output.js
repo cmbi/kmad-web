@@ -1,5 +1,5 @@
 changeMode = function(newMode) {
-  modes = ["regular", "ptm", "domain", "motif"];
+  modes = ["regular", "ptm", "domain", "motif", "filtered_motif"];
   $('#' + newMode + '_mode_button').addClass('disabled');
   if (newMode != "regular") {
     document.getElementById('legend_canvases_container').style.display = ''; 
