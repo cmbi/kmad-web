@@ -288,7 +288,8 @@ def get_annotated_motifs(uniprotID):
     return [limits, elms_ids, probabilities]
 
 
-def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
+def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
+                         filter_motifs, prediction):
     limits = []
     elms_ids = []
     probabilities = []
@@ -299,9 +300,15 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
             for match in reg.finditer(sequence):
                 m_sp = (match.span())
                 prob = 1 + 1/math.log(slimI["prob"], 10)
-                limits.append([m_sp[0] + 1, m_sp[1]])
-                elms_ids.append(i)
-                probabilities.append(prob)
+                start = m_sp[0] + 1
+                end = m_sp[1]
+                # check if no residue is predicted as structured
+                if filter_motifs:
+                     segment_pred = [(j != 0) for j in prediction[start:end]]
+                if not filter_motifs or all(segment_pred):
+                    limits.append([start, end])
+                    elms_ids.append(i)
+                    probabilities.append(prob)
     return [limits, elms_ids, probabilities]
 
 
@@ -339,19 +346,18 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
 #     return [limits, elms_ids, probabilities]
 
 
-def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms):
+def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms,
+               filter_motifs, predictions):
     annotated = get_annotated_motifs(uniprotID)
-    predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms)
+    predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
+                                     filter_motifs, predictions)
     limits = annotated[0] + predicted[0]
     elms_ids = annotated[1] + predicted[1]
     probabilities = annotated[2] + predicted[2]
-    # elms_ids.extend(predicted[1])
-    # probabilities.extend(predicted[2])
     limits, elms_ids, probabilities = filter_out_overlapping(limits,
                                                              elms_ids,
                                                              probabilities)
     return [limits, elms_ids, probabilities, annotated]
-    # return [[], [], [], [[], [], []]]
 
 
 # adds new domains/motifs to the dictionary
@@ -533,7 +539,8 @@ def convert_to_7chars(filename, filter_motifs, predictions):
                     uniprot_data["seq_data"][seq_id]["features"])
                 # elms - slims coordinates, motifs_ids, probs - probabilities
                 [elm, motifs_ids, probs, annotated] = search_elm(
-                    seq_id, ungapped, slims_all_classes, uniprot_data["GO"])
+                    seq_id, ungapped, slims_all_classes, uniprot_data["GO"],
+                    filter_motifs, predictions[i / 2])
                 if i == 1:
                     annotated_motifs = annotated
                 motifsDictionary = add_elements_to_dict(motifs_ids,

@@ -82,7 +82,7 @@ def preprocess_iupred(pred_out):
             disorder_list.append(0)
     return disorder_list
 
-    
+
 def preprocess(pred_out, pred_name):
     pred_out_list = pred_out.splitlines()
     # 0 - structured, 2 - disordered
