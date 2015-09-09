@@ -9,7 +9,7 @@ import urllib2
 from celery import current_app as celery_app
 
 from kmad_web import paths
-from kmad_web.services import files, txtproc
+from kmad_web.services import files, txtproc, iupred
 from kmad_web.services import mutation_analysis as ma
 from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
@@ -150,10 +150,8 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
                                                         alignment_method)
     if multi_seq_input or blast_success:
         dis_predictions = []
-        '''
         if filter_motifs:
             dis_predictions = iupred.get_predictions(fastafile)
-        '''
         convert_result = convert_to_7chars(fastafile, filter_motifs,
                                            dis_predictions)
 
