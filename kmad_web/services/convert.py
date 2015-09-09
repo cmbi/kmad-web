@@ -289,7 +289,7 @@ def get_annotated_motifs(uniprotID):
 
 
 def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
-                         filter_motifs, prediction, seq_index):
+                         filter_motifs, predictions, seq_index):
     limits = []
     elms_ids = []
     probabilities = []
