@@ -141,8 +141,7 @@ def check_id(uniprot_id, seq):
             result = True
         else:
             _log.debug("Different sequences: {}".format(seq))
-    # return result
-    return True
+    return result
 
 
 def get_uniprot_txt(uniprot_id):

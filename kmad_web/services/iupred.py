@@ -6,6 +6,7 @@ import subprocess
 from kmad_web import paths
 
 from kmad_web.services.txtproc import unwrap, preprocess
+from kmad_web.services.consensus import filter_out_short_stretches
 
 
 logging.basicConfig()
@@ -30,7 +31,8 @@ def get_predictions(fastafile):
         except (subprocess.CalledProcessError, OSError) as e:
             _log.error("Error: {}".format(e))
         if data:
-            predictions.append(preprocess(data, 'iupred'))
+            prediction = preprocess(data, 'iupred')
+            predictions.append(filter_out_short_stretches(prediction))
         else:
             predictions.append([])
     return predictions
