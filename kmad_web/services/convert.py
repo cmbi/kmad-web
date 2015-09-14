@@ -346,8 +346,11 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
 
 
 def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms,
-               filter_motifs, predictions, seq_index):
-    annotated = get_annotated_motifs(uniprotID)
+               filter_motifs, predictions, seq_index, seqid_ok):
+    if seqid_ok:
+        annotated = get_annotated_motifs(uniprotID)
+    else:
+        annotated = [[], [], []]
     predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
                                      filter_motifs, predictions, seq_index)
     limits = annotated[0] + predicted[0]
@@ -531,27 +534,26 @@ def convert_to_7chars(filename, filter_motifs, predictions):
             predicted_phosph = run_netphos(tmp_filename)
             if os.path.exists(tmp_filename):        # pragma: no cover
                 os.remove(tmp_filename)
-            if check_id(seq_id, ungapped):
+            seqid_ok = check_id(seq_id, ungapped)
+            if seqid_ok:
                 # uniprot_txt = get_uniprot_txt(seq_id)
                 # uniprot_results = find_phosph_sites(uniprot_txt["features"])
                 uniprot_results = find_phosph_sites(
                     uniprot_data["seq_data"][seq_id]["features"])
                 # elms - slims coordinates, motifs_ids, probs - probabilities
-                [elm, motifs_ids, probs, annotated] = search_elm(
-                    seq_id, ungapped, slims_all_classes, uniprot_data["GO"],
-                    filter_motifs, predictions, i / 2)
-                if i == 1:
-                    annotated_motifs = annotated
-                motifsDictionary = add_elements_to_dict(motifs_ids,
-                                                        motifsDictionary,
-                                                        'slims')
-                motifs_codes = get_codes(motifsDictionary, motifs_ids, 'motifs')
-                for i, indI in enumerate(motifs_codes):
-                    motifProbsDict[indI] = probs[i]
             else:
                 uniprot_results = []
-                elm = []
-                motifs_codes = []
+            [elm, motifs_ids, probs, annotated] = search_elm(
+                seq_id, ungapped, slims_all_classes, uniprot_data["GO"],
+                filter_motifs, predictions, i / 2, seqid_ok)
+            if i == 1:
+                annotated_motifs = annotated
+            motifsDictionary = add_elements_to_dict(motifs_ids,
+                                                    motifsDictionary,
+                                                    'slims')
+            motifs_codes = get_codes(motifsDictionary, motifs_ids, 'motifs')
+            for i, indI in enumerate(motifs_codes):
+                motifProbsDict[indI] = probs[i]
 
             lc_regions = []
             domainsDictionary = add_elements_to_dict(domains,
