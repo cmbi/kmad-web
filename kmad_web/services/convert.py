@@ -72,7 +72,6 @@ def get_id(sequence):
 def run_pfam_scan(filename):
     domain_coords = []
     domain_accessions = []
-    '''
     with open(filename) as a:
         fastafile = re.sub('-', '', a.read())
     values = {'seq': fastafile, 'output': 'xml'}
@@ -108,7 +107,6 @@ def run_pfam_scan(filename):
     except (urllib2.HTTPError,  urllib2.URLError,
             SocketError, BadStatusLine):
         _log.debug('Pfam scan HTTPError')
-    '''
     return [domain_coords, domain_accessions]
 
 
