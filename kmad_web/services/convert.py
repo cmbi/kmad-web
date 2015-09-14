@@ -106,7 +106,7 @@ def run_pfam_scan(filename):
                 count += 1
     except (urllib2.HTTPError,  urllib2.URLError,
             SocketError, BadStatusLine):
-        _log.debug('Pfam scan HTTPError')
+        _log.info('Pfam scan HTTPError')
     return [domain_coords, domain_accessions]
 
 
@@ -156,7 +156,7 @@ def get_uniprot_txt(uniprot_id):
                 go_terms += [lineI.split(';')[1].split(':')[1]]
     except (urllib2.HTTPError,  urllib2.URLError,
             SocketError, BadStatusLine):
-        _log.debug("Uniprot error")
+        _log.info("Uniprot error")
     return {"features": features, "GO": go_terms}
 
 
@@ -281,7 +281,7 @@ def get_annotated_motifs(uniprotID):
                 elms_ids.append(elm_id)
     except (urllib2.HTTPError,  urllib2.URLError,
             SocketError, BadStatusLine):
-        _log.debug('get_annotated_motifs: HTTPError')
+        _log.info('get_annotated_motifs: HTTPError')
     return [limits, elms_ids, probabilities]
 
 
@@ -525,7 +525,7 @@ def convert_to_7chars(filename, filter_motifs, predictions):
             seqI = seqI.rstrip("\n")
             seq_id = get_id(seqFASTA[i-1]).rstrip('\n')
             header = seqFASTA[i-1].rstrip('\n')
-            _log.debug("Annotating sequence: {}".format(seq_id))
+            _log.info("Annotating sequence: {}".format(seq_id))
             ungapped = re.sub('-', '', seqI)
             tmp_filename = tmp_fasta(seq_id, ungapped)
             [pfam, domains] = run_pfam_scan(tmp_filename)
