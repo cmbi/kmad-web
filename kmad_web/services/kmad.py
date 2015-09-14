@@ -54,7 +54,7 @@ class PredictAndAlignStrategy(object):
                  gap_opening_penalty, gap_extension_penalty,
                  end_gap_penalty, ptm_score, domain_score, motif_score,
                  prediction_methods, multi_seq_input, usr_features,
-                 first_seq_gapped, alignment_method, filter_out_methods):
+                 first_seq_gapped, alignment_method, filter_out_motifs):
         from kmad_web.tasks import (query_d2p2, align, run_single_predictor,
                                     postprocess, get_seq)
         from celery import chain, group
