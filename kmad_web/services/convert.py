@@ -89,7 +89,7 @@ def run_pfam_scan(filename):
             count = 0
             finished = False
             while count < 20 and not finished:
-                time.sleep(6)
+                time.sleep(7)
                 try:
                     request = urllib2.Request(result_url)
                     result = urllib2.urlopen(request).read()
@@ -282,6 +282,7 @@ def get_annotated_motifs(uniprotID):
     except (urllib2.HTTPError,  urllib2.URLError,
             SocketError, BadStatusLine):
         _log.info('get_annotated_motifs: HTTPError')
+    _log.info("Seq {} Annotated motifs: {}".format(uniprotID, elms_ids))
     return [limits, elms_ids, probabilities]
 
 
@@ -292,6 +293,8 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
     probabilities = []
     for i in slims_all_classes.keys():
         slimI = slims_all_classes[i]
+        # all motifs are filterred by the same set of GO terms - common for all
+        # sequences
         if set(slimI["GO"]).intersection(seq_go_terms):
             reg = slimI["comp_reg"]
             for match in reg.finditer(sequence):
@@ -300,47 +303,22 @@ def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
                 start = m_sp[0] + 1
                 end = m_sp[1]
                 # check if no residue is predicted as structured
-                if filter_motifs:
-                     segment_pred = [(j != 0) for j in predictions[seq_index][start:end]]
-                if not filter_motifs or all(segment_pred):
+                segment_pred = []
+                if filter_motifs and predictions[seq_index]:
+                     # check if no residue from the motif is predicetd as
+                     # disordered
+                     segment_pred = [(j != 0) for j in predictions[seq_index][start - 1:end]]
+                     if not all(segment_pred):
+                         _log.info("Rejecting motif {}, in ranges from {} to {}, pred: {}".format(
+                             i, start - 1, end,
+                             predictions[seq_index][start - 1:end]))
+                elif filter_motifs:
+                    _log.info("no prediction for sequence {}".format(seq_index))
+                if not filter_motifs or (segment_pred and all(segment_pred)):
                     limits.append([start, end])
                     elms_ids.append(i)
                     probabilities.append(prob)
     return [limits, elms_ids, probabilities]
-
-
-# def get_predicted_motifs(sequence, slims_all_classes, seq_go_terms):
-#     limits = []
-#     elms_ids = []
-#     probabilities = []
-#     try:
-#         data = urllib.urlencode({'sequence': sequence})
-#         url = "http://elm.eu.org/start_search/"
-#         req = urllib2.Request(url, data)
-#         response = urllib2.urlopen(req)
-#         features = response.read()
-#         features = features.splitlines()
-#         for line in features[1:]:
-#             entry = line.split()
-#             prob = 1
-#             if entry:
-#                 slim_id = entry[0]
-#                 try:
-#                     slim_go_terms = slims_all_classes[slim_id]["GO"]
-#                     if set(seq_go_terms).intersection(set(slim_go_terms)):
-#                         if entry[3] == "False":
-#                             prob = 1 + 1/math.log(
-#                                 slims_all_classes[slim_id]["prob"], 10)
-#                             if prob > 0:
-#                                 limits.append([int(entry[1]), int(entry[2])])
-#                                 elms_ids.append(entry[0])
-#                                 probabilities.append(prob)
-#                 except KeyError:
-#                     _log.debug("Didn't find motif: {}".format(slim_id))
-#     except (urllib2.HTTPError,  urllib2.URLError,
-#             SocketError, BadStatusLine):
-#         _log.debug('get_predicted_motifs: HTTPError')
-#     return [limits, elms_ids, probabilities]
 
 
 def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms,
@@ -351,6 +329,7 @@ def search_elm(uniprotID, sequence, slims_all_classes, seq_go_terms,
         annotated = [[], [], []]
     predicted = get_predicted_motifs(sequence, slims_all_classes, seq_go_terms,
                                      filter_motifs, predictions, seq_index)
+    _log.info("Seq id {} Predicted motifs: {}".format(uniprotID, predicted[1]))
     limits = annotated[0] + predicted[0]
     elms_ids = annotated[1] + predicted[1]
     probabilities = annotated[2] + predicted[2]

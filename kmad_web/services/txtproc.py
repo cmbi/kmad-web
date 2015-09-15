@@ -74,6 +74,7 @@ def preprocess_globplot(outlist):
 
 def preprocess_iupred(pred_out):
     disorder_list = []
+    _log.info("first two: {}".format(pred_out[9:11]))
     for i in pred_out[9:]:
         dis_val = float(i.split()[-1])
         if dis_val >= 0.5:
