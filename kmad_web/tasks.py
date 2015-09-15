@@ -359,7 +359,7 @@ def analyze_mutation(processed_result, mutation_site, new_aa,
 def update_elmdb(output_filename):
     _log.info("Running elm update")
 
-    elm_url = "http://elm.eu.org/elms/browse_elms.tsv"
+    elm_url = "http://elm.eu.org/elms/elms_index.tsv"
     go_url = "http://geneontology.org/ontology/go-basic.obo"
     elm_list = elm.get_data_from_url(elm_url)
     go_terms_list = elm.get_data_from_url(go_url)
