@@ -375,10 +375,11 @@ def update_elmdb(output_filename):
                                                 go_families)
         outtext += "{} {} {} {}\n".format(elm_id, pattern,
                                           prob, ' '.join(go_terms_extended))
-    out = open(output_filename, 'w')
-    out.write(outtext)
-    _log.debug("Finished updating elm")
-    out.close()
+    if outtext:
+        out = open(output_filename, 'w')
+        out.write(outtext)
+        _log.debug("Finished updating elm")
+        out.close()
 
 
 @celery_app.task
