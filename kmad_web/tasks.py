@@ -9,7 +9,7 @@ import urllib2
 from celery import current_app as celery_app
 
 from kmad_web import paths
-from kmad_web.services import files, txtproc
+from kmad_web.services import files, txtproc, iupred
 from kmad_web.services import mutation_analysis as ma
 from kmad_web.services.txtproc import (preprocess, process_alignment,
                                        find_seqid_blast, process_d2p2)
@@ -46,11 +46,13 @@ def postprocess(result, single_filename, multi_filename, conffilename,
             and (len(result) > 3 and not result[1][0] == 'D2P2')):
         # first element is the sequence, last element is the alignement
         consensus = find_consensus_disorder(result[1:-1])
+        filtered_disorder = filter_out_short_stretches(consensus[1])
         result = result[:-1] + [consensus] + [result[-1]]
         # so that the alignment stays at the very end
-        result = result[:-1] \
-            + [filter_out_short_stretches(consensus[1])] \
-            + [result[-1]]
+        result = result[:-1] + [filtered_disorder, result[-1]]
+        filtered_motifs_aln = txtproc.filter_motifs(result[-1]['alignments'][2],
+                                                    filtered_disorder)
+        result[-1]['alignments'].append(filtered_motifs_aln)
     elif (output_type == 'predict'
           and (len(result) > 2 and not result[1][0] == 'D2P2')):
         consensus = find_consensus_disorder(result[1:])
@@ -99,10 +101,20 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                 args = [method, '10', '8', '75', '8', '8',
                         fasta_file, '>', out_file]
                 _log.debug(args)
-            try:
-                if pred_name == 'globplot':
+                try:
                     data = subprocess.check_output(args)
-                else:
+                except (subprocess.CalledProcessError, OSError) as e:
+                    _log.error("Error: {}".format(e))
+            elif pred_name == 'iupred':
+                method = os.path.join(paths.IUPRED_DIR, 'iupred')
+                args = [method, fasta_file, 'long']
+                env = {"IUPred_PATH": paths.IUPRED_DIR}
+                try:
+                    data = subprocess.check_output(args, env=env)
+                except (subprocess.CalledProcessError, OSError) as e:
+                    _log.error("Error: {}".format(e))
+            try:
+                if pred_name not in ['globplot', 'iupred']:
                     _log.info("Ran command: {}".format(
                         subprocess.list2cmdline(args)))
                     subprocess.call(args)
@@ -124,7 +136,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
 def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
           end_gap_penalty, ptm_score, domain_score, motif_score,
           multi_seq_input, conffilename, output_type, first_seq_gapped,
-          alignment_method):
+          alignment_method, filter_motifs):
     _log.info("Running align")
 
     if not multi_seq_input:
@@ -137,7 +149,11 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
         fastafile = msa_tools.run_preliminary_alignment(fastafile,
                                                         alignment_method)
     if multi_seq_input or blast_success:
-        convert_result = convert_to_7chars(fastafile)  # .7c filenameA
+        dis_predictions = []
+        if filter_motifs:
+            dis_predictions = iupred.get_predictions(fastafile)
+        convert_result = convert_to_7chars(fastafile, filter_motifs,
+                                           dis_predictions)
 
         toalign = convert_result['filename']
         annotated_motifs = convert_result['annotated_motifs']

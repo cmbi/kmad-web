@@ -12,343 +12,350 @@ KMAD
 <!-- wtforms -->
 <div id='uniprot_id_alert' class="alert alert-warning alert-dismissible" role="alert"
   style="display:none;">
-    <button type="button" class="close" data-dismiss="alert"
-      aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <strong>Warning!</strong> If you provide <strong>multiple</strong>
-    sequences and you want the data from uniprot to be included
-    by KMAD the FASTA headers need to either: 1) be like uniprot FASTA headers,
-    e.g. '>sp|P10636|TAU_HUMAN' or 2) contain only the uniprot ID, e.g.
-    '>P10636'.
+  <button type="button" class="close" data-dismiss="alert"
+    aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Warning!</strong> If you provide <strong>multiple</strong>
+  sequences and you want the data from uniprot to be included
+  by KMAD the FASTA headers need to either: 1) be like uniprot FASTA headers,
+  e.g. '>sp|P10636|TAU_HUMAN' or 2) contain only the uniprot ID, e.g.
+  '>P10636'.
 </div>
 <div id='prediction_alert' class="alert alert-warning alert-dismissible" role="alert"
   style="display:none;">
-    <button type="button" class="close" data-dismiss="alert"
-      aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <strong>Warning!</strong> For a fast disorder prediction we recommend 
-    using only the <strong>GlobPlot</strong> method.
+  <button type="button" class="close" data-dismiss="alert"
+    aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Warning!</strong> For a fast disorder prediction we recommend 
+  using <strong>GlobPlot</strong> and/or <strong>IUPred</strong>
 </div>
 <form method="post" action="{{ url_for('dashboard.index') }}" role="form"
   enctype="multipart/form-data" data-toggle="validator">
-      {{ form.csrf_token }}
-          <div class="panel panel-default" style="width=100%" id ="panel0">
-          <!--<div class="panel panel-default panel-kmad" style="width=100%" id
+  {{ form.csrf_token }}
+  <div class="panel panel-default" style="width=100%" id ="panel0">
+    <!--<div class="panel panel-default panel-kmad" style="width=100%" id
             ="panel0">-->
-            <div class="panel-heading">
-              <div class="panel-title" >
-                <div style="margin:10px;padding-top:5px;">
-                  <span
-                    class="kmad-k">K</span><span class="panel-title-text">nowledge
-                    Based </span><span
-                    class="kmad-m">M</span><span class="panel-title-text">ultiple
-                    Sequence </span><span
-                    class="kmad-a">A</span><span class="panel-title-text">lignment
-                    for Intrinsically </span><span
-                    class="kmad-n">D</span><span class="panel-title-text">isordered
-                    Proteins </span>
-                  <button id="use_example" class="btn" 
-                    onclick="useExample()"
-                    style="margin:10px;background:transparent;border:none;"></button>
+    <div class="panel-heading">
+      <div class="panel-title" >
+        <div style="margin:10px;padding-top:5px;">
+          <span
+            class="kmad-k">K</span><span class="panel-title-text">nowledge
+            Based </span><span
+            class="kmad-m">M</span><span class="panel-title-text">ultiple
+            Sequence </span><span
+            class="kmad-a">A</span><span class="panel-title-text">lignment
+            for Intrinsically </span><span
+            class="kmad-n">D</span><span class="panel-title-text">isordered
+            Proteins </span>
+          <button id="use_example" class="btn" 
+            onclick="useExample()"
+            style="margin:10px;background:transparent;border:none;"></button>
+        </div>
+      </div>
+    </div>
+    <div class="panel-body panel-body-custom"
+      style="margin-left:20px;margin-right:20px;">
+      <div class="row" style='height:100%;'>
+        <div class="col-md-12">
+          <div id="sequence_div" class="form-group">
+            <div style="margin:10px;">
+              {{ form.sequence(class="form-control",
+              placeholder='Enter a protein sequence',
+              style="height:180px;resize:none;") }}
+            </div>
+            <div class="help-block with-errors"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="alignment_options_div">
+            <div class="row">
+              <div class="col-md-6">
+                <div id = "gap_open_div" class="form-group"
+                  style="margin:20px;">
+                  <div class="row">
+                    <div class="col-md-8">{{ form.gap_open_p.label }}</div>
+                    <div class="col-md-4">{{
+                      form.gap_open_p(class_='form-control gap-form',
+                      pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
+                      negative")}}
+                    </div>
+                  </div>
+                  <div class="help-block with-errors"></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div id = "gap_ext_div" class="form-group" style="margin:20px;">
+                  <div class="row">
+                    <div class="col-md-8">{{ form.gap_ext_p.label }}</div>
+                    <div class="col-md-4">{{
+                      form.gap_ext_p(class_='form-control gap-form',
+                      pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
+                      negative")}}
+                    </div>
+                  </div>
+                  <div class="help-block with-errors"></div>
                 </div>
               </div>
             </div>
-            <div class="panel-body panel-body-custom"
-              style="margin-left:20px;margin-right:20px;">
-              <div class="row" style='height:100%;'>
-                <div class="col-md-12">
-                  <div id="sequence_div" class="form-group">
-                    <div style="margin:10px;">
-                      {{ form.sequence(class="form-control",
-                                       placeholder='Enter a protein sequence',
-                                       style="height:180px;resize:none;") }}
+            <div class="row">
+              <div class="col-md-6">
+                <div id = "end_gap_div" class="form-group" style="margin:20px;">
+                  <div class="row">
+                    <div class="col-md-8">{{ form.end_gap_p.label }}</div>
+                    <div class="col-md-4">{{
+                      form.end_gap_p(class_='form-control gap-form',
+                      pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
+                      negative")}}
                     </div>
-                    <div class="help-block with-errors"></div>
                   </div>
+                  <div class="help-block with-errors"></div>
                 </div>
               </div>
-              <div class="row">
+              <div class="col-md-6">
+                <div id = "ptm_score_div" class="form-group" style="margin:20px;">
+                  <div class="row">
+                    <div class="col-md-8">{{ form.ptm_score.label }}</div>
+                    <div class="col-md-4">{{
+                      form.ptm_score(class_='form-control gap-form',
+                      pattern="^[0-9]*\.?[0-9]+", title="PTM score has to
+                      be a positive real number")}}</div>
+                  </div>
+                  <div class="help-block with-errors"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div id = "domain_score_div" class="form-group" style="margin:20px;">
+                  <div class="row">
+                    <div class="col-md-8">{{ form.domain_score.label }}</div>
+                    <div class="col-md-4">{{
+                      form.domain_score(class_='form-control gap-form',
+                      pattern="^[0-9]*\.?[0-9]+", title="domain score has to
+                      be a positive real number")}}</div>
+                  </div>
+                  <div class="help-block with-errors"></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div id = "motif_score_div" class="form-group" style="margin:20px;">
+                  <div class="row">
+                    <div class="col-md-8">{{ form.motif_score.label }}</div>
+                    <div class="col-md-4">{{
+                      form.motif_score(class_='form-control gap-form',
+                      pattern="^[0-9]*\.?[0-9]+", title="motif score has to
+                      be a positive real number")}}</div>
+                  </div>
+                  <div class="help-block with-errors"></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div id = "seq_limit_div" class="form-group" style="margin:20px;">
+                  <div class="row">
+                    <div class="col-md-8">{{ form.seq_limit.label }}</div>
+                    <div class="col-md-4">{{
+                      form.seq_limit(class_='form-control gap-form',
+                      pattern="^[1-9]\d*$", title="max sequence limit
+                      has to be an intiger higher than 0")}}</div>
+                  </div>
+                  <div class="help-block with-errors"></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+              </div>
+            </div>
+          <div class="help-block with-errors"></div>
+        <div class="row">
+          <div class="col-md-6">
+            <div id = "gapped_div" class="form-group"
+              style="margin:20px;">
+              {{ form.first_seq_gapped.label }}
+              <table>
+                <tr>
+                  {% for subfield in form.first_seq_gapped %}
+                  <th>
+                    {{ subfield }}
+                    {{ subfield.label }}
+                  </th>
+                  <th>&nbsp;</th>
+                  {% endfor %}
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-3">
+                <div id="filterMotifs" class="form-group" style="margin:20px;">
+                  <div id="filter_motifs_inner_div">
+                    {{ form.filter_motifs.label(class="control-label")}}
+                    {{ form.filter_motifs(class_='form-control') }}
+                  </div>
+                </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="form_usr_feat_div" class="form-group "
+              style="float:left;
+              width=100%; height:100%;margin:20px;">
+              <div id="usr_feat_inner_div">
+                {{ form.usr_features.label(style="font-size:110%;") }}
+                <table>
+                  {% if form.usr_features.data | length > 0 %}
+                  <tr>
+                    <div id="usr_feat_header">
+                      <th> Name </th>
+                      <th>&nbsp;</th>
+                      <th> Add score </th>
+                      <th>&nbsp;</th>
+                      <th> Seq. No. </th>
+                      <th>&nbsp;</th>
+                      <th> Positions </th>
+                      <th>&nbsp;</th>
+                      <th> Pattern </th>
+                      <th>&nbsp;</th>
+                      <th></th>
+                    </div>
+                  </tr>
+                  {% endif %}
+                  {% for i in range(form.usr_features | length ) %}
+                  <tr>
+                    {{ form.usr_features[i].csrf_token }}
+                    {{ form.usr_features[i].hidden_tag() }}
+                    <td> {{ form.usr_features[i].featname(maxlength=10,
+                      class="form-control",
+                      placeholder="Feature name",
+                      pattern="^[a-zA-Z0-9]{1,}$",
+                      title="Feature name has to be alphanumeral - 
+                      cannot contain any
+                      special characters") }} </td>
+                    <td>&nbsp;</td>
+                    <td> {{
+                      form.usr_features[i].add_score(pattern="[-+]?[0-9]*\.?[0-9]+",
+                      placeholder="Real number",
+                      class="form-control",
+                      title="The score has to be a real number") }} </td>
+                    <td>&nbsp;</td>
+                    <td> {{ form.usr_features[i].sequence_number(pattern="^\d+$",
+                      type="text", placeholder="Integer",
+                      class="form-control", maxlength="20",
+                      title="Sequence number has to be an integer")}} </td>
+                    <td>&nbsp;</td>
+                    <td> {{ form.usr_features[i].positions(pattern="[
+                      ]?(([0-9]((,)[ ]?)?)|([0-9][ ]?-[
+                      ]?[0-9]((,)[ ]?)?)){1,}(([ ]){1,})?",
+                      placeholder="e.g. '1,2,7-9'",
+                      class="form-control", 
+                      title="Feature
+                      positions need to be in a comma
+                      separated format, 
+                      e.g. '1, 2, 15-20'"
+                      )}} </td>
+                    <td>&nbsp;</td>
+                    <td> {{ form.usr_features[i].pattern(placeholder="Regex
+                      expression", class="form-control") }}
+                    </td>
+                    <td>&nbsp;</td>
+                    <td> 
+                      {{ form.usr_features[i].trash_it(value='X', class="btn
+                      btn-danger btn-trash",
+                      style="float:left;clear:both;",
+                      id="remove_feature_" + (i |
+                      string))}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <div class="help-block with-errors"></div>
+                  {% endfor %}
+
+                </table>
+                {{form.add_feature(class="btn btn-success",
+                value="Add a feature")}}
+              </div>
+            </div>
+          </div> 
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-12">
-                <div id="alignment_options_div">
-                  <div class="row">
-                    <div class="col-md-6">
-                    <div id = "gap_open_div" class="form-group"
-                      style="margin:20px;">
-                      <div class="row">
-                      <div class="col-md-8">{{ form.gap_open_p.label }}</div>
-                      <div class="col-md-4">{{
-                        form.gap_open_p(class_='form-control gap-form',
-                        pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
-                    negative")}}
-                       </div>
-                      </div>
-                    <div class="help-block with-errors"></div>
-                    </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div id = "gap_ext_div" class="form-group" style="margin:20px;">
-                        <div class="row">
-                          <div class="col-md-8">{{ form.gap_ext_p.label }}</div>
-                          <div class="col-md-4">{{
-                            form.gap_ext_p(class_='form-control gap-form',
-                            pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
-                            negative")}}
-                          </div>
-                        </div>
-                      <div class="help-block with-errors"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div id = "end_gap_div" class="form-group" style="margin:20px;">
-                        <div class="row">
-                          <div class="col-md-8">{{ form.end_gap_p.label }}</div>
-                          <div class="col-md-4">{{
-                            form.end_gap_p(class_='form-control gap-form',
-                            pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
-                            negative")}}
-                          </div>
-                        </div>
-                      <div class="help-block with-errors"></div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div id = "ptm_score_div" class="form-group" style="margin:20px;">
-                        <div class="row">
-                          <div class="col-md-8">{{ form.ptm_score.label }}</div>
-                          <div class="col-md-4">{{
-                            form.ptm_score(class_='form-control gap-form',
-                            pattern="^[0-9]*\.?[0-9]+", title="PTM score has to
-                          be a positive real number")}}</div>
-                        </div>
-                      <div class="help-block with-errors"></div>
-                      </div>
-                    </div>
-                  </div>
+          <div id="predictionMethod" class="form-group" style="width=100%;
+            height:100%;margin:20px;padding-top:10px;">
+            <div id="prediction_method_inner_div">
+              {{ form.prediction_method.label(class="control-label")}}
+              <br>
+              <span style="font-size:7;color:grey;">Disorder
+                predictors will only be ran if the sequence is not in
+                the D<sup>2</sup>P<sup>2</sup> database</span>
+              <br>
+              <br>
+              {{ form.prediction_method }}
+            </div>
+          </div>
+          <br>
+          <div id="alignmentMethod" class="form-group" style="width=100%;
+            height:100%;margin:20px;padding-top:10px;">
+            <div id="alignment_method_inner_div">
+              {{ form.alignment_method.label }}
+              <table>
+                <tr>
+                  {% for subfield in form.alignment_method %}
+                  <th>
+                    {{ subfield }}
+                    {{ subfield.label }}
+                  </th>
+                  <th>&nbsp;&nbsp;&nbsp;</th>
+                  {% endfor %}
+                </tr>
+              </table>
+            </div>
+          </div>
 
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div id = "domain_score_div" class="form-group" style="margin:20px;">
-                        <div class="row">
-                          <div class="col-md-8">{{ form.domain_score.label }}</div>
-                          <div class="col-md-4">{{
-                            form.domain_score(class_='form-control gap-form',
-                            pattern="^[0-9]*\.?[0-9]+", title="domain score has to
-                          be a positive real number")}}</div>
-                        </div>
-                      <div class="help-block with-errors"></div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div id = "motif_score_div" class="form-group" style="margin:20px;">
-                        <div class="row">
-                          <div class="col-md-8">{{ form.motif_score.label }}</div>
-                          <div class="col-md-4">{{
-                            form.motif_score(class_='form-control gap-form',
-                            pattern="^[0-9]*\.?[0-9]+", title="motif score has to
-                          be a positive real number")}}</div>
-                        </div>
-                      <div class="help-block with-errors"></div>
-                      </div>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="col-md-6">
-                      <div id = "seq_limit_div" class="form-group" style="margin:20px;">
-                        <div class="row">
-                          <div class="col-md-8">{{ form.seq_limit.label }}</div>
-                          <div class="col-md-4">{{
-                            form.seq_limit(class_='form-control gap-form',
-                            pattern="^[1-9]\d*$", title="max sequence limit
-                            has to be an intiger higher than 0")}}</div>
-                        </div>
-                      <div class="help-block with-errors"></div>
-                      </div>
-                    <div class="col-md-6">
-                      </div>
-                    </div>
-                    </div>
-                    <div class="help-block with-errors"></div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div id = "gapped_div" class="form-group"
-                        style="margin:20px;">
-                          {{ form.first_seq_gapped.label }}
-                          <table>
-                          <tr>
-                          {% for subfield in form.first_seq_gapped %}
-                            <th>
-                            {{ subfield }}
-                            {{ subfield.label }}
-                            </th>
-                            <th>&nbsp;</th>
-                          {% endfor %}
-                          </tr>
-                          </table>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div id="form_usr_feat_div" class="form-group "
-                        style="float:left;
-                        width=100%; height:100%;margin:20px;">
-                        <div id="usr_feat_inner_div">
-                          {{ form.usr_features.label(style="font-size:110%;") }}
-                          <table>
-                            {% if form.usr_features.data | length > 0 %}
-                              <tr>
-                                <div id="usr_feat_header">
-                                  <th> Name </th>
-                                  <th>&nbsp;</th>
-                                  <th> Add score </th>
-                                  <th>&nbsp;</th>
-                                  <th> Seq. No. </th>
-                                  <th>&nbsp;</th>
-                                  <th> Positions </th>
-                                  <th>&nbsp;</th>
-                                  <th> Pattern </th>
-                                  <th>&nbsp;</th>
-                                  <th></th>
-                                </div>
-                              </tr>
-                            {% endif %}
-                            {% for i in range(form.usr_features | length ) %}
-                              <tr>
-                                {{ form.usr_features[i].csrf_token }}
-                                {{ form.usr_features[i].hidden_tag() }}
-                                <td> {{ form.usr_features[i].featname(maxlength=10,
-                                   class="form-control",
-                                   placeholder="Feature name",
-                                   pattern="^[a-zA-Z0-9]{1,}$",
-                                   title="Feature name has to be alphanumeral - 
-                                   cannot contain any
-                                   special characters") }} </td>
-                                <td>&nbsp;</td>
-                                <td> {{
-                                  form.usr_features[i].add_score(pattern="[-+]?[0-9]*\.?[0-9]+",
-                                  placeholder="Real number",
-                                  class="form-control",
-                                  title="The score has to be a real number") }} </td>
-                                <td>&nbsp;</td>
-                                <td> {{ form.usr_features[i].sequence_number(pattern="^\d+$",
-                                  type="text", placeholder="Integer",
-                                  class="form-control", maxlength="20",
-                                  title="Sequence number has to be an integer")}} </td>
-                                <td>&nbsp;</td>
-                                <td> {{ form.usr_features[i].positions(pattern="[
-                                  ]?(([0-9]((,)[ ]?)?)|([0-9][ ]?-[
-                                  ]?[0-9]((,)[ ]?)?)){1,}(([ ]){1,})?",
-                                  placeholder="e.g. '1,2,7-9'",
-                                  class="form-control", 
-                                  title="Feature
-                                  positions need to be in a comma
-                                  separated format, 
-                                  e.g. '1, 2, 15-20'"
-                                  )}} </td>
-                                <td>&nbsp;</td>
-                                <td> {{ form.usr_features[i].pattern(placeholder="Regex
-                                  expression", class="form-control") }}
-                                </td>
-                                <td>&nbsp;</td>
-                                <td> 
-                                    {{ form.usr_features[i].trash_it(value='X', class="btn
-                                      btn-danger btn-trash",
-                                      style="float:left;clear:both;",
-                                      id="remove_feature_" + (i |
-                                      string))}}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>&nbsp;</td>
-                              </tr>
-                              <div class="help-block with-errors"></div>
-                              {% endfor %}
-
-                            </table>
-                          {{form.add_feature(class="btn btn-success",
-                          value="Add a feature")}}
-                        </div>
-                      </div>
-                    </div> 
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-12">
-                    <div id="predictionMethod" class="form-group" style="width=100%;
-                      height:100%;margin:20px;padding-top:10px;">
-                      <div id="prediction_method_inner_div">
-                        {{ form.prediction_method.label(class="control-label")}}
-                        <br>
-                        <span style="font-size:7;color:grey;">Disorder
-                        predictors will only be ran if the sequence is not in
-                        the D<sup>2</sup>P<sup>2</sup> database</span>
-                        <br>
-                        <br>
-                        {{ form.prediction_method }}
-                      </div>
-                    </div>
-                    <br>
-                    <div id="alignmentMethod" class="form-group" style="width=100%;
-                      height:100%;margin:20px;padding-top:10px;">
-                      <div id="alignment_method_inner_div">
-                          {{ form.alignment_method.label }}
-                          <table>
-                          <tr>
-                          {% for subfield in form.alignment_method %}
-                            <th>
-                            {{ subfield }}
-                            {{ subfield.label }}
-                            </th>
-                            <th>&nbsp;&nbsp;&nbsp;</th>
-                          {% endfor %}
-                          </tr>
-                          </table>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div id="output_type_div" class="form-group" style="width=100%;
-                      height:100%;margin:20px;padding-top:10px;">
-                      <div id="output_type_inner_div">
-                        {{ form.output_type.label }}
-                        {{ form.output_type(class="form-control") }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div id="form_submit_div" class="form-group " style="float:right;
-                      width=100%; height:100%;margin:20px;padding-top:40px;">
-                      <div id="submit_inner_div" style="display:table;">
-                          <div class="row">
-                            <div class=col-md-6>
-                            </div>
-                            <div class=col-md-6>
-                            <div class="btn-group btn-group-justified">
-                              <div class="btn-group">
-                                {{ form.submit_job(class="form-control btn
-                                btn-block
-                                btn-primary", style="width:100%") }}
-                              </div>
-                              <div class="btn-group">
-                                <button type="reset" class="btn btn-block
-                                  btn-default">Clear</button>
-                              </div>
-                            </div>
-                            </div>
-                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div id="output_type_div" class="form-group" style="width=100%;
+            height:100%;margin:20px;padding-top:10px;">
+            <div id="output_type_inner_div">
+              {{ form.output_type.label }}
+              {{ form.output_type(class="form-control") }}
             </div>
           </div>
         </div>
+        <div class="col-md-6">
+          <div id="form_submit_div" class="form-group " style="float:right;
+            width=100%; height:100%;margin:20px;padding-top:40px;">
+            <div id="submit_inner_div" style="display:table;">
+              <div class="row">
+                <div class=col-md-6>
+                </div>
+                <div class=col-md-6>
+                  <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                      {{ form.submit_job(class="form-control btn
+                      btn-block
+                      btn-primary", style="width:100%") }}
+                    </div>
+                    <div class="btn-group">
+                      <button type="reset" class="btn btn-block
+                        btn-default">Clear</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-    
+</div>
+
 </form>
 <br>
 {% endblock %}

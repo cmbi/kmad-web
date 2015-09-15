@@ -1,3 +1,4 @@
+import ast
 import logging
 import StringIO
 
@@ -52,7 +53,8 @@ def index():
                                 form.motif_score.data, multi_seq_input,
                                 form.usr_features.data, form.output_type.data,
                                 form.first_seq_gapped.data,
-                                form.alignment_method.data)
+                                form.alignment_method.data,
+                                ast.literal_eval(form.filter_motifs.data))
             job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
                         workflow)()
             celery_id = job.id
@@ -72,7 +74,8 @@ def index():
                                 form.prediction_method.data, multi_seq_input,
                                 form.usr_features.data,
                                 form.first_seq_gapped.data,
-                                form.alignment_method.data)
+                                form.alignment_method.data,
+                                ast.literal_eval(form.filter_motifs.data))
 
             job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
                         workflow)()

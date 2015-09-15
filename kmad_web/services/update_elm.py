@@ -1,7 +1,9 @@
 import requests
 import urllib2
 
+from httplib import BadStatusLine
 from lxml import html
+from socket import error as SocketError
 ################################################################################
 # Downloads and processes the ELM database
 # 1. Reqeusts list of motifs
@@ -77,5 +79,11 @@ def extend_go_terms(go_file, motif_go_terms, go_families):
 
 
 def get_data_from_url(url):
-    req = urllib2.Request(url)
-    return urllib2.urlopen(req).read().splitlines()
+    result = []
+    try:
+        req = urllib2.Request(url)
+        result = urllib2.urlopen(req).read().splitlines()
+    except (urllib2.HTTPError,  urllib2.URLError,
+            SocketError, BadStatusLine):
+        print "can't open url"
+    return result

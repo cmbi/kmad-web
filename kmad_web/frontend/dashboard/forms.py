@@ -130,7 +130,6 @@ class KmanForm(Form):
         if (form.output_type.data == 'annotate'
                 or (form.output_type.data == 'refine'
                     and form.alignment_method.data == 'none')):
-            _log.debug("I'm here!")
             if field.data.count('>') < 2:
                 raise validators.ValidationError('In the refinement (if no \
                                                  method for initial alignment \
@@ -231,6 +230,7 @@ class KmanForm(Form):
         choices=[('globplot', 'GlobPlot'),
                  ('disopred', 'DISOPRED'),
                  ('spine', 'SPINE-D'),
+                 ('iupred', 'IUPred'),
                  ('psipred', 'PSIPRED'),
                  ('predisorder', 'PreDisorder')],
         default=['globplot'],
@@ -242,6 +242,12 @@ class KmanForm(Form):
     # remove_feature = SubmitField()
     remove_feature = SubmitField()
     seq_limit = IntegerField(u'max. sequence number', default=35)
+    filter_motifs = SelectField(u'motif filtering',
+                                choices=[('True',
+                                          'filter out motifs in structured regions'),
+                                         ('False', 'use all motifs')],
+                                default='False')
+
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")
 

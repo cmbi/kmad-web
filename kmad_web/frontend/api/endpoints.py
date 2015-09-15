@@ -52,7 +52,9 @@ def create_kmad(output_type):
                             float(form['domain_score']),
                             float(form['motif_score']), multi_seq_input,
                             usr_features, form['output_type'],
-                            ast.literal_eval(form['first_seq_gapped']))
+                            ast.literal_eval(form['first_seq_gapped']),
+                            form['alignment_method'],
+                            ast.literal_eval(form['filter_motifs']))
         job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
                     workflow)()
         celery_id = job.id
@@ -75,7 +77,9 @@ def create_kmad(output_type):
                             float(form['domain_score']),
                             float(form['motif_score']), methods,
                             multi_seq_input, usr_features,
-                            ast.literal_eval(form['first_seq_gapped']))
+                            ast.literal_eval(form['first_seq_gapped']),
+                            form['alignment_method'],
+                            ast.literal_eval(form['filter_motifs']))
         job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
                     workflow)()
 
@@ -177,7 +181,9 @@ def get_kmad_result(output_type, id):
             'alignment': {
                 'raw': result[-1]['alignments'][0],
                 'processed': result[-1]['alignments'][1],
-                'encoded': result[-1]['alignments'][2]}}}
+                'encoded': result[-1]['alignments'][2],
+                'filtered_motifs': result[-1]['alignments'][3]
+            }}}
     elif output_type == "predict":
         response = {'result': {'prediction': result}}
     elif output_type in ['align', 'refine', 'annotate']:
