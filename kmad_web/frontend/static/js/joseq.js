@@ -173,7 +173,7 @@ ProteinSequences = function(container_id, data) {
     }
     x = 10;
     y = 55;
-    for (var i = 0; i < this.disorder[0][1].length; i++) {
+    for (var i = 1; i < this.disorder[0][1].length + 1; i++) {
       if (i % 5 == 0) {
         var ruler_text = new Kinetic.Text({
           x: x,

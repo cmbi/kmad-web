@@ -55,3 +55,30 @@ hr {
   margin-right: auto;
   background-color: #efefef;
 }
+
+m5 {
+  color: red;
+  font-weight: bold;
+}
+
+m4 {
+  color: orange;
+  font-weight: bold;
+}  
+
+m3 {
+  color: #ffe700;
+  font-weight: bold;
+}  
+
+m2 {
+  color: #d6ff00;
+  font-weight: bold;
+}  
+
+m1 {
+  color: #1ca507;
+  font-weight: bold;
+}  
+
+

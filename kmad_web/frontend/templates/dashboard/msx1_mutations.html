@@ -10,18 +10,269 @@ MSX1_HUMAN
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
-      <strong>84, 97, 120, 122, 157</strong>
+      <strong>MSX1_HUMAN disorder prediction</strong>
     </div>
   </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
-      <div class="row" style="height:50px;">
-        <div class="col-md-8">
-          <p align="justify">
-          "(...) Although it will remain for future studies to confirm that
-          these particular mutations are causal." (<i>Jezewski</i>, et al., 2003)
-          </p>
-        </div>
+  <div class="panel-body panel-body-custom">
+    <div class="row" style="height:50px;">
+      <div class="col-md-12" style="overflow:auto;">
+        <img src={{ url_for('static', filename="images/msx1_human/prediction.png") }}>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default" style="width=100%;" id="panel0">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>MSX1_HUMAN mutation summary</strong>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+    <div class="row" style="height:50px;">
+      <div class="col-md-12">
+        The 'causative' value represents how certain we are about the mutation
+        being causative (1 - probably not damaging, 5 - probably damaging).
+        It is a completely subjective measure, only for our use. All the '1s' 
+        should probably still be more thouroughly investigated to make sure 
+        that they're not causative.
+        <br>
+        <p align="justify">
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr >
+              <th>Amino acid change</th>
+              <th>Nucleotide change</th>
+              <th>Disease</th>
+              <th>Causative</th>
+              <th>Structured</th>
+              <th>PTM</th>
+              <th>Disrupts a motif</th>
+              <th>Known function</th>
+              <th>Polyphen2</th>
+              <th>PROVEAN</th>
+              <th>Source</th>
+              <th>Functional char.</th>
+              <th>More</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr >
+              <td>M43L</td>
+              <td>A127C</td>
+              <td>Cleft lip and palate</td>
+              <td><m1>1</m1></td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Benign</td>
+              <td>Neutral</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/21866112">Salahshourifar, 2011, J Hum Genet</a></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td>M67K</td>
+              <td>T200A</td>
+              <td>Tooth agenesis</td>
+              <td><m5>5</m5></td>
+              <td>No</td>
+              <td>No</td>
+              <td>Possibly</td>
+              <td>No</td>
+              <td>Probably damaging</td>
+              <td>Deleterious</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2731714/pdf/nihms133950.pdf">Lidral, 2002, J Dent Res</a></td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144107/pdf/10.1177_0022034510387430.pdf">Wang, 2013, J Dent Res</a></td>
+              <td><a href="#M67K">more</a></td>
+            </tr>
+            <tr >
+              <td>E84V</td>
+              <td>A251T</td>
+              <td>Cleft lip and palate</td>
+              <td><m1>1</m1></td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Benign</td>
+              <td>Neutral</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1735501/pdf/v040p00399.pdf">Jezewski, 2003, J Med Genet</a></td>
+              <td></td>
+              <td><a href="#E84V">more</a></td>
+            </tr>
+            <tr >
+              <td>G97D</td>
+              <td>G290A</td>
+              <td>Cleft lip and palate</td>
+              <td><m1>1</m1></td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Benign</td>
+              <td>Neutral</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1735501/pdf/v040p00399.pdf">Jezewski, 2003, J Med Genet</a></td>
+              <td></td>
+              <td><a href="#G97D">more</a></td>
+            </tr>
+            <tr >
+              <td>G104E</td>
+              <td>G311A</td>
+              <td>Cleft lip and palate</td>
+              <td><m1>1</m1></td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Benign</td>
+              <td>Neutral</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/15354328">Suzuki, 2004, Genet Med</a></td>
+              <td> </td>
+              <td><a href="#G104E"></a></td>
+            </tr>
+            <tr >
+              <td>V120G</td>
+              <td>T359G</td>
+              <td>Cleft lip and palate</td>
+              <td><m4>4</m4></td>
+              <td>No</td>
+              <td>No</td>
+              <td>Possibly</td>
+              <td>No</td>
+              <td>Possibly damaging</td>
+              <td>Neutral</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1735501/pdf/v040p00399.pdf">Jezewski, 2003, J Med Genet</a></td>
+              <td> </td>
+              <td><a href="#V120G">more</a></td>
+            </tr>
+            <tr >
+              <td>G122E</td>
+              <td>G365A</td>
+              <td>Cleft lip and palate</td>
+              <td><m2>2</m2></td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Benign</td>
+              <td>Neutral</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1735501/pdf/v040p00399.pdf">Jezewski, 2003, J Med Genet</a></td>
+              <td> </td>
+              <td><a href="#V122G"></a></td>
+            </tr>
+            <tr >
+              <td>P153Q</td>
+              <td>C458A</td>
+              <td>Cleft lip and palate</td>
+              <td><m4>4</m4></td>
+              <td>No</td>
+              <td>No</td>
+              <td>Possibly</td>
+              <td>No</td>
+              <td>Possibly damaging</td>
+              <td>Deleterious</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/15354328">Suzuki, 2004, Genet Med</a>,
+                <br>
+                <a href="http://www.ncbi.nlm.nih.gov/pubmed/21689018">Huang, 2011, DNA Cell Biol</a>
+              </td>
+              <td> </td>
+              <td><a href="#V122G"></a></td>
+            </tr>
+            <tr >
+              <td>R157S</td>
+              <td>G471T</td>
+              <td>Oligodontia</td>
+              <td><m5>5</m5></td>
+              <td>No</td>
+              <td>Possibly</td>
+              <td>Possibly</td>
+              <td>No</td>
+              <td>X</td>
+              <td>Deleterious</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1735501/pdf/v040p00399.pdf">Jezewski, 2003, J Med Genet</a></td>
+              <td><a href="http://www.nature.com/ejhg/journal/v19/n8/full/ejhg201147a.html">Kamamoto, 2011, Eur J Hum Genet</a></td>
+              <td><a href="#R157S">more</a></td>
+            </tr>
+            <tr >
+              <td>R176W</td>
+              <td>C526T</td>
+              <td>Oligodontia</td>
+              <td><m5>5</m5></td>
+              <td>No</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>Possibly</td>
+              <td></td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/21626677">Bergendal, 2011, Am J Med Genet A</a></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td>T180I</td>
+              <td>C539T</td>
+              <td>Hypodontia</td>
+              <td></td>
+              <td>Yes/No</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><a href="http://www.plosone.org/article/fetchObject.action?uri=info:doi/10.1371/journal.pone.0102944&representation=PDF">Yamaguchi, 2014, PLoS One</a></td>
+              <td><a href="http://www.plosone.org/article/fetchObject.action?uri=info:doi/10.1371/journal.pone.0102944&representation=PDF">Yamaguchi, 2014, PLoS One</a></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td>L211R</td>
+              <td>T632G</td>
+              <td>Oligodontia</td>
+              <td></td>
+              <td>Yes</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><a href="http://www.plosone.org/article/fetchObject.action?uri=info:doi/10.1371/journal.pone.0102944&representation=PDF">Yamaguchi, 2014, PLoS One</a></td>
+              <td><a href="http://www.plosone.org/article/fetchObject.action?uri=info:doi/10.1371/journal.pone.0102944&representation=PDF">Yamaguchi, 2014, PLoS One</a></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td>A225T</td>
+              <td>G673A</td>
+              <td>Tooth agenesis</td>
+              <td></td>
+              <td>Yes</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><a href="http://www.nature.com/jhg/journal/v51/n10/full/jhg2006136a.html">Chishti, 2006, J Hum Genet</a></td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3144107/pdf/10.1177_0022034510387430.pdf">Wang, 2013, J Dent Res</a></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td>A227E</td>
+              <td>C680A</td>
+              <td>Hypodontia</td>
+              <td></td>
+              <td>Yes</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/pubmed/22297032">Mostowska, 2012, Arch Oral Biol</a></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        </p>
       </div>
     </div>
   </div>
@@ -39,12 +290,12 @@ MSX1_HUMAN
           <p align="justify">
           <strong>disease: </strong><a href="http://www.uniprot.org/diseases/DI-00826">Non-syndromic orofacial cleft 5</a>
           <hr>
-            Not sure if it's causative.
-            <br>
-            In the publication referred in the Uniprot annotations 
-            (<i>Jezewski, et al.</i>, 2003) it is described as "non-conserved amino acid variant from controls" 
-            <hr>
-            None of the ELM motifs found on this position are damaged.
+          Not sure if it's causative.
+          <br>
+          In the publication referred in the Uniprot annotations 
+          (<i>Jezewski, et al.</i>, 2003) it is described as "non-conserved amino acid variant from controls" 
+          <hr>
+          None of the ELM motifs found on this position are damaged.
           <hr>
           <strong>motif: <a href="http://www.elm.eu.org/elms/MOD_PLK">MOD_PLK</a></strong>
           <br>
@@ -57,7 +308,7 @@ MSX1_HUMAN
           <strong>Description</strong>
           <ul>
             <li>
-           32% percent conservation in the first 50 homologues (it is quite high) 
+            32% percent conservation in the first 50 homologues (it is quite high) 
             </li>
             <li>
             Didn't find any other evidence for the motif being there
@@ -67,12 +318,12 @@ MSX1_HUMAN
             P6 residue.
             </li>
           </ul>
-            <hr>
-            <strong>Polyphen result</strong>
-            <br>
-            <br>
-            <img src="{{ url_for('static', filename="images/msx1_human/G22D.png") }}"/>
-            <br>
+          <hr>
+          <strong>Polyphen result</strong>
+          <br>
+          <br>
+          <img src="{{ url_for('static', filename="images/msx1_human/G22D.png") }}"/>
+          <br>
           </p>
         </div>
       </div>
@@ -82,7 +333,9 @@ MSX1_HUMAN
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
-      <strong>E84V</strong>
+      <a name="E84V">
+        <strong>E84V</strong>
+      </a>
     </div>
   </div>
   <div class="panel-body">
@@ -92,30 +345,30 @@ MSX1_HUMAN
           <p align="justify">
           <strong>disease: </strong><a href="http://www.uniprot.org/diseases/DI-00826">Non-syndromic orofacial cleft 5</a>
           <hr>
-           Not sure about the correctness of the Uniprot annotation.
-           <br>
-           <br>
+          Not sure about the correctness of the Uniprot annotation.
+          <br>
+          <br>
 
           "(...) Only  one  of  these  variants  (A233T,  see  below)  was
-            identified   in   500   controls   sequenced.(...) The
-            missense mutation A233T (E78V) was found in four Filipino
-            cases (two related subjects) and in one control from the same
-            population.  The  clinical  status  for  clefting  of  the  control  is
-            unknown as it came from a collection of 500 consecutive ano-
-            nymised newborns where the frequency of clefts is 1/500.
-            All
-            cases with the A233T variant have a positive family history for
-            clefts with the mutation found in two other affected relatives
-            available for study" (<i>Jezewski</i>, et al. 2003)
-            <hr>
-            No ELM motifs were found on this position.
-            <br>
-            <br>
-            <hr>
-            <strong>Polyphen result</strong>
-            <br>
-            <img src="{{ url_for('static', filename="images/msx1_human/E84V.png") }}"/>
-            <br>
+          identified   in   500   controls   sequenced.(...) The
+          missense mutation A233T (E78V) was found in four Filipino
+          cases (two related subjects) and in one control from the same
+          population.  The  clinical  status  for  clefting  of  the  control  is
+          unknown as it came from a collection of 500 consecutive ano-
+          nymised newborns where the frequency of clefts is 1/500.
+          All
+          cases with the A233T variant have a positive family history for
+          clefts with the mutation found in two other affected relatives
+          available for study" (<i>Jezewski</i>, et al. 2003)
+          <hr>
+          No ELM motifs were found on this position.
+          <br>
+          <br>
+          <hr>
+          <strong>Polyphen result</strong>
+          <br>
+          <img src="{{ url_for('static', filename="images/msx1_human/E84V.png") }}"/>
+          <br>
           </p>
         </div>
       </div>
@@ -125,7 +378,9 @@ MSX1_HUMAN
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
-      <strong>G97D</strong>
+      <a name="G97D">
+        <strong>G97D</strong>
+      </a>
     </div>
   </div>
   <div class="panel-body">
@@ -135,8 +390,8 @@ MSX1_HUMAN
           <p align="justify">
           <strong>disease: </strong><a href="http://www.uniprot.org/diseases/DI-00826">Non-syndromic orofacial cleft 5</a>
           <hr>
-            <br>
-            None of the ELM motifs found on this position are damaged.
+          <br>
+          None of the ELM motifs found on this position are damaged.
           <hr>
           <strong>motif: <a href="http://www.elm.eu.org/elms/DOC_PP2B_LxvP_1">DOC_PP2B_LxvP_1</a></strong>
           <br>
@@ -152,12 +407,12 @@ MSX1_HUMAN
             <li>One of calcineurin's functions is activation of NFAT family of transcription factors</li>
           </ul>
 
-            <hr>
-            <strong>Polyphen result</strong>
-            <br>
-            <br>
-            <img src="{{ url_for('static', filename="images/msx1_human/G97D.png") }}"/>
-            <br>
+          <hr>
+          <strong>Polyphen result</strong>
+          <br>
+          <br>
+          <img src="{{ url_for('static', filename="images/msx1_human/G97D.png") }}"/>
+          <br>
           </p>
         </div>
       </div>
@@ -167,7 +422,9 @@ MSX1_HUMAN
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
-      <strong>M67K</strong>
+      <a name="M67K">
+        <strong>M67K</strong>
+      </a>
     </div>
   </div>
   <div class="panel-body">
@@ -176,6 +433,7 @@ MSX1_HUMAN
         <div class="col-md-8">
           <p align="justify">
           <strong>disease: </strong><a href="http://www.uniprot.org/diseases/DI-01211">Tooth agenesis selective 1</a>
+          Significantly reduces protein half-life. (<i>Wang et al.</i>, 2013)
           <hr>
           <strong>motif: <a href="http://www.elm.eu.org/elms/LIG_EH1_1">LIG_EH1_1</a></strong>
           <br>
@@ -191,12 +449,12 @@ MSX1_HUMAN
             <li>identified in homeodomains as well as other TF families</li>
             <li>interacts with the WD40 domain of the Groucho/TLE corepressor</li>
           </ul>  
-            <br>
-            <hr>
-            <strong>Polyphen result</strong>
-            <br>
-            <img src="{{ url_for('static', filename="images/msx1_human/M67K.png") }}"/>
-            <br>
+          <br>
+          <hr>
+          <strong>Polyphen result</strong>
+          <br>
+          <img src="{{ url_for('static', filename="images/msx1_human/M67K.png") }}"/>
+          <br>
           </p>
         </div>
       </div>
@@ -206,7 +464,9 @@ MSX1_HUMAN
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
-    <strong>V120G</strong>
+      <a name="V120G">
+        <strong>V120G</strong>
+      </a>
     </div>
   </div>
   <div class="panel-body">
@@ -215,11 +475,11 @@ MSX1_HUMAN
         <div class="col-md-8">
           <p align="justify">
           <strong>disease: </strong><a href="http://www.uniprot.org/diseases/DI-00826">Non-syndromic orofacial cleft 5</a>
-           <hr>
-            "The change disrupts considerable evolutionary conservation. 
-              The variant is found in a family with unaffected sibling,
-              who carries the same mutation inherited from unaffected mother"
-              (<i>Jezewski, et al.</i>, 2003)
+          <hr>
+          "The change disrupts considerable evolutionary conservation. 
+          The variant is found in a family with unaffected sibling,
+          who carries the same mutation inherited from unaffected mother"
+          (<i>Jezewski, et al.</i>, 2003)
           <hr>
           <strong>motif: <a href="http://www.elm.eu.org/elms/LIG_EH1_1">LIG_EH1_1</a></strong>
           <br>
@@ -241,11 +501,11 @@ MSX1_HUMAN
           Pathogenicity of this mutation might depend on the lack/presence of
           mutations in the second occurence of the LIG_EH1_1 motif.
           <br>
-            <hr>
-            <strong>Polyphen result</strong>
-            <br>
-            <img src="{{ url_for('static', filename="images/msx1_human/V120G.png") }}"/>
-            <br>
+          <hr>
+          <strong>Polyphen result</strong>
+          <br>
+          <img src="{{ url_for('static', filename="images/msx1_human/V120G.png") }}"/>
+          <br>
           </p>
         </div>
       </div>
@@ -255,6 +515,7 @@ MSX1_HUMAN
 <div class="panel panel-default" style="width=100%;" id="panel0">
   <div class="panel-heading">
     <div class="panel-title">
+      <a name="R157S"> </a>
       <strong>R157S</strong>
     </div>
   </div>
@@ -294,8 +555,8 @@ MSX1_HUMAN
             Green residues are recognized by one the two binding sites of importin &alpha;.
             Some proteins only have the green part of the motif 
             (<a href="http://www.elm.eu.org/elms/TRG_NLS_MonoCore_2">TRG_NLS_MonoCore_2</a>,
-             <a href="www.elm.eu.org/elms/TRG_NLS_MonoExtN_4">TRG_NLS_MonoExtN_4</a>
-             - slightly different regex, but also matches this segment: (([PKR].{0,1}[^DE])|([PKR]))((K[RK])|(RK))(([^DE][KR])|([KR][^DE]))[^DE]
+            <a href="www.elm.eu.org/elms/TRG_NLS_MonoExtN_4">TRG_NLS_MonoExtN_4</a>
+            - slightly different regex, but also matches this segment: (([PKR].{0,1}[^DE])|([PKR]))((K[RK])|(RK))(([^DE][KR])|([KR][^DE]))[^DE]
             )
             </li>
             <li>The Bipartite version of the motif is bound to both NLS sites
@@ -361,7 +622,7 @@ MSX1_HUMAN
       <div class="row" style="height:50px;">
         <div class="col-md-8">
           <p align="justify">
-          Corresponding residue in mouse was found to be phosphorylated. (<a href="http://www.phosphosite.org/siteAction.do?id=25300718">PhosphoSite</a>)
+          Phosphorylated. (<a href="http://www.phosphosite.org/siteAction.do?id=25300718">PhosphoSite</a>)
           </p>
         </div>
       </div>
@@ -381,82 +642,83 @@ MSX1_HUMAN
           <p>
           From PhosphoSite, MSX2:
           <ul>
-          <li>T171 - very high possibility of phosphorylation
-          (100% identity in this region)</li>
-          <li>T165 - might be phosphorylated</li>
-          <li>K189, K193 - very high possibility of acetylation
-          (100% seq. identity in this region)</li>
-          </p>
+            <li>T171 - very high possibility of phosphorylation
+            (100% identity in this region)</li>
+            <li>T165 - might be phosphorylated</li>
+            <li>K189, K193 - very high possibility of acetylation
+            (100% seq. identity in this region)</li>
+            <li>T180 - phosphorylated</li>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>Provean results</strong>
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
-      <div class="row" style="height:50px;">
-        <div class="col-md-8">
-          <p>
-            <img src="{{ url_for('static', filename="images/msx1_human/provean.png") }}"/>
-          </p>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>Provean results</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row" style="height:50px;">
+            <div class="col-md-8">
+              <p>
+              <img src="{{ url_for('static', filename="images/msx1_human/provean.png") }}"/>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      References
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
-      <div class="row" style="height:50px;">
-        <div class="col-md-8">
-          <p align="justify">
-          <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1735501/pdf/v040p00399.pdf">
-            Complete sequencing shows a role for
-            MSX1
-            in
-            non-syndromic cleft lip and palate
-          </a> <i>Jezewski, et al.</i>, Journal of Medical Genetics, 2003
-          <hr>
-          <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2731714/pdf/nihms133950.pdf">
-            The Role of MSX1 in Human Tooth Agenesis
-          </a> <i>Lidral and Reising</i>, Journal of Dental Research, 2002
-          <hr>
-          <a href="http://www.jbc.org/content/282/8/5101.full.pdf">Classical Nuclear Localization
-            Signals: Definition, Function,
-            and Interaction with
-            Importin &alpha;</a> <i>Lange, et al.</i>, The Journal of Biological Chemistry, 2006
-          <hr>
-          <a href="http://www.jbc.org/content/281/33/23545.full.pdf">Dissection of a Nuclear Localization Signal</a>
-          <i>Hodel, et al.</i>, The Journal of Biological Chemistry, 2001
-          <hr>
-          <a href="http://www.jbc.org/content/276/2/1317.full.pdf">
-            Nuclear localization signal receptor affinity correlates with in 
-            vivo localization in Saccharomyces cerevisiae.</a>
-          <i>Hodel, et al.</i>, The Journal of Biological Chemistry, 2006
-          <hr>
-          <a href="http://www.nature.com/ejhg/journal/v19/n8/full/ejhg201147a.html">
-            Clinical and functional data implicate the Arg(151)Ser variant of MSX1 in familial hypodontia</a>
-          <i>Kamamoto, et al.</i>, European Journal of Human Genetics, 2011
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          References
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row" style="height:50px;">
+            <div class="col-md-8">
+              <p align="justify">
+              <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1735501/pdf/v040p00399.pdf">
+                Complete sequencing shows a role for
+                MSX1
+                in
+                non-syndromic cleft lip and palate
+              </a> <i>Jezewski, et al.</i>, Journal of Medical Genetics, 2003
+              <hr>
+              <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2731714/pdf/nihms133950.pdf">
+                The Role of MSX1 in Human Tooth Agenesis
+              </a> <i>Lidral and Reising</i>, Journal of Dental Research, 2002
+              <hr>
+              <a href="http://www.jbc.org/content/282/8/5101.full.pdf">Classical Nuclear Localization
+                Signals: Definition, Function,
+                and Interaction with
+                Importin &alpha;</a> <i>Lange, et al.</i>, The Journal of Biological Chemistry, 2006
+              <hr>
+              <a href="http://www.jbc.org/content/281/33/23545.full.pdf">Dissection of a Nuclear Localization Signal</a>
+              <i>Hodel, et al.</i>, The Journal of Biological Chemistry, 2001
+              <hr>
+              <a href="http://www.jbc.org/content/276/2/1317.full.pdf">
+                Nuclear localization signal receptor affinity correlates with in 
+                vivo localization in Saccharomyces cerevisiae.</a>
+              <i>Hodel, et al.</i>, The Journal of Biological Chemistry, 2006
+              <hr>
+              <a href="http://www.nature.com/ejhg/journal/v19/n8/full/ejhg201147a.html">
+                Clinical and functional data implicate the Arg(151)Ser variant of MSX1 in familial hypodontia</a>
+              <i>Kamamoto, et al.</i>, European Journal of Human Genetics, 2011
 
-          </p>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-{% endblock %}
-{% block js %}
-<script>
+    {% endblock %}
+    {% block js %}
+    <script>
 $(function(){
     // var height = window.innerHeight;
     var height = 300;
@@ -485,5 +747,5 @@ activate = function(button_id, alignment_id) {
   }
 
 }
-</script>
-{% endblock %}
+    </script>
+    {% endblock %}
