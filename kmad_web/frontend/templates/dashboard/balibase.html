@@ -15,11 +15,19 @@ BAliBASE questions
     </div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-xs-12 col-md-6" style="overflow:auto;">
           <p align="justify">
-          We have encountered multiple 'controversial' cases in BAliBASE alignments, 
-          that make us question the meaningfulness of BAliBASE scores.
-          Several of these problems were explained to us by one of the
+          Correct motif alignment is an extremely difficult task to perform,
+          even by manual curation. There are situations,
+          where the 'correct' solution is not obvious or it does not exist
+          at all. Therefore, it comes to us as no surprise that there are some
+          mistakes or ambiguities in the BAliBASE motif reference set.
+          We provide here several examples (along with two examples
+          from BAliBASE for structured proteins) of such alignments.
+          In the light of these issues we conclude that the motif score
+          does not properly reflect the correctness of motif alignment.
+          <br>
+          Two of these problems were explained to us by one of the
           BAliBASE creators, prof. Julie Thompson. (We include the answers in the text)
           </p>
         </div>
@@ -34,7 +42,7 @@ BAliBASE questions
     </div>
     <div class="panel-body">
       <div class="row" style="height:50px;">
-        <div class="col-md-12">
+        <div class="col-xs-12 col-md-12" style="overflow:auto;">
           <div class="row">
             <div class="col-xs-12 col-md-6">
               <strong>Alignment BOX230 from the reference 9, subset RV921</strong>
@@ -116,7 +124,7 @@ BAliBASE questions
       </div>
       <div class="panel-body">
         <div class="row" style="height:50px;">
-          <div class="col-xs-12 col-md-12">
+          <div class="col-xs-12 col-md-12" style="overflow:auto;">
             <br>
             <strong>Alignment BB11037 from reference 1 (RV911)</strong>
             <br>
@@ -165,7 +173,7 @@ BAliBASE questions
       <div class="panel-body">
         <div class="panel-body panel-body-custom">
           <div class="row" style="height:50px;">
-            <div class="col-xs-12 col-md-12">
+          <div class="col-xs-12 col-md-12" style="overflow:auto;">
               <p align="justify">
               <strong>Alignment BB12034 from reference 1 (RV912)</strong>
               <br>
@@ -255,7 +263,7 @@ BAliBASE questions
       <div class="panel-body">
         <div class="panel-body panel-body-custom">
           <div class="row" style="height:50px;">
-            <div class="col-xs-12 col-md-12">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
               <p align="justify">
               <div class="row">
                 <div class="col-xs-12 col-md-6">
@@ -335,25 +343,26 @@ BAliBASE questions
       <div class="panel-body">
         <div class="panel-body panel-body-custom">
           <div class="row">
-            <div class="col-xs-12 col-md-6">
+            <div class="col-xs-12 col-md-6" style="overflow:auto;">
               <p align="justify">
               In this alignment the highlighted motif is the C-mannosylation site
               (ELM ID: MOD_CMANNOS). The regular expression (W..W) doesn't match 
               the 4th
-              and 5th sequences. Moreover, the C-mannosylation site isa motif for
+              and 5th sequences. Moreover, the C-mannosylation site is a motif for
               attachment of a mannosyl residue in a tryptophane (first tryptophane
               in the motif) - and in both these sequences the first tryptophane is
               substituted with another amino acid.
               <br>
               <div class="row">
                 <div class="col-xs-12 col-md-6">
-                  Residues included in the motif score as the C-mannosylation motif:
+                  Residues included in the motif score:
                   <br>
                   <img src="{{ url_for('static',
                   filename="alignments/balibase_issues/pics/RV913_BOX142_bali.png") }}" >
                 </div>
                 <div class="col-xs-12 col-md-6">
-                  Actual instances of the C-mannosylation site:
+                  Actual instances of the MOD_CMANNOS motif:
+                  <br>
                   <br>
                   <img src="{{ url_for('static',
                   filename="alignments/balibase_issues/pics/RV913_BOX142_single.png") }}" >
@@ -374,7 +383,7 @@ BAliBASE questions
       <div class="panel-body">
         <div class="panel-body panel-body-custom">
           <div class="row">
-            <div class="col-xs-12 col-md-6">
+            <div class="col-xs-12 col-md-6" style="overflow:auto;">
               <p align="justify">
               This alignment is a similar case as the previous one. Here the motif
               is an N-glycosylation site (ELM ID: MOD_N-GLC_2).
@@ -384,20 +393,22 @@ BAliBASE questions
               no longer be an N-glycosylation site.
               <br>
               <div class="row">
-                <div class="col-xs-12 col-md-6">
+                <div class="col-xs-12 col-md-12">
                   Residues included in the motif score as the N-glycosylation motif:
                   <br>
                   <img src="{{ url_for('static',
                   filename="alignments/balibase_issues/pics/RV913_BOX214_bali.png") }}" >
                 </div>
-                <div class="col-xs-12 col-md-6">
-                  Actual instances of the C-mannosylation site:
+              </div>
+              <div class="row">
+                <div class="col-xs-12 col-md-12">
+                  Actual instances of the N-glycosylation site:
                   <br>
                   <img src="{{ url_for('static',
                   filename="alignments/balibase_issues/pics/RV913_BOX214_single.png") }}" >
                 </div>
+                </div>
                 </p>
-              </div>
             </div>
           </div>
         </div>
@@ -450,7 +461,7 @@ BAliBASE questions
     <div class="panel panel-default" style="width=100%;" id="panel0">
       <div class="panel-heading">
         <div class="panel-title">
-          <strong>RV913_BOX063</strong>
+          <strong>RV913_BOX036</strong>
         </div>
       </div>
       <div class="panel-body">
@@ -556,33 +567,5 @@ BAliBASE questions
   {% endblock %}
   {% block js %}
   <script>
-// $(function(){
-//     // var height = window.innerHeight;
-//     var height = 300;
-//     $('iframe').css('height', height);
-//     });
-// activate = function(button_id, alignment_id) {
-//   // activate = function(button_id) {
-//   var btn_ids = ["btn1", "btn2", "btn3", "btn4", "btn5"];
-//   var alignment_ids = ["alignment1", "alignment2", "alignment3", "alignment4", "alignment5"];
-//   for (var i = 0; i < alignment_ids.length; i++) {
-//     if (alignment_ids[i] == alignment_id) {
-//       console.debug(alignment_id);
-//       document.getElementById(alignment_id).style.display = "";
-//     } else {
-//       console.debug(alignment_ids[i]);
-//       document.getElementById(alignment_ids[i]).style.display = "none";
-//     }
-//   }
-//   for (var i = 0; i < btn_ids.length; i++) {
-//     var btn = document.getElementById(button_id);
-//     if (btn_ids[i] == button_id) {
-//       $('#'+btn_ids[i]).addClass('active');
-//     } else {
-//       $('#'+btn_ids[i]).removeClass('active');
-//     }
-//   }
-// 
-// }
   </script>
   {% endblock %}
