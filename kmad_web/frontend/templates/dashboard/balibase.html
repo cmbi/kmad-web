@@ -6,14 +6,14 @@ BAliBASE questions
 <link rel="stylesheet" href="{{ url_for('static', filename='css/disprot_examples.css') }}">
 {% endblock %}
 {% block content %}
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>BAliBASE</strong>
+<div class = "panel-group">
+  <div class="panel panel-default" style="width=100%;" id="panel0">
+    <div class="panel-heading">
+      <div class="panel-title">
+        <strong>BAliBASE</strong>
+      </div>
     </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
+    <div class="panel-body">
       <div class="row">
         <div class="col-md-6">
           <p align="justify">
@@ -26,20 +26,17 @@ BAliBASE questions
       </div>
     </div>
   </div>
-</div>
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>How is it determined which motifs are true positives? </strong>
+  <div class="panel panel-default" style="width=100%;" id="panel0">
+    <div class="panel-heading">
+      <div class="panel-title">
+        <strong>How is it determined which motifs are true positives? </strong>
+      </div>
     </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
+    <div class="panel-body">
       <div class="row" style="height:50px;">
         <div class="col-md-12">
           <div class="row">
-            <div class="col-md-6">
-              <p align="justify">
+            <div class="col-xs-12 col-md-6">
               <strong>Alignment BOX230 from the reference 9, subset RV921</strong>
               <br>
               <strong>Motif:</strong> <a href="http://elm.eu.org/elms/LIG_FHA_2">LIG_FHA_2</a>
@@ -87,291 +84,505 @@ BAliBASE questions
               not match the ELM regular expression"
               #}
               <br>
-              </p>
               <br>
             </div>
-          </div>
-          BAliBASE alignment (RV921_BOX230) with scored motifs highlighted
-          (only the one in the first sequence is annotated)
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/RV921_BOX230_bali_ref_motifs.html") }}"
-            width="100%"></iframe>
-          <br>
-          BAliBASE alignment with all instances of the LIG_FHA_2 motif highlighted
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/RV921_BOX230_bali_predicted_motifs.html") }}"
-            width="100%"></iframe>
-          <br>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>How is the alignment curated when there are no structures available for any of the sequences? (BB11037)</strong>
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
-      <div class="row" style="height:50px;">
-        <div class="col-md-12">
-          <br>
-          <strong>Alignment BB11037 from reference 1 (RV911)</strong>
-          <br>
-          <div class="row">
-            <div class="col-md-6">
-              <p align="justify">
-              For any of the sequences from this alignment there isn't any structure available.
-              The closest structure was found for the 4th sequence (YB00_YEAST),
-              with a very high e-value of 3e-04. And even this structure doesn't
-              cover the area where the sequences are aligned.
-              <br>
-              <strong>1.</strong> How was this alignment determined?
-              <br>
-              <strong>2.</strong> How where the 'coreblocks' determined?
-              <br>
-              <hr>
-              </p>
-
-            </div>
-          </div>
-
-          Reference BAliBASE alignment (highlighted coreblocks are the parts of the alignment for which BAliBASE gives points)
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/BB11037_coreblocks.html") }}"
-            width="100%"></iframe>
-          <br>
-          The closest structure was found for the YB00_YEAST sequence (BLAST e-value: 3e-04),
-          so first - it's very distant, second - it doesn't even cover the "coreblocks" area
-
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/BB11037_closest_structure_aln.html") }}"
-            width="100%"></iframe>
-          <br>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>BBS12034</strong>
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
-      <div class="row" style="height:50px;">
-        <div class="col-md-12">
-          <p align="justify">
-          <strong>Alignment BB12034 from reference 1 (RV912)</strong>
-          <br>
-          <div class="row">
-            <div class="col-md-6">
-              <p align="justify">
-              BAliBASE is said to use SAP structure alignment as the base for
-              the sequence alignment, but there are some discrepancies between the
-              SAP and BAliBASE alignments. 
-              T-Coffee Expresso uses SAP to produce a structure based alignment
-              and the result is also different then the reference alignment.
-              For example the "DRTG"
-              segment is at position 33 in the Expresso and SAP alignments,
-              while in the reference alignment it is shifted to the left.
-              <br>
-              <strong>1.</strong> Why was it decided that this segment should
-              be shifted to the left, although it is aligned differently in the
-              structure alignment?
-              <hr>
-              <strong>Answer:</strong>
-              <br>
-              <div style="background-color: #f5f5f5; border: 1px solid #ccc;
-                border-radius: 4px; color: #333; display: block;">
-                <code>
-                  The SAP alignments were manually refined to align residues with
-                  known functions. In this case, in 1aiq, the motif DRTG contains 
-                  a residue R in contact with a ligand (according to the
-                  <a href="https://www.ebi.ac.uk/thornton-srv/databases/cgi-bin/pdbsum/GetPage.pl?pdbcode=1aiq&template=protein.html&r=wiring&l=1&chain=A">pdb sum website</a>). 
-                  The same function is defined for 1b02 in the motif DVRTK.
-                </code>
+            <div class="row">
+              <div class="col-xs-12 col-md-12">
+                BAliBASE alignment (RV921_BOX230) with scored motifs highlighted
+                (only the one in the first sequence is annotated)
+                <br>
+                <iframe name="alignment_frame" src="{{ url_for('static',
+                  filename="alignments/balibase_issues/RV921_BOX230_bali_ref_motifs.html") }}"
+                  width="100%"></iframe>
+                <br>
+                BAliBASE alignment with all instances of the LIG_FHA_2 motif highlighted
+                <br>
+                <iframe name="alignment_frame" src="{{ url_for('static',
+                  filename="alignments/balibase_issues/RV921_BOX230_bali_predicted_motifs.html") }}"
+                  width="100%"></iframe>
+                <br>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>How is the alignment curated when there are no structures available for any of the sequences? (BB11037)</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="row" style="height:50px;">
+          <div class="col-xs-12 col-md-12">
+            <br>
+            <strong>Alignment BB11037 from reference 1 (RV911)</strong>
+            <br>
+            <div class="row">
+              <div class="col-xs-12 col-md-6">
+                <p align="justify">
+                For any of the sequences from this alignment there isn't any structure available.
+                The closest structure was found for the 4th sequence (YB00_YEAST),
+                with a very high e-value of 3e-04. And even this structure doesn't
+                cover the area where the sequences are aligned.
+                <br>
+                <strong>1.</strong> How was this alignment determined?
+                <br>
+                <strong>2.</strong> How where the 'coreblocks' determined?
+                <br>
+                <hr>
+                </p>
+
+              </div>
+            </div>
+
+            Reference BAliBASE alignment (highlighted coreblocks are the parts of the alignment for which BAliBASE gives points)
+            <br>
+            <iframe name="alignment_frame" src="{{ url_for('static',
+              filename="alignments/balibase_issues/BB11037_coreblocks.html") }}"
+              width="100%"></iframe>
+            <br>
+            The closest structure was found for the YB00_YEAST sequence (BLAST e-value: 3e-04),
+            so first - it's very distant, second - it doesn't even cover the "coreblocks" area
+
+            <br>
+            <iframe name="alignment_frame" src="{{ url_for('static',
+              filename="alignments/balibase_issues/BB11037_closest_structure_aln.html") }}"
+              width="100%"></iframe>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>BBS12034</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row" style="height:50px;">
+            <div class="col-xs-12 col-md-12">
+              <p align="justify">
+              <strong>Alignment BB12034 from reference 1 (RV912)</strong>
+              <br>
+              <div class="row">
+                <div class="col-xs-12 col-md-6">
+                  <p align="justify">
+                  BAliBASE is said to use SAP structure alignment as the base for
+                  the sequence alignment, but there are some discrepancies between the
+                  SAP and BAliBASE alignments. 
+                  T-Coffee Expresso uses SAP to produce a structure based alignment
+                  and the result is also different then the reference alignment.
+                  For example the "DRTG"
+                  segment is at position 33 in the Expresso and SAP alignments,
+                  while in the reference alignment it is shifted to the left.
+                  <br>
+                  <strong>1.</strong> Why was it decided that this segment should
+                  be shifted to the left, although it is aligned differently in the
+                  structure alignment?
+                  <hr>
+                  <strong>Answer:</strong>
+                  <br>
+                  <div style="background-color: #f5f5f5; border: 1px solid #ccc;
+                    border-radius: 4px; color: #333; display: block;">
+                    <code>
+                      The SAP alignments were manually refined to align residues with
+                      known functions. In this case, in 1aiq, the motif DRTG contains 
+                      a residue R in contact with a ligand (according to the
+                      <a href="https://www.ebi.ac.uk/thornton-srv/databases/cgi-bin/pdbsum/GetPage.pl?pdbcode=1aiq&template=protein.html&r=wiring&l=1&chain=A">pdb sum website</a>). 
+                      The same function is defined for 1b02 in the motif DVRTK.
+                    </code>
+                  </div>
+                  </p>
+                  <br>
+                </div>
+              </div>
+              <br>
+              <br>
+              Structure based KMAD (structure alignment performed with Dali)
+              <br>
+              <iframe name="alignment_frame" src="{{ url_for('static',
+                filename="alignments/balibase_issues/BB12034_kmad40.html") }}"
+                width="100%"></iframe>
+              <br>
+              <br>
+              Expresso (structure alignment performed with SAP)
+              <br>
+              <iframe name="alignment_frame" src="{{ url_for('static',
+                filename="alignments/balibase_issues/BB12034_expresso.html") }}"
+                width="100%"></iframe>
+              <br>
+              BAliBASE refrence alignment
+              <br>
+              <iframe name="alignment_frame" src="{{ url_for('static',
+                filename="alignments/balibase_issues/BB12034_bali.html") }}"
+                width="100%"></iframe>
+              <br>
+              SAP structure alignment
+              <br>
+              <iframe name="alignment_frame" src="{{ url_for('static',
+                filename="alignments/balibase_issues/BB12034_sap.html") }}"
+                width="100%"></iframe>
+              <strong>Ligands</strong>
+              <br>
+              Interactions of 1AIQ with the ligand (UMP, 2'-Deoxyuridine 5'-Monophosphate)
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/1aiq_ligand.png") }}" >
+              <br>
+              Interactions of 1B02 with the ligand (UFP-C2F; 
+              UFP: 5-Fluoro-2'-Deoxyuridine-5'-Monophosphate;
+              C2F: 5-Methyl-5,6,7,8-Tetrahydrofolic acid)
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/1b02_ligand.png") }}" >
               </p>
-              <br>
             </div>
           </div>
-          <br>
-          <br>
-          Structure based KMAD (structure alignment performed with Dali)
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/BB12034_kmad40.html") }}"
-            width="100%"></iframe>
-          <br>
-          <br>
-          Expresso (structure alignment performed with SAP)
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/BB12034_expresso.html") }}"
-            width="100%"></iframe>
-          <br>
-          BAliBASE refrence alignment
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/BB12034_bali.html") }}"
-            width="100%"></iframe>
-          <br>
-          SAP structure alignment
-          <br>
-          <iframe name="alignment_frame" src="{{ url_for('static',
-            filename="alignments/balibase_issues/BB12034_sap.html") }}"
-            width="100%"></iframe>
-          <strong>Ligands</strong>
-          <br>
-          Interactions of 1AIQ with the ligand (UMP, 2'-Deoxyuridine 5'-Monophosphate)
-          <br>
-          <img src="{{ url_for('static',
-          filename="alignments/balibase_issues/1aiq_ligand.png") }}" >
-          <br>
-          Interactions of 1B02 with the ligand (UFP-C2F; 
-          UFP: 5-Fluoro-2'-Deoxyuridine-5'-Monophosphate;
-          C2F: 5-Methyl-5,6,7,8-Tetrahydrofolic acid)
-          <br>
-          <img src="{{ url_for('static',
-          filename="alignments/balibase_issues/1b02_ligand.png") }}" >
-          </p>
         </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>RV913_BOX158</strong>
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
-      <div class="row" style="height:50px;">
-        <div class="col-md-12">
-          <br>
-          <p align="justify">
-          <br>
-          <div class="row">
-            <div class="col-md-6">
-              This example shows that BAliBASE motif score might not always
-              be a relevant measure of motif alignment.
-              The motif that BAliBASE scores for here is a KDEL motif,
-              described by regular expression by regular expression: 
-              "[KRHQSAP][DENQT]EL$". Here we present 3 alignment excerpts,
-              with motif scores 0.37, 0.88, and 0.78. Each alignment is shown
-              in two versions - with BAliBASE motifs highlighted (orange) and 
-              with KDEL pattern matches highlighted (purple). 
-              In the alignment 1, which gets the worst score, the actual KDEL
-              motifs are aligned perfectly. The best scoring one -
-              alignment 2 aligns incorrectly one residue. In alignment 3,
-              which also gets quite a good score, the motif residues are
-              aligned with each other, but the whole motif is so spread out
-              because of the gaps that it is hardly possible for it to be 
-              biologically relevant.
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX158</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row" style="height:50px;">
+            <div class="col-xs-12 col-md-12">
+              <p align="justify">
+              <div class="row">
+                <div class="col-xs-12 col-md-6">
+                  This example shows that BAliBASE motif score might not always
+                  be a relevant measure of motif alignment.
+                  The motif that BAliBASE scores for here is a KDEL motif,
+                  described by regular expression by regular expression: 
+                  "[KRHQSAP][DENQT]EL$". Here we present 3 alignment excerpts,
+                  with motif scores 0.37, 0.88, and 0.78. Each alignment is shown
+                  in two versions - with BAliBASE motifs highlighted (orange) and 
+                  with KDEL pattern matches highlighted (purple). 
+                  In the alignment 1, which gets the worst score, the actual KDEL
+                  motifs are aligned perfectly. The best scoring one -
+                  alignment 2 aligns incorrectly one residue. In alignment 3,
+                  which also gets quite a good score, the motif residues are
+                  aligned with each other, but the whole motif is so spread out
+                  because of the gaps that it is hardly possible for it to be 
+                  biologically relevant.
 
-            </div>
-          </div>
-          <br>
-          <strong>Alignment 1</strong>
-          Motif score = 0.37
-          <br>
-          <div class="row">
-            <div class="col-md-6">
-              <img src="{{ url_for('static',
-              filename="alignments/balibase_issues/pics/kmad_clustal_refine80.png") }}" >
+                </div>
+              </div>
               <br>
-            </div>
-            <div class="col-md-6">
-              <img src="{{ url_for('static',
-              filename="alignments/balibase_issues/pics/kmad_clustal_refine80_KDEL.png") }}" >
-            </div>
-          </div>
-          <hr>
-          <strong>Alignment 2</strong>
-          Motif score = 0.88
-          <br>
-          <div class="row">
-            <div class="col-md-6">
-              <img src="{{ url_for('static',
-              filename="alignments/balibase_issues/pics/kmad_tcof_refine77.png") }}" >
+              <strong>Alignment 1</strong>
+              Motif score = 0.37
               <br>
-            </div>
-            <div class="col-md-6">
-              <img src="{{ url_for('static',
-              filename="alignments/balibase_issues/pics/kmad_tcof_refine77_KDEL.png") }}" >
-            </div>
-          </div>
-          <hr>
-          <strong>Alignment 3</strong>
-          Motif score = 0.78
-          <br>
-          <img src="{{ url_for('static',
-          filename="alignments/balibase_issues/pics/kmad_tcof_refine79.png") }}" >
-          <br>
-          <img src="{{ url_for('static',
-          filename="alignments/balibase_issues/pics/kmad_tcof_refine79_KDEL.png") }}" >
+              <div class="row">
+                <div class="col-md-6">
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/kmad_clustal_refine80.png") }}" >
+                  <br>
+                </div>
+                <div class="col-md-6">
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/kmad_clustal_refine80_KDEL.png") }}" >
+                </div>
+              </div>
+              <hr>
+              <strong>Alignment 2</strong>
+              Motif score = 0.88
+              <br>
+              <div class="row">
+                <div class="col-md-6" style="overflow:auto;">
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/kmad_tcof_refine77.png") }}" >
+                  <br>
+                </div>
+                <div class="col-md-6" style="overflow:auto;">
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/kmad_tcof_refine77_KDEL.png") }}" >
+                </div>
+              </div>
+              <hr>
+              <strong>Alignment 3</strong>
+              Motif score = 0.78
+              <br>
+              <div style="overflow:auto;">
+                <img src="{{ url_for('static',
+                filename="alignments/balibase_issues/pics/kmad_tcof_refine79.png") }}" >
+                <br>
+                <img src="{{ url_for('static',
+                filename="alignments/balibase_issues/pics/kmad_tcof_refine79_KDEL.png") }}" >
+              </div>
 
-          <br>
-          </p>
+              <br>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="panel panel-default" style="width=100%;" id="panel0">
-  <div class="panel-heading">
-    <div class="panel-title">
-      <strong>BAliBASE</strong>
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-body panel-body-custom">
-      <div class="row">
-        <div class="col-md-6">
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX142</strong>
         </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-6">
+              <p align="justify">
+              In this alignment the highlighted motif is the C-mannosylation site
+              (ELM ID: MOD_CMANNOS). The regular expression (W..W) doesn't match 
+              the 4th
+              and 5th sequences. Moreover, the C-mannosylation site isa motif for
+              attachment of a mannosyl residue in a tryptophane (first tryptophane
+              in the motif) - and in both these sequences the first tryptophane is
+              substituted with another amino acid.
+              <br>
+              <div class="row">
+                <div class="col-xs-12 col-md-6">
+                  Residues included in the motif score as the C-mannosylation motif:
+                  <br>
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/RV913_BOX142_bali.png") }}" >
+                </div>
+                <div class="col-xs-12 col-md-6">
+                  Actual instances of the C-mannosylation site:
+                  <br>
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/RV913_BOX142_single.png") }}" >
+                </div>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX214</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-6">
+              <p align="justify">
+              This alignment is a similar case as the previous one. Here the motif
+              is an N-glycosylation site (ELM ID: MOD_N-GLC_2).
+              Only the first two sequences match the regular expression, "N[^P]C",
+              and in the three other sequences the first residue is substituted,
+              which is the glycosylated asparagine - therefore, it obviously can 
+              no longer be an N-glycosylation site.
+              <br>
+              <div class="row">
+                <div class="col-xs-12 col-md-6">
+                  Residues included in the motif score as the N-glycosylation motif:
+                  <br>
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/RV913_BOX214_bali.png") }}" >
+                </div>
+                <div class="col-xs-12 col-md-6">
+                  Actual instances of the C-mannosylation site:
+                  <br>
+                  <img src="{{ url_for('static',
+                  filename="alignments/balibase_issues/pics/RV913_BOX214_single.png") }}" >
+                </div>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX146</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
+              Residues included in the motif score as the LIG_Clathr_ClatBox_1 motif:
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX146_bali.png") }}" >
+              <hr>
+              Actual instances of the LIG_Clathr_ClatBox_1 motif (regex: [IVLMF].[IVLMF][DE]):
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX146_single.png") }}" >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX082</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX082_bali.png") }}" >
+              <hr>
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX082_single.png") }}" >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX063</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX036_bali.png") }}" >
+              <hr>
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX036_single.png") }}" >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX034</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX034_bali.png") }}" >
+              <hr>
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX034_single.png") }}" >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX012</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX012_bali.png") }}" >
+              <hr>
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX012_single.png") }}" >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX132</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX132_bali.png") }}" >
+              <hr>
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX132_single.png") }}" >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" style="width=100%;" id="panel0">
+      <div class="panel-heading">
+        <div class="panel-title">
+          <strong>RV913_BOX290</strong>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="panel-body panel-body-custom">
+          <div class="row">
+            <div class="col-xs-12 col-md-12" style="overflow:auto;">
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX290_bali.png") }}" >
+              <hr>
+              <br>
+              <img src="{{ url_for('static',
+              filename="alignments/balibase_issues/pics/RV913_BOX290_single.png") }}" >
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   {% endblock %}
   {% block js %}
   <script>
-$(function(){
-    // var height = window.innerHeight;
-    var height = 300;
-    $('iframe').css('height', height);
-    });
-activate = function(button_id, alignment_id) {
-  // activate = function(button_id) {
-  var btn_ids = ["btn1", "btn2", "btn3", "btn4", "btn5"];
-  var alignment_ids = ["alignment1", "alignment2", "alignment3", "alignment4", "alignment5"];
-  for (var i = 0; i < alignment_ids.length; i++) {
-    if (alignment_ids[i] == alignment_id) {
-      console.debug(alignment_id);
-      document.getElementById(alignment_id).style.display = "";
-    } else {
-      console.debug(alignment_ids[i]);
-      document.getElementById(alignment_ids[i]).style.display = "none";
-    }
-  }
-  for (var i = 0; i < btn_ids.length; i++) {
-    var btn = document.getElementById(button_id);
-    if (btn_ids[i] == button_id) {
-      $('#'+btn_ids[i]).addClass('active');
-    } else {
-      $('#'+btn_ids[i]).removeClass('active');
-    }
-  }
-
-}
+// $(function(){
+//     // var height = window.innerHeight;
+//     var height = 300;
+//     $('iframe').css('height', height);
+//     });
+// activate = function(button_id, alignment_id) {
+//   // activate = function(button_id) {
+//   var btn_ids = ["btn1", "btn2", "btn3", "btn4", "btn5"];
+//   var alignment_ids = ["alignment1", "alignment2", "alignment3", "alignment4", "alignment5"];
+//   for (var i = 0; i < alignment_ids.length; i++) {
+//     if (alignment_ids[i] == alignment_id) {
+//       console.debug(alignment_id);
+//       document.getElementById(alignment_id).style.display = "";
+//     } else {
+//       console.debug(alignment_ids[i]);
+//       document.getElementById(alignment_ids[i]).style.display = "none";
+//     }
+//   }
+//   for (var i = 0; i < btn_ids.length; i++) {
+//     var btn = document.getElementById(button_id);
+//     if (btn_ids[i] == button_id) {
+//       $('#'+btn_ids[i]).addClass('active');
+//     } else {
+//       $('#'+btn_ids[i]).removeClass('active');
+//     }
+//   }
+// 
+// }
   </script>
   {% endblock %}
