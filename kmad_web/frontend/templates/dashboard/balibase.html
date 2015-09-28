@@ -30,18 +30,18 @@ BAliBASE questions
           Two of these problems were explained to us by one of the
           BAliBASE creators, prof. Julie Thompson. (We include the answers in the text)
           <br>
-          Most of the presented alignments are examples of BAliBASE inlcuding
-          motifs that don't match the motif pattern as false negatives (meaning
+          Most of the presented alignments are examples of BAliBASE, that include
+          motifs not matching the motif pattern as false negatives (meaning
           that they are incorrectly predicted by ELM as not being an instance
-          of the particular motif). Such an approach would requires extensive
+          of the particular motif). Such an approach requires extensive
           data about the protein's functionality to be able to confirm that
           although it doesn't match the ELM pattern it not only performs the
-          same function, but performs the samefunction with this particular
+          same function, but performs the same function with this particular
           segment of amino acids (as motifs are known to move around the
           protein it would be possible for a motif to 'disappear' from one
           location and 'appear' in another, more distant than the aligned
           segment). While, of course, the ELM database for sure contains some
-          mistakes, we don;t think that a segment should be considered a false
+          mistakes, we do not think that a segment should be considered a false
           negative just because it aligns well with an actual instance of a
           motif. Moreover, in some examples motifs that are modification sites 
           were assigned to some non-matching segments, where the modified
@@ -52,7 +52,7 @@ BAliBASE questions
           Most of the following alignments are BAliBASE reference alignments 
           (unless stated otherwise), where the bright orange residues are
           residues included in the TP/FN motif instances by BAliBASE, and
-          purple residues are the actual occurences of the motif's.
+          purple residues are the actual occurences of the motifs.
           </p>
         </div>
       </div>
@@ -244,6 +244,14 @@ BAliBASE questions
               </code>
             </div>
             <br>
+            <p align="justify">
+            While we agree that the two arginines in contact with a ligand 
+            should be aligned lined up together it is still not clear to us 
+            why aren't they includeed in the coreblocks. We have knowledge 
+            about their importance and about them being equivalent, but it 
+            is not penalized if a method does not align them properly.
+            </p>
+            <br>
           </div>
         </div>
         <br>
@@ -384,7 +392,7 @@ BAliBASE questions
     <div class="row">
       <div class="col-xs-12 col-md-6" style="overflow:auto;">
         <p align="justify">
-        In this alignment the highlighted motif is the C-mannosylation site
+        In this alignment the highlighted motif is a C-mannosylation site
         (ELM ID: MOD_CMANNOS). The regular expression ("W..W") doesn't match 
         the 4th
         and 5th sequences. Moreover, the C-mannosylation site is a motif for
@@ -465,7 +473,7 @@ BAliBASE questions
         The motif annotated here is a clathrin box (ELM ID:
         LIG_Clathr_ClatBox_1). Its regular expression is "[IVLMF].[IVLMF][DE]"
         The motif pattern matches all sequences, but in the fourth sequence
-        it is not located in the segment alignmed with motifs from other
+        it is not located in the segment aligned with motifs from other
         sequences, but further from the C-terminus.
         <div class="alert alert-warning" role="alert">
           Scroll to the right see the rest of the motifs.
@@ -498,14 +506,14 @@ BAliBASE questions
         <p align="justify">
         The motif in this example is an SH2 ligand (ELM ID: LIG_SH2_STAT5,
         regex: "(Y)[VLTFIC].."). The pattern does not match the segment in
-        last sequence.
+        the last sequence.
         <br>
         This example represents another problem with the BAliBASE motif
-        benchmark - if they are several instances of the motif in an
-        alignment it only scores for one motif. Thus an alignment that would
-        get two of the motif columns aligne right but the rightmost column
+        benchmark - if there are several instances of a motif in an
+        alignment it only scores for one instance. Thus an alignment that would
+        get two of the motif columns aligned right but the rightmost column
         wrong, would get a lower score than an alignment where only the last
-        column is well. aligned.
+        column is well aligned.
         <br>
         Residues annotated in BAliBASE as true positives and/or false
         negatives:
