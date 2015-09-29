@@ -43,7 +43,7 @@ BAliBASE questions
           Most of the following alignments are BAliBASE reference alignments 
           (unless stated otherwise), where the bright orange residues are
           residues included in the TP/FN motif instances by BAliBASE, and
-          purple residues are the actual occurences of the motifs.
+          purple residues are the segments that match the ELM pattern.
           </p>
         </div>
       </div>
@@ -318,8 +318,12 @@ BAliBASE questions
             biologically relevant.
             <br>
             There is no evidence of KDEL (or KDEL equivalent) motif not being
-            at the very end of the sequence. Thus, the 'FN' motifs should
+            at the very end of the sequence. Thus, the 'FN' motifs should not
             be used as an 'arbitrary truth' for the benchmarking purposes.
+            <br>
+            In one of the sequences BAliBASE annotated the motif as a 
+            3-residue segment ("DEL"), but that was probably not done on
+            purpose.
             </p>
           </div>
         </div>
@@ -464,6 +468,11 @@ BAliBASE questions
         The motif pattern matches all sequences, but in the fourth sequence
         it is not located in the segment aligned with motifs from other
         sequences, but further from the C-terminus.
+        Obviously one would not like to use this motif, but it is not fair to
+        give penalty points for not including this. Although BAliBASE alignment 
+        is in this case most probably correct, alignment of this segment should
+        be included in the general score and not in the motif score.
+        <br>
         </p>
         <div class="alert alert-warning" role="alert">
           Scroll to the right see the rest of the motifs.
@@ -594,9 +603,14 @@ BAliBASE questions
     <div class="row">
       <div class="col-xs-12 col-md-6" style="overflow:auto;">
         <p align="justify">
-        Here the SID motif's (ELM ID: LIG_Sin3_2) pattern
-        ("[FHYM].A[AV].[VAC]L[MV].[MI]") matches only two of the
-        sequences.
+        Here only two of the sequence match the SID motif's 
+        (ELM ID: LIG_Sin3_2) pattern
+        ("[FHYM].A[AV].[VAC]L[MV].[MI]").
+        The sequence miss only one residue to match the motif pattern, so of
+        course it is possible that overruling the pattern by BAliBASE is a
+        wise move. 
+        Nevertheless, cases like this are one of the reasons of the noise in the 
+        motif scores.
         <br>
         Residues annotated in BAliBASE as true positives and/or false
         negatives:
@@ -627,6 +641,10 @@ BAliBASE questions
         MOD_PIKK_1), with regular expression "...([ST])Q..".
         The second sequence is does not match the pattern because the
         phosphorylated serine is replaced with an asparagine.
+        In this sequence the motif could have 'moved' a couple of residues
+        to the left, where the motif pattern is found. It might be another 
+        case of residues that are not part of a motif contributing to 
+        the motif score, which adds to the noise in the benchmarking results.
         <br>
         Residues annotated in BAliBASE as true positives and/or false
         negatives:
