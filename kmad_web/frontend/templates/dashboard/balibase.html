@@ -465,13 +465,16 @@ BAliBASE questions
         <p align="justify">
         The motif annotated here is a clathrin box (ELM ID:
         LIG_Clathr_ClatBox_1). Its regular expression is "[IVLMF].[IVLMF][DE]"
-        The motif pattern matches all sequences, but in the fourth sequence
-        it is not located in the segment aligned with motifs from other
-        sequences, but further from the C-terminus.
-        Obviously one would not like to use this motif, but it is not fair to
-        give penalty points for not including this. Although BAliBASE alignment 
+        The motif pattern matches the fourth sequence
+        in a different location than annotated by BAliBASE - much further from 
+        the C-terminus. 
+        Obviously one would not like to use this outlying motif for the motif 
+        score, but it is not fair to give penalty points for a 
+        an alignment of a motif that is not there. 
+        Although BAliBASE alignment 
         is in this case most probably correct, alignment of this segment should
-        be included in the general score and not in the motif score.
+        in our opinion
+        be included only in the general score and not in the motif score.
         <br>
         </p>
         <div class="alert alert-warning" role="alert">
