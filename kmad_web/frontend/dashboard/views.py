@@ -212,12 +212,6 @@ def requires_auth(f):
     return decorated
 
 
-@bp.route('/msx1', methods=['GET'])
-@requires_auth
-def msx1():
-    return render_template('dashboard/msx1_mutations.html')
-
-
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
