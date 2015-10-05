@@ -106,7 +106,7 @@ BAliBASE questions
               <br>
               <strong>1.</strong> The LIG_FHA_2 motif is annotated (by a human) in 
               the top (first) sequence, but it is only predicted in the other sequences.
-              When there are multiple occurrences of the motif in other 
+              When there are multiple occurences of the motif in other 
               sequences how is it decided
               which of them should be aligned with the one in the top sequence? 
               <br>
@@ -220,7 +220,7 @@ BAliBASE questions
             </p>
           </div>
         </div>
-        Reference BAliBASE alignment (highlighted core-blocks are the parts of the alignment for which BAliBASE gives points)
+        Reference BAliBASE alignment (highlighted coreblocks are the parts of the alignment for which BAliBASE gives points)
         <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
           filename="alignments/balibase_issues/BB11037_coreblocks.html") }}"
@@ -285,7 +285,7 @@ BAliBASE questions
             <p align="justify">
             While we agree that the two arginines in contact with a ligand 
             should be lined up together it is still not clear to us 
-            why aren't they included in the core-blocks. We have knowledge 
+            why aren't they includeed in the core-blocks. We have knowledge 
             about their importance and about them being equivalent, but it 
             is not penalized if a method does not align them properly.
             <br>
@@ -320,7 +320,7 @@ BAliBASE questions
           filename="alignments/balibase_issues/BB12034_expresso.html") }}"
           width="100%"></iframe>
         <br>
-        BAliBASE reference alignment
+        BAliBASE refrence alignment
         <br>
         <iframe name="alignment_frame" src="{{ url_for('static',
           filename="alignments/balibase_issues/BB12034_bali.html") }}"
@@ -378,7 +378,7 @@ BAliBASE questions
             gap parameter settings the motif is so spread out that it is hardly
             possible for a bioscientist to draw relevant conclusions. KMAD was
             explicitly designed to avoid such problems thereby optimally 
-            helping the bioscientist to analyze alignments.
+            helping the bioscientist to analyse alignments.
             <br>
             There is no KDEL (or KDEL equivalent) motif present in 
             the sequences other than at the very end. 
@@ -458,7 +458,7 @@ BAliBASE questions
         and 5th sequences. Moreover, the C-mannosylation site is a motif for
         attachment of a mannosyl residue to a tryptophan (the first of the two 
         tryptophans in the 'W..W' motif), and in fourth and fifth sequence this 
-        first tryptophan is not present.
+        first tryptophane is not present.
         <br>
         Again, there probably are good reasons to overrule the ELM motif,
         but we believe that automatic methods haven't progressed to the state
