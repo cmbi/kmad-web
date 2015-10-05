@@ -202,6 +202,11 @@ def cram():
     return render_template('dashboard/cram.html')
 
 
+@bp.route('/1aiq_1b02', methods=['GET'])
+def yasara_example():
+    return render_template('dashboard/yasara_example.html')
+
+
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
