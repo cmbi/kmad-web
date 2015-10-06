@@ -195,16 +195,23 @@ BAliBASE questions
         <div class="row">
           <div class="col-xs-12 col-md-6">
             <p align="justify">
-            <span style="background-color:#90EE90">
-
-            There is no structure available for any of the sequences 
-            from this alignment.
-            </span>
-            <span style="background-color:yellow">
-            For 
-              any
-              the sequences from this alignment there isn't any structure available.
-            </span>
+            Each alignment in BAliBASE has been based on structure information
+            ("We present here the latest release of the
+            most widely used multiple alignment benchmark,
+            BAliBASE, which provides high quality, manually
+            refined, reference alignments based on 3D structural 
+            superpositions", "Those protein families for
+            which at least four structures are available are included
+            in the V1 subset of Reference 1", "Because divergent sequences 
+            cannot be aligned accurately without using structural information
+            as a guide, Uniprot sequences of unknown structure are only 
+            included in the alignment if they share &lt;40% identity with at 
+            least
+            one PDB sequence." - Thompson JD, et al., BAliBASE 3.0: latest developments of the multiple sequence alignment benchmark., Proteins, 2005). This, obviously,
+            makes it hard for us to use BAliBASE for the validation of KMAD because
+            KMAD was designed to align the sequences of intrinsically disordered
+            proteins (IDPs). For BB11037, though, we cannot find any structure
+            information for any of the proteins aligned.
             The closest structure was found for the 4th sequence 
             (PDB ID:1CLD, chain A),
             with a very high e-value of 3&middot;10<sup>-4</sup>. And even this structure doesn't
@@ -294,12 +301,22 @@ BAliBASE questions
             SAP decides that there is a deletion of the glutamine at position
             52, but BAliBASE overrules the structure alignment and inserts the
             gap below a glycine, two residues to the right.
-            Manual inspection of a WHATIF structure alignment leads us to a
-            conclusion that, unless more knowledge is available about these
-            residues, the SAP alignment is correct, and not BAliBASE.
 
-            <a href="{{ url_for('dashboard.yasara_example') }}">Click here</a>
-            to see the WHATIF structure alignment.
+
+             We used WHAT IF to structurally superpose the 1abc and 2pqr structures,
+             and visually inspected the result using the YASARA Twinset (the
+             view is available
+              <a href="{{ url_for('dashboard.yasara_example') }}">here</a>)
+               This structure alignment makes clear, without any
+               doubt, the backbone of Ser53 in the 1B02 sequence structurally
+               overlaps with the backbone atoms of Gln39 and Asp40 in 1AIQ. The
+               sidechain of Ser53 in 1B02, though partly occupies the space of
+               Asp40 in 1AIQ so that Gln39 must be aligned with a deletion.
+               Obviously, knowledge about the biological role of residues in this
+               three-dimensional environment can be used to overrule this gap
+               alignment, but again, we believe that bioinformatics as a whole hasn't
+               progressed yet to the state that software should be allowed to make
+               these decisions.
             <br>
             </p>
             <br>
@@ -380,23 +397,16 @@ BAliBASE questions
             explicitly designed to avoid such problems thereby optimally 
             helping the bioscientist to analyze alignments.
             <br>
-            There is no KDEL (or KDEL equivalent) motif present in 
-            the sequences other than at the very end. 
-            <span style="background-color:#90EE90">
-              Thus, the KDEL motifs that are not at the end of the sequence
-              should be backed up with some (experimental) evidence to 
-              be treated as the arbitrary truth for benchmarking purposes.
-            </span>
+            The last 17 sequences in the alignment contain a 'KDEL motif'
+            followed by at least one extra residue. So, these motifs are not
+            C-terminal as the "[KRHQSAP][DENQT]EL$" motif description dictates. KMAD
+            has no access to the information required to decide that 'VEEV' and similar indeed
+            matche the KDEL$ motif, but our alignment gets many penalty points
+            because BAliBASE considers these false negative motif scores (FNs)  in
+            the KMAD alignment.
             <br>
-            <span style="background-color:yellow">
-            Thus, the 'FN' motifs should not
-            be used as an 'arbitrary truth' for the benchmarking purposes.
-            </span>
             <br>
-            In
-            <span style="background-color:#90EE90;">
-              the 11th</span> 
-            sequence BAliBASE annotated the motif as a 
+            In the 11th sequence BAliBASE annotated the motif as a 
             3-residue segment ("DEL"), but we suppose it was not done on
             purpose.
             </p>
@@ -408,21 +418,29 @@ BAliBASE questions
         <br>
         Motif score = 0.37
         <br>
+            <div style="overflow:auto;">
             <img src="{{ url_for('static',
             filename="alignments/balibase_issues/pics/kmad_clustal_refine80.png") }}" >
+            </div>
             <br>
+            <div style="overflow:auto;">
             <img src="{{ url_for('static',
             filename="alignments/balibase_issues/pics/kmad_clustal_refine80_KDEL.png") }}" >
+            </div>
         <hr>
         <strong>Alignment 2</strong> KMAD refinement of a T-Coffee alignment
         <br>
         Motif score = 0.88
         <br>
+            <div style="overflow:auto;">
             <img src="{{ url_for('static',
             filename="alignments/balibase_issues/pics/kmad_tcof_refine77.png") }}" >
+            </div>
             <br>
+            <div style="overflow:auto;">
             <img src="{{ url_for('static',
             filename="alignments/balibase_issues/pics/kmad_tcof_refine77_KDEL.png") }}" >
+            </div>
         <hr>
         <strong>Alignment 3</strong> KMAD refinement of a T-Coffee alignment
         with very low gap penalties - only for the purpose of 
