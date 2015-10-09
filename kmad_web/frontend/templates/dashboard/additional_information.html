@@ -415,8 +415,10 @@ Additional information
       features were used (PTMs, motifs, domains), and 'KMAD structural' means
       that strcutural information was used to guide the alignment.
       </p>
+      <div style="overflow:auto;">
       <img src="{{ url_for('static', 
       filename="images/reviewer_comments/benchmark_25_random.png") }}"/>
+    </div>
       <br>
     </span>
   </div>
@@ -430,8 +432,10 @@ Additional information
     <span class="panel-body-custom">
       Both KMAD and KMAD refinement were ran in the 'leave-one-out' mode.
       <br>
+      <div style="overflow:auto;">
       <img src="{{ url_for('static', 
       filename="images/reviewer_comments/benchmark_motif_similar.png") }}"/>
+  </div>
       <br>
     </span>
   </div>
@@ -607,18 +611,24 @@ Additional information
     <br>
     <div class="row">
       <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+        </div>
       </div>
       <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+        </div>
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+        </div>
       </div>
     </div>
     <hr>
@@ -640,11 +650,15 @@ Additional information
       stopped a method when after a week no result had been returned yet.
       <br>
       <br>
+      <div style="overflow:auto;">
       <img src="{{ url_for('static',
-        filename="files/plots/perf_plot.png") }}">
-      <img src="{{ url_for('static',
+      filename="files/plots/perf_plot.png") }}">
+      </div>
+      <div style="overflow:auto;">
+        <img src="{{ url_for('static',
         filename="images/reviewer_comments/perf_table.png") }}">
-     </p>
+      </div>
+      </p>
     </span>
   </div>
 </div>
