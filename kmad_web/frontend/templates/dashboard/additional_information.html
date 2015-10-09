@@ -570,12 +570,13 @@ Additional information
   <div class="panel-heading">
     <div class="panel-title" id="phosph">
       <span class="panel-title-text">
-        <strong>Performance</strong>
+        <strong>Performance, part 1</strong>
       </span>
     </div>
   </div>
   <div class="panel-body" id="performance">
     <span class="panel-body-custom">
+      <p align="justify">
       Because KMAD, MUSCLE, and ClustalW don't have an option to run on multiple cores,
       we ran all methods with disabled multithreading. The multithreading
       methods would show much higher performance on a server, but it doesn't
@@ -600,7 +601,7 @@ Additional information
       information from multiple databases is much slower than the alignment
       itself. However, this doesn't depend on the creators of KMAD, but on the
       scripts maintained by the database authors (ELM and Pfam).
-
+      </p>
     </span>
     <br>
     <br>
@@ -621,6 +622,30 @@ Additional information
       </div>
     </div>
     <hr>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>Performance, part 2</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="performance">
+    <span class="panel-body-custom">
+      <p align="justify">
+      The second part pof performance tests was ran of four different protein
+      families. 
+      For each method there are four curves, each representing a single family.
+      Some points are missing because some methods crashed and because we 
+      stopped a method when after a week no result had been returned yet.
+      <br>
+      <br>
+      <img src="{{ url_for('static',
+        filename="files/plots/perf_plot.png") }}">
+      <img src="{{ url_for('static',
+        filename="images/reviewer_comments/perf_table.png") }}">
+     </p>
+    </span>
   </div>
 </div>
 {% endblock %}
