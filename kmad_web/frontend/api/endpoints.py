@@ -20,8 +20,8 @@ bp = Blueprint('kmad', __name__, url_prefix='/api')
 @bp.route('/create/<output_type>/', methods=['POST'])
 def create_kmad(output_type):
     """
-    :param output_type: Either 'predict', 'predict_and_align', 'align'
-    or 'refine'
+    :param output_type: Either 'predict', 'predict_and_align', 'align',
+     'refine' or 'hope'
     :return: The id of the job.
 
     """
