@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}
+Structure alignment
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">Structure alignment, 1AIQ and 1B02</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+    Structure alignment of the 1AIQ and 1B02 structures.
+    Cyan backbone and blue sidechains belong to the 1B02 structure,
+    and red backbone and 
+    orange sidechains belong to structure 1AIQ.
+    <br>
+    <img src="{{ url_for('static', filename="images/1aiq_1b02.gif") }}">
+    <br>
+    <br>
+    <div style="overflow:auto;">
+      <img src="{{ url_for('static', filename="images/1aiq_1b02.png") }}">
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

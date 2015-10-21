@@ -4,8 +4,9 @@ import StringIO
 
 from celery import chain
 from flask import abort
-from flask import (Blueprint, render_template,
-                   request, redirect, url_for, send_file)
+from flask import (Blueprint, render_template, request, redirect, url_for,
+                   send_file, Response)
+from functools import wraps
 
 from kmad_web.services import files, fieldlist_helper
 from kmad_web.frontend.dashboard.forms import KmanForm
@@ -201,6 +202,21 @@ def cram():
     return render_template('dashboard/cram.html')
 
 
+@bp.route('/1aiq_1b02', methods=['GET'])
+def yasara_example():
+    return render_template('dashboard/yasara_example.html')
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
@@ -221,3 +237,18 @@ def download_alignment():
     return send_file(strIO,
                      attachment_filename="kmad_alignment.txt",
                      as_attachment=True)
+
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == 'human' and password == 'Platypu5'
+
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'})

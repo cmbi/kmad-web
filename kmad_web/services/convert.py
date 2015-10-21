@@ -529,8 +529,8 @@ def convert_to_7chars(filename, filter_motifs, predictions):
                                                     motifsDictionary,
                                                     'slims')
             motifs_codes = get_codes(motifsDictionary, motifs_ids, 'motifs')
-            for i, indI in enumerate(motifs_codes):
-                motifProbsDict[indI] = probs[i]
+            for j, indJ in enumerate(motifs_codes):
+                motifProbsDict[indJ] = probs[j]
 
             lc_regions = []
             domainsDictionary = add_elements_to_dict(domains,

@@ -6,7 +6,6 @@
     "Joanna Lange <joasialange@gmail.com>"
   ],
   "license": "Unknown",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
@@ -22,6 +21,7 @@
     "bootstrap-tour": "~0.10.2",
     "jquery-ui": "~1.11.3",
     "highlightjs-v8.1": "~8.2.0",
-    "bootstrap-validator": "~0.7.2"
+    "bootstrap-validator": "~0.7.2",
+    "sequelize": "sequelize/sequelize#~3.9.0",
   }
 }

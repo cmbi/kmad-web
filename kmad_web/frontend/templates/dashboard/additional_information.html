@@ -5,9 +5,33 @@ Additional information
 {% block content %}
 <div class='panel panel-default' style="width:100%;">
   <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>MSA benchmarks</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+          "We conclude that there is currently no universally applicable means
+          of benchmarking MSA, and that developers and users of alignment tools
+          should base their choice of benchmark depending on the context of
+          application—with a keen awareness of the assumptions underlying each 
+          benchmarking strategy."
+          (<i>Who Watches the Watchmen? An Appraisal of Benchmarks
+            for Multiple Sequence Alignment</i>, Iantorno S, et al., 2013)
+          </p>
+        </div>
+      </div>
+    </span>
+  </div>
+  <div class="panel-heading">
     <div class="panel-title">
       <span class="panel-title-text">
-        Comparison with other tools
+        Validation, part 1
       </span>
     </div>
   </div>
@@ -132,7 +156,6 @@ Additional information
                   </tr>
                 </tbody>
               </table>
-
             </div>
           </div>
           <div class="row">
@@ -230,7 +253,6 @@ Additional information
             </div>
           </div>
           <br>
-
           </P>
         </div>
         <div id="whole_balibase">
@@ -339,6 +361,83 @@ Additional information
         </div>
       </div>
     </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>Validaton, part 2: BAliBASE 3.0, BAliBASE motif reference set,
+          PREFAB</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      <p align="justify">
+      Firstly, we ran the validation on 25 random sets rfom each of the three
+      benchmarks. Secondly, we performed validation on a subset from the
+      BAliBASE motif benchmark cotaining only sequence with 40% to 80% sequence
+      identity. We chose this particular subset, because the main task that
+      KMAD was designed for is to perform alignments of closely
+      related proteins, e.g. whole protein families.
+      <br>
+      To avouid circularity in validation on the motif BAliBASE benchmark, we 
+      performed a sort of 'leave-one-out' validation. To each sequence set
+      BAliBASE assigns  only one motif class - and this motif class was 
+      excluded from the KMAD annotations. Therefore, BAliBASE scored only for 
+      a motif that was not used to guide the alignment.
+      This kind of experiment also shows that even if we use annotation of
+      false positive motifs it might still improve the alignment of the
+      true motifs. It means that proper filtering of ELM prediction results
+      is not as important as one could expect - for example, if a motif is 
+      a false positive it will probably not be conserved, and therefore 
+      not have any infuence on the
+      alignment itself.
+      </p>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      Random 25 sequence sets from each benchmark
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      <p align="justify">
+      In this validation step, we also included KMAD using structural
+      information - to show that using features can improve the alignments,
+      and certainly does not damage them. Of course here again circularity is 
+      a problem - using structural information and testing it on a structural
+      benchmark. Nevertheless this results shows that indeed "what you give is
+      what you get" and so when our priority is good motif alignment, then we
+      should use motifs to guide the alignment. All rows described as 
+      'KMAD refine ...' are KMAD refinements of Clustal Omega alignments.
+      'KMAD disorder', 'KMAD refine disorder', etc. mean that the usual KMAD 
+      features were used (PTMs, motifs, domains), and 'KMAD structural' means
+      that strcutural information was used to guide the alignment.
+      </p>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static', 
+      filename="images/reviewer_comments/benchmark_25_random.png") }}"/>
+    </div>
+      <br>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      Subset RV913 from the BAliBASE motif reference set,
+      sequence with identity between 40% and 80%
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      Both KMAD and KMAD refinement were ran in the 'leave-one-out' mode.
+      <br>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static', 
+      filename="images/reviewer_comments/benchmark_motif_similar.png") }}"/>
+  </div>
+      <br>
+    </span>
   </div>
   <div class="panel-heading">
     <div class="panel-title">
@@ -475,12 +574,13 @@ Additional information
   <div class="panel-heading">
     <div class="panel-title" id="phosph">
       <span class="panel-title-text">
-        <strong>Performance</strong>
+        <strong>Performance, part 1</strong>
       </span>
     </div>
   </div>
   <div class="panel-body" id="performance">
     <span class="panel-body-custom">
+      <p align="justify">
       Because KMAD, MUSCLE, and ClustalW don't have an option to run on multiple cores,
       we ran all methods with disabled multithreading. The multithreading
       methods would show much higher performance on a server, but it doesn't
@@ -505,24 +605,30 @@ Additional information
       information from multiple databases is much slower than the alignment
       itself. However, this doesn't depend on the creators of KMAD, but on the
       scripts maintained by the database authors (ELM and Pfam).
-
+      </p>
     </span>
     <br>
     <br>
     <div class="row">
       <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+        </div>
       </div>
       <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+        </div>
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
-        <img src="{{ url_for('static',
-        filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+        </div>
       </div>
     </div>
     <hr>
@@ -530,98 +636,30 @@ Additional information
   <div class="panel-heading">
     <div class="panel-title" id="phosph">
       <span class="panel-title-text">
-        <strong>MSA benchamrks</strong>
+        <strong>Performance, part 2</strong>
       </span>
     </div>
   </div>
-  <div class="panel-body" id="prefab">
+  <div class="panel-body" id="performance">
     <span class="panel-body-custom">
-      <div class="row">
-        <div class="col-md-12">
-          <p>
-          "We conclude that there is currently no universally applicable means
-          of benchmarking MSA, and that developers and users of alignment tools
-          should base their choice of benchmark depending on the context of
-          application—with a keen awareness of the assumptions underlying each 
-          benchmarking strategy."
-          (<i>Who Watches the Watchmen? An Appraisal of Benchmarks
-            for Multiple Sequence Alignment</i>, Iantorno S, et al., 2013)
-          </p>
-        </div>
+      <p align="justify">
+      The second part pof performance tests was ran of four different protein
+      families. 
+      For each method there are four curves, each representing a single family.
+      Some points are missing because some methods crashed and because we 
+      stopped a method when after a week no result had been returned yet.
+      <br>
+      <br>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename="files/plots/perf_plot.png") }}">
       </div>
+      <div style="overflow:auto;">
+        <img src="{{ url_for('static',
+        filename="images/reviewer_comments/perf_table.png") }}">
+      </div>
+      </p>
     </span>
-  </div>
-  <div class="panel-heading">
-    <div class="panel-title" id="phosph">
-      <span class="panel-title-text">
-        <strong>PREFAB</strong>
-      </span>
-    </div>
-  </div>
-  <div class="panel-body" id="prefab">
-    <span class="panel-body-custom">
-      <div class="row">
-        <div class="col-md-6">
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_kmad_prefab.png')}}">
-        </div>
-        <div class="col-md-6">
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_tcoffee_prefab.png')}}">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_all_methods_prefab.png')}}">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_kmad_prefab_abc.png')}}">
-        </div>
-        <div class="col-md-6">
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_tcoffee_prefab_abc.png')}}">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_all_methods_prefab_abc.png')}}">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <strong>A)</strong> KMAD without features,
-          <strong>B)</strong> KMAD with features
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_kmad_prefab_abc_small.png')}}">
-        </div>
-        <div class="col-md-4">
-          <strong>A)</strong> T-Coffee,
-          <strong>B)</strong> T-Coffee Expresso
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_tcoffee_prefab_abc_small.png')}}">
-        </div>
-        <div class="col-md-4">
-          <strong>A)</strong> KMAD without features,
-          <strong>B)</strong> ClustalW2,
-          <strong>C)</strong> MUSCLE,
-          <strong>D)</strong> T-Coffee,
-          <strong>E)</strong> Clustal Omega,
-          <strong>F)</strong> MAFFT,
-          <strong>G)</strong> T-Coffee Expresso,
-          <strong>H)</strong> KMAD with features
-          <img src="{{ url_for('static',
-          filename='files/plots/boxplot_all_methods_prefab_abc_small.png')}}">
-        </div>
-      </div>
-
-
-    </span>
-
   </div>
 </div>
 {% endblock %}
