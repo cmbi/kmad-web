@@ -1,7 +1,8 @@
 import logging
 
 
-from kmad_web.services import txtproc, files
+from kmad_web.helpers import txtproc
+from kmad_web.services import files
 
 
 _log = logging.getLogger(__name__)

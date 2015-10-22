@@ -1,0 +1,3 @@
+
+
+class UniprotFeatureProvider(object):

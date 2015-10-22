@@ -9,7 +9,7 @@ logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
-class PhosphositeParser():
+class PhosphositeParser(object):
     def __init__(self, path=None):
         self._path = path
 
@@ -45,16 +45,10 @@ class PhosphositeParser():
                 in_sequence_section = True
             if in_sequence_section and uniprot_id in lineI:
                 # take ptm and add it to dict
-                reg = re.compile("[A-Z][0-9]{1,5}[-][a-z]")
+                reg = re.compile("[A-Z](?P<pos>[0-9]{1,5})[-][a-z]")
                 matches = list(reg.finditer(lineI))
                 if len(matches) == 1:
-                    # trim it by one character from the left side and two
-                    # chars from the right side because the regex
-                    # matches the residue char before the position and the dash
-                    # and one character after the position, eg. "S157-p"
-                    start = matches[0].span()[0] + 1
-                    end = matches[0].span()[1] - 2
-                    position = lineI[start:end]
+                    position = matches[0].groupdict()['pos']
                     if position.isdigit():
                         positions.append(position)
                     else:

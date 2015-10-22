@@ -5,7 +5,7 @@ import subprocess
 
 from kmad_web import paths
 
-from kmad_web.services.txtproc import unwrap, preprocess
+from kmad_web.helpers.txtproc import unwrap, preprocess
 from kmad_web.services.consensus import filter_out_short_stretches
 
 

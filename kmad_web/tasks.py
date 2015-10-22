@@ -9,10 +9,11 @@ import urllib2
 from celery import current_app as celery_app
 
 from kmad_web import paths
-from kmad_web.services import files, txtproc, iupred
+
+from kmad_web.helpers import txtproc
+
+from kmad_web.services import files, iupred
 from kmad_web.services import mutation_analysis as ma
-from kmad_web.services.txtproc import (preprocess, process_alignment,
-                                       find_seqid_blast, process_d2p2)
 from kmad_web.services.consensus import (find_consensus_disorder,
                                          filter_out_short_stretches)
 from kmad_web.services.convert import convert_to_7chars, run_netphos
@@ -68,6 +69,7 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 @celery_app.task
 def run_single_predictor(prev_result, fasta_file, pred_name):
     _log.info("Run single predictor: {}".format(pred_name))
+    # TODO: factor this IF statement out
     if prev_result[1][0]:
         return prev_result[1][1]
     else:
@@ -126,7 +128,7 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
                     else:
                         _log.info(
                             "Output file {} doesn't exist".format(out_file))
-                data = preprocess(data, pred_name)
+                data = txtproc.preprocess(data, pred_name)
             except (subprocess.CalledProcessError, OSError) as e:
                 _log.error("Error: {}".format(e))
         return data
@@ -188,7 +190,8 @@ def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
 
         alignment_encoded = open(al_outfile).read().encode('ascii',
                                                            errors='ignore')
-        alignment_processed = process_alignment(alignment_encoded, codon_length)
+        alignment_processed = txtproc.process_alignment(alignment_encoded,
+                                                        codon_length)
         alignments = alignment_processed + [feature_codemap]
         result = {'alignments': alignments,
                   'annotated_motifs': annotated_motifs}
@@ -265,7 +268,7 @@ def query_d2p2(blast_result, filename, output_type, multi_seq_input):
     prediction = []
     try:
         if not (multi_seq_input and output_type == 'align'):
-            [found_it, seq_id] = find_seqid_blast(blast_result)
+            [found_it, seq_id] = txtproc.find_seqid_blast(blast_result)
             # seq_length -> temporary solution, until D2P2 fixes their bug
             #               (that sometimes predictions can be too short -
             #                than annotate missing residues as 'ambiguous
@@ -286,7 +289,7 @@ def query_d2p2(blast_result, filename, output_type, multi_seq_input):
                         pred_result = pred_result[:seq_length]
                     '''
                     if len(pred_result) == seq_length:
-                        prediction = process_d2p2(pred_result)
+                        prediction = txtproc.process_d2p2(pred_result)
                     else:
                         found_it = False
                 else:

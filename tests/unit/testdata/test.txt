@@ -1,0 +1,6 @@
+DR   GO; GO:0030424; C:axon; IDA:UniProtKB.
+DR   GO; GO:0005930; C:axoneme; IEA:Ensembl.
+FT   MOD_RES     515    515       Phosphoserine; by PDPK1 and TTBK1.
+FT                                {ECO:0000269|PubMed:16923168}.
+FT   CARBOHYD     87     87       N-linked (Glc) (glycation); in PHF-tau;
+FT                                in vitro. {ECO:0000269|PubMed:19451179}.
