@@ -1,7 +1,4 @@
-import urllib2
-
-from socket import error as SocketError
-from httplib import BadStatusLine
+import requests
 
 from kmad_web.services.types import ServiceError
 
@@ -18,15 +15,15 @@ class ElmService(object):
     def url(self, url):
         self._url = url
 
-    def get_instances(self, uniprot_id):
-        req = urllib2.Request(self._url)
+    def get_instances(self):
         try:
-            response = urllib2.urlopen(req)
-        except (urllib2.HTTPError,  urllib2.URLError,
-                SocketError, BadStatusLine) as e:
-            raise ServiceError(e)
+            request = requests.get(self._url)
+            if request.status_code != 200:
+                raise ServiceError(request.status_code)
+        except requests.HTTPError as e:
+                raise ServiceError(e)
         else:
-            result = response.read()
+            result = request.text
         return result
 
 elm = ElmService()
