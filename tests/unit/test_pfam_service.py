@@ -43,8 +43,8 @@ def test_search_failure(mock_requests_get, mock_requests_post):
 
 
 def test_actual():
-    test_seq = ">test_seq\nMAPAADMTSLPLGVKVEDSAFGKPAGGGAGQAPSAAAATAAAMGADEEGAKPKVSPSLLP\n"
+    test_seq = ">test_seq\nMAPAADMTSLPLGVKVEDSAFGKPAGGGAGQAPSAAAATAAAMGADEEGA\n"
     url = "http://pfam.xfam.org/search/sequence"
     pfam = PfamService(url=url)
     result = pfam.search(test_seq)
-    assert(False)
+    print result

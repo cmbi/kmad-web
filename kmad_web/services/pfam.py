@@ -58,8 +58,9 @@ class PfamService(object):
             raise ServiceError(e)
         else:
             # The Pfam service returns XML when the result is ready, otherwise
-            # it returns HTML (or sth else...)
-            if 'xml' in request.headers['content-type']:
+            # it returns HTML
+            # The content-type isn't being set correctly so we can't check it
+            if request.text.startswith("<?xml"):
                 status = "SUCCESS"
             else:
                 status = "PENDING"
