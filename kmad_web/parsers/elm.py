@@ -40,13 +40,12 @@ class ElmParser(object):
             for line in elm_db:
                 line_list = line.split()
                 slim_id = line_list[0]
-                self._motif_classes[slim_id] = {'probability':
-                                                float(line_list[2]),
-                                                'GO': line_list[3:],
-                                                'regex': line_list[1],
-                                                'comp_reg': re.compile(
-                                                    line_list[1])
-                                                }
+                self._motif_classes[slim_id] = {
+                        'probability': float(line_list[2]),
+                        'GO': line_list[3:],
+                        'regex': line_list[1],
+                        'comp_reg': re.compile(line_list[1])
+                        }
 
     # Updating the ELM db
     # TODO:
@@ -54,13 +53,13 @@ class ElmParser(object):
     # into a database?
     # 2. Move extending the GO terms elsewhere?
     # 3. Can extending GO terms be performed by GoParser?
-    def write_motif_classes(self, elm_txt, go_txt, elm_url, go_url):
+    def write_motif_classes(self, elm_txt, go_txt):
         # cut out the header (6 lines)
         elm_list = elm_txt.splitlines()[6:]
         # set up the ELM and GO services
-        go_service = GoService(go_url)
+        go_service = GoService()
         go_service.get_go_terms()
-        elm_service = ElmService(elm_url)
+        elm_service = ElmService()
         go_parser = GoParser()
         classes_txt = []
         for line in elm_list:
