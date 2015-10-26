@@ -21,6 +21,11 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
+# service urls
 ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
-ELM_DB = 'kmad_web/frontend/static/dbs/elm_complete.txt'
+UNIPROT_URL = "http://www.uniprot.org/uniprot"
+
+# paths
+ELM_DB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'
+NETPHOS_PATH = '/usr/local/bin/netphos'

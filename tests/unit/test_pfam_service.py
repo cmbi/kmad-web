@@ -41,12 +41,3 @@ def test_search_failure(mock_requests_get, mock_requests_post):
     url = "http://pfam.xfam.org/search/sequence"
     pfam = PfamService(url=url)
     assert_raises(ServiceError, pfam.search, test_seq)
-
-
-def test_actual():
-    with open("tests/unit/testdata/CRAM_CRAAB.fasta") as a:
-        test_seq = a.read()
-    url = "http://pfam.xfam.org/search/sequence"
-    pfam = PfamService(url=url)
-    result = pfam.search(test_seq)
-    print result

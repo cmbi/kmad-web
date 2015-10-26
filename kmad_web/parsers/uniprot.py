@@ -10,20 +10,15 @@ _log = logging.getLogger(__name__)
 
 class UniprotParser(object):
     def __init__(self):
-        self._go_terms = []
-        self._features = []
-
-    def parse_txt(self, txt_file):
-        self._go_terms = self._get_go_terms(txt_file)
-        self._features = self._get_features(txt_file)
+        self.go_terms = []
+        self.ptms = []
 
     def parse_fasta(self, fastafile):
         fasta_seq = unwrap(fastafile)
         return fasta_seq
 
-    def _get_features(self, txt_file):
+    def parse_ptms(self, txt_file):
         txt_list = txt_file.splitlines()
-        features = []
         for i, line in enumerate(txt_list):
             if line.startswith("FT"):
                 if "MOD_RES" in line or "CARBOHYD" in line:
@@ -33,11 +28,9 @@ class UniprotParser(object):
                     feature['info'] = ' '.join(line.split()[4:])
                     feature['pub_med'] = self._get_pubmed_ids(txt_list, i)
                     feature['eco'] = self._get_eco_codes(txt_list, i)
-                    features.append(feature)
-        return features
+                    self.ptms.append(feature)
 
-    def _get_go_terms(self, txtfile):
-        go_terms = []
+    def parse_go_terms(self, txtfile):
         for line in txtfile.splitlines():
             if line.startswith("DR   GO;"):
                 go_term = {}
@@ -48,8 +41,7 @@ class UniprotParser(object):
                 go_term['type'] = match_dict['type']
                 go_term['description'] = match_dict['desc']
                 go_term['source'] = match_dict['src']
-                go_terms.append(go_term)
-        return go_terms
+                self.go_terms.append(go_term)
 
     def _get_pubmed_ids(self, txt_list, index):
         pubmed_ids = set()
