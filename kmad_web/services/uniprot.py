@@ -39,5 +39,3 @@ class UniprotService(object):
         else:
             result = request.text
         return result
-
-uniprot = UniprotService()

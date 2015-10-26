@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pfam xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://pfam.xfam.org/"
+      xsi:schemaLocation="http://pfam.xfam.org/
+                          http://pfam.xfam.org/static/documents/schemas/pfam_family.xsd"
+      release="28.0" 
+      release_date="2015-05-15">
+  <results job_id="C856655E-796C-11E5-9AC7-552D6FECAC22">
+    <matches>
+      <protein length="46">
+        <database id="pfam" release="28.0" release_date="2015-05-15">
+          <match accession="PF00321.13" id="Thionin" type="Pfam-A" class="Domain">
+            <location start="1" end="46" ali_start="2" ali_end="46" hmm_start="2" hmm_end="46" evalue="1.3e-13" bitscore="51.1" evidence="hmmer v3.1b1" significant="1">
+              <hmm>
+                <![CDATA[sCCpsttaRncYnaCrfaggsresCaklsgCkiisgstCpsgypn]]>
+              </hmm>
+              <match_string>
+                <![CDATA[+CCps  aR+ +n+Cr+ g     Ca   gC+ii g tCp +y n]]>
+              </match_string>
+              <pp>
+                <![CDATA[7******************************************75]]>
+              </pp>
+              <seq>
+                <![CDATA[TCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN]]>
+              </seq>
+              <raw>
+                <![CDATA[
+#HMM       sCCpsttaRncYnaCrfaggsresCaklsgCkiisgstCpsgypn
+#MATCH     +CCps  aR+ +n+Cr+ g     Ca   gC+ii g tCp +y n
+#PP        7******************************************75
+#SEQ       TCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN
+                ]]>
+              </raw>
+            </location>
+          </match>
+        </database>
+      </protein>
+    </matches>
+  </results>
+</pfam>
+

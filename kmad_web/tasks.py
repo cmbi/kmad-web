@@ -73,65 +73,59 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
     if prev_result[1][0]:
         return prev_result[1][1]
     else:
-        if pred_name == "dummy":    # pragma: no cover
-            sequence = open(fasta_file).readlines()[1:]
-            sequence = [i.rstrip("\n") for i in sequence]
-            sequence = ''.join(sequence)
-            data = ["dummy", [0 for i in sequence]]
-        else:
-            if pred_name == "spine":
-                tmp_name = fasta_file.split('/')[-1].split('.')[0]
-                tmp_path = '/'.join(fasta_file.split("/")[:-1])
-                method = paths.SPINE_DIR+"/bin/run_spine-d"
-                args = [method, tmp_path, tmp_name]
-                out_file = paths.SPINE_OUTPUT_DIR + tmp_name + ".spd"
-            elif pred_name == "disopred":
-                method = paths.DISOPRED_PATH
-                args = [method, fasta_file]
-                out_file = disopred_outfilename(fasta_file)
-            elif pred_name == "predisorder":
-                method = paths.PREDISORDER_PATH
-                out_file = predisorder_outfilename(fasta_file)
-                args = [method, fasta_file, out_file]
-            elif pred_name == "psipred":
-                method = paths.PSIPRED_PATH
-                out_file = psipred_outfilename(fasta_file)
-                args = [method, fasta_file]
-            elif pred_name == 'globplot':
-                method = paths.GLOBPLOT_PATH
-                out_file = fasta_file + ".gplot"
-                args = [method, '10', '8', '75', '8', '8',
-                        fasta_file, '>', out_file]
-                _log.debug(args)
-                try:
-                    data = subprocess.check_output(args)
-                except (subprocess.CalledProcessError, OSError) as e:
-                    _log.error("Error: {}".format(e))
-            elif pred_name == 'iupred':
-                method = os.path.join(paths.IUPRED_DIR, 'iupred')
-                args = [method, fasta_file, 'long']
-                env = {"IUPred_PATH": paths.IUPRED_DIR}
-                try:
-                    data = subprocess.check_output(args, env=env)
-                except (subprocess.CalledProcessError, OSError) as e:
-                    _log.error("Error: {}".format(e))
+        if pred_name == "spine":
+            tmp_name = fasta_file.split('/')[-1].split('.')[0]
+            tmp_path = '/'.join(fasta_file.split("/")[:-1])
+            method = paths.SPINE_DIR+"/bin/run_spine-d"
+            args = [method, tmp_path, tmp_name]
+            out_file = paths.SPINE_OUTPUT_DIR + tmp_name + ".spd"
+        elif pred_name == "disopred":
+            method = paths.DISOPRED_PATH
+            args = [method, fasta_file]
+            out_file = disopred_outfilename(fasta_file)
+        elif pred_name == "predisorder":
+            method = paths.PREDISORDER_PATH
+            out_file = predisorder_outfilename(fasta_file)
+            args = [method, fasta_file, out_file]
+        elif pred_name == "psipred":
+            method = paths.PSIPRED_PATH
+            out_file = psipred_outfilename(fasta_file)
+            args = [method, fasta_file]
+        elif pred_name == 'globplot':
+            method = paths.GLOBPLOT_PATH
+            out_file = fasta_file + ".gplot"
+            args = [method, '10', '8', '75', '8', '8',
+                    fasta_file, '>', out_file]
+            _log.debug(args)
             try:
-                if pred_name not in ['globplot', 'iupred']:
-                    _log.info("Ran command: {}".format(
-                        subprocess.list2cmdline(args)))
-                    subprocess.call(args)
-                    _log.info("out file name: {}; exists: {}".format(out_file,
-                              os.path.exists(out_file)))
-                    if os.path.exists(out_file):
-                        with open(out_file) as f:
-                            data = f.read()
-                    else:
-                        _log.info(
-                            "Output file {} doesn't exist".format(out_file))
-                data = txtproc.preprocess(data, pred_name)
+                data = subprocess.check_output(args)
             except (subprocess.CalledProcessError, OSError) as e:
                 _log.error("Error: {}".format(e))
-        return data
+        elif pred_name == 'iupred':
+            method = os.path.join(paths.IUPRED_DIR, 'iupred')
+            args = [method, fasta_file, 'long']
+            env = {"IUPred_PATH": paths.IUPRED_DIR}
+            try:
+                data = subprocess.check_output(args, env=env)
+            except (subprocess.CalledProcessError, OSError) as e:
+                _log.error("Error: {}".format(e))
+        try:
+            if pred_name not in ['globplot', 'iupred']:
+                _log.info("Ran command: {}".format(
+                    subprocess.list2cmdline(args)))
+                subprocess.call(args)
+                _log.info("out file name: {}; exists: {}".format(out_file,
+                          os.path.exists(out_file)))
+                if os.path.exists(out_file):
+                    with open(out_file) as f:
+                        data = f.read()
+                else:
+                    _log.info(
+                        "Output file {} doesn't exist".format(out_file))
+            data = txtproc.preprocess(data, pred_name)
+        except (subprocess.CalledProcessError, OSError) as e:
+            _log.error("Error: {}".format(e))
+    return data
 
 
 @celery_app.task

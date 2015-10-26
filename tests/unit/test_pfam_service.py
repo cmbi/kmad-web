@@ -1,4 +1,5 @@
 import requests
+import xmltodict
 
 from mock import patch, Mock
 from nose.tools import eq_, assert_raises
@@ -24,7 +25,7 @@ def test_search_success(mock_requests_get, mock_requests_post):
     url = "http://pfam.xfam.org/search/sequence"
     pfam = PfamService(url=url)
     result = pfam.search(test_seq)
-    eq_([expected_result], result)
+    eq_(expected_result, result)
 
 
 @patch('kmad_web.services.pfam.requests.post')
@@ -43,7 +44,8 @@ def test_search_failure(mock_requests_get, mock_requests_post):
 
 
 def test_actual():
-    test_seq = ">test_seq\nMAPAADMTSLPLGVKVEDSAFGKPAGGGAGQAPSAAAATAAAMGADEEGA\n"
+    with open("tests/unit/testdata/CRAM_CRAAB.fasta") as a:
+        test_seq = a.read()
     url = "http://pfam.xfam.org/search/sequence"
     pfam = PfamService(url=url)
     result = pfam.search(test_seq)

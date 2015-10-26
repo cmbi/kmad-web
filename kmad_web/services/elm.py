@@ -1,6 +1,8 @@
 import os
 import requests
 
+from lxml import html
+
 from kmad_web.services.types import ServiceError
 
 
@@ -40,5 +42,13 @@ class ElmService(object):
         else:
             result = request.text
         return result
-
-elm = ElmService()
+    
+    def get_motif_go_terms(self, motif_id):
+        url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
+        page = requests.get(url)
+        tree = html.fromstring(page.text)
+        go_terms = []
+        for i in tree.get_element_by_id('ElmDetailGoterms').iterlinks():
+            if i[2].startswith("http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:"):
+                go_terms += [i[2].split(':')[2]]
+        return go_terms

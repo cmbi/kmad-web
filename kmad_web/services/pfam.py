@@ -65,5 +65,3 @@ class PfamService(object):
             else:
                 status = "PENDING"
             return {"status": status, "result": request.text}
-
-pfam = PfamService()
