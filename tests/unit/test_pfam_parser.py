@@ -10,17 +10,13 @@ def test_parse():
     pfam.parse(pfam_result)
     eq_(5, len(pfam._domains))
     eq_(set(['PF00321.13', 'PF00418.15']),
-        set([i['acc'] for i in pfam._domains]))
+        set([i['accession'] for i in pfam._domains]))
     # check single domain with one occurence
     pfam = PfamParser()
     with open('tests/unit/testdata/crambin_pfam.xml') as a:
         pfam_result = a.read()
 
     pfam.parse(pfam_result)
-    expected = [{
-        'acc': 'PF00321.13',
-        'start': '1',
-        'end': '46'
-        }]
-    eq_(expected, pfam._domains)
-
+    expected_accession = 'PF00321.13'
+    eq_(1, len(pfam._domains))
+    eq_(expected_accession, pfam._domains[0]['accession'])

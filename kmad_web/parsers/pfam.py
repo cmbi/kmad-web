@@ -29,7 +29,12 @@ class PfamParser(object):
                 location = m['location']
             for l in location:
                 domain = {}
-                domain['acc'] = m['@accession']
-                domain['start'] = l['@start']
-                domain['end'] = l['@end']
+                # information about this domain class
+                domain['accession'] = m['@accession']
+                domain['id'] = m['@id']
+                domain['type'] = m['@type']
+                domain['class'] = m['@class']
+                # information about this domain location
+                for k in l.keys():
+                    domain[k.lstrip('@')] = l[k]
                 self._domains.append(domain)
