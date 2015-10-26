@@ -25,6 +25,7 @@ CELERYBEAT_SCHEDULE = {
 ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
+PFAM_URL = "http://pfam.xfam.org/search/sequence"
 
 # paths
 ELM_DB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'
