@@ -10,9 +10,20 @@ class SequenceAnnotator(object):
     def __init__(self):
         self._sequences = []
 
-    # sequences: [{'header': fasta_header,
-    #              'id': uniprot_id (can be None)
-    #              'seq': sequence}]
+    """
+    input sequences
+    sequences: [{'header': fasta_header,
+                 'id': uniprot_id (can be None)
+                 'seq': sequence}]
+    output sequences
+    sequences: [{'header': fasta_header,
+                 'id': uniprot_id (can be None)
+                 'seq': sequence,
+                 'ptms': motif_list,
+                 'domains': domain_list,
+                 'ptms': ptm_list,
+                }]
+    """
     def annotate(self, sequences):
         self._sequences = sequences
         self._add_missing_uniprot_ids()
@@ -20,8 +31,6 @@ class SequenceAnnotator(object):
         self._annotate_ptms()
         self._annotate_motifs(go_terms)
         self._annotate_domains()
-        # Use all obtained information to encode the sequences
-        self._encode_sequences()
 
     def _get_go_terms(sequences):
         uniprot = UniprotGoTermProvider()
@@ -52,4 +61,7 @@ class SequenceAnnotator(object):
             s['motifs_filtered'] = elm.filter_motifs(s['motifs'])
 
     def _annotate_domains(sequences):
-
+        for s in sequences:
+            fasta_sequence = '>seq\n{}\n'.format(s)
+            pfam = PfamFeatureProvider()
+            s['domains'] = pfam.get_domains(fasta_sequence)

@@ -9,8 +9,8 @@ from flask import (Blueprint, render_template, request, redirect, url_for,
 from functools import wraps
 
 from kmad_web.services import files, fieldlist_helper
-from kmad_web.frontend.dashboard.forms import KmanForm
-from kmad_web.services.kmad import KmanStrategyFactory
+from kmad_web.frontend.dashboard.forms import KmadForm
+from kmad_web.services.kmad import KmadStrategyFactory
 
 
 _log = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ bp = Blueprint('dashboard', __name__)
 
 @bp.route("/", methods=['POST', 'GET'])
 def index():
-    form = KmanForm()
+    form = KmadForm()
     if (form.submit_job.data and form.validate_on_submit()
             and form.sequence.data and form.output_type.data
             and form.gap_open_p.data and form.gap_ext_p.data
@@ -29,7 +29,7 @@ def index():
             and form.first_seq_gapped and form.seq_limit.data):
         _log.debug("validation")
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
-        strategy = KmanStrategyFactory.create(form.output_type.data)
+        strategy = KmadStrategyFactory.create(form.output_type.data)
 
         _log.debug("Using '{}'".format(strategy.__class__.__name__))
 

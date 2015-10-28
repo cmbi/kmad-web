@@ -110,7 +110,7 @@ def check_if_fasta(sequences):
                                           acid codes')
 
 
-class KmanForm(Form):
+class KmadForm(Form):
     def validate_sequence(form, field):
         i = 0
         seq_list = field.data.splitlines()

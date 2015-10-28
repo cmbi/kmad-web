@@ -23,6 +23,12 @@ from kmad_web.services.files import (get_fasta_from_blast,
                                      psipred_outfilename)
 from kmad_web.services import update_elm as elm
 from kmad_web.services import msa_tools
+from kmad_web.domain.blast.provider import BlastResultProvider
+from kmad_web.domain.sequences.provider import UniprotSequenceProvider
+from kmad_web.domain.annotator import SequenceAnnotator
+from kmad_web.domain.encoder import SequenceEncoder
+from kmad_web.domain.fles import write_fles, parse_fles
+from kmad_web.default_settiings import KMAD
 
 
 logging.basicConfig()
@@ -128,72 +134,72 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
     return data
 
 
-@celery_app.task
-def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
-          end_gap_penalty, ptm_score, domain_score, motif_score,
-          multi_seq_input, conffilename, output_type, first_seq_gapped,
-          alignment_method, filter_motifs):
-    _log.info("Running align")
-
-    if not multi_seq_input:
-        blast_result = prev_tasks[0]
-        fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
-        _log.debug("BLAST success: {}".format(blast_success))
-    else:
-        fastafile = filename
-    if output_type == 'refine' and alignment_method != 'none':
-        fastafile = msa_tools.run_preliminary_alignment(fastafile,
-                                                        alignment_method)
-    if multi_seq_input or blast_success:
-        dis_predictions = []
-        if filter_motifs:
-            dis_predictions = iupred.get_predictions(fastafile)
-        convert_result = convert_to_7chars(fastafile, filter_motifs,
-                                           dis_predictions)
-
-        toalign = convert_result['filename']
-        annotated_motifs = convert_result['annotated_motifs']
-        codon_length = 7
-
-        al_outfile = "%s_al" % toalign
-        args = ["kmad", "-i", toalign,
-                "-o", toalign, "-g", str(gap_opening_penalty),
-                "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
-                "-p", str(ptm_score), "-d", str(domain_score),
-                "--out-encoded", "--opt",
-                "-m", str(motif_score), "-c", str(codon_length)]
-        if output_type == "refine":
-            args.append("--refine")
-        if conffilename:
-            args.extend(["--conf", conffilename])
-        if first_seq_gapped == "gapped":
-            args.append("--gapped")
-        _log.debug("Running KMAD: {}".format(subprocess.list2cmdline(args)))
-        subprocess.call(args)
-
-        with open(fastafile.split('.')[0] + '.map') as a:
-            feature_codemap = a.read().splitlines()
-
-        motifs = [[i.split()[0].split('_')[1]] + i.split()[1:]
-                  for i in feature_codemap if i.startswith('motif')]
-
-        domains = [[i.split()[0].split('_')[1], i.split()[1]]
-                   for i in feature_codemap if i.startswith('domain')]
-
-        feature_codemap = {'motifs': motifs, 'domains': domains}
-
-        alignment_encoded = open(al_outfile).read().encode('ascii',
-                                                           errors='ignore')
-        alignment_processed = txtproc.process_alignment(alignment_encoded,
-                                                        codon_length)
-        alignments = alignment_processed + [feature_codemap]
-        result = {'alignments': alignments,
-                  'annotated_motifs': annotated_motifs}
-    else:
-        result = {'alignments': [[], [], [], []],
-                  'annotated_motifs': []}
-    _log.debug("Finished alignment")
-    return result
+# @celery_app.task
+# def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
+#           end_gap_penalty, ptm_score, domain_score, motif_score,
+#           multi_seq_input, conffilename, output_type, first_seq_gapped,
+#           alignment_method, filter_motifs):
+#     _log.info("Running align")
+#
+#     if not multi_seq_input:
+#         blast_result = prev_tasks[0]
+#         fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
+#         _log.debug("BLAST success: {}".format(blast_success))
+#     else:
+#         fastafile = filename
+#     if output_type == 'refine' and alignment_method != 'none':
+#         fastafile = msa_tools.run_preliminary_alignment(fastafile,
+#                                                         alignment_method)
+#     if multi_seq_input or blast_success:
+#         dis_predictions = []
+#         if filter_motifs:
+#             dis_predictions = iupred.get_predictions(fastafile)
+#         convert_result = convert_to_7chars(fastafile, filter_motifs,
+#                                            dis_predictions)
+#
+#         toalign = convert_result['filename']
+#         annotated_motifs = convert_result['annotated_motifs']
+#         codon_length = 7
+#
+#         al_outfile = "%s_al" % toalign
+#         args = ["kmad", "-i", toalign,
+#                 "-o", toalign, "-g", str(gap_opening_penalty),
+#                 "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
+#                 "-p", str(ptm_score), "-d", str(domain_score),
+#                 "--out-encoded", "--opt",
+#                 "-m", str(motif_score), "-c", str(codon_length)]
+#         if output_type == "refine":
+#             args.append("--refine")
+#         if conffilename:
+#             args.extend(["--conf", conffilename])
+#         if first_seq_gapped == "gapped":
+#             args.append("--gapped")
+#         _log.debug("Running KMAD: {}".format(subprocess.list2cmdline(args)))
+#         subprocess.call(args)
+#
+#         with open(fastafile.split('.')[0] + '.map') as a:
+#             feature_codemap = a.read().splitlines()
+#
+#         motifs = [[i.split()[0].split('_')[1]] + i.split()[1:]
+#                   for i in feature_codemap if i.startswith('motif')]
+#
+#         domains = [[i.split()[0].split('_')[1], i.split()[1]]
+#                    for i in feature_codemap if i.startswith('domain')]
+#
+#         feature_codemap = {'motifs': motifs, 'domains': domains}
+#
+#         alignment_encoded = open(al_outfile).read().encode('ascii',
+#                                                            errors='ignore')
+#         alignment_processed = txtproc.process_alignment(alignment_encoded,
+#                                                         codon_length)
+#         alignments = alignment_processed + [feature_codemap]
+#         result = {'alignments': alignments,
+#                   'annotated_motifs': annotated_motifs}
+#     else:
+#         result = {'alignments': [[], [], [], []],
+#                   'annotated_motifs': []}
+#     _log.debug("Finished alignment")
+#     return result
 
 
 @celery_app.task
@@ -237,21 +243,105 @@ def get_seq(d2p2, fasta_file):
 
 
 @celery_app.task
-def run_blast(filename, seq_limit):
+def run_blast(fasta_sequence):
+    # out_blast = filename.split(".")[0]+".blastp"
+    # args = ["blastp", "-query", filename, "-evalue", "1e-5",
+    #         "-num_threads", "15", "-db", paths.SWISSPROT_DB,
+    #         "-out", out_blast, '-outfmt', '10', '-max_target_seqs',
+    #         str(seq_limit)]
+    # try:
+    #     subprocess.call(args)
+    # except subprocess.CalledProcessError as e:
+    #     _log.error("Error: {}".format(e.output))
+    # with open(out_blast) as a:
+    #     output = a.read().splitlines()
+    # return output
     _log.info("Running blast")
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=True)
+    with tmp_file as f:
+        f.write(fasta_sequence)
 
-    out_blast = filename.split(".")[0]+".blastp"
-    args = ["blastp", "-query", filename, "-evalue", "1e-5",
-            "-num_threads", "15", "-db", paths.SWISSPROT_DB,
-            "-out", out_blast, '-outfmt', '10', '-max_target_seqs',
-            str(seq_limit)]
+    blast = BlastResultProvider()
+    blast_result = blast.get_result(tmp_file.name)
+    return blast_result
+
+
+@celery_app.task
+def get_sequences_from_blast(blast_result):
+    sequences = []
+    uniprot = UniprotSequenceProvider()
+    for s in blast_result:
+        sequence = uniprot.get_sequence(s['id'])
+        sequences.append(sequence)
+    return sequences
+
+
+@celery_app.task
+def create_fles(sequences):
+    """
+    Create FLES file (input file for KMAD)
+
+    :param sequences: list sequence dictionaries ({'header': '', 'seq': ''})
+    :return: filename
+    """
+    annotator = SequenceAnnotator()
+    annotator.annotate(sequences)
+    encoder = SequenceEncoder()
+    encoder.encode(sequences)
+    return {'fles_path': write_fles(sequences), 'sequences': sequences}
+
+
+@celery_app.task
+def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
+             motif_score, conf_path=None, gapped=False, full_ungapped=False):
+    """
+    Run KMAD on the given fles_filename and return aligned sequences (dict)
+
+    :fles_path: path to the FLES file (with encoded sequences)
+    :gop: gap opening penalty
+    :gep: gap extension penalty
+    :egp: end gap penalty
+    :ptm_score: feature weight for PTMs
+    :motif_score: feature weight for motifs
+    :domain_score: feature weight for domains
+    :conf_path: path to the configuration file
+    :gapped: True for standard alignment
+    :full_ungapped: indel-free alignment but in a standard alignment format
+                    (no residues are cut out from the final alignment,
+                     but in all alignment rounds profile length is equal
+                     query sequence length)
+    """
+    fles_path = create_fles_result['fles_path']
+    sequences = create_fles_result['sequences']
+    args = [KMAD, '-i', fles_path, '-o', fles_path, '-g', gop, '-e', gep,
+            '-n', egp, '-p', ptm_score, '-m', motif_score, '-d', domain_score,
+            '--out-encoded', '-c', '7']
+    result_path = fles_path + '_al'
+    # additional parameters
+    if conf_path:
+        args.extend(['--conf', conf_path])
+    if gapped:
+        args.extend(['--gapped'])
+    elif full_ungapped:
+        args.extend(['--full_ungapped'])
+
     try:
         subprocess.call(args)
     except subprocess.CalledProcessError as e:
-        _log.error("Error: {}".format(e.output))
-    with open(out_blast) as a:
-        output = a.read().splitlines()
-    return output
+        raise RuntimeError(e)
+    else:
+        return {'fles_path': result_path, 'sequences': sequences}
+
+
+@celery_app.task
+def process_kmad_alignment(run_kmad_result):
+    fles_path = run_kmad_result['fles_path']
+    sequences = run_kmad_result['sequences']
+
+    alignment = parse_fles(fles_path)
+    for s_index, s in enumerate(alignment):
+        sequences[s_index]['aligned'] = s['seq']
+    return sequences
 
 
 @celery_app.task

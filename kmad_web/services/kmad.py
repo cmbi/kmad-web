@@ -3,12 +3,13 @@ import logging
 
 from kmad_web.helpers import txtproc
 from kmad_web.services import files
+from kmad_web.domain.sequences.fasta import check_fasta, make_fasta
 
 
 _log = logging.getLogger(__name__)
 
 
-class KmanStrategyFactory(object):
+class KmadStrategyFactory(object):
     @classmethod
     def create(cls, output_type):
         if output_type == 'predict':
@@ -23,6 +24,63 @@ class KmanStrategyFactory(object):
             raise ValueError("Unexpected output type '{}'".format(output_type))
 
 
+def MotifsStrategy(object):
+    def __init__(self, sequence, position, mutant_aa):
+        if not check_fasta(sequence):
+            self._fasta_sequence = make_fasta(sequence)
+        else:
+            self._fasta_sequence = sequence
+        self._position = position
+        self._mutant_aa = mutant_aa
+        self._feature_type = 'motifs'
+
+    def __call__(self):
+        from celery import chain
+        from kmad_web.tasks import (run_blast, get_sequences_from_blast,
+                                    create_fles, align, analyze_mutation,
+                                    process_kmad_alignment)
+        workflow = chain(
+            run_blast.s(self._fasta_sequence),
+            get_sequences_from_blast.s(),
+            create_fles.s(),
+            align.s(),
+            process_kmad_alignment.s(),
+            analyze_mutation.s(self._fasta_sequence, self._position,
+                               self._mutant_aa, self._feature_type)
+        )
+        job = workflow()
+        return job.id
+
+
+def PtmsStrategy(object):
+    def __init__(self, sequence, position, mutant_aa):
+        if not check_fasta(sequence):
+            self._fasta_sequence = make_fasta(sequence)
+        else:
+            self._fasta_sequence = sequence
+        self._position = position
+        self._mutant_aa = mutant_aa
+        self._feature_type = 'ptms'
+
+    def __call__(self):
+        from celery import chain
+        from kmad_web.tasks import (run_blast, get_sequences_from_blast,
+                                    create_fles, align, analyze_mutation,
+                                    parse_fles)
+        workflow = chain(
+            run_blast.s(self._fasta_sequence),
+            get_sequences_from_blast.s(),
+            create_fles.s(),
+            align.s(),
+            parse_fles.s(),
+            analyze_mutation.s(self._fasta_sequence, self._position,
+                               self._mutant_aa, self._feature_type)
+        )
+        job = workflow()
+        return job.id
+
+
+# TODO: change
 class PredictStrategy(object):
     def __init__(self, output_type):
         self.output_type = output_type
@@ -47,6 +105,7 @@ class PredictStrategy(object):
         return workflow
 
 
+# TODO: remove
 class PredictAndAlignStrategy(object):
     def __init__(self, output_type):
         self.output_type = output_type
@@ -87,6 +146,7 @@ class PredictAndAlignStrategy(object):
         return workflow
 
 
+# TODO: change
 class AlignStrategy(object):
     def __init__(self, output_type):
         self.output_type = output_type
@@ -121,6 +181,7 @@ class AlignStrategy(object):
         return workflow
 
 
+# TODO: change
 class AnnotateStrategy(object):
     def __init__(self, output_type):
         self.output_type = output_type

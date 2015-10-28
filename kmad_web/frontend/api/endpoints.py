@@ -8,7 +8,7 @@ from celery import chain, group
 from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
-from kmad_web.services.kmad import KmanStrategyFactory
+from kmad_web.services.kmad import KmadStrategyFactory
 from kmad_web.services import files
 
 
@@ -27,7 +27,7 @@ def create_kmad(output_type):
     """
     form = request.form
     from kmad_web.tasks import filter_blast, run_blast
-    strategy = KmanStrategyFactory.create(output_type)
+    strategy = KmadStrategyFactory.create(output_type)
     _log.debug("Using '{}'".format(strategy.__class__.__name__))
 
     single_fasta_filename, multi_fasta_filename, multi_seq_input = (

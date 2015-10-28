@@ -27,11 +27,14 @@ class ElmUpdater(object):
         # and parse it
         elm_parser.parse_motif_classes(elm_data)
         full_motif_classes = elm_parser.motif_classes.copy()
+        print len(full_motif_classes)
         for motif_id in elm_parser.motif_classes:
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
         # make json serializable
+        print len(full_motif_classes)
         self._make_json_friendly(full_motif_classes)
+        print len(full_motif_classes)
         # write processed motif_classes to a json file
         with open(self._elmdb_path, 'w') as outfile:
             json.dumps(full_motif_classes, outfile)
@@ -56,5 +59,5 @@ class ElmUpdater(object):
 
     # change sets to lists
     def _make_json_friendly(self, full_motif_classes):
-        for m in full_motif_classes:
+        for m in full_motif_classes.values():
             m['GO'] = list(m['GO'])
