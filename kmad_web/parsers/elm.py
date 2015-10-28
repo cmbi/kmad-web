@@ -3,8 +3,6 @@ import os
 import re
 
 from kmad_web.parsers.types import ParserError
-from kmad_web.services.elm import ElmService
-from kmad_web.services.go import GoService
 
 
 class ElmParser(object):
@@ -32,6 +30,7 @@ class ElmParser(object):
 
     # Parse the self-made ELM DB (json file created in the write_motif_classes
     # function)
+    # TODO: cache
     def parse_full_motif_classes(self):
         if not os.path.exists(self._elmdb_path):
             raise ParserError("ELM DB not found: {}".format(self._elmdb_path))

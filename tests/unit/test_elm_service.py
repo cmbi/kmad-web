@@ -31,8 +31,9 @@ def test_get_instances_failure(mock_requests_get):
     elm = ElmService(url=url)
     assert_raises(ServiceError, elm.get_instances, test_id)
 
+
 def test_get_motif_go_terms():
     test_id = "MOD_PIKK_1"
     elm = ElmService("http://elm.eu.org/")
-    expected = ['0006975', '0000077', '0016447', '0005634', '0004674']
+    expected = set(['0006975', '0000077', '0016447', '0005634', '0004674'])
     eq_(expected, elm.get_motif_go_terms(test_id))

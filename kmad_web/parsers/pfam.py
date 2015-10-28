@@ -1,4 +1,6 @@
 import xmltodict
+
+
 class PfamParser(object):
     def __init__(self):
         self._domains = []
@@ -14,7 +16,7 @@ class PfamParser(object):
     """
     def parse(self, pfam_result):
         pfam_dict = xmltodict.parse(pfam_result)
-        matches = pfam_dict['pfam']['results']['matches']['protein'] \
+        matches = pfam_dict['pfam']['results']['matches']['protein']\
                            ['database']['match']
         if not isinstance(matches, list):
             # if there are multiple domains found matches is a list, otherwise

@@ -1,15 +1,20 @@
 import json
+import logging
+import time
 
 from kmad_web.parsers.elm import ElmParser
 from kmad_web.services.elm import ElmService
-from kmad_web.services.go import GoService
 from kmad_web.domain.go.providers.go import GoProvider
-from kmad_web.default_settings import ELM_URL, GO_URL, ELM_DB
+from kmad_web.default_settings import ELM_URL, ELM_DB_PATH
+
+logging.basicConfig()
+_log = logging.getLogger(__name__)
 
 
 class ElmUpdater(object):
-    def __init__(self):
-        self._elmdb_path = ELM_DB
+    def __init__(self, poll=5):
+        self._poll = poll
+        self._elmdb_path = ELM_DB_PATH
         # hold extended go_terms (go term family = go_term + parents + all
         # descendants) in _go_families not to look twice for the same thing
         self._go_families = {}
@@ -25,11 +30,15 @@ class ElmUpdater(object):
         for motif_id in elm_parser.motif_classes:
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
+        # make json serializable
+        self._make_json_friendly(full_motif_classes)
         # write processed motif_classes to a json file
         with open(self._elmdb_path, 'w') as outfile:
-            json.dumps(elm_parser.motif_classes, outfile)
+            json.dumps(full_motif_classes, outfile)
 
+    # TODO: cache
     def _get_extended_go_terms(self, motif_id):
+        _log.debug("Getting GO terms for the {} motif".format(motif_id))
         elm_service = ElmService(ELM_URL)
         go_terms = elm_service.get_motif_go_terms(motif_id)
         for go_term in go_terms:
@@ -37,9 +46,15 @@ class ElmUpdater(object):
                 go = GoProvider()
                 go.get_parent_terms(go_term)
                 go.get_children_terms(go_term)
-                go_family = go.parents + go.children
+                go_family = go.parents.union(go.children)
                 self._go_families[go_term] = go_family
             else:
-                go_family = go_families[go_terms]
-            go_terms.extend(go_family)
+                go_family = self._go_families[go_term]
+            go_terms.update(go_family)
+            time.sleep(self._poll)
         return go_terms
+
+    # change sets to lists
+    def _make_json_friendly(self, full_motif_classes):
+        for m in full_motif_classes:
+            m['GO'] = list(m['GO'])

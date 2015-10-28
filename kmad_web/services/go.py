@@ -36,5 +36,5 @@ class GoService(object):
             raise ServiceError("GoService hasn't been configured")
 
         if 'soap_timeout' not in kwargs:
-            soap_timeout = 90
+            soap_timeout = 100
         return soap.run(self._url, soap_timeout, method, *args)
