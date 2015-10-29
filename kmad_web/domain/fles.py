@@ -24,6 +24,6 @@ def parse_fles(fles_path):
         for l in range(0, len(fles), 2):
             sequence = {}
             sequence['header'] = fles[l]
-            sequence['seq'] = fles[l + 1]
+            sequence['encoded_seq'] = fles[l + 1]
             alignment.append(sequence)
         return alignment

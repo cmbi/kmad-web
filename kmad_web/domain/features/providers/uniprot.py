@@ -21,9 +21,9 @@ class UniprotFeatureProvider(object):
             # ptm['type']
             ptm['name'] = self._get_ptm_type(p['info'])
             if ptm['name']:
-              ptm['positions'] = p['position']
-              ptm['annotation_level'] = self._get_annotation_level(p['eco'])
-              self.ptms.append(ptm)
+                ptm['position'] = p['position']
+                ptm['annotation_level'] = self._get_annotation_level(p['eco'])
+                self.ptms.append(ptm)
 
     def _get_annotation_level(self, eco):
         # the first eco code is always the 'best' one ( = highest annotation

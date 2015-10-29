@@ -25,8 +25,8 @@ from kmad_web.services import update_elm as elm
 from kmad_web.services import msa_tools
 from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
-from kmad_web.domain.annotator import SequenceAnnotator
-from kmad_web.domain.encoder import SequenceEncoder
+from kmad_web.domain.sequences.annotator import SequenceAnnotator
+from kmad_web.domain.sequences.encoder import SequenceEncoder
 from kmad_web.domain.fles import write_fles, parse_fles
 from kmad_web.default_settiings import KMAD
 
