@@ -3,7 +3,7 @@ import logging
 
 from kmad_web.helpers import txtproc
 from kmad_web.services import files
-from kmad_web.domain.sequences.fasta import check_fasta, make_fasta
+from kmad_web.domain.sequences.fasta import check_fasta, make_fasta, parse_fasta
 
 
 _log = logging.getLogger(__name__)
@@ -28,8 +28,10 @@ def MotifsStrategy(object):
     def __init__(self, sequence, position, mutant_aa):
         if not check_fasta(sequence):
             self._fasta_sequence = make_fasta(sequence)
+            self._raw_sequence = sequence
         else:
             self._fasta_sequence = sequence
+            self._raw_sequence = parse_fasta(sequence)[1]
         self._position = position
         self._mutant_aa = mutant_aa
         self._feature_type = 'motifs'
@@ -45,7 +47,7 @@ def MotifsStrategy(object):
             create_fles.s(),
             align.s(),
             process_kmad_alignment.s(),
-            analyze_mutation.s(self._fasta_sequence, self._position,
+            analyze_mutation.s(self._raw_sequence, self._position,
                                self._mutant_aa, self._feature_type)
         )
         job = workflow()

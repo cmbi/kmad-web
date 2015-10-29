@@ -11,12 +11,11 @@ CELERY_QUEUES = (
 )
 CELERY_RESULT_BACKEND = 'redis://localhost/2'
 
-#CELERY_TASK_SERIALIZER = 'json'
 CELERYBEAT_SCHEDULE = {
-    # Every day at midnight
+    # Every month on the 1st at midnight
     'update_elmdb': {
         'task': 'kmad_web.tasks.update_elmdb',
-        'schedule': crontab(hour=0,minute=0),
+        'schedule': crontab(day_of_month=1, hour=0, minute=0),
         'args': ('kmad_web/frontend/static/dbs/elm_complete.txt',)
     },
 }
@@ -26,6 +25,7 @@ ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
 PFAM_URL = "http://pfam.xfam.org/search/sequence"
+KMAD = "KMAD"
 
 # paths
 ELM_DB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'

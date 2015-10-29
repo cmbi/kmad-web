@@ -16,18 +16,17 @@ from kmad_web.services import files, iupred
 from kmad_web.services import mutation_analysis as ma
 from kmad_web.services.consensus import (find_consensus_disorder,
                                          filter_out_short_stretches)
-from kmad_web.services.convert import convert_to_7chars, run_netphos
 from kmad_web.services.files import (get_fasta_from_blast,
                                      disopred_outfilename,
                                      predisorder_outfilename,
                                      psipred_outfilename)
-from kmad_web.services import update_elm as elm
-from kmad_web.services import msa_tools
 from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequenceAnnotator
 from kmad_web.domain.sequences.encoder import SequenceEncoder
 from kmad_web.domain.fles import write_fles, parse_fles
+from kmad_web.domain.mutation import Mutation
+from kmad_web.domain.updaters.elm import ElmUpdater
 from kmad_web.default_settiings import KMAD
 
 
@@ -134,74 +133,6 @@ def run_single_predictor(prev_result, fasta_file, pred_name):
     return data
 
 
-# @celery_app.task
-# def align(prev_tasks, filename, gap_opening_penalty, gap_extension_penalty,
-#           end_gap_penalty, ptm_score, domain_score, motif_score,
-#           multi_seq_input, conffilename, output_type, first_seq_gapped,
-#           alignment_method, filter_motifs):
-#     _log.info("Running align")
-#
-#     if not multi_seq_input:
-#         blast_result = prev_tasks[0]
-#         fastafile, blast_success = get_fasta_from_blast(blast_result, filename)
-#         _log.debug("BLAST success: {}".format(blast_success))
-#     else:
-#         fastafile = filename
-#     if output_type == 'refine' and alignment_method != 'none':
-#         fastafile = msa_tools.run_preliminary_alignment(fastafile,
-#                                                         alignment_method)
-#     if multi_seq_input or blast_success:
-#         dis_predictions = []
-#         if filter_motifs:
-#             dis_predictions = iupred.get_predictions(fastafile)
-#         convert_result = convert_to_7chars(fastafile, filter_motifs,
-#                                            dis_predictions)
-#
-#         toalign = convert_result['filename']
-#         annotated_motifs = convert_result['annotated_motifs']
-#         codon_length = 7
-#
-#         al_outfile = "%s_al" % toalign
-#         args = ["kmad", "-i", toalign,
-#                 "-o", toalign, "-g", str(gap_opening_penalty),
-#                 "-n", str(end_gap_penalty), "-e", str(gap_extension_penalty),
-#                 "-p", str(ptm_score), "-d", str(domain_score),
-#                 "--out-encoded", "--opt",
-#                 "-m", str(motif_score), "-c", str(codon_length)]
-#         if output_type == "refine":
-#             args.append("--refine")
-#         if conffilename:
-#             args.extend(["--conf", conffilename])
-#         if first_seq_gapped == "gapped":
-#             args.append("--gapped")
-#         _log.debug("Running KMAD: {}".format(subprocess.list2cmdline(args)))
-#         subprocess.call(args)
-#
-#         with open(fastafile.split('.')[0] + '.map') as a:
-#             feature_codemap = a.read().splitlines()
-#
-#         motifs = [[i.split()[0].split('_')[1]] + i.split()[1:]
-#                   for i in feature_codemap if i.startswith('motif')]
-#
-#         domains = [[i.split()[0].split('_')[1], i.split()[1]]
-#                    for i in feature_codemap if i.startswith('domain')]
-#
-#         feature_codemap = {'motifs': motifs, 'domains': domains}
-#
-#         alignment_encoded = open(al_outfile).read().encode('ascii',
-#                                                            errors='ignore')
-#         alignment_processed = txtproc.process_alignment(alignment_encoded,
-#                                                         codon_length)
-#         alignments = alignment_processed + [feature_codemap]
-#         result = {'alignments': alignments,
-#                   'annotated_motifs': annotated_motifs}
-#     else:
-#         result = {'alignments': [[], [], [], []],
-#                   'annotated_motifs': []}
-#     _log.debug("Finished alignment")
-#     return result
-
-
 @celery_app.task
 def annotate(d2p2, filename):
     _log.info("Running annotate")
@@ -288,7 +219,12 @@ def create_fles(sequences):
     annotator.annotate(sequences)
     encoder = SequenceEncoder()
     encoder.encode(sequences)
-    return {'fles_path': write_fles(sequences), 'sequences': sequences}
+    return {
+        'fles_path': write_fles(sequences),
+        'sequences': sequences,
+        'motif_code_dict': encoder.motif_code_dict,
+        'domain_code_dict': encoder.domain_code_dict
+    }
 
 
 @celery_app.task
@@ -330,7 +266,12 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     except subprocess.CalledProcessError as e:
         raise RuntimeError(e)
     else:
-        return {'fles_path': result_path, 'sequences': sequences}
+        return {
+            'fles_path': result_path,
+            'sequences': sequences,
+            'motif_code_dict': create_fles_result['motif_code_dict'],
+            'domain_code_dict': create_fles_result['domain_code_dict']
+        }
 
 
 @celery_app.task
@@ -341,7 +282,25 @@ def process_kmad_alignment(run_kmad_result):
     alignment = parse_fles(fles_path)
     for s_index, s in enumerate(alignment):
         sequences[s_index]['aligned'] = s['seq']
-    return sequences
+    return {
+        'sequences': sequences,
+        'motif_code_dict': run_kmad_result['motif_code_dict'],
+        'domain_code_dict': run_kmad_result['domain_code_dict']
+    }
+
+
+@celery_app.task
+def analyze_mutation(process_kmad_result, fasta_sequence, position, mutant_aa,
+                     feature_type):
+    sequences = process_kmad_result['sequences']
+    mutation = Mutation(sequences[0], position, mutant_aa)
+    if feature_type == 'motifs':
+        result = mutation.analyze_motifs(feature_type)
+    elif feature_type == 'ptms':
+        result = mutation.analyze_ptms(feature_type)
+    else:
+        raise RuntimeError("Unknown feature_type: {}".format(feature_type))
+    return result
 
 
 @celery_app.task
@@ -383,90 +342,69 @@ def query_d2p2(blast_result, filename, output_type, multi_seq_input):
     return [blast_result, [found_it, prediction]]
 
 
-@celery_app.task
-def analyze_mutation(processed_result, mutation_site, new_aa,
-                     wild_seq_filename):
-    _log.info("Running analyse mutation")
-
-    mutation_site_0 = mutation_site - 1  # 0-based mutation site position
-    wild_seq = processed_result[0]
-
-    disorder_prediction = processed_result[-2]  # filtered consensus
-    encoded_alignment = processed_result[-1]['alignments'][2]
-    proc_alignment = processed_result[-1]['alignments'][1]
-    feature_codemap = processed_result[-1]['alignments'][3]
-
-    annotated_motifs = processed_result[-1]['annotated_motifs']
-
-    mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
-    mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    with mutant_seq_file as f:
-        f.write('>mutant\n{}\n'.format(mutant_seq))
-
-    alignment_position = ma.get_real_position(encoded_alignment,
-                                              mutation_site_0, 0)
-    predicted_phosph_wild = run_netphos(wild_seq_filename)
-    predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
-    alignment = ma.preprocess_features(encoded_alignment)
-
-    os.remove(mutant_seq_file.name)
-
-    surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
-                                              predicted_phosph_mutant,
-                                              alignment, mutation_site_0,
-                                              encoded_alignment)
-    ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
-                               new_aa, predicted_phosph_mutant)
-    motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
-                                   wild_seq, mutant_seq, mutation_site_0,
-                                   alignment_position, feature_codemap,
-                                   annotated_motifs)
-    output = ma.combine_results(ptm_data, motif_data, surrounding_data,
-                                disorder_prediction, mutation_site_0, wild_seq)
-    # output = {
-    #     'residues': [
-    #         {
-    #             'position': 1,  # 1-based!
-    #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
-    #             'ptm': [{
-    #                 'phosrel': ['Y', 'N', 'description'],
-    #                 'glycosylation': ['M', 'N', 'description']
-    #             }],
-    #             'motifs': [{
-    #                 'motif-a': ['Y', 'M', 'description'],
-    #                 'motif-b': ['Y', 'M', 'description']
-    #             }],
-    #         }
-    #     ]
-    # }
-    return output
+# @celery_app.task
+# def analyze_mutation(processed_result, mutation_site, new_aa,
+#                      wild_seq_filename):
+#     _log.info("Running analyse mutation")
+#
+#     mutation_site_0 = mutation_site - 1  # 0-based mutation site position
+#     wild_seq = processed_result[0]
+#
+#     disorder_prediction = processed_result[-2]  # filtered consensus
+#     encoded_alignment = processed_result[-1]['alignments'][2]
+#     proc_alignment = processed_result[-1]['alignments'][1]
+#     feature_codemap = processed_result[-1]['alignments'][3]
+#
+#     annotated_motifs = processed_result[-1]['annotated_motifs']
+#
+#     mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
+#     mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+#     with mutant_seq_file as f:
+#         f.write('>mutant\n{}\n'.format(mutant_seq))
+#
+#     alignment_position = ma.get_real_position(encoded_alignment,
+#                                               mutation_site_0, 0)
+#     predicted_phosph_wild = run_netphos(wild_seq_filename)
+#     predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
+#     alignment = ma.preprocess_features(encoded_alignment)
+#
+#     os.remove(mutant_seq_file.name)
+#
+#     surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
+#                                               predicted_phosph_mutant,
+#                                               alignment, mutation_site_0,
+#                                               encoded_alignment)
+#     ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
+#                                new_aa, predicted_phosph_mutant)
+#     motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
+#                                    wild_seq, mutant_seq, mutation_site_0,
+#                                    alignment_position, feature_codemap,
+#                                    annotated_motifs)
+#     output = ma.combine_results(ptm_data, motif_data, surrounding_data,
+#                                 disorder_prediction, mutation_site_0, wild_seq)
+#     # output = {
+#     #     'residues': [
+#     #         {
+#     #             'position': 1,  # 1-based!
+#     #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
+#     #             'ptm': [{
+#     #                 'phosrel': ['Y', 'N', 'description'],
+#     #                 'glycosylation': ['M', 'N', 'description']
+#     #             }],
+#     #             'motifs': [{
+#     #                 'motif-a': ['Y', 'M', 'description'],
+#     #                 'motif-b': ['Y', 'M', 'description']
+#     #             }],
+#     #         }
+#     #     ]
+#     # }
+#     return output
 
 
 @celery_app.task
 def update_elmdb(output_filename):
-    _log.info("Running elm update")
-
-    elm_url = "http://elm.eu.org/elms/elms_index.tsv"
-    go_url = "http://geneontology.org/ontology/go-basic.obo"
-    elm_list = elm.get_data_from_url(elm_url)
-    go_terms_list = elm.get_data_from_url(go_url)
-    outtext = ""
-    go_families = dict()
-    for i in elm_list[6:]:
-        lineI = re.split('\t|"', i)
-        elm_id = lineI[4]
-        pattern = lineI[10]
-        prob = lineI[13]
-        motif_go_terms = elm.get_motif_go_terms(elm_id)
-        go_terms_extended = elm.extend_go_terms(go_terms_list, motif_go_terms,
-                                                go_families)
-        outtext += "{} {} {} {}\n".format(elm_id, pattern,
-                                          prob, ' '.join(go_terms_extended))
-    if outtext:
-        out = open(output_filename, 'w')
-        out.write(outtext)
-        _log.debug("Finished updating elm")
-        out.close()
+    elm = ElmUpdater()
+    elm.update()
 
 
 @celery_app.task

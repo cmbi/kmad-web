@@ -1,9 +1,6 @@
 import logging
 import re
 
-from kmad_web.helpers.txtproc import unwrap
-
-
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
@@ -12,10 +9,6 @@ class UniprotParser(object):
     def __init__(self):
         self.go_terms = []
         self.ptms = []
-
-    def parse_fasta(self, fastafile):
-        fasta_seq = unwrap(fastafile)
-        return fasta_seq
 
     def parse_ptms(self, txt_file):
         txt_list = txt_file.splitlines()

@@ -27,5 +27,6 @@ from kmad_web.domain.updaters.elm import ElmUpdater
 
 
 def test_actual_update():
+    print "testing actual update"
     elm = ElmUpdater()
     elm.update()

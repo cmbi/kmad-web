@@ -1,46 +1,29 @@
+import string
+
 from collections import OrderedDict
 
 
 class SequencesEncoder(object):
     def __init__(self):
         self._sequences = []
-        self._motif_code_map = {}
-        self._domain_code_map = {}
+        self._motif_code_dict = {}
+        self._domain_code_dict = {}
         # domain code is 2 chars long
         self._domain_pos = 2
         # ptm code is 1 chars long
         self._ptm_pos = 4
         # motif code is 2 chars long
         self._motif_pos = 5
+        self._create_code_alphabet()
 
     def encode(self, sequences):
         self._sequences = sequences
         self._create_codon_sequences()
-        # make code maps for motifs and domains (code map for PTMs is constant)
-        self._make_feature_code_map('motifs')
-        self._make_feature_code_map('domains')
-        # all feature positions are 1-based!
-        self._encode_ptms()
-        self._encode_motifs()
-        self._encode_domains()
-        self._create_encoded_sequences()
-
-    def _create_encoded_sequences(self):
-        for s in self._sequences:
-            s['encoded_seq'] = ''.join([''.join(c) for c in s['codon_seq']])
-
-    """
-    Encodes ptms on the sequences[lists of codons]
-    ptm positions are 1-based
-
-    Only one PTM can be encoded on a given position - in case of multiple PTMs
-    on one position the one with higher (highest: 0, lowest: 5) annotation
-    level will be encoded. In case of a equal annotation levels the one with
-    lower index in the ptm_code_map will be encoded - so phosphorylations have
-    the highest priority, then the acetylations, and so on...
-    """
-    def _encode_ptms(self):
-        ptm_code_map = OrderedDict([
+        # make code dicts for motifs and domains
+        # (code dict for PTMs is constant)
+        self.motif_code_dict = self._create_motif_code_dict('motifs')
+        self.domain_code_dict = self._create_domain_code_dict('domains')
+        self._ptm_code_dict = OrderedDict([
             ('phosphorylation', ["N", "O", "P", "Q", "d"]),
             ('acetylation',     ["B", "C", "D", "E"]),
             ('N-glycosylation', ["F", "G", "H", "I"]),
@@ -49,14 +32,67 @@ class SequencesEncoder(object):
             ('methylation',     ["V", "W", "X", "Y"]),
             ('O-glycosylation', ["Z", "a", "b", "c"])
         ])
-        # position in codon
-        pos = self._ptm_pos
+        # all feature positions are 1-based!
+        self._encode_ptms()
+        self._encode_motifs()
+        self._encode_domains()
+        self._create_encoded_sequences()
+
+    def _create_code_alphabet(self):
+        self._code_alphabet = []
+        alphanum_chars = string.printable[:62]
+        assert alphanum_chars.isalnum()
+        alphanum_chars = list(alphanum_chars)
+        # A means there is no feature - therefore it is not used in feature
+        # codes
+        alphanum_chars.remove('A')
+        for char_i in alphanum_chars:
+            for char_j in alphanum_chars:
+                self._code_alphabet.append(char_i + char_j)
+
+    def _create_motif_code_dict(self, feature_type):
+        feat_ids = set()
+        for s in self._sequences:
+            feat_ids.update([f['id'] for f in s[feature_type]])
+        feat_ids = list(feat_ids)
+        feat_code_dict = {feat_ids[i]: self._code_alphabet[i]
+                          for i in range(len(feat_ids))}
+        return feat_code_dict
+
+    def _create_domain_code_dict(self, feature_type):
+        feat_ids = set()
+        for s in self._sequences:
+            feat_ids.update([f['accession'] for f in s[feature_type]])
+        feat_ids = list(feat_ids)
+        feat_code_dict = {feat_ids[i]: self._code_alphabet[i]
+                          for i in range(len(feat_ids))}
+        return feat_code_dict
+
+    def _create_encoded_sequences(self):
+        for s in self._sequences:
+            s['encoded_seq'] = ''.join([''.join(c) for c in s['codon_seq']])
+
+    """
+    Encodes ptms on the sequences[lists of codons]
+    ptm positions are 1-based
+    """
+    def _encode_ptms(self):
+        # ptm position in codon
+        codon_pos = self._ptm_pos
         for s in self._sequences:
             ptms = self._filter_ptms(s['ptms'])
             for p in ptms:
-                ptm_code = ptm_code_map[p['name']][p['annotation_level']]
-                s['codon_seq'][p['position']][pos] = ptm_code
+                ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
+                ptm_pos = p['position'] - 1
+                s['codon_seq'][ptm_pos][codon_pos] = ptm_code
 
+    """
+    Only one PTM can be encoded on a given position - in case of multiple PTMs
+    on one position the one with higher (highest: 0, lowest: 5) annotation
+    level will be encoded. In case of a equal annotation levels the one with
+    lower index in the ptm_code_dict will be encoded - so phosphorylations have
+    the highest priority, then the acetylations, and so on...
+    """
     def _filter_ptms(self, all_ptms):
         filtered_ptms = []
         ptms_pos_wise = self._group_ptms_by_position(all_ptms)
@@ -68,7 +104,23 @@ class SequencesEncoder(object):
             filtered_ptms.append(ptm)
         return filtered_ptms
 
-    def _group_ptms_by_position(ptms):
+    def _choose_ptm_to_encode(self, ptms):
+        # highest level -> lowest number
+        # this only returns one PTM with the highest level
+        highest_level = min([p['annotation_level'] for p in ptms])
+        # find all PTMs with highest level
+        highest_level_ptms = [i for i in ptms
+                              if i['annotation_level'] == highest_level]
+        if len(highest_level_ptms) > 1:
+            # if there is mmore than one PTM with the highest level choose the
+            # one with lowest index in the ptm_code_dict
+            ptm = min(highest_level_ptms,
+                      key=lambda x: self._ptm_code_dict.keys().index(x['name']))
+        else:
+            ptm = highest_level_ptms[0]
+        return ptm
+
+    def _group_ptms_by_position(self, ptms):
         ptms_pos_wise = {}
         for p in ptms:
             if p['position'] not in ptms_pos_wise.keys():
@@ -85,7 +137,7 @@ class SequencesEncoder(object):
         pos = self._motif_pos
         for s in self._sequences:
             for m in s['motifs']:
-                motif_code = self._motif_code_map[m['id']]
+                motif_code = self._motif_code_dict[m['id']]
                 for i in range(m['start'] - 1, m['end']):
                     s['codon_seq'][i][pos:pos+2] = motif_code
 
@@ -98,7 +150,7 @@ class SequencesEncoder(object):
         pos = self._domain_pos
         for s in self._sequences:
             for d in s['domains']:
-                domain_code = self._domain_code_map[d['accession']]
+                domain_code = self._domain_code_dict[d['accession']]
                 for i in range(d['start'] - 1, d['end']):
                     s['codon_seq'][i][pos:pos+2] = domain_code
 
@@ -115,5 +167,5 @@ class SequencesEncoder(object):
     """
     def _create_codon_sequences(self):
         for s in self._sequences:
-            s['codon_seq'] = [list(s['seq'][i: i + 7])
-                              for i in range(0, len(s['seq'], 7))]
+            s['codon_seq'] = [[r, 'A', 'A', 'A', 'A', 'A', 'A']
+                              for r in s['seq']]

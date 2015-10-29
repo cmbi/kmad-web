@@ -18,10 +18,9 @@ class UniprotFeatureProvider(object):
         uniprot_parser.parse_ptms(uniprot_txt)
         for p in uniprot_parser.ptms:
             ptm = {}
-            # ptm['type']
             ptm['name'] = self._get_ptm_type(p['info'])
             if ptm['name']:
-                ptm['position'] = p['position']
+                ptm['position'] = int(p['position'])
                 ptm['annotation_level'] = self._get_annotation_level(p['eco'])
                 self.ptms.append(ptm)
 
