@@ -7,6 +7,10 @@ class Mutation(object):
         # 1-based position
         self._position = position
         self._mutant_aa = mutant_aa
+        self._ptm_names = [
+            'phosphorylation', 'acetylation', 'N-glycosylation', 'amidation',
+            'hydroxylation', 'methylation', 'O-glycosylation'
+        ]
 
     # TODO: implement
     def analyze_ptms(self, sequences):
