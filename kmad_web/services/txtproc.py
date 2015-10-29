@@ -5,7 +5,7 @@ logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
-def preprocess_spine(pred_out):
+def process_spine(pred_out):
     disorder_list = []
     disorder_symbol = 'D'
     for i, lineI in enumerate(pred_out):
@@ -29,7 +29,7 @@ def unwrap(seq_data):
     return new
 
 
-def preprocess_disopred_psipred(pred_out, pred_name):
+def process_disopred_psipred(pred_out, pred_name):
     disorder_list = []
     if pred_name == "disopred":
         start = 3
@@ -48,7 +48,7 @@ def preprocess_disopred_psipred(pred_out, pred_name):
     return disorder_list
 
 
-def preprocess_predisorder(pred_out):
+def process_predisorder(pred_out):
     disorder_list = []
     disorder_symbol = 'D'
     for i in range(len(pred_out[0].rstrip("\n"))):
@@ -60,7 +60,7 @@ def preprocess_predisorder(pred_out):
     return disorder_list
 
 
-def preprocess_globplot(outlist):
+def process_globplot(outlist):
     seqlength = len(''.join(outlist[1:]))
     dis_regions = [i.split('-') for i in outlist[0].split(':')[-1].split(', ')]
     disorder_list = [0 for i in xrange(seqlength)]
@@ -72,7 +72,7 @@ def preprocess_globplot(outlist):
     return disorder_list
 
 
-def preprocess_iupred(pred_out):
+def process_iupred(pred_out):
     disorder_list = []
     _log.info("first two: {}".format(pred_out[9:11]))
     for i in pred_out[9:]:
@@ -84,19 +84,19 @@ def preprocess_iupred(pred_out):
     return disorder_list
 
 
-def preprocess(pred_out, pred_name):
+def process_prediction(pred_out, pred_name):
     pred_out_list = pred_out.splitlines()
     # 0 - structured, 2 - disordered
     if pred_name == "spine":
-        disorder_list = preprocess_spine(pred_out_list)
+        disorder_list = process_spine(pred_out_list)
     elif pred_name == "disopred" or pred_name == "psipred":
-        disorder_list = preprocess_disopred_psipred(pred_out_list, pred_name)
+        disorder_list = process_disopred_psipred(pred_out_list, pred_name)
     elif pred_name == "predisorder":
-        disorder_list = preprocess_predisorder(pred_out_list)
+        disorder_list = process_predisorder(pred_out_list)
     elif pred_name == "globplot":
-        disorder_list = preprocess_globplot(pred_out_list)
+        disorder_list = process_globplot(pred_out_list)
     elif pred_name == "iupred":
-        disorder_list = preprocess_iupred(pred_out_list)
+        disorder_list = process_iupred(pred_out_list)
     return [pred_name, disorder_list]
 
 

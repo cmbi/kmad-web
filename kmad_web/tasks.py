@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import subprocess
-import re
 import tempfile
 import urllib2
 
@@ -12,14 +11,10 @@ from kmad_web import paths
 
 from kmad_web.helpers import txtproc
 
-from kmad_web.services import files, iupred
-from kmad_web.services import mutation_analysis as ma
+from kmad_web.services import files
 from kmad_web.services.consensus import (find_consensus_disorder,
                                          filter_out_short_stretches)
-from kmad_web.services.files import (get_fasta_from_blast,
-                                     disopred_outfilename,
-                                     predisorder_outfilename,
-                                     psipred_outfilename)
+from kmad_web.services.files import prediction_filename
 from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequenceAnnotator
@@ -72,65 +67,50 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 
 
 @celery_app.task
-def run_single_predictor(prev_result, fasta_file, pred_name):
+def run_single_predictor(d2p2_result, fasta_file, pred_name):
     _log.info("Run single predictor: {}".format(pred_name))
-    # TODO: factor this IF statement out
-    if prev_result[1][0]:
-        return prev_result[1][1]
-    else:
-        if pred_name == "spine":
-            tmp_name = fasta_file.split('/')[-1].split('.')[0]
-            tmp_path = '/'.join(fasta_file.split("/")[:-1])
-            method = paths.SPINE_DIR+"/bin/run_spine-d"
-            args = [method, tmp_path, tmp_name]
-            out_file = paths.SPINE_OUTPUT_DIR + tmp_name + ".spd"
-        elif pred_name == "disopred":
-            method = paths.DISOPRED_PATH
-            args = [method, fasta_file]
-            out_file = disopred_outfilename(fasta_file)
-        elif pred_name == "predisorder":
-            method = paths.PREDISORDER_PATH
-            out_file = predisorder_outfilename(fasta_file)
-            args = [method, fasta_file, out_file]
-        elif pred_name == "psipred":
-            method = paths.PSIPRED_PATH
-            out_file = psipred_outfilename(fasta_file)
-            args = [method, fasta_file]
-        elif pred_name == 'globplot':
-            method = paths.GLOBPLOT_PATH
-            out_file = fasta_file + ".gplot"
-            args = [method, '10', '8', '75', '8', '8',
-                    fasta_file, '>', out_file]
-            _log.debug(args)
-            try:
-                data = subprocess.check_output(args)
-            except (subprocess.CalledProcessError, OSError) as e:
-                _log.error("Error: {}".format(e))
-        elif pred_name == 'iupred':
-            method = os.path.join(paths.IUPRED_DIR, 'iupred')
-            args = [method, fasta_file, 'long']
-            env = {"IUPred_PATH": paths.IUPRED_DIR}
-            try:
-                data = subprocess.check_output(args, env=env)
-            except (subprocess.CalledProcessError, OSError) as e:
-                _log.error("Error: {}".format(e))
-        try:
-            if pred_name not in ['globplot', 'iupred']:
-                _log.info("Ran command: {}".format(
-                    subprocess.list2cmdline(args)))
-                subprocess.call(args)
-                _log.info("out file name: {}; exists: {}".format(out_file,
-                          os.path.exists(out_file)))
-                if os.path.exists(out_file):
-                    with open(out_file) as f:
-                        data = f.read()
-                else:
-                    _log.info(
-                        "Output file {} doesn't exist".format(out_file))
-            data = txtproc.preprocess(data, pred_name)
-        except (subprocess.CalledProcessError, OSError) as e:
-            _log.error("Error: {}".format(e))
-    return data
+    out_file = prediction_filename(pred_name)
+    env = {}
+    if pred_name == "spine":
+        tmp_name = fasta_file.split('/')[-1].split('.')[0]
+        tmp_path = '/'.join(fasta_file.split("/")[:-1])
+        method = paths.SPINE_DIR+"/bin/run_spine-d"
+        args = [method, tmp_path, tmp_name]
+    elif pred_name == "disopred":
+        method = paths.DISOPRED_PATH
+        args = [method, fasta_file]
+    elif pred_name == "predisorder":
+        method = paths.PREDISORDER_PATH
+        args = [method, fasta_file, out_file]
+    elif pred_name == "psipred":
+        method = paths.PSIPRED_PATH
+        args = [method, fasta_file]
+    elif pred_name == 'globplot':
+        method = paths.GLOBPLOT_PATH
+        args = [method, '10', '8', '75', '8', '8',
+                fasta_file, '>', out_file]
+    elif pred_name == 'iupred':
+        method = os.path.join(paths.IUPRED_DIR, 'iupred')
+        args = [method, fasta_file, 'long']
+        env = {"IUPred_PATH": paths.IUPRED_DIR}
+
+    try:
+        data = subprocess.check_output(args, env=env)
+        _log.info("Ran command: {}".format(
+            subprocess.list2cmdline(args)
+        ))
+    except (subprocess.CalledProcessError, OSError) as e:
+        _log.error("Error: {}".format(e))
+
+    if pred_name not in ['globplot', 'iupred']:
+        if os.path.exists(out_file):
+            with open(out_file) as f:
+                data = f.read()
+        else:
+            raise RuntimeError("Output file {} doesn't exist".format(
+                out_file))
+    data = txtproc.process_prediction(data, pred_name)
+    return {pred_name: data, 'd2p2': d2p2_result}
 
 
 @celery_app.task

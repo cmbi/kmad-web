@@ -1,11 +1,13 @@
 import glob
 import logging
 import os
+import re
 import tempfile
 import time
 import urllib2
 
 from kmad_web.helpers import txtproc
+from kmad_web.default_settings import SPINE_OUTPUT_DIR
 
 
 _log = logging.getLogger(__name__)
@@ -79,16 +81,18 @@ def get_fasta_from_blast(blast_result, query_filename):
     return outfile_name, success
 
 
-def disopred_outfilename(fasta_file):
-    return '.'.join(fasta_file.split('.')[:-1])+".diso"
-
-
-def psipred_outfilename(fasta_file):
-    return ('.'.join(fasta_file.split('.')[:-1])+".ss2").split('/')[-1]
-
-
-def predisorder_outfilename(fasta_file):
-    return '.'.join(fasta_file.split('.')[:-1])+".predisorder"
+def prediction_filename(fasta_file, method):
+    if method == 'disopred':
+        return '.'.join(fasta_file.split('.')[:-1])+".diso"
+    elif method == 'psipred':
+        return ('.'.join(fasta_file.split('.')[:-1])+".ss2").split('/')[-1]
+    elif method == 'predisorder':
+        return '.'.join(fasta_file.split('.')[:-1])+".predisorder"
+    elif method == 'spine':
+        tmp_name = fasta_file.split('/')[-1].split('.')[0]
+        return os.path.join(SPINE_OUTPUT_DIR, tmp_name)
+    elif method == 'globplot':
+        return re.sub('.fasta', '.gplot', fasta_file)
 
 
 def write_single_fasta(fasta_seq):
