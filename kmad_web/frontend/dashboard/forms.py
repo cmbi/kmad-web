@@ -227,7 +227,8 @@ class KmadForm(Form):
         default='clustalo')
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
-        choices=[('globplot', 'GlobPlot'),
+        choices=[('d2p2', 'D2P2'),
+                 ('globplot', 'GlobPlot'),
                  ('disopred', 'DISOPRED'),
                  ('spine', 'SPINE-D'),
                  ('iupred', 'IUPred'),

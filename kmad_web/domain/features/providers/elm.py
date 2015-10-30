@@ -6,7 +6,7 @@ from kmad_web.services.elm import ElmService
 from kmad_web.parsers.elm import ElmParser
 
 
-class ELmFeatureProvider(object):
+class ElmFeatureProvider(object):
     # go_terms[set] - go_terms for the full set of sequences
     def __init__(self, go_terms):
         elm_parser = ElmParser(ELMDB_PATH)

@@ -9,7 +9,7 @@ from celery import current_app as celery_app
 
 from kmad_web import paths
 
-from kmad_web.helpers import txtproc
+from kmad_web.services import txtproc
 
 from kmad_web.services import files
 from kmad_web.services.consensus import (find_consensus_disorder,
@@ -18,11 +18,11 @@ from kmad_web.services.files import prediction_filename
 from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequenceAnnotator
-from kmad_web.domain.sequences.encoder import SequenceEncoder
+from kmad_web.domain.sequences.encoder import SequencesEncoder
 from kmad_web.domain.fles import write_fles, parse_fles
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.updaters.elm import ElmUpdater
-from kmad_web.default_settiings import KMAD
+from kmad_web.default_settings import KMAD, BLAST_DB
 
 
 logging.basicConfig()
@@ -69,7 +69,7 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 @celery_app.task
 def run_single_predictor(fasta_file, pred_name):
     _log.info("Run single predictor: {}".format(pred_name))
-    out_file = prediction_filename(pred_name)
+    out_file = prediction_filename(fasta_file, pred_name)
     env = {}
     if pred_name == "spine":
         tmp_name = fasta_file.split('/')[-1].split('.')[0]
@@ -110,7 +110,20 @@ def run_single_predictor(fasta_file, pred_name):
             raise RuntimeError("Output file {} doesn't exist".format(
                 out_file))
     data = txtproc.process_prediction(data, pred_name)
+    _log.debug('data: {}'.format(data))
     return {pred_name: data}
+
+
+@celery_app.task
+def process_prediction_results(predictions, fasta_sequence):
+    sequence = ''.join(fasta_sequence.splitlines()[1:])
+    _log.debug("predictions: {}".format(predictions))
+    # predictions are passed here as a list of single key dictionaries
+    predictions = {x.keys()[0]: x.values()[0] for x in predictions}
+    consensus = find_consensus_disorder(predictions.values())
+    predictions['consensus'] = consensus
+    predictions['filtered'] = filter_out_short_stretches(consensus)
+    return {'prediction': predictions, 'sequence': sequence}
 
 
 @celery_app.task
@@ -156,14 +169,20 @@ def get_seq(d2p2, fasta_file):
 @celery_app.task
 def run_blast(fasta_sequence):
     _log.info("Running blast")
-    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=True)
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
     with tmp_file as f:
         f.write(fasta_sequence)
 
-    blast = BlastResultProvider()
+    blast = BlastResultProvider(BLAST_DB)
     blast_result = blast.get_result(tmp_file.name)
     exact_hit = blast.get_exact_hit(blast_result)
-    return {'blast_result': blast_result, 'exact_hit': exact_hit}
+    return {
+        'blast_result': blast_result,
+        'exact_hit': {
+            'seq_id': exact_hit,
+            'found': bool(exact_hit)
+        }
+    }
 
 
 @celery_app.task
@@ -186,7 +205,7 @@ def create_fles(sequences):
     """
     annotator = SequenceAnnotator()
     annotator.annotate(sequences)
-    encoder = SequenceEncoder()
+    encoder = SequencesEncoder()
     encoder.encode(sequences)
     return {
         'fles_path': write_fles(sequences),
@@ -277,11 +296,6 @@ def query_d2p2(blast_result):
     _log.info("Running query_d2p2")
     prediction = []
     try:
-        # seq_length -> temporary solution, until D2P2 fixes their bug
-        #               (that sometimes predictions can be too short -
-        #                than annotate missing residues as 'ambiguous
-        #                disorder prediction'(code 5)
-        seq_length = int(blast_result[0].split(',')[3])
         if blast_result['exact_hit']['found']:
             seq_id = blast_result['exact_hit']['seq_id']
             data = 'seqids=["%s"]' % seq_id
@@ -290,10 +304,10 @@ def query_d2p2(blast_result):
             if response[seq_id]:
                 pred_result = \
                     response[seq_id][0][2]['disorder']['consensus']
-                if len(pred_result) == seq_length:
-                    prediction = txtproc.process_d2p2(pred_result)
+                prediction = txtproc.process_d2p2(pred_result)
     except urllib2.HTTPError and urllib2.URLError:
         _log.debug("D2P2 HTTP/URL Error")
+    print _log.debug("D@P@ {}".format(prediction))
     if prediction:
         return {'d2p2': prediction}
     else:
@@ -396,11 +410,13 @@ def get_task(output_type):
     If the output_type is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
-    if output_type in ['predict', 'predict_and_align', 'align', 'refine',
+    if output_type in ['predict_and_align', 'align', 'refine',
                        'annotate']:
         task = postprocess
     elif output_type == 'hope':
         task = analyze_mutation
+    elif output_type == 'predict':
+        task = process_prediction_results
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
 

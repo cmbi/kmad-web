@@ -11,6 +11,7 @@ from functools import wraps
 from kmad_web.services import files, fieldlist_helper
 from kmad_web.frontend.dashboard.forms import KmadForm
 from kmad_web.services.kmad import KmadStrategyFactory
+from kmad_web.services.kmad import PredictStrategy
 
 
 _log = logging.getLogger(__name__)
@@ -29,22 +30,24 @@ def index():
             and form.first_seq_gapped and form.seq_limit.data):
         _log.debug("validation")
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
-        strategy = KmadStrategyFactory.create(form.output_type.data)
+        # strategy = KmadStrategyFactory.create(form.output_type.data)
 
-        _log.debug("Using '{}'".format(strategy.__class__.__name__))
+        # _log.debug("Using '{}'".format(strategy.__class__.__name__))
 
         single_fasta_filename, multi_fasta_filename, multi_seq_input = (
             files.write_fasta(seq_data))
         from kmad_web.tasks import run_blast, filter_blast, analyze_mutation
 
         if form.output_type.data == "predict":
-            workflow = strategy(seq_data, single_fasta_filename,
-                                multi_fasta_filename,
-                                form.prediction_method.data,
-                                multi_seq_input)
-            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
-                        workflow)()
-            celery_id = job.id
+            # workflow = strategy(seq_data, single_fasta_filename,
+            #                     multi_fasta_filename,
+            #                     form.prediction_method.data,
+            #                     multi_seq_input)
+            # job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
+            #             workflow)()
+            strategy = PredictStrategy(seq_data, form.prediction_method.data)
+
+            celery_id = strategy()
             _log.debug(form.prediction_method.data)
         elif form.output_type.data in ['align', 'refine']:
             workflow = strategy(seq_data, single_fasta_filename,

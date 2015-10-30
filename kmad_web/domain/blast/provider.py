@@ -16,8 +16,15 @@ class BlastResultProvider(object):
     :return: blast result
     """
     def get_result(self, fasta_filename):
-        blast_service = BlastService(self._db_path, self._seq_limit)
+        blast_service = BlastService(self._db_path)
         blast_service.run_blast(fasta_filename)
         blast_parser = BlastParser()
-        result = blast_parser.parse(blast_service.result)
+        blast_parser.parse(blast_service.result)
+        result = blast_parser.blast_hits
         return result
+
+    def get_exact_hit(self, blast_hits):
+        print blast_hits[0]
+        if (blast_hits and blast_hits[0]['slen'] == blast_hits[0]['qlen']
+                and blast_hits[0]['pident'] == '100.00'):
+            return blast_hits[0]['id']

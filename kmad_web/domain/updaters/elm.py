@@ -5,7 +5,7 @@ import time
 from kmad_web.parsers.elm import ElmParser
 from kmad_web.services.elm import ElmService
 from kmad_web.domain.go.providers.go import GoProvider
-from kmad_web.default_settings import ELM_URL, ELM_DB_PATH
+from kmad_web.default_settings import ELM_URL, ELMDB_PATH
 
 logging.basicConfig()
 _log = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ _log = logging.getLogger(__name__)
 class ElmUpdater(object):
     def __init__(self, poll=5):
         self._poll = poll
-        self._elmdb_path = ELM_DB_PATH
+        self._elmdb_path = ELMDB_PATH
         # hold extended go_terms (go term family = go_term + parents + all
         # descendants) in _go_families not to look twice for the same thing
         self._go_families = {}

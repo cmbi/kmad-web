@@ -11,6 +11,13 @@ def unwrap(fasta):
     return new
 
 
-def parse_fasta(self, fastafile):
+def parse_fasta(fastafile):
     fasta_sequence = unwrap(fastafile)
     return fasta_sequence
+
+#TODO: implement
+def check_fasta(sequence):
+    pass
+#TODO: implement
+def make_fasta(sequence):
+    pass

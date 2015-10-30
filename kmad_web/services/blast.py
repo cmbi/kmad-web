@@ -1,6 +1,11 @@
+import logging
 import subprocess
 
 from kmad_web.services.types import ServiceError
+
+
+logging.basicConfig()
+_log = logging.getLogger(__name__)
 
 
 class BlastService(object):
@@ -8,8 +13,7 @@ class BlastService(object):
     :param db_path: path to the BLAST database;
     :param seq_limit: maximum number of sequences;
     """
-    def __init__(self, db_path, seq_limit):
-        self._seq_limit = str(seq_limit)
+    def __init__(self, db_path):
         self._db_path = db_path
         self.result = None
         self._outfmt = "10 qseqid sseqid pident mismatch evalue bitscore slen" \
@@ -23,8 +27,8 @@ class BlastService(object):
     def run_blast(self, fasta_filename):
         args = ['blastp', '-query', fasta_filename, '-evalue', '1e-5',
                 '-num_threads', '15', '-db', self._db_path,
-                '-outfmt', self._outfmt, '-max_target_seqs', self._seq_limit]
+                '-outfmt', self._outfmt]
         try:
-            self._result = subprocess.check_output(args)
+            self.result = subprocess.check_output(args)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)

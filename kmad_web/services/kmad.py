@@ -85,14 +85,14 @@ class PtmsStrategy(object):
 
 # TODO: change
 class PredictStrategy(object):
-    def __init__(self, output_type, fasta_sequence, prediction_methods):
-        self._output_type = output_type
+    def __init__(self, fasta_sequence, prediction_methods):
         self._fasta_sequence = fasta_sequence
         self._prediction_methods = prediction_methods
 
     def __call__(self):
         from celery import chain, group
-        from kmad_web.tasks import run_blast, query_d2p2, run_single_predictor
+        from kmad_web.tasks import (run_blast, query_d2p2, run_single_predictor,
+                                    process_prediction_results)
 
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         with tmp_file as f:
@@ -102,7 +102,7 @@ class PredictStrategy(object):
             prediction_tasks = [
                 chain(
                     run_blast.s(self._fasta_sequence),
-                    query_d2p2.s(self._fasta_)
+                    query_d2p2.s()
                 )
             ]
         else:
@@ -111,7 +111,11 @@ class PredictStrategy(object):
             if pred_name != 'd2p2':
                 prediction_tasks += [run_single_predictor.s(tmp_file.name,
                                                             pred_name)]
-        workflow = group(prediction_tasks)
+        print prediction_tasks
+        workflow = chain(
+            group(prediction_tasks),
+            process_prediction_results.s(self._fasta_sequence)
+        )
         job = workflow()
         return job.id
 

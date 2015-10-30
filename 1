@@ -34,6 +34,7 @@ def create_kmad(output_type):
         files.write_fasta(form['seq_data']))
 
     if output_type == "predict":
+        _log.debug('IF1')
         methods = form['prediction_methods'].split()
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename, methods, multi_seq_input)
@@ -41,6 +42,7 @@ def create_kmad(output_type):
                     workflow)()
         celery_id = job.id
     elif output_type in ['align', 'refine']:
+        _log.debug('IF2')
         usr_features = []
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename,
@@ -57,12 +59,14 @@ def create_kmad(output_type):
                     workflow)()
         celery_id = job.id
     elif output_type == 'annotate':
+        _log.debug('IF3')
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename)
         job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
                     workflow)()
         celery_id = job.id
     elif output_type == 'predict_and_align':
+        _log.debug('IF4')
         methods = form['prediction_methods'].split()
         usr_features = []
         workflow = strategy(form['seq_data'], single_fasta_filename,
@@ -149,6 +153,7 @@ def get_kmad_status(output_type, id):
     response = {'status': async_result.status}
     if async_result.failed():
         response.update({'message': async_result.traceback})
+    _log.debug("Status: {}".format(response))
     return jsonify(response)
 
 
@@ -181,7 +186,7 @@ def get_kmad_result(output_type, id):
                 'filtered_motifs': result[-1]['alignments'][3]
             }}}
     elif output_type == "predict":
-        response = {'result': result}
+        response = {'result': {'prediction': result}}
     elif output_type in ['align', 'refine', 'annotate']:
         _log.debug("Result: {}".format(result))
         response = {'result': {

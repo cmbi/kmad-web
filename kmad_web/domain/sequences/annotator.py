@@ -1,5 +1,5 @@
-from kmad_web.go.providers.uniprot import UniprotGoTermProvider
-from kmad_web.identifiers.uniprot import UniprotIdProvider
+from kmad_web.domain.go.providers.uniprot import UniprotGoTermProvider
+from kmad_web.domain.sequences.uniprot_id import get_uniprot_id
 from kmad_web.domain.features.providers.uniprot import UniprotFeatureProvider
 from kmad_web.domain.features.providers.elm import ElmFeatureProvider
 from kmad_web.domain.features.providers.pfam import PfamFeatureProvider
@@ -41,10 +41,9 @@ class SequenceAnnotator(object):
         return go_terms
 
     def _add_missing_uniprot_ids(sequences):
-        uniprot = UniprotIdProvider()
         for s in sequences:
             if not s['id']:
-                uniprot.get_uniprot_id(s['seq'])
+                s['id'] = get_uniprot_id(s['seq'])
 
     def _annotate_ptms(sequences):
         uniprot = UniprotFeatureProvider()

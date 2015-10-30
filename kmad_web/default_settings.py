@@ -28,5 +28,9 @@ PFAM_URL = "http://pfam.xfam.org/search/sequence"
 KMAD = "KMAD"
 
 # paths
-ELM_DB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'
+ELMDB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'
 NETPHOS_PATH = '/usr/local/bin/netphos'
+# predictors
+SPINE_DIR = "/srv/kmad/spined"
+SPINE_OUTPUT_DIR = SPINE_DIR+"/predout/"
+BLAST_DB = "/home/joanna/data/uniprot_sprot"

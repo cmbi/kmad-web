@@ -97,7 +97,7 @@ def process_prediction(pred_out, pred_name):
         disorder_list = process_globplot(pred_out_list)
     elif pred_name == "iupred":
         disorder_list = process_iupred(pred_out_list)
-    return [pred_name, disorder_list]
+    return disorder_list
 
 
 def process_fasta(fastafile):
@@ -146,7 +146,7 @@ def process_d2p2(prediction):
             processed += [1]
         else:
             processed += [0]
-    return ["D2P2", processed]
+    return processed
 
 
 def process_alignment(data, codon_length):
