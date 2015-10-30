@@ -124,13 +124,17 @@ def remove_files(filename):
 
 
 def write_conf_file(usr_features):
-    parsed_features = txtproc.parse_features(usr_features)
-    tmp_file = tempfile.NamedTemporaryFile(suffix=".cfg", delete=False)
-    _log.debug("Created tmp file '{}'".format(tmp_file.name))
-    with tmp_file as f:
-        _log.debug("Writing data to '{}'".format(tmp_file.name))
-        f.write(parsed_features)
-    return tmp_file.name
+    usr_features = txtproc.remove_empty(usr_features)
+    if usr_features:
+        parsed_features = txtproc.parse_features(usr_features)
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".cfg", delete=False)
+        _log.debug("Created tmp file '{}'".format(tmp_file.name))
+        with tmp_file as f:
+            _log.debug("Writing data to '{}'".format(tmp_file.name))
+            f.write(parsed_features)
+        return tmp_file.name
+    else:
+        return None
 
 
 def write_fasta(seq_data):

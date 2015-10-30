@@ -119,7 +119,9 @@ def process_prediction_results(predictions, fasta_sequence):
     sequence = ''.join(fasta_sequence.splitlines()[1:])
     _log.debug("predictions: {}".format(predictions))
     # predictions are passed here as a list of single key dictionaries
-    predictions = {x.keys()[0]: x.values()[0] for x in predictions}
+    # or a single dictionary (if only one predictor was used)
+    if type(predictions) == list:
+        predictions = {x.keys()[0]: x.values()[0] for x in predictions}
     consensus = find_consensus_disorder(predictions.values())
     predictions['consensus'] = consensus
     predictions['filtered'] = filter_out_short_stretches(consensus)
@@ -307,7 +309,6 @@ def query_d2p2(blast_result):
                 prediction = txtproc.process_d2p2(pred_result)
     except urllib2.HTTPError and urllib2.URLError:
         _log.debug("D2P2 HTTP/URL Error")
-    print _log.debug("D@P@ {}".format(prediction))
     if prediction:
         return {'d2p2': prediction}
     else:
@@ -410,10 +411,12 @@ def get_task(output_type):
     If the output_type is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
-    if output_type in ['predict_and_align', 'align', 'refine',
+    if output_type in ['refine',
                        'annotate']:
         task = postprocess
-    elif output_type == 'hope':
+    elif output_type == 'align':
+        task = process_kmad_alignment
+    elif output_type == 'ptms' or output_type == 'motifs':
         task = analyze_mutation
     elif output_type == 'predict':
         task = process_prediction_results

@@ -8,7 +8,7 @@ from celery import chain, group
 from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
-from kmad_web.services.kmad import KmadStrategyFactory
+from kmad_web.services.kmad import (PredictStrategy, AlignStrategy)
 from kmad_web.services import files
 
 
@@ -26,36 +26,21 @@ def create_kmad(output_type):
 
     """
     form = request.form
-    from kmad_web.tasks import filter_blast, run_blast
-    strategy = KmadStrategyFactory.create(output_type)
-    _log.debug("Using '{}'".format(strategy.__class__.__name__))
-
-    single_fasta_filename, multi_fasta_filename, multi_seq_input = (
-        files.write_fasta(form['seq_data']))
-
     if output_type == "predict":
         methods = form['prediction_methods'].split()
-        workflow = strategy(form['seq_data'], single_fasta_filename,
-                            multi_fasta_filename, methods, multi_seq_input)
-        job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
-                    workflow)()
-        celery_id = job.id
+        strategy = PredictStrategy(form['seq_data'], methods)
+        celery_id = strategy()
     elif output_type in ['align', 'refine']:
         usr_features = []
-        workflow = strategy(form['seq_data'], single_fasta_filename,
-                            multi_fasta_filename,
-                            float(form['gap_open_p']),
-                            float(form['gap_ext_p']), float(form['end_gap_p']),
-                            float(form['ptm_score']),
-                            float(form['domain_score']),
-                            float(form['motif_score']), multi_seq_input,
-                            usr_features, form['output_type'],
-                            ast.literal_eval(form['first_seq_gapped']),
-                            form['alignment_method'],
-                            ast.literal_eval(form['filter_motifs']))
-        job = chain(run_blast.s(single_fasta_filename, form['seq_limit']),
-                    workflow)()
-        celery_id = job.id
+        strategy = AlignStrategy(form['seq_data'],
+                                 float(form['gop']),
+                                 float(form['gep']), float(form['egp']),
+                                 float(form['ptm_score']),
+                                 float(form['domain_score']),
+                                 float(form['motif_score']),
+                                 ast.literal_eval(form['gapped']),
+                                 usr_features)
+        celery_id = strategy()
     elif output_type == 'annotate':
         workflow = strategy(form['seq_data'], single_fasta_filename,
                             multi_fasta_filename)

@@ -10,7 +10,6 @@ from functools import wraps
 
 from kmad_web.services import files, fieldlist_helper
 from kmad_web.frontend.dashboard.forms import KmadForm
-from kmad_web.services.kmad import KmadStrategyFactory
 from kmad_web.services.kmad import PredictStrategy
 
 

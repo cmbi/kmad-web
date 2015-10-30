@@ -1,5 +1,6 @@
 from kmad_web.default_settings import UNIPROT_URL
 from kmad_web.services.uniprot import UniprotService
+from kmad_web.domain.sequences.fasta import parse_fasta
 
 
 class UniprotSequenceProvider(object):
@@ -9,7 +10,5 @@ class UniprotSequenceProvider(object):
     def get_sequence(self, uniprot_id):
         uniprot = UniprotService(self._url)
         fasta = uniprot.get_fasta(uniprot_id)
-        sequence = {}
-        sequence['header'] = fasta.splitlines()[0]
-        sequence['seq'] = ''.join(fasta.splitlines()[1:])
+        sequence = parse_fasta(fasta)
         return sequence
