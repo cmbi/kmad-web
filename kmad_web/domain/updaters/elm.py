@@ -28,24 +28,21 @@ class ElmUpdater(object):
         # and parse it
         elm_parser.parse_motif_classes(elm_data)
         full_motif_classes = elm_parser.motif_classes.copy()
-        print "before extending:", len(full_motif_classes)
         for motif_id in elm_parser.motif_classes:
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
         # make json serializable
-        print "after extending:", len(full_motif_classes)
         self._make_json_friendly(full_motif_classes)
-        print "json friendly: ", len(full_motif_classes)
         # write processed motif_classes to a json file
         with open(self._elmdb_path, 'w') as outfile:
-            json.dumps(full_motif_classes, outfile)
+            json.dump(full_motif_classes, outfile, indent=4)
 
     # TODO: cache
     def _get_extended_go_terms(self, motif_id):
         _log.debug("Getting GO terms for the {} motif".format(motif_id))
         elm_service = ElmService(ELM_URL)
         go_terms = elm_service.get_motif_go_terms(motif_id)
-        for go_term in go_terms:
+        for go_term in list(go_terms):
             if go_term not in self._go_families.keys():
                 go = GoProvider()
                 go.get_parent_terms(go_term)

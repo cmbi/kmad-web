@@ -67,7 +67,7 @@ def postprocess(result, single_filename, multi_filename, conffilename,
 
 
 @celery_app.task
-def run_single_predictor(d2p2_result, fasta_file, pred_name):
+def run_single_predictor(fasta_file, pred_name):
     _log.info("Run single predictor: {}".format(pred_name))
     out_file = prediction_filename(pred_name)
     env = {}
@@ -110,7 +110,7 @@ def run_single_predictor(d2p2_result, fasta_file, pred_name):
             raise RuntimeError("Output file {} doesn't exist".format(
                 out_file))
     data = txtproc.process_prediction(data, pred_name)
-    return {pred_name: data, 'd2p2': d2p2_result}
+    return {pred_name: data}
 
 
 @celery_app.task
@@ -155,18 +155,6 @@ def get_seq(d2p2, fasta_file):
 
 @celery_app.task
 def run_blast(fasta_sequence):
-    # out_blast = filename.split(".")[0]+".blastp"
-    # args = ["blastp", "-query", filename, "-evalue", "1e-5",
-    #         "-num_threads", "15", "-db", paths.SWISSPROT_DB,
-    #         "-out", out_blast, '-outfmt', '10', '-max_target_seqs',
-    #         str(seq_limit)]
-    # try:
-    #     subprocess.call(args)
-    # except subprocess.CalledProcessError as e:
-    #     _log.error("Error: {}".format(e.output))
-    # with open(out_blast) as a:
-    #     output = a.read().splitlines()
-    # return output
     _log.info("Running blast")
     tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=True)
     with tmp_file as f:
@@ -174,7 +162,8 @@ def run_blast(fasta_sequence):
 
     blast = BlastResultProvider()
     blast_result = blast.get_result(tmp_file.name)
-    return blast_result
+    exact_hit = blast.get_exact_hit(blast_result)
+    return {'blast_result': blast_result, 'exact_hit': exact_hit}
 
 
 @celery_app.task
@@ -284,42 +273,31 @@ def analyze_mutation(process_kmad_result, fasta_sequence, position, mutant_aa,
 
 
 @celery_app.task
-def query_d2p2(blast_result, filename, output_type, multi_seq_input):
+def query_d2p2(blast_result):
     _log.info("Running query_d2p2")
-
-    found_it = False
     prediction = []
     try:
-        if not (multi_seq_input and output_type == 'align'):
-            [found_it, seq_id] = txtproc.find_seqid_blast(blast_result)
-            # seq_length -> temporary solution, until D2P2 fixes their bug
-            #               (that sometimes predictions can be too short -
-            #                than annotate missing residues as 'ambiguous
-            #                disorder prediction'(code 5)
-            seq_length = int(blast_result[0].split(',')[3])
-            if found_it:
-                data = 'seqids=["%s"]' % seq_id
-                request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-                response = json.loads(urllib2.urlopen(request).read())
-                if response[seq_id]:
-                    pred_result = \
-                        response[seq_id][0][2]['disorder']['consensus']
-                    '''
-                    if len(pred_result) < seq_length:
-                        pred_result.extend([5 for i in range(len(pred_result),
-                                                             seq_length + 1)])
-                    elif len(pred_result) > seq_length:
-                        pred_result = pred_result[:seq_length]
-                    '''
-                    if len(pred_result) == seq_length:
-                        prediction = txtproc.process_d2p2(pred_result)
-                    else:
-                        found_it = False
-                else:
-                    found_it = False
+        # seq_length -> temporary solution, until D2P2 fixes their bug
+        #               (that sometimes predictions can be too short -
+        #                than annotate missing residues as 'ambiguous
+        #                disorder prediction'(code 5)
+        seq_length = int(blast_result[0].split(',')[3])
+        if blast_result['exact_hit']['found']:
+            seq_id = blast_result['exact_hit']['seq_id']
+            data = 'seqids=["%s"]' % seq_id
+            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
+            response = json.loads(urllib2.urlopen(request).read())
+            if response[seq_id]:
+                pred_result = \
+                    response[seq_id][0][2]['disorder']['consensus']
+                if len(pred_result) == seq_length:
+                    prediction = txtproc.process_d2p2(pred_result)
     except urllib2.HTTPError and urllib2.URLError:
         _log.debug("D2P2 HTTP/URL Error")
-    return [blast_result, [found_it, prediction]]
+    if prediction:
+        return {'d2p2': prediction}
+    else:
+        return None
 
 
 # @celery_app.task

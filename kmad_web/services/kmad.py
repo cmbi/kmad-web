@@ -1,4 +1,5 @@
 import logging
+import tempfile
 
 
 from kmad_web.helpers import txtproc
@@ -24,7 +25,7 @@ class KmadStrategyFactory(object):
             raise ValueError("Unexpected output type '{}'".format(output_type))
 
 
-def MotifsStrategy(object):
+class MotifsStrategy(object):
     def __init__(self, sequence, position, mutant_aa):
         if not check_fasta(sequence):
             self._fasta_sequence = make_fasta(sequence)
@@ -54,7 +55,7 @@ def MotifsStrategy(object):
         return job.id
 
 
-def PtmsStrategy(object):
+class PtmsStrategy(object):
     def __init__(self, sequence, position, mutant_aa):
         if not check_fasta(sequence):
             self._fasta_sequence = make_fasta(sequence)
@@ -84,27 +85,35 @@ def PtmsStrategy(object):
 
 # TODO: change
 class PredictStrategy(object):
-    def __init__(self, output_type):
-        self.output_type = output_type
+    def __init__(self, output_type, fasta_sequence, prediction_methods):
+        self._output_type = output_type
+        self._fasta_sequence = fasta_sequence
+        self._prediction_methods = prediction_methods
 
-    def __call__(self, fasta_seq, single_fasta_filename, multi_fasta_filename,
-                 prediction_methods, multi_seq_input):
+    def __call__(self):
         from celery import chain, group
-        from kmad_web.tasks import (query_d2p2, run_single_predictor,
-                                    postprocess, get_seq)
+        from kmad_web.tasks import run_blast, query_d2p2, run_single_predictor
 
-        conffilename = ""
-        tasks_to_run = [get_seq.s(fasta_seq)]
-        for pred_name in prediction_methods:
-            tasks_to_run += [run_single_predictor.s(single_fasta_filename,
-                                                    pred_name)]
-        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
-                                      multi_seq_input),
-                         group(tasks_to_run),
-                         postprocess.s(single_fasta_filename,
-                                       multi_fasta_filename,
-                                       conffilename, self.output_type))
-        return workflow
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+        with tmp_file as f:
+            f.write(self._fasta_sequence)
+
+        if 'd2p2' in self._prediction_methods:
+            prediction_tasks = [
+                chain(
+                    run_blast.s(self._fasta_sequence),
+                    query_d2p2.s(self._fasta_)
+                )
+            ]
+        else:
+            prediction_tasks = []
+        for pred_name in self._prediction_methods:
+            if pred_name != 'd2p2':
+                prediction_tasks += [run_single_predictor.s(tmp_file.name,
+                                                            pred_name)]
+        workflow = group(prediction_tasks)
+        job = workflow()
+        return job.id
 
 
 # TODO: remove

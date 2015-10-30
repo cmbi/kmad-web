@@ -7,6 +7,7 @@ from kmad_web.services.helpers import soap
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
+
 class GoService(object):
     def __init__(self, url=None):
         self._url = url
