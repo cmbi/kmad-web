@@ -18,9 +18,11 @@ def test_clustalo_service():
 def test_clustalw_service():
     clustalw = ClustalwService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
+    dnd = "tests/unit/testdata/test_multi.dnd"
     out = clustalw.align(test_filename)
     ok_(os.path.exists(out))
     os.remove(out)
+    os.remove(dnd)
 
 
 def test_mafft_service():
