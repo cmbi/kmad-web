@@ -17,11 +17,16 @@ from kmad_web.services.consensus import (find_consensus_disorder,
 from kmad_web.services.files import prediction_filename
 from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
-from kmad_web.domain.sequences.annotator import SequenceAnnotator
+from kmad_web.domain.sequences.annotator import SequencesAnnotator
 from kmad_web.domain.sequences.encoder import SequencesEncoder
+from kmad_web.domain.sequences.fasta import parse_fasta
 from kmad_web.domain.fles import write_fles, parse_fles, fles2fasta
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.updaters.elm import ElmUpdater
+from kmad_web.services.alignment import (ClustaloService, ClustalwService,
+                                         MafftService, MuscleService,
+                                         TcoffeeService)
+
 from kmad_web.default_settings import KMAD, BLAST_DB
 
 
@@ -127,6 +132,28 @@ def process_prediction_results(predictions, fasta_sequence):
 
 
 @celery_app.task
+def prealign(fasta_file, alignment_method):
+    service_dict = {
+        'clustalo': ClustaloService,
+        'clustalw': ClustalwService,
+        'mafft': MafftService,
+        'muscle': MuscleService,
+        't_coffee': TcoffeeService
+    }
+
+    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+    with tmp_file as f:
+        f.write(fasta_file)
+
+    alignment_service = service_dict[alignment_method]()
+    filename = alignment_service.align()
+    with open(filename) as a:
+        fasta_file = a.read()
+    sequences = parse_fasta(fasta_file)
+    return sequences
+
+
+@celery_app.task
 def annotate(d2p2, filename):
     _log.info("Running annotate")
 
@@ -203,7 +230,7 @@ def create_fles(sequences):
     :param sequences: list sequence dictionaries ({'header': '', 'seq': ''})
     :return: filename
     """
-    annotator = SequenceAnnotator()
+    annotator = SequencesAnnotator()
     annotator.annotate(sequences)
     encoder = SequencesEncoder()
     encoder.encode(sequences)

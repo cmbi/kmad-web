@@ -13,7 +13,7 @@ logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
-class SequenceAnnotator(object):
+class SequencesAnnotator(object):
     def __init__(self):
         self._sequences = []
         self._poll = 5
