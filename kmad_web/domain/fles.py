@@ -1,4 +1,3 @@
-import os
 import tempfile
 
 
@@ -14,16 +13,24 @@ def write_fles(sequences):
     return tmp_file.name
 
 
-def parse_fles(fles_path):
-    if not os.path.exists(fles_path):
-        raise RuntimeError("Alignment file not found")
-    else:
-        with open(fles_path) as a:
-            fles = a.read().splitlines()
-        alignment = []
-        for l in range(0, len(fles), 2):
-            sequence = {}
-            sequence['header'] = fles[l]
-            sequence['encoded_seq'] = fles[l + 1]
-            alignment.append(sequence)
-        return alignment
+def parse_fles(fles_file):
+    fles_lines = fles_file.splitlines()
+    alignment = []
+    for l in range(0, len(fles_lines), 2):
+        sequence = {}
+        sequence['header'] = fles_lines[l]
+        sequence['encoded_seq'] = fles_lines[l + 1]
+        alignment.append(sequence)
+    return alignment
+
+
+def fles2fasta(fles_file):
+    fles_lines = fles_file.splitlines()
+    fasta_lines = []
+    codon_length = 7
+    for line in fles_lines:
+        if line.startswith('>'):
+            fasta_lines.append(line)
+        else:
+            fasta_lines.append(line[::codon_length])
+    return '\n'.join(fasta_lines)

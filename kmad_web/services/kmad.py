@@ -122,7 +122,8 @@ class AlignStrategy(object):
 
     def __call__(self):
 
-        from kmad_web.tasks import (create_fles, run_kmad, run_blast,
+        from kmad_web.tasks import (create_fles, get_sequences_from_blast,
+                                    run_kmad, run_blast,
                                     process_kmad_alignment)
         from celery import chain
 
@@ -133,6 +134,7 @@ class AlignStrategy(object):
             tasks = [create_fles.s(sequences)]
         else:
             tasks = [run_blast.s(self._fasta),
+                     get_sequences_from_blast.s(),
                      create_fles.s()]
         tasks.extend([
             run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,

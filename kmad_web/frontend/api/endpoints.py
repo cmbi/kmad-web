@@ -32,14 +32,12 @@ def create_kmad(output_type):
         celery_id = strategy()
     elif output_type in ['align', 'refine']:
         usr_features = []
-        strategy = AlignStrategy(form['seq_data'],
-                                 float(form['gop']),
-                                 float(form['gep']), float(form['egp']),
-                                 float(form['ptm_score']),
-                                 float(form['domain_score']),
-                                 float(form['motif_score']),
-                                 ast.literal_eval(form['gapped']),
-                                 usr_features)
+        strategy = AlignStrategy(
+            form['seq_data'], str(form['gop']), str(form['gep']),
+            str(form['egp']), str(form['ptm_score']), str(form['domain_score']),
+            str(form['motif_score']), ast.literal_eval(form['gapped']),
+            usr_features
+        )
         celery_id = strategy()
     elif output_type == 'annotate':
         workflow = strategy(form['seq_data'], single_fasta_filename,
@@ -154,20 +152,9 @@ def get_kmad_result(output_type, id):
     task = get_task(output_type)
     result = task.AsyncResult(id).get()
     _log.debug("Result: {}".format(result))
-    if output_type == "predict_and_align":
-        response = {'result': {
-            'prediction': result[0:-1],
-            'feature_codemap': result[-1]['alignments'][3],
-            'annotated_motifs': result[-1]['annotated_motifs'],
-            'alignment': {
-                'raw': result[-1]['alignments'][0],
-                'processed': result[-1]['alignments'][1],
-                'encoded': result[-1]['alignments'][2],
-                'filtered_motifs': result[-1]['alignments'][3]
-            }}}
-    elif output_type == "predict":
+    if output_type in ['predict', 'align']:
         response = {'result': result}
-    elif output_type in ['align', 'refine', 'annotate']:
+    elif output_type in ['refine', 'annotate']:
         _log.debug("Result: {}".format(result))
         response = {'result': {
             'feature_codemap': result[-1]['alignments'][3],

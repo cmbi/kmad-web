@@ -17,7 +17,7 @@ def unwrap(fasta):
 
 
 def parse_fasta(fastafile):
-    fasta_data = unwrap(fastafile)
+    fasta_data = unwrap(fastafile.splitlines())
     for i in range(0, len(fasta_data), 2):
         sequence = {
             'header': fasta_data[i],
@@ -52,7 +52,6 @@ def check_fasta(sequence_data):
         alright = (data_lines[0].startswith('>')
                    and not data_lines[-1].startswith('>')
                    and alpha_or_dash(data_lines[-1]))
-        _log.debug("FAIL FAIL FAIL")
         if alright:
             for i, lineI in enumerate(data_lines[:-1]):
                 fasta_header = lineI.startswith('>')

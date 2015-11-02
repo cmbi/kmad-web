@@ -40,6 +40,7 @@ class PfamService(object):
 
     def _create(self, fasta_sequence):
         try:
+            _log.debug("fasta_sequence: {}".format(fasta_sequence))
             data = {'seq': fasta_sequence, 'output': 'xml'}
             request = requests.post(self._url, data=data)
             request.raise_for_status()
@@ -47,7 +48,11 @@ class PfamService(object):
                 raise ServiceError(e)
         else:
             result = xmltodict.parse(request.text)
-        result_url = result['jobs']['job']['result_url']
+            try:
+                result_url = result['jobs']['job']['result_url']
+            except KeyError as e:
+                raise ServiceError(
+                    "{}\nUnexpected response from Pfam".format(e))
         return result_url
 
     def _status(self, url):

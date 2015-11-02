@@ -19,7 +19,7 @@ from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequenceAnnotator
 from kmad_web.domain.sequences.encoder import SequencesEncoder
-from kmad_web.domain.fles import write_fles, parse_fles
+from kmad_web.domain.fles import write_fles, parse_fles, fles2fasta
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.updaters.elm import ElmUpdater
 from kmad_web.default_settings import KMAD, BLAST_DB
@@ -110,14 +110,12 @@ def run_single_predictor(fasta_file, pred_name):
             raise RuntimeError("Output file {} doesn't exist".format(
                 out_file))
     data = txtproc.process_prediction(data, pred_name)
-    _log.debug('data: {}'.format(data))
     return {pred_name: data}
 
 
 @celery_app.task
 def process_prediction_results(predictions, fasta_sequence):
     sequence = ''.join(fasta_sequence.splitlines()[1:])
-    _log.debug("predictions: {}".format(predictions))
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
     if type(predictions) == list:
@@ -191,7 +189,7 @@ def run_blast(fasta_sequence):
 def get_sequences_from_blast(blast_result):
     sequences = []
     uniprot = UniprotSequenceProvider()
-    for s in blast_result:
+    for s in blast_result['blast_result']:
         sequence = uniprot.get_sequence(s['id'])
         sequences.append(sequence)
     return sequences
@@ -233,9 +231,9 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     :conf_path: path to the configuration file
     :gapped: True for standard alignment
     :full_ungapped: indel-free alignment but in a standard alignment format
-                    (no residues are cut out from the final alignment,
-                     but in all alignment rounds profile length is equal
-                     query sequence length)
+        (no residues are cut out from the final alignment,
+        but in all alignment rounds profile length is equal
+        query sequence length)
     """
     fles_path = create_fles_result['fles_path']
     sequences = create_fles_result['sequences']
@@ -268,11 +266,27 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
 def process_kmad_alignment(run_kmad_result):
     fles_path = run_kmad_result['fles_path']
     sequences = run_kmad_result['sequences']
+    codon_length = 7
 
-    alignment = parse_fles(fles_path)
+    if not os.path.exists(fles_path):
+        raise RuntimeError(
+            "Couldn't find the alignment file: {}".format(fles_path)
+        )
+
+    with open(fles_path) as a:
+        fles_file = a.read()
+    alignment = parse_fles(fles_file)
+    fasta_file = fles2fasta(fles_file)
+
     for s_index, s in enumerate(alignment):
-        sequences[s_index]['aligned'] = s['seq']
+        _log.debug(
+            "aligned_sequence: {}".format(s)
+        )
+        sequences[s_index]['encoded_aligned'] = s['encoded_seq']
+        sequences[s_index]['aligned'] = s['encoded_seq'][::codon_length]
     return {
+        'fles_file': fles_file,
+        'fasta_file': fasta_file,
         'sequences': sequences,
         'motif_code_dict': run_kmad_result['motif_code_dict'],
         'domain_code_dict': run_kmad_result['domain_code_dict']

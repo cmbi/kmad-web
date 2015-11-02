@@ -50,7 +50,6 @@ class UsrFeatureEntryForm(Form):
                 i_list = i.split('-')
                 non_int = not all(e.isdigit() and int(e) > 0 for e in i_list)
                 if non_int or len(i_list) not in [1, 2]:
-                    _log.debug("item: {}".format(i_list))
                     raise validators.ValidationError('Feature positions need \
                                                       to be listed in a comma \
                                                       separated format, e.g. \

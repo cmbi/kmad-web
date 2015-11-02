@@ -1,13 +1,18 @@
+import logging
 import string
 
 from collections import OrderedDict
 
 
+logging.basicConfig()
+_log = logging.getLogger(__name__)
+
+
 class SequencesEncoder(object):
     def __init__(self):
         self._sequences = []
-        self._motif_code_dict = {}
-        self._domain_code_dict = {}
+        self.motif_code_dict = {}
+        self.domain_code_dict = {}
         # domain code is 2 chars long
         self._domain_pos = 2
         # ptm code is 1 chars long
@@ -21,8 +26,8 @@ class SequencesEncoder(object):
         self._create_codon_sequences()
         # make code dicts for motifs and domains
         # (code dict for PTMs is constant)
-        self.motif_code_dict = self._create_motif_code_dict('motifs')
-        self.domain_code_dict = self._create_domain_code_dict('domains')
+        self.motif_code_dict = self._create_motif_code_dict()
+        self.domain_code_dict = self._create_domain_code_dict()
         self._ptm_code_dict = OrderedDict([
             ('phosphorylation', ["N", "O", "P", "Q", "d"]),
             ('acetylation',     ["B", "C", "D", "E"]),
@@ -50,19 +55,19 @@ class SequencesEncoder(object):
             for char_j in alphanum_chars:
                 self._code_alphabet.append(char_i + char_j)
 
-    def _create_motif_code_dict(self, feature_type):
+    def _create_motif_code_dict(self):
         feat_ids = set()
         for s in self._sequences:
-            feat_ids.update([f['id'] for f in s[feature_type]])
+            feat_ids.update([f['id'] for f in s['motifs']])
         feat_ids = list(feat_ids)
         feat_code_dict = {feat_ids[i]: self._code_alphabet[i]
                           for i in range(len(feat_ids))}
         return feat_code_dict
 
-    def _create_domain_code_dict(self, feature_type):
+    def _create_domain_code_dict(self):
         feat_ids = set()
         for s in self._sequences:
-            feat_ids.update([f['accession'] for f in s[feature_type]])
+            feat_ids.update([f['accession'] for f in s['domains']])
         feat_ids = list(feat_ids)
         feat_code_dict = {feat_ids[i]: self._code_alphabet[i]
                           for i in range(len(feat_ids))}
@@ -137,7 +142,7 @@ class SequencesEncoder(object):
         pos = self._motif_pos
         for s in self._sequences:
             for m in s['motifs']:
-                motif_code = self._motif_code_dict[m['id']]
+                motif_code = self.motif_code_dict[m['id']]
                 for i in range(m['start'] - 1, m['end']):
                     s['codon_seq'][i][pos:pos+2] = motif_code
 
@@ -150,8 +155,8 @@ class SequencesEncoder(object):
         pos = self._domain_pos
         for s in self._sequences:
             for d in s['domains']:
-                domain_code = self._domain_code_dict[d['accession']]
-                for i in range(d['start'] - 1, d['end']):
+                domain_code = self.domain_code_dict[d['accession']]
+                for i in range(int(d['start']) - 1, int(d['end'])):
                     s['codon_seq'][i][pos:pos+2] = domain_code
 
     """

@@ -1,3 +1,6 @@
+import logging
+import time
+
 from kmad_web.domain.go.providers.uniprot import UniprotGoTermProvider
 from kmad_web.domain.sequences.uniprot_id import get_uniprot_id
 from kmad_web.domain.features.providers.uniprot import UniprotFeatureProvider
@@ -6,9 +9,14 @@ from kmad_web.domain.features.providers.pfam import PfamFeatureProvider
 from kmad_web.domain.features.providers.netphos import NetphosFeatureProvider
 
 
+logging.basicConfig()
+_log = logging.getLogger(__name__)
+
+
 class SequenceAnnotator(object):
     def __init__(self):
         self._sequences = []
+        self._poll = 5
 
     """
     input sequences
@@ -51,16 +59,18 @@ class SequenceAnnotator(object):
         for s in self.sequences:
             s['ptms'] = netphos.get_phosphorylations(s['seq'])
             if s['id']:
-                s['ptms'].extend(uniprot.get_ptms(s['id']))
+                uniprot_ptms = uniprot.get_ptms(s['id'])
+                if uniprot_ptms:
+                    s['ptms'].extend(uniprot_ptms)
 
     def _annotate_motifs(self, go_terms):
-        elm = ElmFeatureProvider()
+        elm = ElmFeatureProvider(go_terms)
         for s in self.sequences:
             s['motifs'] = elm.get_motif_instances(s['seq'], s['id'])
             s['motifs_filtered'] = elm.filter_motifs(s['motifs'])
 
     def _annotate_domains(self):
         for s in self.sequences:
-            fasta_sequence = '>seq\n{}\n'.format(s)
             pfam = PfamFeatureProvider()
-            s['domains'] = pfam.get_domains(fasta_sequence)
+            s['domains'] = pfam.get_domains(s)
+            time.sleep(self._poll)

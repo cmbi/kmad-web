@@ -11,7 +11,7 @@ class NetphosFeatureProvider(object):
 
     def get_phosphorylations(self, sequence):
         fasta_sequence = ">sequence\n{}\n".format(sequence)
-        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=True)
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         with tmp_file as f:
             f.write(fasta_sequence)
         netphos_service = NetphosService(NETPHOS_PATH)
@@ -22,7 +22,7 @@ class NetphosFeatureProvider(object):
         for p in netphos_parser.phosph_positions:
             phosph = {'name': 'phosphorylation',
                       'annotation_level': 4,
-                      'positions': p
+                      'position': p
                       }
             phosphorylations.append(phosph)
         return phosphorylations
