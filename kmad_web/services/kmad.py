@@ -105,7 +105,6 @@ class PredictStrategy(object):
         return job.id
 
 
-# TODO: change
 class AlignStrategy(object):
     def __init__(self, sequence_data, gop, gep, egp, ptm_score,
                  domain_score, motif_score, gapped, usr_features):
@@ -146,6 +145,59 @@ class AlignStrategy(object):
         job = workflow()
         return job.id
 
+
+class RefineStrategy(object):
+    def __init__(self, sequence_data, gop, gep, egp, ptm_score,
+                 domain_score, motif_score, gapped, usr_features,
+                 alignment_method=None):
+        self._fasta = make_fasta(sequence_data)
+        self._gop = gop
+        self._gep = gep
+        self._egp = egp
+        self._ptm_score = ptm_score
+        self._motif_score = motif_score
+        self._domain_score = domain_score
+        self._gapped = gapped
+        self._usr_features = usr_features
+        self._multi_fasta = sequence_data.count('>') > 1
+        self._alignment_method = alignment_method
+
+    def __call__(self):
+
+        from kmad_web.tasks import (create_fles, get_sequences_from_blast,
+                                    run_kmad, run_blast, prealign,
+                                    process_kmad_alignment)
+        from celery import chain
+
+        config_path = files.write_conf_file(self._usr_features)
+
+        if not self._multi_fasta and self._alignment_method:
+            tasks = [
+                run_blast.s(self._fasta),
+                get_sequences_from_blast.s(),
+                prealign.s(self._alignment_method),
+                create_fles.s()
+            ]
+        elif self._multi_fasta and self._alignment_method:
+            tasks = [
+                prealign.s(self._alignment_method),
+                create_fles.s()
+            ]
+        elif self._multi_fasta and not self._alignment_method:
+            sequences = parse_fasta(self._fasta)
+            tasks = [create_fles.s(sequences)]
+        else:
+            raise RuntimeError("sequence data holds a single sequence, but no"
+                               " prealignment method is specified")
+        tasks.extend([
+            run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
+                       self._domain_score, self._motif_score, config_path,
+                       self._gapped, refine=True),
+            process_kmad_alignment.s()
+        ])
+        workflow = chain(tasks)
+        job = workflow()
+        return job.id
 
 # TODO: change
 class AnnotateStrategy(object):

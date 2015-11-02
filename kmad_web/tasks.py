@@ -217,7 +217,8 @@ def create_fles(sequences):
 
 @celery_app.task
 def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
-             motif_score, conf_path=None, gapped=False, full_ungapped=False):
+             motif_score, conf_path=None, gapped=False, full_ungapped=False,
+             refine=False):
     """
     Run KMAD on the given fles_filename and return aligned sequences (dict)
 
@@ -244,6 +245,8 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     # additional parameters
     if conf_path:
         args.extend(['--conf', conf_path])
+    if refine:
+        args.extend(['--refine'])
     if gapped:
         args.extend(['--gapped'])
     elif full_ungapped:
