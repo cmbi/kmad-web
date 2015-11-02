@@ -14,7 +14,7 @@ class ClustaloService(object):
         args = [self._path, '-i', filename, '-o', out_filename]
 
         try:
-            subprocess.call(args)
+            subprocess.call(args, stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
 
@@ -24,6 +24,7 @@ class ClustaloService(object):
 class ClustalwService(object):
     def __init__(self):
         self._path = CLUSTALW
+        self._suffix = "_al"
 
     def align(self, filename):
         out_filename = filename + self._suffix
@@ -34,7 +35,8 @@ class ClustalwService(object):
         ]
 
         try:
-            subprocess.call(args)
+            subprocess.call(args, stderr=subprocess.PIPE,
+                            stdout=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
 
@@ -44,13 +46,14 @@ class ClustalwService(object):
 class MafftService(object):
     def __init__(self):
         self._path = MAFFT
+        self._suffix = "_al"
 
     def align(self, filename):
         out_filename = filename + self._suffix
         args = ["mafft", filename]
         try:
             with open(out_filename, 'w') as out:
-                subprocess.call(args, stdout=out)
+                subprocess.call(args, stdout=out, stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
 
@@ -60,6 +63,7 @@ class MafftService(object):
 class MuscleService(object):
     def __init__(self):
         self._path = MUSCLE
+        self._suffix = "_al"
 
     def align(self, filename):
         out_filename = filename + self._suffix
@@ -67,7 +71,8 @@ class MuscleService(object):
         args = [self._path, "-in", filename, "-out", out_filename]
 
         try:
-            subprocess.call(args)
+            subprocess.call(args, stderr=subprocess.PIPE,
+                            stdout=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
 
@@ -77,6 +82,7 @@ class MuscleService(object):
 class TcoffeeService(object):
     def __init__(self):
         self._path = TCOFFEE
+        self._suffix = "_al"
 
     def align(self, filename):
         out_filename = filename + self._suffix
@@ -87,7 +93,8 @@ class TcoffeeService(object):
         ]
 
         try:
-            subprocess.call(args)
+            subprocess.call(args, stderr=subprocess.PIPE,
+                            stdout=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
 

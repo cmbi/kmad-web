@@ -30,6 +30,11 @@ KMAD = "kmad"
 # paths
 ELMDB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'
 NETPHOS_PATH = '/usr/local/bin/netphos'
+CLUSTALO = '/usr/bin/clustalo'
+CLUSTALW = '/usr/local/bin/clustalw2'
+MUSCLE = '/usr/local/bin/muscle'
+MAFFT = '/usr/local/bin/mafft'
+TCOFFEE = '/usr/local/bin/t_coffee'
 # predictors
 SPINE_DIR = "/srv/kmad/spined"
 SPINE_OUTPUT_DIR = SPINE_DIR+"/predout/"
