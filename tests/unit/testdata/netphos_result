@@ -1,0 +1,101 @@
+>sp_P28360_MSX1_HUMAN	303 amino acids
+#
+# netphos-3.1b prediction results
+#
+# Sequence		   # x   Context     Score   Kinase    Answer
+# -------------------------------------------------------------------
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.542   PKG        YES
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.430   GSK3        . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.423   CaM-II      . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.363   CKI         . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.347   DNAPK       . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.336   p38MAPK     . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.326   cdc2        . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.315   CKII        . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.266   unsp        . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.255   ATM         . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.202   cdk5        . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.202   RSK         . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.165   PKA         . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.075   PKC         . 
+# sp_P28360_MSX1_HUMAN     8 T   AADMTSLPL   0.070   PKB         . 
+#
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.454   GSK3        . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.415   CKI         . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.408   CaM-II      . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.393   DNAPK       . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.381   cdc2        . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.357   ATM         . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.324   PKA         . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.321   CKII        . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.308   RSK         . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.294   p38MAPK     . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.284   PKG         . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.182   cdk5        . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.094   PKB         . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.085   PKC         . 
+# sp_P28360_MSX1_HUMAN     9 S   ADMTSLPLG   0.013   unsp        . 
+#
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.451   GSK3        . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.449   CaM-II      . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.377   CKI         . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.374   cdc2        . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.350   PKG         . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.341   DNAPK       . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.322   p38MAPK     . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.296   CKII        . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.277   ATM         . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.276   RSK         . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.213   PKA         . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.177   cdk5        . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.131   unsp        . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.127   PKC         . 
+# sp_P28360_MSX1_HUMAN    19 S   KVEDSAFGK   0.085   PKB         . 
+#
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.583   PKC        YES
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.457   cdc2        . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.448   GSK3        . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.446   CaM-II      . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.361   CKI         . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.359   DNAPK       . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.318   PKG         . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.296   p38MAPK     . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.291   RSK         . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.285   CKII        . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.262   ATM         . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.209   PKA         . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.175   cdk5        . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.075   PKB         . 
+# sp_P28360_MSX1_HUMAN    34 S   GQAPSAAAA   0.025   unsp        . 
+#
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.438   CaM-II      . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.436   GSK3        . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.411   PKC         . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.362   CKI         . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.358   cdc2        . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.353   PKG         . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.348   DNAPK       . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.317   p38MAPK     . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.299   CKII        . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.245   ATM         . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.206   RSK         . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.200   cdk5        . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.124   PKA         . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.080   PKB         . 
+# sp_P28360_MSX1_HUMAN    39 T   AAAATAAAM   0.018   unsp        . 
+#
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.959   unsp       YES
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.672   PKA        YES
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.482   RSK         . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.482   GSK3        . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.475   p38MAPK     . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.467   CaM-II      . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.399   PKG         . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.385   cdc2        . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.377   cdk5        . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.355   CKI         . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.344   DNAPK       . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.290   ATM         . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.243   CKII        . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.082   PKB         . 
+# sp_P28360_MSX1_HUMAN    55 S   KPKVSPSLL   0.054   PKC         . 

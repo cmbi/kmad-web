@@ -1,0 +1,2 @@
+class FeatureProviderError(RuntimeError):
+    pass

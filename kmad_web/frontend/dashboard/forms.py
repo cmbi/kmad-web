@@ -50,7 +50,6 @@ class UsrFeatureEntryForm(Form):
                 i_list = i.split('-')
                 non_int = not all(e.isdigit() and int(e) > 0 for e in i_list)
                 if non_int or len(i_list) not in [1, 2]:
-                    _log.debug("item: {}".format(i_list))
                     raise validators.ValidationError('Feature positions need \
                                                       to be listed in a comma \
                                                       separated format, e.g. \
@@ -110,7 +109,7 @@ def check_if_fasta(sequences):
                                           acid codes')
 
 
-class KmanForm(Form):
+class KmadForm(Form):
     def validate_sequence(form, field):
         i = 0
         seq_list = field.data.splitlines()
@@ -227,7 +226,8 @@ class KmanForm(Form):
         default='clustalo')
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
-        choices=[('globplot', 'GlobPlot'),
+        choices=[('d2p2', 'D2P2'),
+                 ('globplot', 'GlobPlot'),
                  ('disopred', 'DISOPRED'),
                  ('spine', 'SPINE-D'),
                  ('iupred', 'IUPred'),
