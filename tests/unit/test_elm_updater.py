@@ -4,21 +4,19 @@ from nose.tools import eq_
 from kmad_web.domain.updaters.elm import ElmUpdater
 
 
-"""
+@patch('kmad_web.services.elm.ElmUpdater._get_extended_go_terms')
 @patch('kmad_web.domain.updaters.elm.json.dumps')
 @patch('kmad_web.services.elm.ElmService.get_all_classes')
-def test_update(mock_get_all_classes, mock_json_dumps):
+def test_update(mock_get_all_classes, mock_json_dumps,
+                mock_get_extended_go_terms):
     with open('tests/unit/testdata/test_elm_classes.tsv') as a:
         test_classes = a.read()
     mock_get_all_classes.return_value = test_classes
+    mock_get_extended_go_terms.return_value = ['goterm1', 'goterm2']
 
     elm = ElmUpdater()
     elm.update()
-    expected_json = {'CLV_C14_Caspase3-7': {'GO': ['0001817', '0030154',
-                                                   '0006915', '0008283',
-                                                   '0006508', '0005829',
-                                                   '0005634', '0005515',
-                                                   '0004197'],
+    expected_json = {'CLV_C14_Caspase3-7': {'GO': ['goterm1', 'goterm2'],
                                             'pattern':
                                                 '[DSTE][^P][^DEWHFYC]D[GSAN]',
                                             'class': "Caspase-3 and "
@@ -26,9 +24,3 @@ def test_update(mock_get_all_classes, mock_json_dumps):
                                             'probability': '0.00309374033071'}
                      }
     eq_(list(mock_json_dumps.call_args)[0][0], expected_json)
-"""
-
-
-def test_actual_update():
-    elm = ElmUpdater()
-    elm.update()

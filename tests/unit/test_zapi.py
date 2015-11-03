@@ -1,3 +1,4 @@
+"""
 import inspect
 import json
 import re
@@ -232,3 +233,4 @@ class TestEndpoints(object):
                 url = url.replace('>', '&gt;')
                 url = url.replace('<', '&lt;')
                 assert "<samp>/api{}</samp>".format(url) in rv.data
+                """

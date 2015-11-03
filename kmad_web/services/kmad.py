@@ -2,8 +2,7 @@ import logging
 import tempfile
 
 
-from kmad_web.helpers import txtproc
-from kmad_web.services import files
+from kmad_web.domain.features.user_features import UserFeaturesParser
 from kmad_web.domain.sequences.fasta import (check_fasta, make_fasta,
                                              parse_fasta)
 
@@ -96,7 +95,6 @@ class PredictStrategy(object):
             if pred_name != 'd2p2':
                 prediction_tasks += [run_single_predictor.s(tmp_file.name,
                                                             pred_name)]
-        print prediction_tasks
         workflow = chain(
             group(prediction_tasks),
             process_prediction_results.s(self._fasta_sequence)
@@ -126,7 +124,8 @@ class AlignStrategy(object):
                                     process_kmad_alignment)
         from celery import chain
 
-        config_path = files.write_conf_file(self._usr_features)
+        user_feat_parser = UserFeaturesParser()
+        config_path = user_feat_parser.write_conf_file(self._usr_features)
 
         if self._multi_fasta:
             sequences = parse_fasta(self._fasta)
@@ -169,7 +168,8 @@ class RefineStrategy(object):
                                     process_kmad_alignment)
         from celery import chain
 
-        config_path = files.write_conf_file(self._usr_features)
+        user_feat_parser = UserFeaturesParser()
+        config_path = user_feat_parser.write_conf_file(self._usr_features)
 
         if not self._multi_fasta and self._alignment_method:
             tasks = [
@@ -199,22 +199,11 @@ class RefineStrategy(object):
         job = workflow()
         return job.id
 
-# TODO: change
+
+# TODO: implement
 class AnnotateStrategy(object):
-    def __init__(self, output_type):
-        self.output_type = output_type
+    def __init__(self):
+        pass
 
-    def __call__(self, fasta_seq, single_fasta_filename, multi_fasta_filename):
-        from kmad_web.tasks import (query_d2p2, annotate, postprocess, get_seq)
-        from celery import chain, group
-        fasta_seq = txtproc.process_fasta(fasta_seq)
-
-        tasks_to_run = [get_seq.s(fasta_seq),
-                        annotate.s(multi_fasta_filename)]
-        workflow = chain(query_d2p2.s(single_fasta_filename, self.output_type,
-                                      True),
-                         group(tasks_to_run),
-                         postprocess.s(single_fasta_filename,
-                                       multi_fasta_filename,
-                                       "dummyname", self.output_type))
-        return workflow
+    def __call__(self):
+        pass

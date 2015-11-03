@@ -36,6 +36,12 @@ MUSCLE = '/usr/local/bin/muscle'
 MAFFT = '/usr/local/bin/mafft'
 TCOFFEE = '/usr/local/bin/t_coffee'
 # predictors
-SPINE_DIR = "/srv/kmad/spined"
-SPINE_OUTPUT_DIR = SPINE_DIR+"/predout/"
+IUPRED = ""
+IUPRED_DIR = ""
+SPINE = "/srv/kmad/spined/spined"
+SPINE_OUTPUT_DIR = "/srv/kmad/spined/predout/"
+DISOPRED = ""
+PREDISORDER = ""
+PSIPRED = ""
+GLOBPLOT = ""
 BLAST_DB = "/home/joanna/data/uniprot_sprot"
