@@ -348,14 +348,14 @@ def query_d2p2(blast_result):
 #     #     'residues': [
 #     #         {
 #     #             'position': 1,  # 1-based!
-#     #             'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
 #     #             'ptm': [{
-#     #                 'phosrel': ['Y', 'N', 'description'],
-#     #                 'glycosylation': ['M', 'N', 'description']
+#     #                 'phosrel': {'wild': 'Y', 'mutant': 'N'}
 #     #             }],
 #     #             'motifs': [{
-#     #                 'motif-a': ['Y', 'M', 'description'],
-#     #                 'motif-b': ['Y', 'M', 'description']
+#     #                 'motif-a': {'wild': 'Y',
+#                                   'mutant': 'M',
+#                                   'probability': 0.0,
+#                                   'class': 'motif_class'},
 #     #             }],
 #     #         }
 #     #     ]
