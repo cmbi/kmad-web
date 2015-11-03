@@ -1,0 +1,84 @@
+body {
+  background-color: #444;
+}
+
+.panel-title-text {
+  color: #4C4C4C;
+  font-size: 120%;
+  font-weight: bold;
+}
+
+.panel-body-custom {
+  color: #4C4C4C;
+  font-size: 110%;
+}
+
+.kmad-k {
+    color: #7109AA;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.kmad-m {
+    color: #FFFF00;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.kmad-a {
+    color: #7BB800;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.kmad-n {
+    color: #9E0059;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.form-control.gap-form {
+  height: 27px;
+  width: 50px;
+}
+
+#predictionMethod ul {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  list-style-type: none;
+}
+
+hr {
+  height: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #efefef;
+}
+
+m5 {
+  color: red;
+  font-weight: bold;
+}
+
+m4 {
+  color: orange;
+  font-weight: bold;
+}  
+
+m3 {
+  color: #ffe700;
+  font-weight: bold;
+}  
+
+m2 {
+  color: #d6ff00;
+  font-weight: bold;
+}  
+
+m1 {
+  color: #1ca507;
+  font-weight: bold;
+}  
+
+

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}
+KMAD help
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">Help</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+      <strong>Sequence</strong>
+      <br>
+      <br>
+      The sequence should be either in 
+      <a href="https://wiki.cmbi.umcn.nl/index.php/FASTA">FASTA</a> format or a plain protein
+      sequence, in case of a single sequence input. In case of multiple
+      sequences input the accepted format is 
+      <a href="https://wiki.cmbi.umcn.nl/index.php/FASTA">FASTA</a>.
+      If the chosen action is 'refine' the input sequences have to be aligned 
+      (also in <a href="https://wiki.cmbi.umcn.nl/index.php/FASTA">FASTA</a>).
+      <br>
+      <br>
+      <strong>Action</strong>
+      <br>
+      <br>
+      In the action field you specify which action do you want to perform:
+      either <strong>predict</strong>, <strong>predict and align</strong>,
+      <strong>align</strong>, or
+      <strong>refine</strong>.
+      The <strong>predict</strong> option will use the programs chosen by the
+      user to predict <a
+        href="https://wiki.cmbi.umcn.nl/index.php/disordered">disorder</a>.
+      <strong>Align</strong> will either only perform a <a
+        href="https://wiki.cmbi.umcn.nl/index.php/MSA">multiple sequence
+        alignment</a> if
+      multiple sequences are provided, or if the input is a single sequence it
+      will run a 
+      <a href="https://wiki.cmbi.umcn.nl/index.php/Blast">BLAST</a> 
+      search against 
+      <a href="https://wiki.cmbi.umcn.nl/index.php/SwissProt">SwissProt</a> 
+      and align the first 35
+      homologues with e-value lower or equal 1e-05.
+      <strong>Predict and align</strong> will simply perform both of the mentioned actions,
+      and <strong>refine</strong> will run a KMAD refinement on an alignment provided by the
+      user.
+      <br>
+      <br>
+      <a href="https://wiki.cmbi.umcn.nl/index.php/Gap_penalty"><strong>Gap
+          penalties</strong></a>
+      All gap penalty values need to be negative.
+      <br>
+      <br>
+      <dl>
+        <dt>gap opening penalty (GOP)</dt> 
+          <dd>- penalty for opening a new gap - recommended values are not lower
+          than -20 and not higher -4</dd>
+        <dt>gap extension penalty (GEP)</dt>
+          <dd>- penalty for extending an already existing gap - should be
+          significantly lower than GOP, usually around 10% of the GOP value</dd>
+        <dt>end gap penalty</dt>
+          <dd>- gap penalty for a gap et the end (or
+        beginning) of a sequence - recommended values are the same as for GEP</dd>
+      </dl>
+      <br>
+      <br>
+      <strong>Feature weights (&omega;<sub>f<sub>t</sub></sub>)</strong>
+      <br>
+      <br>
+      <dl>
+        <dt><a
+          href="https://wiki.cmbi.umcn.nl/index.php/Post-translational">PTM</a> score</dt>
+          <dd>score for aligning two PTMs of the same type together -
+          recommended values are between 10 and 20
+        <dt><a href="https://wiki.cmbi.umcn.nl/index.php/Motif">motif</a> score</dt> 
+          <dd>score for aligning two motifs of the same type - recommended
+          values are higher than 2, and 2 - 3 times lower than the PTM score</dd>
+        <dt><a href="https://wiki.cmbi.umcn.nl/index.php/Domain">domain</a> score</dt>
+          <dd>score for aligning two domains of the same type and at the same
+          time penalty for aligning two domains of a different type -
+          recommended values are the same as for the motif score</dd>
+      </dl>
+      A more deatiled description of the feature scoring can be found in the
+      <a href="{{ url_for('dashboard.methods') }}">methods</a> section.
+      <br>
+      <br>
+      <strong>User defined features</strong>
+      <br>
+      <br>
+      You can add new features to your sequences by specifiying their exact
+      positions in the sequences or by pattern. If you want to assign features
+      by position in several different sequences then add the same feature
+      (having the same feature name) once for every sequence that you want to
+      assign it to:
+      <pre style="background-color:white;width=76%">
+      <img src="{{ url_for('static',
+      filename="images/features-help-screenshot.jpg") }}"
+style="width:70%;"/>
+      </pre>
+      In the example above the feature 'feature1' will be assigned in the first
+      sequence to positions from 3 to 4 and from 6 to 10, and in the
+      second sequence to positions 11, 12, and from 15 to 20.
+      <br>
+      In case of assigning by pattern an example input looks like this:
+      <pre style="background-color:white;width=76%">
+      <img src="{{ url_for('static',
+      filename="images/features-regex-help-screenshot.jpg") }}"
+style="width:70%;"/>
+      </pre>
+      In this case all of the segments (in all of the sequences) that match
+      the provided <a
+        href="https://wiki.cmbi.umcn.nl/index.php/Regular_expression">regex</a> pattern ('K.P')
+      will have 'feature2' assigned to them.
+
+      <br>
+      <br>
+      <strong>Results</strong>
+      <br>
+      <br>
+
+      'Submit' button submits the job and redirects you to the output page. 
+      You can download both the disorder prediction and the alignment (in <a
+        href="https://wiki.cmbi.umcn.nl/index.php/FASTA">FASTA</a>
+      format).
+      <br>
+      <br>
+      <strong>Output example</strong>
+      <br>
+      Example of output for human sialoprotein (uniprot ID: SIAL_HUMAN) -
+      action 'align' with default parameters
+      <br>
+      <div style="overflow:scroll;">
+        Regular colouring
+        <br>
+        <img src="{{ url_for('static',
+        filename='alignments/example_output_sial_reg.png') }}"></img>
+        <br>
+        PTMs colouring
+        <br>
+        <img src="{{ url_for('static',
+        filename='alignments/example_output_sial_ptms.png') }}"></img>
+        <br>
+        Motif colouring
+        <br>
+        <img src="{{ url_for('static',
+        filename='alignments/example_output_sial_motifs.png') }}"></img>
+        Domain colouring
+        <br>
+        <img src="{{ url_for('static',
+        filename='alignments/example_output_sial_domains.png') }}"></img>
+      </div>
+      <br>
+      You can run this example by copying this sequence to the protein sequence
+      input box and submitting a job with default parameters:
+      <textarea style='resize:none; width:800px;height:220px;'>
+        >sp|P21815|SIAL_HUMAN Bone sialoprotein 2 OS=Homo sapiens GN=IBSP PE=1
+        SV=4
+        MKTALILLSILGMACAFSMKNLHRRVKIEDSEENGVFKYRPRYYLYKHAYFYPHLKRFPV
+        QGSSDSSEENGDDSSEEEEEEEETSNEGENNEESNEDEDSEAENTTLSATTLGYGEDATP
+        GTGYTGLAAIQLPKKAGDITNKATKEKESDEEEEEEEEGNENEESEAEVDENEQGINGTS
+        TNSTEAENGNGSSGGDNGEEGEEESVTGANAEDTTETGRQGKGTSKTTTSPNGGFEPTTP
+        PQVYRTTSPPFGKTTTVEYEGEYEYTGANEYDNGYEIYESENGEPRGDNYRAYEDEYSYF
+        KGQGYDGYDGQNYYHHQ
+      </textarea>
+
+      <br>
+      In case of any questions don't hesitate to contact us (<a
+        href="mailto:j.lange@radboudumc.nl">j.lange@radboudumc.nl</a>).
+  </div>
+
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

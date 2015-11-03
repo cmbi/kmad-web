@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}
+Why KMAD
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">Why did we develop KMAD?</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+      <div class="row">
+      <div class="col-md-12">
+        The reason for developing KMAD was our opinion that
+        sometimes, in case of disordered (and less often, but structured as
+        well) proteins plain amino acid sequence is not enough to create a
+        biologically relevant sequence alignment.
+        Here is a very simple example to visualize the problem that we want
+        deal with (red residues are phosphoserines):
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/bad_alignment.png')}}">
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/good_alignment.png')}}">
+              <br>
+              The first alignment is what all methods that don't take into
+              account any other information than amino acid sequence would
+              produce. In terms of the amino acid of the amino acid
+              similarity it is the optimal solution.
+              However, we should remember that the best alignment is the one
+              that represents the biology the best, and not the one that is the
+              best solution to a mathematical equation. Hence, the alignment
+              wher two phosphoserines are aligned together is in this case a
+              better alignment - despite the fact that it has more gaps and
+              pairiwise identity is lower.
+      </div>
+      </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">What can it help you with?</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+    KMAD alignments can be used for all the usual applications of alignments,
+    but it can especially help in determining the conservation of PTMs and
+    motifs in very divergent (but not only) regions. Therefore, it can also be
+    helpful in supporting PTM predictions.
+    This example shows how bad alignment can impair our conclusions about PTM
+    conservation and reliability of prediction. (This is of course a very short
+    alignment, just to illustrate the general idea, normally we wouldn't draw
+    any conclusions from such a short excerpt). The red residues are
+    phosphoserines and orange indicates a phosphorylation prediction.
+    The second alignment shows that the phosphorylation is highly conserved in
+    this region, which is not clearly visible in the first alignment. The
+    second alignment also shows that the phosphorylation prediction is actually
+    much more reliable than what it seems from the first alignment.
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/bad_msa.png')}}">
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/good_msa.png')}}">
+              <br>
+  </div>
+
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

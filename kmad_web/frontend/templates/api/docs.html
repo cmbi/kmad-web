@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="panel panel-default" style="width=100%" id ="panel0">
+  <div class="panel-body" >
+    <span class="panel-body-text">
+      {% for url, (method, doc) in docs.iteritems()|sort %}
+        <h3><samp>/api{{ url }}</samp> <small>({{ method }})</small></h3>
+        {{ doc|beautify_docstring }}
+        <hr>
+      {% endfor %}
+    </span>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% endblock %}

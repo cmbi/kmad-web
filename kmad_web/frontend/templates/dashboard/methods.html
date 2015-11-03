@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+{% block title %}
+KMAD methods
+{% endblock %}
+{% block additional_imports %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/methods.css') }}">
+{% endblock %}
+{% block content %}
+<div class="panel-group" id="panel-group0">
+  <div class="panel panel-default" style="width=100%;" id="panel0">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <span class="panel-title-text"><strong>Disorder prediction</strong></span>
+       </h4>
+    </div>
+    <div class="panel-body panel-body-custom">
+        <p>  
+        We first try to find your sequence in the
+        <strong>D<sup>2</sup>P<sup>2</sup></strong> 
+      database of precomputed disorder predictions. 
+      If the sequence is not present there, the 
+      disorder prediction is performed with 4 different predictors:
+      <strong>DISOPRED</strong>, <strong>SPINE-D</strong>, <strong>PSIPRED</strong>, and
+      <strong>PreDisorder</strong>.
+      </p>
+      </br>
+      <p>
+      <strong>D<sup>2</sup>P<sup>2</sup></strong> <br>
+      Database of Disordered Protein Predictions
+      <br>
+      <br>
+       Oates,M.E., Romero,P., Ishida,T., Ghalwash,M., Mizianty,M.J., Xue,B.,
+       Dosztányi,S., Uversky,V.N., Obradovic,Z., Kurgan,L., Dunker,A.K.,
+       Gough,J. (2013). "D2P2: Database of Disordered Protein Predictions."
+       <em>Nucleic Acids Research</em>
+       <strong>41</strong>
+       (D1):D508-D516
+       <br>
+       <br>
+       <strong>DISOPRED</strong>
+       <br>
+       <br>
+       Ward JJ, Sodhi JS, McGuffin LJ, Buxton BF and Jones DT (2004)
+       <br>
+       Prediction and functional analysis of native disorder in proteins from
+       the three kingdoms of life
+       <br>
+       <i>Journal of Molecular Biology</i>
+       , <b>337</b>:635-645. 
+       <br>
+       <br>
+       <strong>SPINE-D</strong>
+       <br>
+       <br>
+        Tuo Zhang, Eshel Faraggi, Bin Xue, A. Keith Dunker, Vladimir N.
+        Uversky, Yaoqi Zhou. SPINE-D: Accurate prediction of short and long
+        disordered regions by a single neural-network based method.
+        <i> Journal of Biomolecular Structure and Dynamics.</i>
+        2012,
+        <b>29</b>
+        (4):799-813.
+        <br>
+        <br>
+        <strong>PSIPRED</strong>
+        <br>
+        <br>
+        Jones, D.T. (1999) Protein secondary structure prediction based on
+        position-specific scoring matrices. <i>Journal of Molecular Biology</i>
+        <b>292</b>:195-202.
+        <br>
+        <br>
+        <strong>PreDisorder</strong>
+        <br>
+        <br>
+        X. Deng, J. Eickholt, and J. Cheng. PreDisorder: Ab Initio
+        Sequence-Based Prediction of Protein Disordered Regions. <i>BMC
+          Bioinformatics</i>, <b>10</b>:436, 2009.
+        <br>
+        J. Hecker, J. Yang, and J. Cheng. Protein Disorder Prediction at
+        Multiple Levels of Sensitivity and Specificity. <i>BMC Genomics.</i> <b>9</b>(S1):S9, 2008.
+        <br>
+        J. Cheng, M. Sweredoski, and P. Baldi. Accurate Prediction of Protein
+        Disordered Regions by Mining Protein Structure Data, <i>Data Mining and
+          Knowledge Discovery</i>, vol. 11, no. 3, pp. 213-222, 2005.
+        <br>
+        <br>
+        <strong>GlobPlot</strong>
+        <br>
+        <br>
+        Linding R, Russell RB, Neduva V, Gibson TJ. GlobPlot: exploring protein
+        sequences for globularity and disorder
+        <i>Nucleic Acids Research</i>
+        <strong>31</strong>
+        (13): 3701-3708
+        <br>
+        <strong>IUPred</strong>
+        <br>
+        Zsuzsanna Dosztányi, Veronika Csizmók, Péter Tompa and István Simon.
+        The Pairwise Energy Content Estimated from Amino Acid Composition
+        Discriminates between Folded and Intrinsically Unstructured Proteins 
+        <i>J. Mol. Biol.</i> (2005) <strong>347</strong>, 827-839
+        <br>
+      </p>
+    </div>
+  </div>
+  <div class="panel panel-default" style="width=100%;" id="panel1">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <span class="kmad-k">K</span><span class="kmad-m">M</span><span
+            class="kmad-a">A</span><span class="kmad-n">D</span> 
+            <br>
+            <span
+              class="kmad-k">K</span><span class="panel-title-text">nowledge
+              Based </span><span
+              class="kmad-m">M</span><span class="panel-title-text">ultiple
+              Sequence </span><span
+              class="kmad-a">A</span><span class="panel-title-text">lignment
+              for Intrinsically </span><span
+              class="kmad-n">D</span><span class="panel-title-text">isordered
+              Proteins </span>
+      </h4>
+    </div>
+    <div class="panel-body panel-body-custom">
+        <p>
+        The tool incorporates information from databases and predictions about
+        functional sites to perform a Multiple Sequence Alignment (MSA).
+        The information includes phosphorylations predicted by <strong>NetPhos</strong>, annotated
+        posttranslational modifications (PTMs) from <strong>Swissprot</strong>, short linear
+        motifs (SLiMs) from <strong>ELM</strong>, and functional domains
+        predicted by <strong>Pfam</strong>.
+
+        The posttranslational modifications used by KMAD are, the most abundant
+        ones, that is:
+        <ul>
+          <li>phosphorylations</li>
+          <li>N-linked glycosylations</li>
+          <li>O-linked glycosylations</li>
+          <li>hydroxylations</li>
+          <li>methylations</li>
+          <li>amidations</li>
+          <li>acetylations</li>
+        </ul>
+        Motifs predicted by ELM are filtered by their GO
+        terms. Motif's list of GO terms is extended by each GO term's parents
+        and all of its descendants. If there is no overlap between sequence GO
+        terms and the extended motif GO terms then the motif is discarded.
+        </p>
+        <p>
+        KMAD algorithm is a progressive iterative alignment, based on the
+        MaxHom algorithm. Pairiwise alignments follow the Gotoh algorithm with
+        a modified scoring function shown in Figure 1.
+        The final multiple sequence alignment is optimized as described <a
+          href="#optimization">here</a>.
+        <br>
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <figure>
+              <img src="{{ url_for('static',
+                filename='files/formula_scoring_function_gimp.png') }}"
+                style="width:50%;">
+              <figcaption><strong>Figure 1.</strong>
+		            KMAD scoring function;
+                <i>i</i> and <i>j</i> represent positions in the profile and in the sequence,
+                respectively; <i>profile<sub>i</sub></i> is a vector that contains the
+                frequencies of the 20 amino acid types <i>m</i> at position
+                <i>i</i> in the
+                alignment. <i>D</i> is the 20&times;20 substitution matrix.
+                The residue score is the convolution of the
+                profile vector for <i>i</i> and the <i>D</i> column for <i>j</i>. In the first iteration
+                all profile values are zero or one, according to the first
+                sequence. <i>&omega;<sub>t</sub></i>
+                are weights for the three feature types <i>f<sub>t</sub></i>
+                (<i>&omega;<sub>f<sub>t</sub></sub></i> weights optionally can be
+                set by the user). <i>U<sub>f,i</sub></i> values for PTMs and SLiMs are determined from the
+                conservation of that feature at <i>i</i>. <i>U<sub>f,i</sub></i> values for domains are the
+                conservation of the domain at position <i>i</i> minus the conservation of all
+                other domains at that position. The terms <i>R</i> relate to the perceived
+                reliability (<i>PR</i>) of the feature; experimentally determined PTMs, for
+                example, weigh three times higher than predicted ones.
+                <i>R<sub>f,i,j</sub></i> is the
+                product of the average <i>PR</i> of the feature <i>f</i> at position
+                <i>i</i> in the profile and
+                the <i>PR</i> of this feature at position <i>j</i> in the sequence. The metascore for
+                <i>j</i> is the weighted sum over all scores for its features.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+        <br>
+        <strong>Perceived reliability (<i>PR</i>)</strong>
+        <dl style="margin-left: 2.5em; padding-left: 0;">
+          <dt>PTMs</dt>
+          <dd>- perceived reliability of a PTM depends on the type of its
+          annotation source. All predicted phosphorylations get a <i>PR</i>
+          value of 0.3. For annotations from Swissprot we determine the
+          <i>PR</i> value based on its ECO code
+          (Evidence Codes Ontology), representing source of the data.
+          The possible values are: 1, 0.9, 0.8, 0.7.
+          The <i>PR</i> values were chosen arbitrarily for the lack of any
+          other method to quantify the annotation's quality.
+          The ECO codes related to each value are as follows:
+          <dl style="margin-left: 2.5em; padding-left: 0;">
+            <dt>1.0 - Experimental evidence codes</dt>
+            <dd>
+            <ul>
+              <li>0000269, EXP - experimental evidence used in manual
+              assertion</li>
+              <li>0000314, IDA - direct assay evidence used in manual
+              assertion</li>
+              <li>0000353, IPI - physical interaction evidence used in manual
+              assertion</li>
+              <li>0000315, IMP - mutant phenotype evidence used in manual
+              assertion</li>
+              <li>0000316, IGI - genetic interaction evidence used in manual
+              assertion</li>
+              <li>0000270, IEP - restriction landmark genome scanning evidence
+              used in manual assertion</li>
+            </dd>
+            <dt>0.9 - Computational analysis evidence codes</dt>
+            <ul>
+              <li>0000250, ISS - sequence similarity evidence used in manual
+              assertion</li>
+              <li>0000266, ISO - sequence orthology evidence used in manual
+              assertion</li>
+              <li>0000247, ISA - sequence alignment evidence used in manual
+              assertion</li>
+              <li>0000255, ISM - match to sequence model evidence used in
+              manual assertion</li>
+              <li>0000317, IGC - genomic context evidence used in manual
+              assertion</li>
+              <li>0000318, IBA - biological aspect of ancestor evidence used in
+              manual assertion</li>
+              <li>0000319, IBD - biological aspect of descendant evidence used
+              in manual assertion</li>
+              <li>0000320, IKR - phylogenetic determination of loss of key
+              residues evidence used in manual assertion</li>
+              <li>0000321, IRD - rapid divergence from ancestral sequence
+              evidence used in manual assertion</li>
+              <li>0000245, RCA - computational combinatorial evidence used in
+              manual assertion</li>
+            </ul>
+            <dd></dd>
+            <dt>0.8 - Author Statement evidence codes and Curatorial Statement
+            evidence codes</dt>
+            <dd>
+            <ul>
+              <li>0000304, TAS - traceable author statement used in manual
+              assertion</li>
+              <li>0000303, NAS - non-traceable author statement used in manual
+              assertion</li>
+              <li>0000305, IC - curator inference used in manual assertion</li>
+              <li>0000307, ND - no biological data found used in manual
+              assertion</li>
+            </ul>
+            </dd>
+            <dt>0.7 - Automatically assigned evidence code</dt>
+            <dd>
+            <ul>
+              <li>0000501, IEA - evidence used in automatic assertion</li>
+            </ul>
+            </dd>
+          </dl>
+          </dd>
+          <dt>motifs</dt>
+          <dd>- The motif's <i>PR</i> value is determined based on its
+          'probability' <i>P</i> assigned by ELM in form of an E-value.
+          Motifs with <i>P</i> > 0.1 are discarded and in case of overlapping
+          motifs only the one with higher <i>P</i> is kept.
+          <i>PR</i> value calculation is based on formula
+          <i>PR</i> = 1 + 1/<i>log<sub>10</sub></i>(<i>P</i>).
+          Therefore the limit of <i>PR</i> is 1 as <i>P</i> tends to 0.
+          </dd>
+          <dt>domains</dt>
+          <dd>- All domains have PR equal to 1.
+          The reason behind this is that their length is enough to compensate
+          for the lack of the <i>PR</i> factor.
+          If the prediction reliability of a certain domain is low, then when
+          aligning two domains of this kind the overall score for the domains
+          will be anyway significantly lower because of the more frequent
+          mismatches.
+          </dd>
+        </dl>
+        </p>
+        <p>
+        <strong>&omega;<sub>f<sub>t</sub></sub> weights</strong>
+        <br>
+        The default values of the &omega;<sub>f<sub>t</sub></sub> weights are
+        10, 3, 3 for PTMs, motifs, ad domains, respectively. Small changes of
+        these values do not seem to have a significant effect on the
+        alignments. We advise keeping the scores for domains and motifs lower
+        than for PTMs as they consist of at least several residues - the score
+        will be added for each two matching residues. Setting too high values
+        might result in forcing alignment of subsequences that should not be
+        aligned with each other.
+        </p>
+        <div id="optimization">
+        <h4><strong>Optimization</strong></h4>
+        The final alignment is optimized to compensate for some of the flaws of
+        a heuristic MSA. 
+        Optimization rounds are performed until no more changes are introduced,
+        but not more than 15 times. 
+        For each gap in the alignment KMAD checks if moving the residue the 
+        other side of that gap gives a better alignment score. In each round
+        only one residue can be moved to and from a certain column - so, for
+        example, if both moving residues from sequence 1, position 2 and sequence
+        2, position 2 would increase the alignment score then KMAD moves only
+        the one that gives a higher score gain.
+        </div>
+
+        <br>
+        <h4><strong>References</strong></h4>
+        <p>
+        <strong>ELM</strong>
+        <br>
+        <br>
+        Dinkel H., Van Roey K., Michael S., Davey N.E., Weatheritt R.J., Born D., Speck T., Krüger D.,
+        Grebnev G., Kubań M., Strumiłło M., Uyar B., Budd A., Altenberg B., Seiler M., Chemes L.B.,
+        Glavina J., Sánchez I.E., Diella F., Gibson T.J.
+        The eukaryotic linear motif resource ELM: 10 years and counting
+        <i>Nucleic Acids Research</i> (2013) Database issue 
+        <b>42</b>:D259-266
+        <br>
+        <br>
+        <strong>NetPhos</strong>
+        <br>
+        <br>
+        Blom, N., Gammeltoft, S., and Brunak, S.
+        Sequence- and structure-based prediction of eukaryotic protein
+        phosphorylation sites.
+        <i>Journal of Molecular Biology</i>: <b>294</b>(5): 1351-1362, 1999. 
+        <br>
+        <br>
+        <strong>Pfam</strong>
+        <br>
+        <br>
+        R.D. Finn, A. Bateman, J. Clements, P. Coggill, R.Y. Eberhardt, S.R.
+        Eddy, A. Heger, K. Hetherington, L. Holm, J. Mistry, E.L.L. Sonnhammer,
+        J. Tate, M. Punta. The Pfam protein families database <i>Nucleic Acids Research</i> (2014)  Database Issue
+        <b>42</b>:D222-D230 
+        <br>
+        <br>
+        <strong>Uniprot</strong>
+        <br>
+        <br>
+        The UniProt Consortium.
+        Activities at the Universal Protein Resource (UniProt)
+        <i>Nucleic Acids Res.</i> <b>42</b>: D191-D198 (2014).
+        <br>
+        <br>
+        </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

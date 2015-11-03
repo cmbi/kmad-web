@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% block title %}
+Reviewer comments
+{% endblock %}
+{% block additional_imports %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/disprot_examples.css') }}">
+{% endblock %}
+{% block content %}
+<div class="panel panel-default" style="width=100%;" id="panel0">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>Gap count - Clustal Omega vs Clustal Omega refined with KMAD</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-12">
+        <span class="panel-body-custom">
+          We counted gaps and gap characters in 120 alignments of proteins from Disprot (a total of
+          26881 sequences).
+          In the gap count each segment of gap characters was counted as a
+          single gap., So, for example sequence 'A--A-A' has two gaps, but
+          three gap characters.
+          <br>
+          <strong>Gap characters</strong>
+          <br>
+          <div class="row">
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>Without terminal gaps</strong>
+              <br>
+              <div style="margin-right:300px;">
+                In 63 cases KMAD alignment had more gap characters than Clustal
+                Omega,
+                while Clustal had more gap characters in 23 cases.
+                In 34 cases there was a tie.
+                <br>
+                Mean number of gap characters in KMAD alignments: 4430.10
+                <br>
+                Mean number of gaps characters Clustal alignments: 3829.40
+              </div>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_nonterm_chars.png')}}">
+              <br>
+            </div>
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>With terminal gaps</strong>
+              <br>
+              <div style="margin-right:300px;">
+                KMAD alignments had more gap characters in 35 cases. Clustal
+                alignments had more gap characters in 19 cases. There was a tie
+                in 66 cases.
+                <br>
+                Mean number of gap characters in KMAD alignments: 12120.50
+                <br>
+                Mean number of gaps characters Clustal alignments: 12287.18
+              </div>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_term_chars.png')}}">
+            </div>
+          </div>
+          <br>
+          <hr>
+          <strong>Gaps</strong>
+          <br>
+          <br>
+          <div class="row">
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>Without terminal gaps</strong>
+              <div style="margin-right:300px;">
+                In case of gap count the tendency was opposite than with gap
+                characters 
+                count - KMAD alignment had more often fewer gaps than
+                Clustal alignments.
+                In 35 cases KMAD alignments had more gaps, in 59
+                cases Clustal alignments
+                had more gaps, and there was a tie in 26
+                cases.
+                <br>
+                Mean number of gaps in KMAD alignments: 344.88
+                <br>
+                Mean number of gaps in Clustal alignments: 392.24
+              </div>
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_nonterm_gaps.png')}}">
+              <br>
+              <br>
+            </div>
+            <div class="col-md-6" style="border-right: 2px solid #ccc;">
+              <strong>With terminal gaps</strong>
+              <br>
+              <div style="margin-right:300px;">
+                KMAD alignments had more gaps in 31 cases, Clustal alignments
+                had more gaps in 63 cases. 26 cases where a tie.
+                <br>
+                Mean number of gaps in KMAD alignments: 380.53
+                <br>
+                Mean number of gaps in Clustal alignments: 429.66
+              </div>
+              <br>
+              <br>
+              <br>
+              <br>
+              <img src="{{ url_for('static',
+              filename='images/reviewer_comments/plot_term_gaps.png')}}">
+            </div>
+          </div>
+
+          This result is caused by the fact that Clustal alignments more
+          often have long terminal gaps, which are later changed by KMAD to
+          non-terminal gaps - this causes a large increase in the gap character
+          count, but not in the gap count. Removing one terminal gap can be
+          give hundreds of points to the gap character count, while it will
+          only change the gap count by one point. KMAD tends to insert less
+          gaps in general (one of the results of Clustal not removing once
+          inserted gaps), therefore the gap count is lower, but the
+          non-terminal gaps are slightly longer than in case of Clustal. 
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <strong>Example of BLAST results</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      To the 1st reviewer's comment ("What is more, in the provided example,
+      all the proteins have names (RLA) that indicate that they belong to the
+      same gene family. It would be more convincing if they provided an
+      alignment of proteins that diverged more and this method perhaps could
+      help the discovery of new members of a protein family.")
+
+      This is a problem for two reasons. First of all for many proteins from
+      Disprot we could find with BLAST either only very closely realted
+      proteins (e.g. from the same family) or very distantly related.
+      What's more, with more diverged proteins manual inspection is much
+      harder, and it would be very difficult to spot mistakes and improvements
+      in the alignments.
+
+      As an example, here is a blast result for the RLA3_CANAX protein:
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/blast_rla3_canax_all.png')}}">
+      </div>
+      <br>
+      Only the last two sequences don't belong to the same family.
+      But if we have a closer look at them, we see that the match between them
+      and our query protein is of very low quality.
+      Here is a KMAD alignment of the whole set of 53 proteins:
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/RLA3_CANAX_large.png')}}">
+      </div>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename='images/reviewer_comments/RLA3_CANAX_legend.png')}}">
+      </div>
+
+
+
+      Performance of KMAD on more diverged proteins is tested in the
+      BAliBASE validation - out of 220 sequence sets 51 have average identity
+      lower than 20%.
+    </span>
+
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <strong>Phosphorylation conservation</strong>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      In the article "Global Analysis of Cdk1 Substrate Phosphorylation Sites
+      Provides Insights into Evolution", Holt, et al., Science 2009 
+      this alignment was given as an example of low conservation of
+      phosphorylation position. While it is true, that the exact position of
+      the phosphorylations is not conserved, the phosphorylation itself in this
+      region is conserved. This example shows exactly what KMAD was designed for - to
+      stress conservation of the functional sites in disordered regions - where
+      amino acid conservation is very low, but disorder itself and
+      modifications in the region are conserved.
+      <br>
+
+      From the two presented alignments, KMAD alignment has more
+      information about the actual conservation of phosphorylation sites,
+      and gives better insight into their functional importance.
+      <br>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/ubx_al.png')}}">
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <br>
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/conservation.png')}}">
+        </div>
+        </div>
+      </div>
+      <br>
+      Based on the two alignments we calculated phylogenetic trees with
+      ClustalW2 (default parameters).
+      <br>
+      <div class="row">
+        <div class="col-md-6">
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/holt_figtree.png')}}"
+          style="width:100%">
+        </div>
+        </div>
+        <div class="col-md-6">
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/kmad_figtree.png')}}"
+          style="width:100%">
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/holt_figtree_bnw.png')}}"
+          style="width:100%">
+        </div>
+        </div>
+        <div class="col-md-6">
+          <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/kmad_figtree_bnw.png')}}"
+          style="width:100%">
+        </div>
+        </div>
+      </div>
+
+
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <strong>Performance</strong>
+    </div>
+  </div>
+  <div class="panel-body" id="performance">
+    <span class="panel-body-custom">
+      Because KMAD and MUSCLE don't have an option to run on multiple cores,
+      we ran all methods with disabled multithreading. The multithreading
+      methods would show much higher performance on a server, but it doesn't
+      change much for a casual user - personal computers still usually use just
+      a couple of cores.
+
+      The tools were tested on a random sample of 22 alignments from the
+      BAliBASE set.
+      We present plots of the methods' runtime vs. average sequence length,
+      number of sequence, and number of sequences times average sequence length
+      (LxN).
+      T-coffee is the slowest method in the set (it even takes longer than KMAD
+      and MUSCLE when multithreading is enabled).
+      KMAD is the second slowest, probably because it has more operations to
+      perform with every aligned residue - check all features and calculate
+      scores for them.
+      In the future we plan a general optimization of the software, including  
+      implementation of multithreading.
+
+      However, the alignment part is not the bottleneck in the whole process
+      for KMAD. The preparation of the sequence - that is annotation with
+      information from multiple databases is much slower than the alignment
+      itself. However, this doesn't depend on the creators of KMAD, but on the
+      scripts maintained by the database authors (ELM and Pfam).
+
+    </span>
+    <br>
+    <br>
+    <div class="row">
+      <div class="col-md-4">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+      </div>
+      <div class="col-md-4">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+      </div>
+      <div class="col-md-4">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+      </div>
+    </div>
+    <hr>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

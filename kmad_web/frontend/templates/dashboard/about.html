@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+{% block title %}
+KMAD about
+{% endblock %}
+{% block content %}
+<div class="panel-group" id="panel-group0">
+  <div class="panel panel-default" style="width=100%;" id="panel0">
+    <div class="panel-heading">
+      <div class="panel-title">
+        <H1><strong>KMAD</strong>: <strong>K</strong>nowledge Based
+          <strong>M</strong>ultiple Sequence <strong>A</strong>lignment for Intrinsically
+          <strong>D</strong>isordered Proteins</H1>
+      </div>
+    </div>
+    <div class="panel-body">
+      <H2>Joanna Lange, Lucjan S. Wyrwicz, Gert Vriend</H2>
+      <H2>CMBI, Radboudumc, Nijmegen, The Netherlands</H2>
+
+      <H2>Introduction</H2>
+      <P ALIGN="JUSTIFY">
+      KMAD was designed to align intrinsically disordered (aka natively unfolded) proteins for the HOPE 
+      mutation analysis server. This led to three major considerations:
+      </P>
+      <OL>
+        <LI>A HSSP-style iterative profile alignment would be needed;
+        <LI>The scoring scheme should be hybrid and include knowledge about the IDPs other than their sequences;
+        <LI>Validation of the results would be very difficult as there are no structures that can be superposed 
+        to obtain the &#39;real&#39; alignment.
+      </OL> 
+
+      <H3>HOPE</H3>
+      <P ALIGN="JUSTIFY">
+      The <A HREF="http://www.cmbi.ru.nl/hope/home">HOPE</A> server accepts from the user a sequence and
+      a mutation that is known causal for a genetic disorder. HOPE then looks up the protein&#39;s structure
+      or models it, it calls dozens of compute servers and looks up very much data from all kinds of databases,
+      it combines all results and reasons about those results to finally arrive at a human readable report
+      that explains to biomedical scientists what the mutation does to the protein, and why that might explain
+      why the mutation causes the human disease phenotype.
+      </P><P ALIGN="JUSTIFY">
+      The transfer of curator annotations from homologous non-human sequences to the human sequence of interest
+      is a major contributor to HOPE&#39;s reasoning. It does not make any sense to study insertions relative
+      to the human sequence because curator annotations such as post translational modifications (PTMs) or 
+      short linear motifs (SLiMs) in an insertion in, for example, the sequence of the mouse cannot be 
+      transferred to the human sequence anyway. 
+      </P><P ALIGN="JUSTIFY">
+      The transfer of curator annotations to the human sequence is most valuable when the species from which
+      this information is obtained is closest related to man. 
+      </P><P ALIGN="JUSTIFY">
+      These HOPE-centric considerations naturally led to the choice for an iterative profile alignment method.
+      </P>
+
+      <H3>Iterative profile alignment</H3>
+      <P ALIGN="JUSTIFY">
+      In its default form, KMAD starts with one sequence, either the human sequence that it receives from HOPE,
+      or a sequences submitted by a user through a form in this KMAD website. KMAD then does a series of
+      things:
+      </P>
+      <P ALIGN="JUSTIFY">
+      <OL>
+        <LI>run BLAST against the PDB to check that there is no trivial solution that renders the use of
+        KMAD meaningless
+        <LI>run BLAST against UniProt to obtain homologous sequences
+        <LI>extract curator annotations for these sequences from SwissProt, ELM, etc.
+        <LI>obtain software predicted sequence features such as phosphorylation sites 
+        <LI>align the sequences against the input sequence using a hybrid scoring schema, that includes 
+        an IDP specific Dayhoff-style matrix and scores for the curator annotations and predicted sequence
+        features
+        <LI>Iterate over the next two steps with decreasing N and increasing W:
+        <OL>
+          <LI>make a sequence profile based for the input sequence that is based on on all sequences that
+          are better than N sequence identical to the input sequence
+          <LI>Align all sequences against this profile with weight W on the profile and weight (1-W) on
+          the IDP-specific Dayhoff-style scoring matrix (and constant weight on the annotation features)
+        </OL>
+        <LI>Present the alignment to the user in an interactive web page that allows for the interactive colouring
+        of all curator annotations and predicted features
+      </OL>
+      </P>
+      <H3>Improving the alignment by use of sequence features</H3>
+      <P ALIGN="JUSTIFY">
+      KMAD obtains a large number of sequence annotations to augment the alignment:
+      </P>
+      <P ALIGN="JUSTIFY">
+      <OL>
+        <LI>SLiMs from ELM</li>
+        <LI>posttranslational modifications (PTMs) from SwissProt 
+        <ul>
+          <li>phosphorylations,</li>
+          <li>N-linked glycosylations,</li>
+          <li>O-linked glycosylations,</li>
+          <li>methylations,</li>
+          <li>amidations,</li> 
+          <li>acetylations,</li>
+          <li>hydroxylations</li>
+        </ul>
+        </li>
+        <LI>phosphorylations predicted by NetPhos</li>
+        <LI>domains predicted by Pfam</li>
+      </OL>
+      All these features participate in the scoring of alignments with weights, that
+      are settable by the user. The default values are:
+      <ul>
+        <li>PTMs &#8594; 10,</LI>
+        <li>domains &#8594; 3,</LI>
+        <li>motifs &#8594; 3</LI>
+      </ul>
+      </P>
+      <P ALIGN="JUSTIFY">
+      Many SLiMs and predicted PTMs have a high probability of occurrence. For example, the motif N,{P},[S,T],{P}
+      has a chance of 1/200 to occur anywhere, so most often this motif is meaningless. To avoid guiding the
+      alignment by these meaningless motifs we check if there is overlap in the GO terms for the motif in the
+      input sequence and the GO terms for the sequence to be aligned against the input sequence. If there is no
+      overlap in these GO terms we reject the motif from this sequence.
+      </P>
+
+      <H3>Validation</H3>
+      <P ALIGN="JUSTIFY">
+      Several good multiple sequence alignment (MSA) programs are available all with a slightly different angle
+      and with different pros and cons. We chose to compare KMAD outputs with Clustal Omega outputs, simply
+      because Clustal Omega works well, is supported by a responsive team, and it is easy to obtain, install
+      and use.
+      </P><P ALIGN="JUSTIFY">
+      The quality of alignments of software such as Clustal Omega has been optimized by tuning the parameters
+      and designing algorithms to achieve the greatest overlap between the MSA sequence alignments and structure
+      based sequence alignments. Structure based sequence alignments provide the truth that can be used to 
+      determine the quality of the MSA. The underlying concept is that
+      &#39;regulation&#39; is more conserved
+      than &#39;function&#39; is more conserved than &#39;structure&#39; is more
+      conserved than &#39;sequence&#39;.
+      From this hierarchy of conservation we can extrapolate that if two residues have the same role in
+      regulation or function that they will have the same location in the structure, and thus should be
+      aligned in the MSA. 
+      </P><P ALIGN="JUSTIFY">
+      IDPs have no structure, or when they do, this structure is induced by interactions with other (macro)
+      molecules, and then there is no guarantee that homologous IDPs will have similar induced structures upon
+      binding. Additionally, there are far too few IDPs for which an induced structure is available from the PDB
+      to even start contemplating these for validation purposes. Consequently, the idea breaks down that 
+      residues with a similar functional role are located at corresponding positions in the protein structures.
+      From a HOPE point of view, though, it seems safe to assume that identical functional motifs in different
+      IDPs will perform identical, or at least highly similar, functions. To automatically transfer the 
+      information about motifs from aligned IDPs to the IDP of interest, these motifs should be aligned in 
+      the MSA, and this obtained best by adding some weights on the alignment of these motifs. Obviously,
+      this is a circular argument: &#34;Lets add some weights to the alignment of
+      motifs&#34; and &#34;Wow,
+      the alignment becomes much better because I see more motifs align well&#34;.
+      </P>
+      <P ALIGN="JUSTIFY">
+      Conclusion: There is no easy natural way to validate KMAD MSA results.
+      </P>
+      <P ALIGN="JUSTIFY">
+      But, HOPE does require the transfer of information about curator annotations and predicted features from
+      homologous IDP sequences to the IDP sequence of interest, and many IDP sequences are hard or very hard to 
+      align, unless knowledge about the presence of sequence motifs is used to guide the alignment.
+      </P>
+      <h4>Visual inspection</h4>
+      <P ALIGN="JUSTIFY">
+      The visual inspection of the alignments showed that KMAD often
+      manages to overcome problems encountered by Clustal and T-coffee. 
+      Here we present several
+      representative examples of what are the usual problems and how KMAD solves
+      them:
+      <ul>
+        <li><a href="{{url_for('dashboard.disprot_clustal_examples')}}">Clustal</a></li>
+        <li><a
+          href="{{url_for('dashboard.disprot_tcoffee_examples')}}">T-Coffee</a></li>
+      </ul>
+      {#<br>
+      <a href="{{ url_for('dashboard.alignment_example', filename='example1') }}"
+        class="btn btn-primary btn-xs" >SIAL_HUMAN</a>
+      <a href="{{ url_for('dashboard.alignment_example', filename='example2') }}" class="btn
+        btn-primary btn-xs" >RLA3_CANAX</a>
+      <br>
+      #}
+      <br>
+      </P>
+      <H4>Benchmark validation</H4>
+      <P ALIGN="JUSTIFY">
+      We had to resort to indirect validation techniques (on top of the trivial visual inspection). We 
+      first compared KMAD MSA outputs with Clustal Omega MSA outputs to conclude that Clustal Omega normally
+      performs a bit better than KMAD when sequences of proteins with know structure are aligned. That is
+      not surprising because Clustal Omega has been optimized for this purpose while
+      KMAD was &#39;optimized&#39;
+      for IDP sequence alignment. 
+      <br>
+      <figure>
+
+        <img src="{{ url_for('static', filename='files/plots/all_bali_out_sp.jpg') }}"/>
+        <img src="{{ url_for('static', filename='files/plots/all_bali_out_elm_sp.jpg') }}"/>
+        <figcaption>
+        Figure 1. Scatter plots for BAliBASE scores for KMAD alignments versus Clustal Omega alignments. Left: overall
+        BAliBASE scores; Right: BAliBASE scores for motifs. As there are more dots below the line than above the line,
+        and as BAliBASE scores range from zero (worst) to one (best), it is clear that Clustal Omega provides better
+        results than KMAD. This is, of course, the result of Clustal Omega&#39;s understanding of protein
+        structures that is encoded in its scoring matrix and a series of algorithms.
+        </figcaption>
+      </figure>
+      <BR>
+      But now comes the big trick.
+      We can first make an alignment with Clustal Omega
+      and derive KMAD&#39;s profile
+      from this, and then do two more rounds of alignment with KMAD. 
+      Then for a subset from BAliBASE that holds holds sequences ranging 40% - 80% in
+      pairwise sequence identity 
+      we sometimes
+      see that KMAD gets better scores from BAliBASE while it never gets BAliBASE scores that are worse than
+      Clustal Omega&#39;s scores.
+      <BR>
+      <!--We analyzed all 27 entries in the BAliBASE set that hold sequences ranging 40-80% in pairwise
+sequence identity. --> 
+      </P>
+      <div>
+        <br>
+        <figure>
+          <img src="{{ url_for('static', filename='files/plots/motif_score_plot.jpg') }}"/>
+          <br>
+          <P ALIGN="JUSTIFY">
+          <figcaption>
+          Figure 2. Scatter plot for BAliBASE motif scores for KMAD alignment
+          'refinements' versus Clustal Omega alignments. The four 
+          cases where KMAD does better than Clustal Omega all related to a C-terminal KDEL motif that KMAD
+          recognized and aligned better than Clustal Omega these cases are shown below. For each of the four
+          cases two frames are provided; the first holding the KMAD alignment and the second holding the 
+          Clustal Omega alignment.
+          </figcaption>
+          </P>
+          <br>
+        </figure>
+      </div>
+      <div>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment1_1') }}" class="btn
+          btn-primary" >Alignment 1</a>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment1_2') }}" class="btn
+          btn-primary" >Alignment 2</a>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment1_3') }}" class="btn
+          btn-primary" >Alignment 3</a>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment1_4') }}" class="btn
+          btn-primary" >Alignment 4</a>
+      </div>
+      <div>
+      </div>
+      <H4>Refinement results for the whole BAliBASE dataset</H4>
+      The refinement results for the whole BAliBASE dataset shows that the overall
+      scores of Clustal Omega and KMAD are comparable. 
+      In terms of motif scores KMAD often outperforms Clustal Omega and gets lower
+      scores only in several cases.
+
+      <P ALIGN="JUSTIFY">
+      <figure>
+        <div class="row">
+          <div class="col-md-6">
+            <img src="{{ url_for('static',
+            filename='files/plots/refine_standard_params_sp.jpg') }}"/>
+          </div>
+          <div class="col-md-6">
+            <img src="{{ url_for('static',
+            filename='files/plots/refine_standard_params_elm_sp.jpg') }}"/>
+          </div>
+        </div>
+        <br>
+      </figure>
+      <div>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment2_1') }}" class="btn
+          btn-primary" >Alignment 1</a>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment2_2') }}" class="btn
+          btn-primary" >Alignment 2</a>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment2_3') }}" class="btn
+          btn-primary" >Alignment 3</a>
+        <a href="{{ url_for('dashboard.alignment_example', filename='alignment2_4') }}" class="btn
+          btn-primary" >Alignment 4</a>
+      </div>
+      <H4>Parameter values</H4>
+      <P ALIGN="JUSTIFY">
+      We used different parameter values for alignments and refinements.
+      The feature weights were higher in the refinement score, because otherwise
+      the features would not be able to overcome the profile.
+      On the other hand, gap penalties were slighlty lower in the refinement
+      mode, because the gap insertion was anyway induced by the gaps in the preliminary
+      alignment.The exact values were:
+      <br>
+      <div class="row">
+      <div class="col-md-3">
+        <strong>Alignment mode:</strong>
+        <br>
+        <strong>gap open penalty:</strong> 12
+        <br>
+        <strong>gap extension penalty:</strong> 1.2
+        <br>
+        <strong>end gap penalty:</strong> 1.2
+        <br>
+        <strong>PTM weight:</strong> 10
+        <br>
+        <strong>motif weight:</strong> 4
+        <br>
+        <strong>domain weight:</strong> 4
+        <br>
+      </div>
+      <div class="col-md-3">
+        <strong>Refinement mode:</strong>
+        <br>
+        <strong>gap open penalty:</strong> 8
+        <br>
+        <strong>gap extension penalty:</strong> 0.8
+        <br>
+        <strong>end gap penalty:</strong> 0.8
+        <br>
+        <strong>PTM weight:</strong> 50
+        <br>
+        <strong>motif weight:</strong> 20
+        <br>
+        <strong>domain weight:</strong> 7
+        <br>
+      </div>
+      </div>
+      <br>
+      <br>
+
+      </P>
+
+      <div id="additional">
+        <span class="panel-title-text">
+        <H4>Additional information</H4>
+        </span>
+        <P ALIGN="JUSTIFY">
+        The referees of the article raised some valid questions and made a series of
+        good points. As more people might have the same questions we put the answers
+        to their questions <a href="{{
+          url_for('dashboard.additional_information')}}">here</a>.
+        </P>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

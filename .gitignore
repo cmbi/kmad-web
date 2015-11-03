@@ -27,6 +27,7 @@ pip-log.txt
 .tox
 nosetests.xml
 coverage.xml
+cover/
 
 # Translations
 *.mo
@@ -48,6 +49,18 @@ Session.vim
 
 # celery
 celerybeat-schedule
+celerybeat-schedule.db
 
 # bower
-kman_web/frontend/static/libs
+kmad_web/frontend/static/libs
+node_modules/
+
+#redis
+dump.rdb
+
+#tmp files produced by predictors
+tmp*
+
+error.log
+
+core

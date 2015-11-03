@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}
+Alignment example
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">Alignment 4</span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+      <span style="font-size:12; color:grey;">
+        The original alignment consisted of 50 sequences, first 15 of them are
+        shown below.
+      </span>
+    <br>
+    <strong>KMAD</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box001_kmad_bali_col.html') }}"
+      style="width:100%;height:310px;" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+    <br>
+    <strong>Clustal</strong>
+    <br>
+    <iframe src="{{ url_for('static',
+      filename='alignments/rv932_box001.clustalo_bali_col.html') }}" 
+      style="width:100%;height:310px" name="targetframe" allowTransparency="true" scrolling="yes" frameborder="1" >
+      </iframe>
+    <br>
+  </div>
+
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

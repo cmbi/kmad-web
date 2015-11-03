@@ -1,0 +1,667 @@
+{% extends "base.html" %}
+{% block title %}
+Additional information
+{% endblock %}
+{% block content %}
+<div class='panel panel-default' style="width:100%;">
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>MSA benchmarks</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+          "We conclude that there is currently no universally applicable means
+          of benchmarking MSA, and that developers and users of alignment tools
+          should base their choice of benchmark depending on the context of
+          application—with a keen awareness of the assumptions underlying each 
+          benchmarking strategy."
+          (<i>Who Watches the Watchmen? An Appraisal of Benchmarks
+            for Multiple Sequence Alignment</i>, Iantorno S, et al., 2013)
+          </p>
+        </div>
+      </div>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">
+        Validation, part 1
+      </span>
+    </div>
+  </div>
+  <div class="panel-body panel-body-custom">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="more_methods">
+          <div class="panel panel-warning">
+            <div class="panel-heading">
+              <div class="panel-title">
+                The BAliBASE benchmark holds <strong>gapped</strong> alignments of
+                <strong>structured</strong> proteins. Minding that
+                KMAD was designed to perform <strong>ungapped</strong> alignments of
+                <strong>disordered</strong> proteins 
+                only a small drop in accuracy compared to other methods can still be
+                considered a success. KMAD has a different purpose, and it doesn't have
+                to perform as well as other methods with the 'conventional' alignments.
+              </div>
+            </div>
+          </div>
+          We chose 5 popular alignment methods, i.e. MUSCLE, MAFFT, T-Coffee,
+          ClustalW, and Clustal Omega for the comparison. For each of the methods we refined its alignments with KMAD.
+          In all cases, except for T-Coffee, KMAD improves the alignment score (both the
+          general one and the motif score).
+          T-Coffee gets the best scores, but we have to keep in mind that still - these
+          proteins are mostly structured. After visual inspection of T-Coffee alignments
+          of completely disordered proteins, we conclude that Clustal coupled with KMAD
+          very often produces better alignments. (Examples of T-Coffee mistakes are
+          presented 
+          <a
+            href="{{ url_for('dashboard.disprot_tcoffee_examples') }}">here</a>)
+          <br>
+          <div class="row">
+            <div class="col-md-6">
+              <img style="max-width:100%;max-height:100%;" 
+              src="{{ url_for('static',
+              filename='files/plots/boxplot_bali_score.png') }}"/>
+            </div>
+            <div class="col-md-6">
+              <br>
+              <br>
+              <table class="table table-condensed table-striped">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Mean</th>
+                    <th>3rd quartile</th>
+                    <th>1st quartile</th>
+                    <th>Median</th>
+                  </tr> 
+                </thead>
+                <tbody>
+                  <tr >
+                    <td>MAFFT</td>
+                    <td>0.70</td>
+                    <td>0.81</td>
+                    <td>0.53</td>
+                    <td>0.66</td>
+                  </tr>
+                  <tr >
+                    <td>MAFFT + KMAD</td>
+                    <td>0.71</td>
+                    <td>0.82</td>
+                    <td>0.54</td>
+                    <td>0.66</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE</td>
+                    <td>0.71</td>
+                    <td>0.83</td>
+                    <td>0.54</td>
+                    <td>0.68</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE + KMAD</td>
+                    <td>0.71</td>
+                    <td>0.83</td>
+                    <td>0.53</td>
+                    <td>0.67</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW</td>
+                    <td>0.69</td>
+                    <td>0.82</td>
+                    <td>0.51</td>
+                    <td>0.66</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW + KMAD</td>
+                    <td>0.71</td>
+                    <td>0.84</td>
+                    <td>0.54</td>
+                    <td>0.68</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega</td>
+                    <td>0.73</td>
+                    <td>0.84</td>
+                    <td>0.57</td>
+                    <td>0.68</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega + KMAD</td>
+                    <td>0.74</td>
+                    <td>0.85</td>
+                    <td>0.56</td>
+                    <td>0.69</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee</td>
+                    <td>0.74</td>
+                    <td>0.86</td>
+                    <td>0.58</td>
+                    <td>0.70</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee + KMAD</td>
+                    <td>0.73</td>
+                    <td>0.84</td>
+                    <td>0.56</td>
+                    <td>0.69</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <img style="max-width:100%;max-height:100%;" 
+              src="{{ url_for('static',
+              filename='files/plots/boxplot_bali_motif_score.png') }}"/>
+            </div>
+            <div class="col-md-6">
+              <br>
+              <br>
+              <table class="table table-condensed table-striped">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Mean</th>
+                    <th>3rd quartile</th>
+                    <th>1st quartile</th>
+                    <th>Median</th>
+                  </tr> 
+                </thead>
+                <tbody>
+                  <tr >
+                    <td>MAFFT</td>
+                    <td>0.84</td>
+                    <td>1.0</td>
+                    <td>0.53</td>
+                    <td>0.71</td>
+                  </tr>
+                  <tr >
+                    <td>MAFFT + KMAD</td>
+                    <td>0.89</td>
+                    <td>1.0</td>
+                    <td>0.62</td>
+                    <td>0.76</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE</td>
+                    <td>0.85</td>
+                    <td>1.0</td>
+                    <td>0.55</td>
+                    <td>0.72</td>
+                  </tr>
+                  <tr >
+                    <td>MUSCLE + KMAD</td>
+                    <td>0.86</td>
+                    <td>1.0</td>
+                    <td>0.56</td>
+                    <td>0.71</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW</td>
+                    <td>0.64</td>
+                    <td>1.0</td>
+                    <td>0.22</td>
+                    <td>0.60</td>
+                  </tr>
+                  <tr >
+                    <td>ClustalW + KMAD</td>
+                    <td>0.77</td>
+                    <td>1.0</td>
+                    <td>0.40</td>
+                    <td>0.66</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega</td>
+                    <td>0.74</td>
+                    <td>1.0</td>
+                    <td>0.23</td>
+                    <td>0.63</td>
+                  </tr>
+                  <tr >
+                    <td>Clustal Omega + KMAD</td>
+                    <td>0.86</td>
+                    <td>1.0</td>
+                    <td>0.47</td>
+                    <td>0.70</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee</td>
+                    <td>0.95</td>
+                    <td>1.0</td>
+                    <td>0.6</td>
+                    <td>0.78</td>
+                  </tr>
+                  <tr >
+                    <td>T-Coffee + KMAD</td>
+                    <td>0.92</td>
+                    <td>1.0</td>
+                    <td>0.6</td>
+                    <td>0.77</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <br>
+          </P>
+        </div>
+        <div id="whole_balibase">
+          Apart from the 'linear motif' BAliBASE benchmark we also used the
+          basic BAliBASE reference sets for comparison with other tools.
+          The results here are slightly worse than with the linear motif set,
+          mostly because these proteins have fewer (and shorter) disordered
+          regions while that's what KMAD was optimized for. Our conclusion from
+          this comparison is that even though KMAD was developed for different
+          purpose it also can be used for alignment of structured proteins.
+          <div class="row">
+            <div class="col-md-6">
+              <img style="max-width:100%;max-height:100%;" 
+              src="{{ url_for('static',
+              filename='files/plots/boxplot_wholebali_score.png') }}"/>
+            </div>
+            <div class="col-md-6">
+              <br>
+              <br>
+              <table class="table table-condensed table-striped">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Mean</th>
+                    <th>3rd quartile</th>
+                    <th>1st quartile</th>
+                    <th>Median</th>
+                  </tr> 
+                  <tr>
+                    <td>MAFFT</td>
+                    <td>0.79</td>
+                    <td>0.93</td>
+                    <td>0.72</td>
+                    <td>0.86</td>
+                  </tr>
+                  <tr>
+                    <td>MAFFT + KMAD</td>
+                    <td>0.77</td>
+                    <td>0.93</td>
+                    <td>0.68</td>
+                    <td>0.86</td>
+                  </tr>
+                  <tr>
+                    <td>MUSCLE</td>
+                    <td>0.82</td>
+                    <td>0.95</td>
+                    <td>0.76</td>
+                    <td>0.89</td>
+                  </tr>
+                  <tr>
+                    <td>MUSCLE + KMAD</td>
+                    <td>0.78</td>
+                    <td>0.93</td>
+                    <td>0.71</td>
+                    <td>0.86</td>
+                  </tr>
+                  <tr>
+                    <td>ClustalW</td>
+                    <td>0.75</td>
+                    <td>0.92</td>
+                    <td>0.65</td>
+                    <td>0.83</td>
+                  </tr>
+                  <tr>
+                    <td>ClustalW + KMAD</td>
+                    <td>0.75</td>
+                    <td>0.93</td>
+                    <td>0.64</td>
+                    <td>0.83</td>
+                  </tr>
+                  <tr>
+                    <td>Clustal Omega</td>
+                    <td>0.81</td>
+                    <td>0.95</td>
+                    <td>0.76</td>
+                    <td>0.89</td>
+                  </tr>
+                  <tr>
+                    <td>Clustal Omega + KMAD</td>
+                    <td>0.78</td>
+                    <td>0.94</td>
+                    <td>0.72</td>
+                    <td>0.87</td>
+                  </tr>
+                  <tr>
+                    <td>T-Coffee</td>
+                    <td>0.86</td>
+                    <td>0.96</td>
+                    <td>0.82</td>
+                    <td>0.91</td>
+                  </tr>
+                  <tr>
+                    <td>T-Coffee + KMAD</td>
+                    <td>0.80</td>
+                    <td>0.95</td>
+                    <td>0.75</td>
+                    <td>0.88</td>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>Validaton, part 2: BAliBASE 3.0, BAliBASE motif reference set,
+          PREFAB</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      <p align="justify">
+      Firstly, we ran the validation on 25 random sets rfom each of the three
+      benchmarks. Secondly, we performed validation on a subset from the
+      BAliBASE motif benchmark cotaining only sequence with 40% to 80% sequence
+      identity. We chose this particular subset, because the main task that
+      KMAD was designed for is to perform alignments of closely
+      related proteins, e.g. whole protein families.
+      <br>
+      To avouid circularity in validation on the motif BAliBASE benchmark, we 
+      performed a sort of 'leave-one-out' validation. To each sequence set
+      BAliBASE assigns  only one motif class - and this motif class was 
+      excluded from the KMAD annotations. Therefore, BAliBASE scored only for 
+      a motif that was not used to guide the alignment.
+      This kind of experiment also shows that even if we use annotation of
+      false positive motifs it might still improve the alignment of the
+      true motifs. It means that proper filtering of ELM prediction results
+      is not as important as one could expect - for example, if a motif is 
+      a false positive it will probably not be conserved, and therefore 
+      not have any infuence on the
+      alignment itself.
+      </p>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      Random 25 sequence sets from each benchmark
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      <p align="justify">
+      In this validation step, we also included KMAD using structural
+      information - to show that using features can improve the alignments,
+      and certainly does not damage them. Of course here again circularity is 
+      a problem - using structural information and testing it on a structural
+      benchmark. Nevertheless this results shows that indeed "what you give is
+      what you get" and so when our priority is good motif alignment, then we
+      should use motifs to guide the alignment. All rows described as 
+      'KMAD refine ...' are KMAD refinements of Clustal Omega alignments.
+      'KMAD disorder', 'KMAD refine disorder', etc. mean that the usual KMAD 
+      features were used (PTMs, motifs, domains), and 'KMAD structural' means
+      that strcutural information was used to guide the alignment.
+      </p>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static', 
+      filename="images/reviewer_comments/benchmark_25_random.png") }}"/>
+    </div>
+      <br>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      Subset RV913 from the BAliBASE motif reference set,
+      sequence with identity between 40% and 80%
+    </div>
+  </div>
+  <div class="panel-body" id="prefab">
+    <span class="panel-body-custom">
+      Both KMAD and KMAD refinement were ran in the 'leave-one-out' mode.
+      <br>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static', 
+      filename="images/reviewer_comments/benchmark_motif_similar.png") }}"/>
+  </div>
+      <br>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">
+        <strong>More examples from visual inspection</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      Apart from the BAliBASE validation we also visually inspected the
+      alignments. 
+      Here are examples of problems encountered by T-Coffee and Clustal Omega:
+      <ul>
+        <li><a href={{ url_for('dashboard.disprot_tcoffee_examples') }}>T-Coffee</a></li>
+        <li><a href={{ url_for('dashboard.disprot_clustal_examples') }}>Clustal Omega</a></li>
+      </ul>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title">
+      <span class="panel-title-text">
+        <strong>Example of BLAST results</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      To the 1st reviewer's comment ("What is more, in the provided example,
+      all the proteins have names (RLA) that indicate that they belong to the
+      same gene family. It would be more convincing if they provided an
+      alignment of proteins that diverged more and this method perhaps could
+      help the discovery of new members of a protein family.")
+
+      This is a problem for two reasons. First of all for many proteins from
+      Disprot we could find with BLAST either only very closely realted
+      proteins (e.g. from the same family) or very distantly related.
+      What's more, with more diverged proteins manual inspection is much
+      harder, and it would be very difficult to spot mistakes and improvements
+      in the alignments.
+
+      As an example, here is a blast result for the RLA3_CANAX protein:
+      <div style="overflow:auto;">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/blast_rla3_canax_all.png')}}">
+      </div>
+      <br>
+      Only the last two sequences don't belong to the same family.
+      But if we have a closer look at them, we see that the match between them
+      and our query protein is of very low quality.
+      Here is a KMAD alignment of the whole set of 53 proteins:
+      <div style="overflow:auto;">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/RLA3_CANAX_large.png')}}">
+      </div>
+      <div style="overflow:auto;">
+        <img src="{{ url_for('static',
+        filename='images/reviewer_comments/RLA3_CANAX_legend.png')}}">
+      </div>
+      <br>
+      Performance of KMAD on more diverged proteins is tested in the
+      BAliBASE validation - out of 220 sequence sets 51 have average identity
+      lower than 20%.
+    </span>
+
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>Phosphorylation conservation</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body">
+    <span class="panel-body-custom">
+      In the Science 2009 article "Global Analysis of Cdk1 Substrate
+      Phosphorylation Sites Provides Insights into Evolution", Holt, et al.,
+      show an alignment to illustrate the low conservation of phosphorylation
+      positions. While it is true, that the exact position of the
+      phosphorylations is not conserved, their presence is conserved. This
+      example shows exactly what KMAD was designed for: to stress conservation
+      of the presence of functional sites in disordered regions where amino
+      acid conservation is very low, but disorder itself and the presence of
+      motifs in the region are conserved. 
+      From the two presented alignments, KMAD alignment has more information
+      about the actual presence of phosphorylation sites, and thus gives better
+      insight into their functional importance. Actually, a phylogenetic tree
+      made with RaXML from the KMAD alignment has the same shape as the tree
+      given in Holt et al. So we have gained functional information at no loss
+      of phylogenetic information. This is obvious because highly variable
+      regions seldom contribute much to the phylogenic tree.
+      <br>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <div style="overflow:auto;">
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/ubx_al.png')}}">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <br>
+          <div style="overflow:auto;">
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/conservation.png')}}">
+          </div>
+        </div>
+      </div>
+      <br>
+      We calculated phylogenetic trees with RaXML based on the two alignments.
+      <br>
+      <div class="row">
+        <div class="col-md-6">
+          <strong>Holt</strong>
+          <div style="overflow:auto;">
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/holt_raxml_tree.png')}}"
+            style="width:100%">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <strong>KMAD</strong>
+          <div style="overflow:auto;">
+            <img src="{{ url_for('static',
+            filename='images/reviewer_comments/kmad_raxml_tree.png')}}"
+            style="width:100%">
+          </div>
+        </div>
+      </div>
+    </span>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>Performance, part 1</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="performance">
+    <span class="panel-body-custom">
+      <p align="justify">
+      Because KMAD, MUSCLE, and ClustalW don't have an option to run on multiple cores,
+      we ran all methods with disabled multithreading. The multithreading
+      methods would show much higher performance on a server, but it doesn't
+      change much for a casual user - personal computers still usually use just
+      a couple of cores.
+
+      The tools were tested on a random sample of 22 alignments from the
+      BAliBASE set.
+      We present plots of the methods' runtime vs. average sequence length,
+      number of sequence, and number of sequences times average sequence length
+      (LxN).
+      T-coffee is the slowest method in the set (it even takes longer than KMAD
+      and MUSCLE when multithreading is enabled).
+      KMAD is the second slowest, probably because it has more operations to
+      perform with every aligned residue - check all features and calculate
+      scores for them.
+      In the future we plan a general optimization of the software, including  
+      implementation of multithreading.
+
+      However, the alignment part is not the bottleneck in the whole process
+      for KMAD. The preparation of the sequence - that is annotation with
+      information from multiple databases is much slower than the alignment
+      itself. However, this doesn't depend on the creators of KMAD, but on the
+      scripts maintained by the database authors (ELM and Pfam).
+      </p>
+    </span>
+    <br>
+    <br>
+    <div class="row">
+      <div class="col-md-6">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_numbers_log.png')}}">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/seq_lengths_log.png')}}">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div style="overflow:auto;">
+          <img src="{{ url_for('static',
+          filename='images/reviewer_comments/performance_plots/nxl_log.png')}}">
+        </div>
+      </div>
+    </div>
+    <hr>
+  </div>
+  <div class="panel-heading">
+    <div class="panel-title" id="phosph">
+      <span class="panel-title-text">
+        <strong>Performance, part 2</strong>
+      </span>
+    </div>
+  </div>
+  <div class="panel-body" id="performance">
+    <span class="panel-body-custom">
+      <p align="justify">
+      The second part pof performance tests was ran of four different protein
+      families. 
+      For each method there are four curves, each representing a single family.
+      Some points are missing because some methods crashed and because we 
+      stopped a method when after a week no result had been returned yet.
+      <br>
+      <br>
+      <div style="overflow:auto;">
+      <img src="{{ url_for('static',
+      filename="files/plots/perf_plot.png") }}">
+      </div>
+      <div style="overflow:auto;">
+        <img src="{{ url_for('static',
+        filename="images/reviewer_comments/perf_table.png") }}">
+      </div>
+      </p>
+    </span>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}
