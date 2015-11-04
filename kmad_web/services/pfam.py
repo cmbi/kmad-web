@@ -52,7 +52,7 @@ class PfamService(object):
                 result_url = result['jobs']['job']['result_url']
             except KeyError as e:
                 raise ServiceError(
-                    "{}\nUnexpected response from Pfam".format(e))
+                    "{}\nUnexpected response from Pfam".format(e.message))
         return result_url
 
     def _status(self, url):

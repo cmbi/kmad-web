@@ -18,35 +18,16 @@ class TestDashboard(object):
         rv = self.app.get('/')
         eq_(rv.status_code, 200)
 
-    @patch('kmad_web.services.kmad.files.write_fasta')
     @patch('kmad_web.services.kmad.PredictStrategy.__call__')
-    @patch('kmad_web.services.kmad.PredictAndAlignStrategy.__call__')
-    @patch('kmad_web.frontend.dashboard.views.chain')
-    def test_index_post_predict(self, mock_chain, mock_call1, mock_call2,
-                                mock_write_fasta):
-        # mock_call1.return_value = 12345
-        # mock_call2.return_value = 12345
-        mock_write_fasta.return_value = ['test.fasta', 'test.fasta', False]
-        mock_chain.call.id.return_value = 12345
+    def test_index_post_predict(self, mock_strategy):
+        mock_strategy.call.return_value = 12345
         test_sequence = '>testseq\nSEQSEQSEQSEQ\n'
-        rv = self.app.post('/', data={'output_type': 'predict_and_align',
-                                      'sequence': test_sequence,
-                                      'submit_job': 'Submit'},
-                           follow_redirects=True)
-        eq_(rv.status_code, 200)
-        assert 'Job status' in rv.data
-        mock_call1.assert_called_once_with(test_sequence, 'test.fasta',
-                                           'test.fasta', -12, -1.2, -1.2, 10,
-                                           3, 3, [], False, [], u'ungapped')
-
         rv = self.app.post('/', data={'output_type': 'predict',
                                       'sequence': test_sequence,
                                       'submit_job': 'Submit'},
                            follow_redirects=True)
         eq_(rv.status_code, 200)
         assert 'Job status' in rv.data
-        mock_call2.assert_called_once_with(test_sequence, 'test.fasta',
-                                           'test.fasta', [], False)
 
     def test_methods(self):
         rv = self.app.get('/methods',

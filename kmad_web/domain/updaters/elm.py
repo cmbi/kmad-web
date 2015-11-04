@@ -33,6 +33,8 @@ class ElmUpdater(object):
             full_motif_classes[motif_id]['GO'] = extended_go_terms
         # make json serializable
         self._make_json_friendly(full_motif_classes)
+        if self._not_ok(full_motif_classes.keys()):
+            raise RuntimeError("ElmUpdater: not enough motif classes")
         # write processed motif_classes to a json file
         with open(self._elmdb_path, 'w') as outfile:
             json.dump(full_motif_classes, outfile, indent=4)
@@ -54,6 +56,12 @@ class ElmUpdater(object):
             go_terms.update(go_family)
             time.sleep(self._poll)
         return go_terms
+
+    def _not_ok(self, full_motif_classes):
+        if len(full_motif_classes.keys()) < 200:
+            return True
+        else:
+            return False
 
     # change sets to lists
     def _make_json_friendly(self, full_motif_classes):

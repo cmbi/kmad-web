@@ -55,6 +55,7 @@ def run_single_predictor(fasta_file, pred_name):
         args = [method, fasta_file]
     elif pred_name == 'globplot':
         method = GLOBPLOT
+        out_file = '.'.join(fasta_file.split('.')[:-1])+".gplot"
         args = [method, '10', '8', '75', '8', '8',
                 fasta_file, '>', out_file]
     elif pred_name == 'iupred':
@@ -301,66 +302,6 @@ def query_d2p2(blast_result):
         return {'d2p2': data}
     else:
         return None
-
-
-# @celery_app.task
-# def analyze_mutation(processed_result, mutation_site, new_aa,
-#                      wild_seq_filename):
-#     _log.info("Running analyse mutation")
-#
-#     mutation_site_0 = mutation_site - 1  # 0-based mutation site position
-#     wild_seq = processed_result[0]
-#
-#     disorder_prediction = processed_result[-2]  # filtered consensus
-#     encoded_alignment = processed_result[-1]['alignments'][2]
-#     proc_alignment = processed_result[-1]['alignments'][1]
-#     feature_codemap = processed_result[-1]['alignments'][3]
-#
-#     annotated_motifs = processed_result[-1]['annotated_motifs']
-#
-#     mutant_seq = ma.create_mutant_sequence(wild_seq, mutation_site_0, new_aa)
-#     mutant_seq_file = tempfile.NamedTemporaryFile(suffix=".fasta",
-#         delete=False)
-#     with mutant_seq_file as f:
-#         f.write('>mutant\n{}\n'.format(mutant_seq))
-#
-#     alignment_position = ma.get_real_position(encoded_alignment,
-#                                               mutation_site_0, 0)
-#     predicted_phosph_wild = run_netphos(wild_seq_filename)
-#     predicted_phosph_mutant = run_netphos(mutant_seq_file.name)
-#     alignment = ma.preprocess_features(encoded_alignment)
-#
-#     os.remove(mutant_seq_file.name)
-#
-#     surrounding_data = ma.analyze_predictions(predicted_phosph_wild,
-#                                               predicted_phosph_mutant,
-#                                               alignment, mutation_site_0,
-#                                               encoded_alignment)
-#     ptm_data = ma.analyze_ptms(alignment, mutation_site_0, alignment_position,
-#                                new_aa, predicted_phosph_mutant)
-#     motif_data = ma.analyze_motifs(alignment, proc_alignment, encoded_alignment,
-#                                    wild_seq, mutant_seq, mutation_site_0,
-#                                    alignment_position, feature_codemap,
-#                                    annotated_motifs)
-#     output = ma.combine_results(ptm_data, motif_data, surrounding_data,
-#                                 disorder_prediction, mutation_site_0, wild_seq)
-#     # output = {
-#     #     'residues': [
-#     #         {
-#     #             'position': 1,  # 1-based!
-#     #             'ptm': [{
-#     #                 'phosrel': {'wild': 'Y', 'mutant': 'N'}
-#     #             }],
-#     #             'motifs': [{
-#     #                 'motif-a': {'wild': 'Y',
-#                                   'mutant': 'M',
-#                                   'probability': 0.0,
-#                                   'class': 'motif_class'},
-#     #             }],
-#     #         }
-#     #     ]
-#     # }
-#     return output
 
 
 @celery_app.task

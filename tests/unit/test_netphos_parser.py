@@ -8,4 +8,4 @@ def test_parse():
         netphos_result = a.read()
     netphos_parser = NetphosParser()
     netphos_parser.parse(netphos_result)
-    eq_(set([8, 34, 55]), netphos_parser._phosph_postions)
+    eq_(set([8, 34, 55]), netphos_parser.phosph_positions)

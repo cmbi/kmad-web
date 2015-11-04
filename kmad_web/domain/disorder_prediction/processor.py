@@ -5,7 +5,6 @@ class PredictionProcessor(object):
         pass
 
     def process_prediction(self, prediction_lines, pred_name):
-        prediction_lines = prediction_lines.splitlines()
         # 0 - structured, 2 - disordered
         if pred_name == "spine":
             disorder_list = self._process_spine(prediction_lines)
@@ -21,6 +20,7 @@ class PredictionProcessor(object):
             disorder_list = self._process_iupred(prediction_lines)
         elif pred_name == 'd2p2':
             disorder_list = self._process_d2p2(prediction_lines)
+        print disorder_list
         return disorder_list
 
     def get_consensus_disorder(self, predictions):
@@ -80,7 +80,7 @@ class PredictionProcessor(object):
 
     def _process_d2p2(self, prediction):
         disorder_list = []
-        for i in disorder_list:
+        for i in prediction:
             if i >= 7:
                 disorder_list += [2]
             elif i >= 5:

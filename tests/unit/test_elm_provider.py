@@ -10,5 +10,5 @@ def test_filter_motifs():
                    ]
     expected_motifs = [{'start': 2, 'end': 4, 'probability': 0.5},
                        {'start': 5, 'end': 8, 'probability': 0.8}]
-    elm = ElmFeatureProvider()
+    elm = ElmFeatureProvider('test_path')
     eq_(expected_motifs, elm.filter_motifs(test_motifs))
