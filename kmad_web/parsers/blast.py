@@ -20,5 +20,5 @@ class BlastParser(object):
             blast_hit['evalue'] = line_list[4]
             blast_hit['bitscore'] = line_list[5]
             blast_hit['slen'] = line_list[6]
-            blast_hit['qlen'] = line_list[6]
+            blast_hit['qlen'] = line_list[7]
             self.blast_hits.append(blast_hit)

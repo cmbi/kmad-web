@@ -22,8 +22,7 @@ class PfamFeatureProvider(object):
         pfam_parser = PfamParser()
         pfam_parser.parse(pfam_result)
         domains = []
-
-        for d in pfam_parser._domains:
+        for d in pfam_parser.domains:
             domain = {}
             for key in ['accession', 'start', 'end']:
                 domain[key] = d[key]

@@ -1,10 +1,11 @@
 import os
 
-from nose.tools import ok_
+from nose.tools import ok_, assert_raises
 
 from kmad_web.services.alignment import (ClustaloService, ClustalwService,
                                          MafftService, MuscleService,
                                          TcoffeeService)
+from kmad_web.services.types import ServiceError
 
 
 def test_clustalo_service():
@@ -13,6 +14,9 @@ def test_clustalo_service():
     out = clustalo.align(test_filename)
     ok_(os.path.exists(out))
     os.remove(out)
+
+    clustalo._path = "NONAME"
+    assert_raises(ServiceError, clustalo.align, test_filename)
 
 
 def test_clustalw_service():
@@ -24,6 +28,9 @@ def test_clustalw_service():
     os.remove(out)
     os.remove(dnd)
 
+    clustalw._path = "NONAME"
+    assert_raises(ServiceError, clustalw.align, test_filename)
+
 
 def test_mafft_service():
     mafft = MafftService()
@@ -31,6 +38,9 @@ def test_mafft_service():
     out = mafft.align(test_filename)
     ok_(os.path.exists(out))
     os.remove(out)
+
+    mafft._path = "NONAME"
+    assert_raises(ServiceError, mafft.align, test_filename)
 
 
 def test_muscle_service():
@@ -40,6 +50,9 @@ def test_muscle_service():
     ok_(os.path.exists(out))
     os.remove(out)
 
+    muscle._path = "NONAME"
+    assert_raises(ServiceError, muscle.align, test_filename)
+
 
 def test_tcoffee_service():
     tcoffee = TcoffeeService()
@@ -47,3 +60,6 @@ def test_tcoffee_service():
     out = tcoffee.align(test_filename)
     ok_(os.path.exists(out))
     os.remove(out)
+
+    tcoffee._path = "NONAME"
+    assert_raises(ServiceError, tcoffee.align, test_filename)

@@ -5,6 +5,13 @@ class PfamParser(object):
     def __init__(self):
         self._domains = []
 
+    @property
+    def domains(self):
+        return self._domains
+
+    @domains.setter
+    def domains(self, domains):
+        self._domains = domains
     """
     output = [
               {

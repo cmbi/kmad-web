@@ -1,22 +1,26 @@
+from mock import patch, PropertyMock
 from nose.tools import eq_
 
 from kmad_web.domain.features.providers.pfam import PfamFeatureProvider
 
 
-def test_get_domains():
+@patch('kmad_web.domain.features.providers.pfam.PfamParser')
+@patch('kmad_web.domain.features.providers.pfam.PfamService')
+def test_get_domains(mock_service, mock_parser):
     pfam_provider = PfamFeatureProvider()
 
-    with open('tests/unit/testdata/TAU_HUMAN.fasta') as a:
-        tau_fasta = a.read().splitlines()
-    expected = ['PF00418.15'] * 4
-    seq = ''.join(tau_fasta[1:])
-    result = pfam_provider.get_domains({'seq': seq})
-    eq_(expected, [d['accession'] for d in result])
+    type(mock_parser.return_value).domains = PropertyMock(
+        return_value=[{
+            'accession': 'test_acc',
+            'start': '0',
+            'end': '0',
+            'some_other_key': 'test'
+        }])
 
-    with open('tests/unit/testdata/CRAM_CRAAB.fasta') as a:
-        cram_fasta = a.read().splitlines()
+    expected = [{
+        'accession': 'test_acc',
+        'start': '0',
+        'end': '0'
+    }]
 
-    expected = ['PF00321.13']
-    seq = ''.join(cram_fasta[1:])
-    result = pfam_provider.get_domains({'seq': seq})
-    eq_(expected, [d['accession'] for d in result])
+    eq_(expected, pfam_provider.get_domains({'header': '>1', 'seq': 'SEQ'}))

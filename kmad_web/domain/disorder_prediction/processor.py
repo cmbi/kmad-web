@@ -1,9 +1,6 @@
 
 
 class PredictionProcessor(object):
-    def _init_(self):
-        pass
-
     def process_prediction(self, prediction_lines, pred_name):
         # 0 - structured, 2 - disordered
         if pred_name == "spine":
@@ -11,7 +8,7 @@ class PredictionProcessor(object):
         elif pred_name == "disopred":
             disorder_list = self._process_disopred(prediction_lines)
         elif pred_name == "psipred":
-            disorder_list = self._process_disopred_psipred(prediction_lines)
+            disorder_list = self._process_psipred(prediction_lines)
         elif pred_name == "predisorder":
             disorder_list = self._process_predisorder(prediction_lines)
         elif pred_name == "globplot":
@@ -20,14 +17,14 @@ class PredictionProcessor(object):
             disorder_list = self._process_iupred(prediction_lines)
         elif pred_name == 'd2p2':
             disorder_list = self._process_d2p2(prediction_lines)
-        print disorder_list
         return disorder_list
 
     def get_consensus_disorder(self, predictions):
         consensus = []
-        half = float(len(predictions))/2
-        for i in range(len(predictions[0])):
-            column = [predictions[j][i] for j in range(len(predictions))]
+        half = float(len(predictions.keys()))/2
+        pred_keys = predictions.keys()
+        for i in range(len(predictions[pred_keys[0]])):
+            column = [predictions[k][i] for k in pred_keys]
             if column.count(0) > half:
                 consensus += [0]
             elif column.count(2) > half:

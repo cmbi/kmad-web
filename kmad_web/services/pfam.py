@@ -27,6 +27,7 @@ class PfamService(object):
             raise ServiceError("PfamService hasn't been configured")
         result_url = self._create(fasta_sequence)
         start_time = time.time()
+        print start_time
         while True:
             r = self._status(result_url)
             _log.info("Pfam status: {}".format(r['status']))
@@ -69,4 +70,6 @@ class PfamService(object):
                 status = "SUCCESS"
             else:
                 status = "PENDING"
+            print request.text
+            print status
             return {"status": status, "result": request.text}

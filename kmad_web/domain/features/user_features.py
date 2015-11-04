@@ -7,13 +7,10 @@ _log = logging.getLogger(__name__)
 
 
 class UserFeaturesParser(object):
-    def __init__(self):
-        pass
-
-    def parse(self, user_features):
+    def _parse(self, user_features):
         outtext = 'feature_settings = \n' \
                   + '  {\n' \
-                  + '  user_features = ( \n'
+                  + '  usr_features = ( \n'
         feat_dict = {}
         for i in user_features:
             i_positions = self._parse_positions(i['positions'])
@@ -57,10 +54,10 @@ class UserFeaturesParser(object):
         outtext += ');\n};\n'
         return outtext
 
-    def write_conf_file(usr_features):
+    def write_conf_file(self, usr_features):
         usr_features = self._remove_empty(usr_features)
         if usr_features:
-            parsed_features = txtproc.parse_features(usr_features)
+            parsed_features = self._parse(usr_features)
             tmp_file = tempfile.NamedTemporaryFile(suffix=".cfg", delete=False)
             _log.debug("Created tmp file '{}'".format(tmp_file.name))
             with tmp_file as f:
@@ -77,7 +74,24 @@ class UserFeaturesParser(object):
         for i in indexes:
             for j in usr_features[i].keys():
                 if not usr_features[i][j]:
-                    del new_features[i]
+                    # if pattern is empty but positions and seq number is not
+                    #      then don't delete the feature (and if p and seq
+                    #      number are empty but pattern is not
+                    #      then also don't)
+                    #
+                    check1 = (j == 'pattern'
+                              and not (usr_features[i]['positions']
+                                       and usr_features[i]['sequence_number'])
+                              )
+                    check2 = ((j == 'positions' or j == 'sequence_number')
+                              and not usr_features[i]['pattern']
+                              )
+                    check3 = (j != 'positions'
+                              and j != 'pattern'
+                              and j != 'sequence_number'
+                              )
+                    if check1 or check2 or check3:
+                        del new_features[i]
                     break
         return new_features
 

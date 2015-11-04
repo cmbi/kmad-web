@@ -15,7 +15,7 @@ class ClustaloService(object):
 
         try:
             subprocess.call(args, stderr=subprocess.PIPE)
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, OSError) as e:
             raise ServiceError(e)
 
         return out_filename
@@ -37,7 +37,7 @@ class ClustalwService(object):
         try:
             subprocess.call(args, stderr=subprocess.PIPE,
                             stdout=subprocess.PIPE)
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, OSError) as e:
             raise ServiceError(e)
 
         return out_filename
@@ -50,11 +50,11 @@ class MafftService(object):
 
     def align(self, filename):
         out_filename = filename + self._suffix
-        args = ["mafft", filename]
+        args = [self._path, filename]
         try:
             with open(out_filename, 'w') as out:
                 subprocess.call(args, stdout=out, stderr=subprocess.PIPE)
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, OSError) as e:
             raise ServiceError(e)
 
         return out_filename
@@ -73,7 +73,7 @@ class MuscleService(object):
         try:
             subprocess.call(args, stderr=subprocess.PIPE,
                             stdout=subprocess.PIPE)
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, OSError) as e:
             raise ServiceError(e)
 
         return out_filename
@@ -95,7 +95,7 @@ class TcoffeeService(object):
         try:
             subprocess.call(args, stderr=subprocess.PIPE,
                             stdout=subprocess.PIPE)
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, OSError) as e:
             raise ServiceError(e)
 
         return out_filename

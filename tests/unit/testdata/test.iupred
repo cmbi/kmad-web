@@ -1,0 +1,12 @@
+# IUPred 
+# Copyright (c) Zsuzsanna Dosztanyi, 2005
+#
+# Z. Dosztanyi, V. Csizmok, P. Tompa and I. Simon
+# J. Mol. Biol. (2005) 347, 827-839. 
+#
+#
+# Prediction output 
+# 1
+    1 S     0.001
+    2 E     0.9
+    3 Q     0.8

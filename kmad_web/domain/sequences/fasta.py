@@ -18,12 +18,14 @@ def unwrap(fasta):
 
 def parse_fasta(fastafile):
     fasta_data = unwrap(fastafile.splitlines())
+    sequences = []
     for i in range(0, len(fasta_data), 2):
         sequence = {
             'header': fasta_data[i],
             'seq': fasta_data[i + 1]
         }
-    return sequence
+        sequences.append(sequence)
+    return sequences
 
 
 def make_fasta(sequence_data):
@@ -56,17 +58,15 @@ def check_fasta(sequence_data):
             for i, lineI in enumerate(data_lines[:-1]):
                 fasta_header = lineI.startswith('>')
                 if fasta_header and not alpha_or_dash(data_lines[i + 1]):
-                    _log.debug("This line is a header"
-                               " but next is not a sequence:\n{}".format(
-                                   data_lines[i + 1]
-                               ))
-                    alright = False
-                    break
+                    raise RuntimeError("This line is a header "
+                                       "but next is not a sequence:\n{}".format(
+                                           data_lines[i + 1]
+                                       ))
                 elif not fasta_header and not alpha_or_dash(lineI):
-                    _log.debug("Line that is not a header"
-                               " and is not a sequence:\n{}".format(
-                                   data_lines[i + 1]
-                               ))
-                    alright = False
-                    break
+                    raise RuntimeError("Line that is not a header"
+                                       " and is not a sequence:\n{}".format(
+                                           data_lines[i + 1]
+                                       ))
+    else:
+        alright = False
     return alright

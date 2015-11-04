@@ -37,7 +37,7 @@ def run_single_predictor(fasta_file, pred_name):
     env = {}
     if pred_name == "spine":
         tmp_name = fasta_file.split('/')[-1].split('.')[0]
-        out_file = os.path.join(SPINE_OUTPUT_DIR, tmp_name)
+        out_file = os.path.join(SPINE_OUTPUT_DIR, tmp_name + '.spd')
         tmp_path = '/'.join(fasta_file.split("/")[:-1])
         method = SPINE
         args = [method, tmp_path, tmp_name]
@@ -88,6 +88,7 @@ def process_prediction_results(predictions, fasta_sequence):
     sequence = ''.join(fasta_sequence.splitlines()[1:])
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
+    # -> merge into one dictionary
     if type(predictions) == list:
         predictions = {x.keys()[0]: x.values()[0] for x in predictions}
     processor = PredictionProcessor()
@@ -252,24 +253,6 @@ def process_kmad_alignment(run_kmad_result):
 @celery_app.task
 def analyze_mutation(process_kmad_result, fasta_sequence, position, mutant_aa,
                      feature_type):
-    """
-    :return: {
-        'residues': [
-            {
-                'position': 1,  # 1-based!
-                'disordered': 'Y',  # Y = Yes, N = No, M = Maybe
-                'ptm': [{
-                    'phosrel': ['Y', 'N', 'description'],
-                    'glycosylation': ['M', 'N', 'description']
-                }],
-                'motifs': [{
-                    'motif-a': ['Y', 'M', 'description'],
-                    'motif-b': ['Y', 'M', 'description']
-                }],
-            }
-        ]
-    }
-    """
     sequences = process_kmad_result['sequences']
     mutation = Mutation(sequences[0], position, mutant_aa)
     if feature_type == 'motifs':

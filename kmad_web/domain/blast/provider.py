@@ -24,7 +24,8 @@ class BlastResultProvider(object):
         return result
 
     def get_exact_hit(self, blast_hits):
-        print blast_hits[0]
         if (blast_hits and blast_hits[0]['slen'] == blast_hits[0]['qlen']
                 and blast_hits[0]['pident'] == '100.00'):
             return blast_hits[0]['id']
+        else:
+            return None
