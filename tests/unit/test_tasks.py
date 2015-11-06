@@ -76,7 +76,8 @@ class TestTasks(object):
     def test_run_single_predictor(self, mock_subprocess, mock_call,
                                   mock_check_output, mock_os):
         filename = 'testdata/test.fasta'
-        methods = ['psipred', 'predisorder', 'disopred', 'spine', 'globplot']
+        methods = ['psipred', 'predisorder', 'disopred', 'spine', 'globplot',
+                   'iupred']
 
         pred = [1, 1, 2]
         mock_os.return_value = True
@@ -93,3 +94,74 @@ class TestTasks(object):
 
         result = run_single_predictor(filename, pred_name)
         eq_(result,  expected)
+
+    def test_process_prediction_results(self):
+        fasta_seq = '>1\nSEQSEQ\n'
+        predictions_in = [
+            {'disopred': [0, 0, 0, 0, 2, 2]},
+            {'predisorder': [2, 2, 0, 0, 2, 2]}
+        ]
+
+        from kmad_web.tasks import process_prediction_results
+
+        result = process_prediction_results(predictions_in, fasta_seq)
+        expected = {
+            'prediction': {
+                'disopred': [0, 0, 0, 0, 2, 2],
+                'predisorder': [2, 2, 0, 0, 2, 2],
+                'consensus': [1, 1, 0, 0, 2, 2],
+                'filtered': [1, 1, 0, 0, 2, 2]
+            },
+            'sequence': 'SEQSEQ'
+        }
+        eq_(expected, result)
+
+    @patch('kmad_web.tasks.tempfile')
+    @patch('kmad_web.tasks.TcoffeeService')
+    @patch('kmad_web.tasks.MuscleService')
+    @patch('kmad_web.tasks.MafftService')
+    @patch('kmad_web.tasks.ClustalwService')
+    @patch('kmad_web.tasks.ClustaloService')
+    @patch('kmad_web.tasks.open', mock_open(read_data='>1\nSEQSEQ\n'),
+           create=True)
+    def test_prealign(self, mock_clustalo, mock_clustalw, mock_mafft,
+                      mock_muscle, mock_tcoffee, mock_temp):
+
+        from kmad_web.tasks import prealign
+
+        methods = ['clustalo', 'clustalw', 'mafft', 'muscle', 't_coffee']
+        fasta_seq = '>1\nSEQSEQ\n'
+        expected = [{'seq': 'SEQSEQ', 'header': '>1'}]
+        for m in methods:
+            result = prealign(fasta_seq, m)
+            eq_(expected, result)
+
+    @patch('kmad_web.tasks.tempfile')
+    @patch('kmad_web.tasks.BlastResultProvider.get_result')
+    @patch('kmad_web.tasks.BlastResultProvider.get_exact_hit')
+    def test_run_blast(self, mock_hit, mock_res, mock_tmp):
+
+        from kmad_web.tasks import run_blast
+
+        fasta_seq = '>1\nSEQSEQ\n'
+
+        mock_res.return_value = 'blast_result'
+        mock_hit.return_value = 'exact_hit'
+        expected = {
+            'blast_result': 'blast_result',
+            'exact_hit': {
+                'seq_id': 'exact_hit',
+                'found': True
+            }
+        }
+        eq_(expected, run_blast(fasta_seq))
+
+        mock_hit.return_value = 'exact_hit'
+        expected = {
+            'blast_result': 'blast_result',
+            'exact_hit': {
+                'seq_id': 'exact_hit',
+                'found': True
+            }
+        }
+        eq_(expected, run_blast(fasta_seq))

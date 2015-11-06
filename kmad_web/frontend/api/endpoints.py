@@ -6,7 +6,8 @@ import re
 from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
-from kmad_web.services.kmad import (PredictStrategy, AlignStrategy)
+from kmad_web.services.kmad import (PredictStrategy, AlignStrategy,
+                                    PtmsStrategy, MotifsStrategy)
 
 
 _log = logging.getLogger(__name__)
@@ -17,8 +18,8 @@ bp = Blueprint('kmad', __name__, url_prefix='/api')
 @bp.route('/create/<output_type>/', methods=['POST'])
 def create_kmad(output_type):
     """
-    :param output_type: Either 'predict', 'predict_and_align', 'align',
-     'refine' or 'hope'
+    :param output_type: Either 'predict', 'align',
+     'refine', 'ptms' or 'motifs'
     :return: The id of the job.
 
     """
@@ -26,7 +27,6 @@ def create_kmad(output_type):
     if output_type == "predict":
         methods = form['prediction_methods'].split()
         strategy = PredictStrategy(form['seq_data'], methods)
-        celery_id = strategy()
     elif output_type == 'align':
         usr_features = []
         strategy = AlignStrategy(
@@ -35,8 +35,13 @@ def create_kmad(output_type):
             str(form['motif_score']), ast.literal_eval(form['gapped']),
             usr_features
         )
-        celery_id = strategy()
-
+    elif output_type == 'ptms':
+        strategy = PtmsStrategy(form['seq_data'], int(form['position']),
+                                form['mutant_aa'])
+    elif output_type == 'motifs':
+        strategy = MotifsStrategy(form['seq_data'], int(form['position']),
+                                  form['mutant_aa'])
+    celery_id = strategy()
     _log.info("Task created with id '{}'".format(celery_id))
     return jsonify({'id': celery_id}), 202
 

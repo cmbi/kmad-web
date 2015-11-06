@@ -91,10 +91,10 @@ def process_prediction_results(predictions, fasta_sequence):
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
     # -> merge into one dictionary
-    if type(predictions) == list:
+    if type(predictions) is list:
         predictions = {x.keys()[0]: x.values()[0] for x in predictions}
     processor = PredictionProcessor()
-    consensus = processor.get_consensus_disorder(predictions.values())
+    consensus = processor.get_consensus_disorder(predictions)
     predictions['consensus'] = consensus
     predictions['filtered'] = processor.filter_out_short_stretches(consensus)
     return {'prediction': predictions, 'sequence': sequence}
@@ -115,7 +115,7 @@ def prealign(fasta_file, alignment_method):
         f.write(fasta_file)
 
     alignment_service = service_dict[alignment_method]()
-    filename = alignment_service.align()
+    filename = alignment_service.align(tmp_file.name)
     with open(filename) as a:
         fasta_file = a.read()
     sequences = parse_fasta(fasta_file)
