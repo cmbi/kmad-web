@@ -16,7 +16,8 @@ class TestTasks(object):
     def test_get_task(self):
 
         from kmad_web.tasks import (get_task, process_prediction_results,
-                                    process_kmad_alignment, analyze_mutation)
+                                    process_kmad_alignment, analyze_ptms,
+                                    analyze_motifs)
 
         output_type = 'predict'
         expected = process_prediction_results
@@ -29,12 +30,12 @@ class TestTasks(object):
         eq_(result, expected)
 
         output_type = 'ptms'
-        expected = analyze_mutation
+        expected = analyze_ptms
         result = get_task(output_type)
         eq_(result, expected)
 
         output_type = 'motifs'
-        expected = analyze_mutation
+        expected = analyze_motifs
         result = get_task(output_type)
         eq_(result, expected)
 

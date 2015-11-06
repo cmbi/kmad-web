@@ -23,6 +23,8 @@ from kmad_web.domain.updaters.elm import ElmUpdater
 from kmad_web.services.alignment import (ClustaloService, ClustalwService,
                                          MafftService, MuscleService,
                                          TcoffeeService)
+from kmad_web.domain.features.analysis import ptms as ap
+from kmad_web.domain.features.analysis import motifs as am
 
 from kmad_web.default_settings import KMAD, BLAST_DB
 
@@ -251,16 +253,18 @@ def process_kmad_alignment(run_kmad_result):
 
 
 @celery_app.task
-def analyze_mutation(process_kmad_result, fasta_sequence, position, mutant_aa,
-                     feature_type):
+def analyze_ptms(process_kmad_result, fasta_sequence, position, mutant_aa):
     sequences = process_kmad_result['sequences']
     mutation = Mutation(sequences[0], position, mutant_aa)
-    if feature_type == 'motifs':
-        result = mutation.analyze_motifs(feature_type)
-    elif feature_type == 'ptms':
-        result = mutation.analyze_ptms(feature_type)
-    else:
-        raise RuntimeError("Unknown feature_type: {}".format(feature_type))
+    result = ap.analyze_ptms(mutation, sequences)
+    return result
+
+
+@celery_app.task
+def analyze_motifs(process_kmad_result, fasta_sequence, position, mutant_aa):
+    sequences = process_kmad_result['sequences']
+    mutation = Mutation(sequences[0], position, mutant_aa)
+    result = am.analyze_motifs(mutation, sequences)
     return result
 
 
@@ -302,8 +306,10 @@ def get_task(output_type):
     _log.info("Getting task for output '{}'".format(output_type))
     if output_type == 'align':
         task = process_kmad_alignment
-    elif output_type == 'ptms' or output_type == 'motifs':
-        task = analyze_mutation
+    elif output_type == 'ptms':
+        task = analyze_ptms
+    elif output_type == 'motifs':
+        task = analyze_motifs
     elif output_type == 'predict':
         task = process_prediction_results
     else:
