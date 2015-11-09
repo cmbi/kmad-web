@@ -7,34 +7,29 @@ def test_process_prediction():
     p = PredictionProcessor()
 
     with open('tests/unit/testdata/test.spine') as a:
-        prediction_lines = a.read().splitlines()
+        prediction = a.read()
     expected = [0, 2, 2]
-    eq_(expected, p.process_prediction(prediction_lines, 'spine'))
+    eq_(expected, p.process_prediction(prediction, 'spine'))
 
     with open('tests/unit/testdata/test.disopred') as a:
-        prediction_lines = a.read().splitlines()
-    expected = [0, 2, 2]
-    eq_(expected, p.process_prediction(prediction_lines, 'disopred'))
+        prediction = a.read()
+    eq_(expected, p.process_prediction(prediction, 'disopred'))
 
     with open('tests/unit/testdata/test.psipred') as a:
-        prediction_lines = a.read().splitlines()
-    expected = [0, 2, 2]
-    eq_(expected, p.process_prediction(prediction_lines, 'psipred'))
+        prediction = a.read()
+    eq_(expected, p.process_prediction(prediction, 'psipred'))
 
     with open('tests/unit/testdata/test.predisorder') as a:
-        prediction_lines = a.read().splitlines()
-    expected = [0, 2, 2]
-    eq_(expected, p.process_prediction(prediction_lines, 'predisorder'))
+        prediction = a.read()
+    eq_(expected, p.process_prediction(prediction, 'predisorder'))
 
     with open('tests/unit/testdata/test.globplot') as a:
-        prediction_lines = a.read().splitlines()
-    expected = [0, 2, 2]
-    eq_(expected, p.process_prediction(prediction_lines, 'globplot'))
+        prediction = a.read()
+    eq_(expected, p.process_prediction(prediction, 'globplot'))
 
     with open('tests/unit/testdata/test.iupred') as a:
-        prediction_lines = a.read().splitlines()
-    expected = [0, 2, 2]
-    eq_(expected, p.process_prediction(prediction_lines, 'iupred'))
+        prediction = a.read()
+    eq_(expected, p.process_prediction(prediction, 'iupred'))
 
     prediction = [0, 5, 9]
     expected = [0, 1, 2]

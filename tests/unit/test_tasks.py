@@ -130,10 +130,10 @@ class TestTasks(object):
         from kmad_web.tasks import prealign
 
         methods = ['clustalo', 'clustalw', 'mafft', 'muscle', 't_coffee']
-        fasta_seq = '>1\nSEQSEQ\n'
-        expected = [{'seq': 'SEQSEQ', 'header': '>1'}]
+        sequences = [{'seq': 'SEQSEQ', 'header': '>1'}]
+        expected = [{'seq': 'SEQSEQ', 'header': '>1', 'aligned': 'SEQSEQ'}]
         for m in methods:
-            result = prealign(fasta_seq, m)
+            result = prealign(sequences, m)
             eq_(expected, result)
 
     @patch('kmad_web.tasks.tempfile')

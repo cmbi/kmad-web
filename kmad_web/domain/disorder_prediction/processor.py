@@ -7,22 +7,27 @@ _log = logging.getLogger(__name__)
 
 class PredictionProcessor(object):
     def process_prediction(self, prediction, pred_name):
-        prediction_lines = prediction.splitlines()
         # 0 - structured, 2 - disordered
         if pred_name == "spine":
+            prediction_lines = prediction.splitlines()
             disorder_list = self._process_spine(prediction_lines)
         elif pred_name == "disopred":
+            prediction_lines = prediction.splitlines()
             disorder_list = self._process_disopred(prediction_lines)
         elif pred_name == "psipred":
+            prediction_lines = prediction.splitlines()
             disorder_list = self._process_psipred(prediction_lines)
         elif pred_name == "predisorder":
+            prediction_lines = prediction.splitlines()
             disorder_list = self._process_predisorder(prediction_lines)
         elif pred_name == "globplot":
+            prediction_lines = prediction.splitlines()
             disorder_list = self._process_globplot(prediction_lines)
         elif pred_name == "iupred":
+            prediction_lines = prediction.splitlines()
             disorder_list = self._process_iupred(prediction_lines)
         elif pred_name == 'd2p2':
-            disorder_list = self._process_d2p2(prediction_lines)
+            disorder_list = self._process_d2p2(prediction)
         return disorder_list
 
     def get_consensus_disorder(self, predictions):
