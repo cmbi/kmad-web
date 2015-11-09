@@ -15,7 +15,7 @@ _log = logging.getLogger(__name__)
 
 class SequencesAnnotator(object):
     def __init__(self):
-        self._sequences = []
+        self.sequences = []
         self._poll = 5
 
     """
