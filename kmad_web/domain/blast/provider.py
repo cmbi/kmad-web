@@ -28,4 +28,4 @@ class BlastResultProvider(object):
                 and blast_hits[0]['pident'] == '100.00'):
             return blast_hits[0]['id']
         else:
-            return None
+            return ''

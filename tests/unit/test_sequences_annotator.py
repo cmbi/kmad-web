@@ -54,3 +54,35 @@ def test_annotate_ptms(mock_netphos, mock_uniprot):
     seq_ann.sequences = sequences
     seq_ann._annotate_ptms()
     eq_(expected, seq_ann.sequences)
+
+
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._get_go_terms')
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_domains')
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_ptms')
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_motifs')
+def test_annotate(mock_motifs, mock_ptms, mock_domains, mock_go_terms):
+    crambin = 'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'
+    seq = [{'seq': 'SEQSEQ', 'id': 'TEST_ID'},
+           {'seq': crambin, 'id': ''},
+           {'seq': crambin[:-1], 'id': ''}
+           ]
+    expected = [{'seq': 'SEQSEQ', 'id': 'TEST_ID'},
+                {'seq': crambin, 'id': 'P01542'},
+                {'seq': crambin[:-1], 'id': ''}
+                ]
+    seq_ann = SequencesAnnotator()
+    seq_ann.annotate(seq)
+    eq_(expected, seq_ann.sequences)
+
+
+@patch('kmad_web.domain.sequences.annotator.UniprotGoTermProvider')
+def test_get_go_terms(mock_uniprot):
+    seq = [{'id': '1'}, {'id': '2'}]
+    mock_uniprot.return_value.get_go_terms.side_effect = [['go1', 'go2'],
+                                                          ['go1', 'go3']
+                                                          ]
+    seq_ann = SequencesAnnotator()
+    seq_ann.sequences = seq
+    result = seq_ann._get_go_terms()
+    expected = set(['go1', 'go2', 'go3'])
+    eq_(expected, result)
