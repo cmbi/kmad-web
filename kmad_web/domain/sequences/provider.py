@@ -10,6 +10,6 @@ class UniprotSequenceProvider(object):
     def get_sequence(self, uniprot_id):
         uniprot = UniprotService(self._url)
         fasta = uniprot.get_fasta(uniprot_id)
-        sequence = parse_fasta(fasta)
+        sequence = parse_fasta(fasta)[0]
         sequence['id'] = uniprot_id
         return sequence

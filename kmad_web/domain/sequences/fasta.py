@@ -1,4 +1,5 @@
 import logging
+import re
 
 
 logging.basicConfig()
@@ -28,6 +29,19 @@ def parse_fasta(fastafile):
     return sequences
 
 
+def parse_fasta_alignment(fastafile):
+    fasta_data = unwrap(fastafile.splitlines())
+    sequences = []
+    for i in range(0, len(fasta_data), 2):
+        sequence = {
+            'header': fasta_data[i],
+            'aligned': fasta_data[i + 1],
+            'seq': re.sub('-', '', fasta_data[i + 1])
+        }
+        sequences.append(sequence)
+    return sequences
+
+
 def make_fasta(sequence_data):
     if check_fasta(sequence_data):
         return sequence_data
@@ -36,6 +50,13 @@ def make_fasta(sequence_data):
             raise RuntimeError("Sequence has to consist of only alphabetic "
                                "characters")
         return ">sequence\n{}\n".format(sequence_data)
+
+
+def sequences2fasta(sequences):
+    fasta = ""
+    for s in sequences:
+        fasta += "{}\n{}\n".format(s['header'], s['seq'])
+    return fasta
 
 
 def alpha_or_dash(sequence):

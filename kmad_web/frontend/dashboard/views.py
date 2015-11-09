@@ -1,3 +1,4 @@
+import ast
 import logging
 import StringIO
 
@@ -8,7 +9,8 @@ from functools import wraps
 
 from kmad_web.services.helpers import fieldlist
 from kmad_web.frontend.dashboard.forms import KmadForm
-from kmad_web.services.kmad import PredictStrategy
+from kmad_web.services.kmad import (AlignStrategy, AnnotateStrategy,
+                                    RefineStrategy, PredictStrategy)
 
 
 _log = logging.getLogger(__name__)
@@ -29,6 +31,26 @@ def index():
         if form.output_type.data == "predict":
             strategy = PredictStrategy(seq_data, form.prediction_method.data)
             celery_id = strategy()
+        elif form.output_type.data == "align":
+            strategy = AlignStrategy(
+                seq_data, str(form.gop.data), str(form.gep.data),
+                str(form.egp.data), str(form.ptm_score.data),
+                str(form.domain_score.data), str(form.motif_score.data),
+                ast.literal_eval(form.gapped.data), form.usr_features.data
+            )
+            celery_id = strategy()
+        elif form.output_type.data == 'annotate':
+            strategy = AnnotateStrategy(seq_data)
+            celery_id = strategy()
+        elif form.output_type.data == 'refine':
+            strategy = RefineStrategy(
+                seq_data, str(form.gop.data), str(form.gep.data),
+                str(form.egp.data), str(form.ptm_score.data),
+                str(form.domain_score.data), str(form.motif_score.data),
+                ast.literal_eval(form.gapped.data), form.usr_features.data,
+                form.alignment_method.data)
+        elif form.output_type.data == 'predict_and_align':
+            pass
         else:
             abort(500, description='Unknown output type')
         _log.info("Job has id '{}'".format(celery_id))

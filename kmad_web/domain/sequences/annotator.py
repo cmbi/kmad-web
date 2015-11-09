@@ -50,7 +50,7 @@ class SequencesAnnotator(object):
 
     def _add_missing_uniprot_ids(self):
         for s in self.sequences:
-            if not s['id']:
+            if 'id' not in s.keys() or not s['id']:
                 s['id'] = get_uniprot_id(s['seq'])
 
     def _annotate_ptms(self):

@@ -21,7 +21,7 @@ class SequencesEncoder(object):
         self._motif_pos = 5
         self._create_code_alphabet()
 
-    def encode(self, sequences):
+    def encode(self, sequences, aligned_mode=False):
         self._sequences = sequences
         self._create_codon_sequences()
         # make code dicts for motifs and domains
@@ -42,6 +42,8 @@ class SequencesEncoder(object):
         self._encode_motifs()
         self._encode_domains()
         self._create_encoded_sequences()
+        if aligned_mode:
+            self._create_encoded_aligned_sequences()
 
     def _create_code_alphabet(self):
         self._code_alphabet = []
@@ -76,6 +78,21 @@ class SequencesEncoder(object):
     def _create_encoded_sequences(self):
         for s in self._sequences:
             s['encoded_seq'] = ''.join([''.join(c) for c in s['codon_seq']])
+
+    def _create_encoded_aligned_sequences(self):
+        codon_length = 7
+        for s in self._sequences:
+            seq = ""
+            it = 0
+            for r in s['aligned']:
+                if r != '-':
+                    seq += s['encoded_seq'][it:it + codon_length]
+                    it += codon_length
+                else:
+                    # equivalent of: seq += '-AAAAAA'
+                    seq += '-' + 'A' * (codon_length - 1)
+
+            s['encoded_aligned'] = seq
 
     """
     Encodes ptms on the sequences[lists of codons]

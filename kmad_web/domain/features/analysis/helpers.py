@@ -20,13 +20,15 @@ def _get_ptms_from_position(position, all_ptms):
 
 def _get_domains_from_position(position, all_domains):
     domains = [d for d in all_domains
-               if (d['start'] - 1 <= position and d['end'] - 1 >= position)]
+               if (int(d['start']) - 1 <= position
+                   and int(d['end']) - 1 >= position)]
     return domains
 
 
 def _get_motifs_from_position(position, all_motifs):
     motifs = [m for m in all_motifs
-              if (m['start'] - 1 <= position and m['end'] - 1 >= position)]
+              if (int(m['start']) - 1 <= position
+                  and int(m['end']) - 1 >= position)]
     return motifs
 
 

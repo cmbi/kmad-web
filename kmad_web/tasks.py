@@ -16,7 +16,8 @@ from kmad_web.domain.disorder_prediction.processor import PredictionProcessor
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequencesAnnotator
 from kmad_web.domain.sequences.encoder import SequencesEncoder
-from kmad_web.domain.sequences.fasta import parse_fasta
+from kmad_web.domain.sequences.fasta import (parse_fasta_alignment,
+                                             sequences2fasta)
 from kmad_web.domain.fles import write_fles, parse_fles, fles2fasta
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.updaters.elm import ElmUpdater
@@ -101,7 +102,7 @@ def process_prediction_results(predictions, fasta_sequence):
 
 
 @celery_app.task
-def prealign(fasta_file, alignment_method):
+def prealign(sequences, alignment_method):
     service_dict = {
         'clustalo': ClustaloService,
         'clustalw': ClustalwService,
@@ -109,16 +110,18 @@ def prealign(fasta_file, alignment_method):
         'muscle': MuscleService,
         't_coffee': TcoffeeService
     }
+    fasta = sequences2fasta(sequences)
 
     tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
     with tmp_file as f:
-        f.write(fasta_file)
+        f.write(fasta)
 
     alignment_service = service_dict[alignment_method]()
     filename = alignment_service.align(tmp_file.name)
     with open(filename) as a:
         fasta_file = a.read()
-    sequences = parse_fasta(fasta_file)
+    sequences = parse_fasta_alignment(fasta_file)
+    _log.debug("sequences: {}".format(sequences[0]))
     return sequences
 
 
@@ -152,9 +155,13 @@ def get_sequences_from_blast(blast_result):
 
 
 @celery_app.task
-def create_fles(sequences):
+def create_fles(sequences, aligned_mode=False):
     """
     Create FLES file (input file for KMAD)
+    aligned_mode -> gets passed to the encoder, True if you want to encode
+    aligned sequences (then each sequences should have an 'aligned' key:
+            {'header': '', 'seq': 'SEQ', 'aligned': 'SE--Q'}
+        )
 
     :param sequences: list sequence dictionaries ({'header': '', 'seq': ''})
     :return: filename
@@ -162,9 +169,23 @@ def create_fles(sequences):
     annotator = SequencesAnnotator()
     annotator.annotate(sequences)
     encoder = SequencesEncoder()
-    encoder.encode(sequences)
+    encoder.encode(sequences, aligned_mode)
+    _log.debug("ALigned mode: {}".format(aligned_mode))
     return {
-        'fles_path': write_fles(sequences),
+        'fles_path': write_fles(sequences, aligned_mode),
+        'sequences': sequences,
+        'motif_code_dict': encoder.motif_code_dict,
+        'domain_code_dict': encoder.domain_code_dict
+    }
+
+
+@celery_app.task
+def annotate(sequences):
+    annotator = SequencesAnnotator()
+    annotator.annotate(sequences)
+    encoder = SequencesEncoder()
+    encoder.encode(sequences, aligned_mode=True)
+    return {
         'sequences': sequences,
         'motif_code_dict': encoder.motif_code_dict,
         'domain_code_dict': encoder.domain_code_dict
@@ -187,8 +208,8 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     :param domain_score: feature weight for domains
     :param conf_path: path to the configuration file
     :param gapped: True for standard alignment
-    :param full_ungapped: indel-free alignment but in a standard alignment format
-        (no residues are cut out from the final alignment,
+    :param full_ungapped: indel-free alignment but in a standard alignment
+        format (no residues are cut out from the final alignment,
         but in all alignment rounds profile length is equal
         query sequence length)
     """
@@ -238,9 +259,6 @@ def process_kmad_alignment(run_kmad_result):
     fasta_file = fles2fasta(fles_file)
 
     for s_index, s in enumerate(alignment):
-        _log.debug(
-            "aligned_sequence: {}".format(s)
-        )
         sequences[s_index]['encoded_aligned'] = s['encoded_seq']
         sequences[s_index]['aligned'] = s['encoded_seq'][::codon_length]
     return {
@@ -304,7 +322,7 @@ def get_task(output_type):
     If the output_type is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
-    if output_type == 'align':
+    if output_type == 'align' or output_type == 'refine':
         task = process_kmad_alignment
     elif output_type == 'ptms':
         task = analyze_ptms

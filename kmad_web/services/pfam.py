@@ -40,7 +40,6 @@ class PfamService(object):
 
     def _create(self, fasta_sequence):
         try:
-            _log.debug("fasta_sequence: {}".format(fasta_sequence))
             data = {'seq': fasta_sequence, 'output': 'xml'}
             request = requests.post(self._url, data=data)
             request.raise_for_status()

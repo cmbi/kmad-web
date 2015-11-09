@@ -21,20 +21,29 @@ class MotifsStrategy(object):
         self._position = position
         self._mutant_aa = mutant_aa
         self._feature_type = 'motifs'
+        self._gop = '-12'
+        self._gep = '-1.2'
+        self._egp = '-1.2'
+        self._ptm_score = '10'
+        self._motif_score = '4'
+        self._domain_score = '4'
+        self._full_ungapped = 'True'
 
     def __call__(self):
         from celery import chain
         from kmad_web.tasks import (run_blast, get_sequences_from_blast,
-                                    create_fles, run_kmad, analyze_mutation,
+                                    create_fles, run_kmad, analyze_motifs,
                                     process_kmad_alignment)
         workflow = chain(
             run_blast.s(self._fasta_sequence),
             get_sequences_from_blast.s(),
             create_fles.s(),
-            run_kmad.s(),
+            run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
+                       self._domain_score, self._motif_score,
+                       full_ungapped=self._full_ungapped),
             process_kmad_alignment.s(),
-            analyze_mutation.s(self._raw_sequence, self._position,
-                               self._mutant_aa, self._feature_type)
+            analyze_motifs.s(self._raw_sequence, self._position,
+                             self._mutant_aa)
         )
         job = workflow()
         return job.id
@@ -49,20 +58,29 @@ class PtmsStrategy(object):
         self._position = position
         self._mutant_aa = mutant_aa
         self._feature_type = 'ptms'
+        self._gop = '-12'
+        self._gep = '-1.2'
+        self._egp = '-1.2'
+        self._ptm_score = '10'
+        self._motif_score = '4'
+        self._domain_score = '4'
+        self._full_ungapped = 'True'
 
     def __call__(self):
         from celery import chain
         from kmad_web.tasks import (run_blast, get_sequences_from_blast,
-                                    create_fles, run_kmad, analyze_mutation,
-                                    parse_fles)
+                                    create_fles, run_kmad, analyze_ptms,
+                                    process_kmad_alignment)
         workflow = chain(
             run_blast.s(self._fasta_sequence),
             get_sequences_from_blast.s(),
             create_fles.s(),
-            run_kmad.s(),
-            parse_fles.s(),
-            analyze_mutation.s(self._fasta_sequence, self._position,
-                               self._mutant_aa, self._feature_type)
+            run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
+                       self._domain_score, self._motif_score,
+                       full_ungapped=self._full_ungapped),
+            process_kmad_alignment.s(),
+            analyze_ptms.s(self._fasta_sequence, self._position,
+                           self._mutant_aa)
         )
         job = workflow()
         return job.id
@@ -176,16 +194,16 @@ class RefineStrategy(object):
                 run_blast.s(self._fasta),
                 get_sequences_from_blast.s(),
                 prealign.s(self._alignment_method),
-                create_fles.s()
+                create_fles.s(aligned_mode=True)
             ]
         elif self._multi_fasta and self._alignment_method:
             tasks = [
                 prealign.s(self._alignment_method),
-                create_fles.s()
+                create_fles.s(aligned_mode=True)
             ]
         elif self._multi_fasta and not self._alignment_method:
             sequences = parse_fasta(self._fasta)
-            tasks = [create_fles.s(sequences)]
+            tasks = [create_fles.s(sequences, aligned_mode=True)]
         else:
             raise RuntimeError("sequence data holds a single sequence, but no"
                                " prealignment method is specified")
@@ -200,10 +218,12 @@ class RefineStrategy(object):
         return job.id
 
 
-# TODO: implement
 class AnnotateStrategy(object):
-    def __init__(self):
-        pass
+    def __init__(self, sequences):
+        self._sequences = sequences
 
     def __call__(self):
-        pass
+        from kmad_web.tasks import annotate
+
+        job = annotate.delay(self._sequences)
+        return job.id

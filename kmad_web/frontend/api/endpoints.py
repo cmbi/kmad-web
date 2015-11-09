@@ -7,7 +7,8 @@ from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
 from kmad_web.services.kmad import (PredictStrategy, AlignStrategy,
-                                    PtmsStrategy, MotifsStrategy)
+                                    PtmsStrategy, RefineStrategy,
+                                    MotifsStrategy)
 
 
 _log = logging.getLogger(__name__)
@@ -26,6 +27,7 @@ def create_kmad(output_type):
     form = request.form
     if output_type == "predict":
         methods = form['prediction_methods'].split()
+        _log.debug("WTF")
         strategy = PredictStrategy(form['seq_data'], methods)
     elif output_type == 'align':
         usr_features = []
@@ -35,7 +37,16 @@ def create_kmad(output_type):
             str(form['motif_score']), ast.literal_eval(form['gapped']),
             usr_features
         )
+    elif output_type == 'refine':
+        usr_features = []
+        strategy = RefineStrategy(
+            form['seq_data'], str(form['gop']), str(form['gep']),
+            str(form['egp']), str(form['ptm_score']), str(form['domain_score']),
+            str(form['motif_score']), ast.literal_eval(form['gapped']),
+            usr_features, form['alignment_method']
+        )
     elif output_type == 'ptms':
+        _log.debug('hmd')
         strategy = PtmsStrategy(form['seq_data'], int(form['position']),
                                 form['mutant_aa'])
     elif output_type == 'motifs':

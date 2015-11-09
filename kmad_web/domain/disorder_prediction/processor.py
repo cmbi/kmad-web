@@ -1,7 +1,13 @@
+import logging
+
+
+logging.basicConfig()
+_log = logging.getLogger(__name__)
 
 
 class PredictionProcessor(object):
-    def process_prediction(self, prediction_lines, pred_name):
+    def process_prediction(self, prediction, pred_name):
+        prediction_lines = prediction.splitlines()
         # 0 - structured, 2 - disordered
         if pred_name == "spine":
             disorder_list = self._process_spine(prediction_lines)
@@ -139,6 +145,7 @@ class PredictionProcessor(object):
 
     def _process_globplot(self, prediction_lines):
         seqlength = len(''.join(prediction_lines[1:]))
+        _log.debug(prediction_lines)
         dis_regions = [i.split('-')
                        for i in prediction_lines[0].split(':')[-1].split(', ')]
         disorder_list = [0 for i in xrange(seqlength)]
