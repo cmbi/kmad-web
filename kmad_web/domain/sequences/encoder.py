@@ -59,7 +59,7 @@ class SequencesEncoder(object):
     def _create_motif_code_dict(self):
         feat_ids = set()
         for s in self._sequences:
-            feat_ids.update([f['id'] for f in s['motifs']])
+            feat_ids.update([f['id'] for f in s['motifs_filtered']])
         feat_ids = list(feat_ids)
         feat_code_dict = {feat_ids[i]: self._code_alphabet[i]
                           for i in range(len(feat_ids))}
@@ -157,7 +157,7 @@ class SequencesEncoder(object):
         # position in codon
         pos = self._motif_pos
         for s in self._sequences:
-            for m in s['motifs']:
+            for m in s['motifs_filtered']:
                 motif_code = self.motif_code_dict[m['id']]
                 for i in range(m['start'] - 1, m['end']):
                     s['codon_seq'][i][pos:pos+2] = motif_code

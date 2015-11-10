@@ -26,6 +26,7 @@ from kmad_web.services.alignment import (ClustaloService, ClustalwService,
                                          TcoffeeService)
 from kmad_web.domain.features.analysis import ptms as ap
 from kmad_web.domain.features.analysis import motifs as am
+from kmad_web.helpers import invert_dict
 
 from kmad_web.default_settings import KMAD, BLAST_DB
 
@@ -98,7 +99,9 @@ def process_prediction_results(predictions, fasta_sequence):
     consensus = processor.get_consensus_disorder(predictions)
     predictions['consensus'] = consensus
     predictions['filtered'] = processor.filter_out_short_stretches(consensus)
-    return {'prediction': predictions, 'sequence': sequence}
+    prediction_text = processor.make_text(predictions)
+    return {'prediction': predictions, 'sequence': sequence,
+            'prediction_text': prediction_text}
 
 
 @celery_app.task
@@ -266,8 +269,8 @@ def process_kmad_alignment(run_kmad_result):
         'fles_file': fles_file,
         'fasta_file': fasta_file,
         'sequences': sequences,
-        'motif_code_dict': run_kmad_result['motif_code_dict'],
-        'domain_code_dict': run_kmad_result['domain_code_dict']
+        'motif_code_dict': invert_dict(run_kmad_result['motif_code_dict']),
+        'domain_code_dict': invert_dict(run_kmad_result['domain_code_dict'])
     }
 
 
@@ -314,6 +317,7 @@ def query_d2p2(blast_result):
 def combine_alignment_and_prediction(results):
     """
     :return: {'prediction': [0, 1, 2],
+              'prediction_text': prediction_text,
               'sequence': 'SEQ',
               'fles_file': '>1\nSAAAA...',
               'fasta_file': '>1\nSEQ..'

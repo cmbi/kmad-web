@@ -169,3 +169,7 @@ class PredictionProcessor(object):
             else:
                 disorder_list.append(0)
         return disorder_list
+
+    # TODO: be serious
+    def make_text(self, predictions):
+        return "prediction text"

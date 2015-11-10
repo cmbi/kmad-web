@@ -40,7 +40,6 @@ class ElmFeatureProvider(object):
         for m in self._full_motif_classes.values():
             m['compiled_regex'] = re.compile(m['pattern'])
             m['GO'] = set(m['GO'])
-            m['probability']
 
     def _predict_motifs(self, sequence):
         motifs = []
@@ -119,8 +118,6 @@ class ElmFeatureProvider(object):
                         # motif i starts inside the motif j
                         check = (m_i['start'] >= m_j['start']
                                  and m_i['start'] <= m_j['end'])
-                        # print (check, m_i, m_j, m_i['start'] >= m_j['start'],
-                        #        m_i['start'] <= m_j['end'])
                         if check:
                             if m_i['probability'] > m_j['probability']:
                                 remove_indexes.add(it_j)
