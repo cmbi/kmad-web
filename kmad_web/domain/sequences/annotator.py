@@ -61,7 +61,6 @@ class SequencesAnnotator(object):
             s['ptms'] = netphos.get_phosphorylations(s['seq'])
             if s['id']:
                 uniprot_ptms = uniprot.get_ptms(s['id'])
-                _log.debug(uniprot_ptms)
                 if uniprot_ptms:
                     s['ptms'].extend(uniprot_ptms)
 
@@ -75,7 +74,6 @@ class SequencesAnnotator(object):
     def _annotate_domains(self):
         _log.info("Annotate sequences with domains")
         for s in self.sequences:
-            s['domains'] = []
-            # pfam = PfamFeatureProvider()
-            # s['domains'] = pfam.get_domains(s)
-            # time.sleep(self._poll)
+            pfam = PfamFeatureProvider()
+            s['domains'] = pfam.get_domains(s)
+            time.sleep(self._poll)
