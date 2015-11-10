@@ -8,10 +8,9 @@ from kmad_web.parsers.uniprot import UniprotParser
 
 
 class UniprotFeatureProvider(object):
-    def __init__(self):
-        self._ptms = []
 
     def get_ptms(self, uniprot_id):
+        ptms = []
         uniprot_service = UniprotService(UNIPROT_URL)
         uniprot_txt = uniprot_service.get_txt(uniprot_id)
         uniprot_parser = UniprotParser()
@@ -22,8 +21,8 @@ class UniprotFeatureProvider(object):
             if ptm['name']:
                 ptm['position'] = int(p['position'])
                 ptm['annotation_level'] = self._get_annotation_level(p['eco'])
-                self._ptms.append(ptm)
-        return self._ptms
+                ptms.append(ptm)
+        return ptms
 
     def _get_annotation_level(self, eco):
         # the first eco code is always the 'best' one ( = highest annotation

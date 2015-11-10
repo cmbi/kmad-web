@@ -103,8 +103,8 @@ class SequencesEncoder(object):
         for s in self._sequences:
             ptms = self._filter_ptms(s['ptms'])
             for p in ptms:
-                ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
                 ptm_pos = p['position'] - 1
+                ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
                 s['codon_seq'][ptm_pos][codon_pos] = ptm_code
 
     """
