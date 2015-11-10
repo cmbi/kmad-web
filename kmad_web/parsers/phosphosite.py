@@ -5,7 +5,6 @@ import re
 from kmad_web.parsers.types import ParserError
 
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 

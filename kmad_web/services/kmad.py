@@ -3,8 +3,8 @@ import tempfile
 
 
 from kmad_web.domain.features.user_features import UserFeaturesParser
-from kmad_web.domain.sequences.fasta import (check_fasta, make_fasta,
-                                             parse_fasta)
+from kmad_web.domain.sequences.fasta import (check_fasta, get_first_seq,
+                                             make_fasta, parse_fasta)
 
 
 _log = logging.getLogger(__name__)
@@ -87,8 +87,8 @@ class PtmsStrategy(object):
 
 
 class PredictStrategy(object):
-    def __init__(self, fasta_sequence, prediction_methods):
-        self._fasta_sequence = fasta_sequence
+    def __init__(self, sequence_data, prediction_methods):
+        self._fasta_sequence = make_fasta(sequence_data)
         self._prediction_methods = prediction_methods
 
     def __call__(self):
@@ -226,4 +226,78 @@ class AnnotateStrategy(object):
         from kmad_web.tasks import annotate
 
         job = annotate.delay(self._sequences)
+        return job.id
+
+
+class PredictAndAlignStrategy(object):
+    def __init__(self, sequence_data, prediction_methods, gop, gep, egp,
+                 ptm_score, domain_score, motif_score, gapped, usr_features):
+        self._fasta = make_fasta(sequence_data)
+        self._gop = gop
+        self._gep = gep
+        self._egp = egp
+        self._ptm_score = ptm_score
+        self._motif_score = motif_score
+        self._domain_score = domain_score
+        self._gapped = gapped
+        self._usr_features = usr_features
+        self._multi_fasta = sequence_data.count('>') > 1
+        self._prediction_methods = prediction_methods
+
+    def __call__(self):
+        from celery import chain, group
+        from kmad_web.tasks import (create_fles, run_blast, query_d2p2,
+                                    get_sequences_from_blast, run_kmad,
+                                    process_kmad_alignment,
+                                    process_prediction_results,
+                                    run_single_predictor,
+                                    combine_alignment_and_prediction)
+
+        user_feat_parser = UserFeaturesParser()
+        config_path = user_feat_parser.write_conf_file(self._usr_features)
+
+        single_fasta_seq = get_first_seq(self._fasta)
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+        with tmp_file as f:
+            f.write(single_fasta_seq)
+
+        if 'd2p2' in self._prediction_methods:
+            prediction_tasks = [
+                chain(
+                    run_blast.s(single_fasta_seq),
+                    query_d2p2.s()
+                )
+            ]
+        else:
+            prediction_tasks = []
+        for pred_name in self._prediction_methods:
+            if pred_name != 'd2p2':
+                prediction_tasks += [run_single_predictor.s(tmp_file.name,
+                                                            pred_name)]
+
+        prediction_tasks += [process_prediction_results.s(single_fasta_seq)]
+
+        if self._multi_fasta:
+            sequences = parse_fasta(self._fasta)
+            alignment_tasks = [create_fles.s(sequences)]
+        else:
+            alignment_tasks = [run_blast.s(self._fasta),
+                               get_sequences_from_blast.s(),
+                               create_fles.s()]
+        alignment_tasks.extend([
+            run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
+                       self._domain_score, self._motif_score, config_path,
+                       self._gapped),
+            process_kmad_alignment.s()
+        ])
+        workflow = chain(
+            group(
+                chain(alignment_tasks),
+                chain(prediction_tasks)
+            ),
+            combine_alignment_and_prediction.s()
+        )
+
+        job = workflow()
+
         return job.id

@@ -2,7 +2,6 @@ import logging
 import tempfile
 
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 

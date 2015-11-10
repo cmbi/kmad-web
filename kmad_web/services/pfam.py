@@ -6,7 +6,6 @@ import xmltodict
 
 from kmad_web.services.types import ServiceError, TimeoutError
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
@@ -29,7 +28,6 @@ class PfamService(object):
         start_time = time.time()
         while True:
             r = self._status(result_url)
-            _log.info("Pfam status: {}".format(r['status']))
             if r['status'] == "SUCCESS":
                 return r['result']
             else:

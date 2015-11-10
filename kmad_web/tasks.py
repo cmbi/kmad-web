@@ -30,7 +30,6 @@ from kmad_web.domain.features.analysis import motifs as am
 from kmad_web.default_settings import KMAD, BLAST_DB
 
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
@@ -88,6 +87,7 @@ def run_single_predictor(fasta_file, pred_name):
 
 @celery_app.task
 def process_prediction_results(predictions, fasta_sequence):
+    _log.info("Processing prediction results")
     sequence = ''.join(fasta_sequence.splitlines()[1:])
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
@@ -121,7 +121,6 @@ def prealign(sequences, alignment_method):
     with open(filename) as a:
         fasta_file = a.read()
     sequences = parse_fasta_alignment(fasta_file)
-    _log.debug("sequences: {}".format(sequences[0]))
     return sequences
 
 
@@ -166,11 +165,11 @@ def create_fles(sequences, aligned_mode=False):
     :param sequences: list sequence dictionaries ({'header': '', 'seq': ''})
     :return: filename
     """
+    _log.info("Creating a FLES file")
     annotator = SequencesAnnotator()
     annotator.annotate(sequences)
     encoder = SequencesEncoder()
     encoder.encode(sequences, aligned_mode)
-    _log.debug("ALigned mode: {}".format(aligned_mode))
     return {
         'fles_path': write_fles(sequences, aligned_mode),
         'sequences': sequences,
@@ -213,6 +212,7 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
         but in all alignment rounds profile length is equal
         query sequence length)
     """
+    _log.info("Running KMAD")
     fles_path = create_fles_result['fles_path']
     sequences = create_fles_result['sequences']
     args = [KMAD, '-i', fles_path, '-o', fles_path, '-g', gop, '-e', gep,
@@ -244,6 +244,7 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
 
 @celery_app.task
 def process_kmad_alignment(run_kmad_result):
+    _log.info("Processing KMAD result")
     fles_path = run_kmad_result['fles_path']
     sequences = run_kmad_result['sequences']
     codon_length = 7
@@ -310,6 +311,24 @@ def query_d2p2(blast_result):
 
 
 @celery_app.task
+def combine_alignment_and_prediction(results):
+    """
+    :return: {'prediction': [0, 1, 2],
+              'sequence': 'SEQ',
+              'fles_file': '>1\nSAAAA...',
+              'fasta_file': '>1\nSEQ..'
+              'sequences': [],
+              'motif_code_dict': {}
+              'domain_code_dict': {}
+              }
+    """
+    _log.info("Combining alignment and prediction results")
+    combined = results[1]
+    combined.update(results[0])
+    return combined
+
+
+@celery_app.task
 def update_elmdb(output_filename):
     elm = ElmUpdater()
     elm.update()
@@ -322,8 +341,10 @@ def get_task(output_type):
     If the output_type is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
-    if output_type == 'align' or output_type == 'refine':
+    if output_type in ['align', 'refine']:
         task = process_kmad_alignment
+    elif output_type == 'predict_and_align':
+        task = combine_alignment_and_prediction
     elif output_type == 'ptms':
         task = analyze_ptms
     elif output_type == 'motifs':

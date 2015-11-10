@@ -8,7 +8,7 @@ from wtforms.fields import (FloatField, IntegerField, SelectField,
                             SubmitField, RadioField)
 from wtforms.widgets import html_params, HTMLString
 
-logging.basicConfig()
+logging.basicConfig(propagate=False)
 _log = logging.getLogger(__name__)
 
 
@@ -162,17 +162,17 @@ class KmadForm(Form):
                                                      should be just plain \
                                                      sequences in FASTA format)')
 
-    def validate_gap_open_p(form, field):
+    def validate_gop(form, field):
         if field.data >= 0:
             raise validators.ValidationError("gap penalty values \
                                              have to be negative")
 
-    def validate_gap_ext_p(form, field):
+    def validate_gep(form, field):
         if field.data >= 0:
             raise validators.ValidationError("gap penalty values \
                                              have to be negative")
 
-    def validate_end_gap_p(form, field):
+    def validate_egp(form, field):
         if field.data >= 0:
             raise validators.ValidationError("gap penalty values \
                                              have to be negative")
@@ -203,17 +203,17 @@ class KmadForm(Form):
                                                    'predict disorder'),
                                                   ('annotate',
                                                    'annotate alignment')])
-    gap_open_p = FloatField(u'gap opening penalty', default=-12)
-    gap_ext_p = FloatField(u'gap extension penalty', default=-1.2)
-    end_gap_p = FloatField(u'end gap penalty', default=-1.2)
+    gop = FloatField(u'gap opening penalty', default=-12)
+    gep = FloatField(u'gap extension penalty', default=-1.2)
+    egp = FloatField(u'end gap penalty', default=-1.2)
     ptm_score = FloatField(u'PTM score', default=10)
     domain_score = FloatField(u'domain score', default=4)
     motif_score = FloatField(u'motif score', default=4)
 
-    first_seq_gapped = RadioField(u'First sequence:',
-                                  choices=[('ungapped', 'without gaps'),
-                                           ('gapped', 'with gaps')],
-                                  default='ungapped')
+    gapped = RadioField(u'First sequence:',
+                        choices=[('True', 'without gaps'),
+                                 ('False', 'with gaps')],
+                        default='False')
 
     alignment_method = RadioField(
         u'Alignment method:',

@@ -1,7 +1,6 @@
 import logging
 import re
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 

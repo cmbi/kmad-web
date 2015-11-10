@@ -7,7 +7,6 @@ from kmad_web.services.elm import ElmService
 from kmad_web.domain.go.providers.go import GoProvider
 from kmad_web.default_settings import ELM_URL, ELMDB_PATH
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 

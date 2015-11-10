@@ -9,7 +9,6 @@ from kmad_web.domain.features.providers.pfam import PfamFeatureProvider
 from kmad_web.domain.features.providers.netphos import NetphosFeatureProvider
 
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
@@ -34,6 +33,7 @@ class SequencesAnnotator(object):
     """
     def annotate(self, sequences):
         self.sequences = sequences
+        _log.info("Annotating sequences")
         self._add_missing_uniprot_ids()
         go_terms = self._get_go_terms()
         self._annotate_ptms()
@@ -54,6 +54,7 @@ class SequencesAnnotator(object):
                 s['id'] = get_uniprot_id(s['seq'])
 
     def _annotate_ptms(self):
+        _log.info("Annotate sequences with PTMs")
         uniprot = UniprotFeatureProvider()
         netphos = NetphosFeatureProvider()
         for s in self.sequences:
@@ -64,12 +65,14 @@ class SequencesAnnotator(object):
                     s['ptms'].extend(uniprot_ptms)
 
     def _annotate_motifs(self, go_terms):
+        _log.info("Annotate sequences with motifs")
         elm = ElmFeatureProvider(go_terms)
         for s in self.sequences:
             s['motifs'] = elm.get_motif_instances(s['seq'], s['id'])
             s['motifs_filtered'] = elm.filter_motifs(s['motifs'])
 
     def _annotate_domains(self):
+        _log.info("Annotate sequences with domains")
         for s in self.sequences:
             pfam = PfamFeatureProvider()
             s['domains'] = pfam.get_domains(s)

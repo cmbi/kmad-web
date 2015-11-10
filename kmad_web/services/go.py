@@ -4,7 +4,6 @@ import requests
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers import soap
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 

@@ -10,7 +10,8 @@ from functools import wraps
 from kmad_web.services.helpers import fieldlist
 from kmad_web.frontend.dashboard.forms import KmadForm
 from kmad_web.services.kmad import (AlignStrategy, AnnotateStrategy,
-                                    RefineStrategy, PredictStrategy)
+                                    RefineStrategy, PredictStrategy,
+                                    PredictAndAlignStrategy)
 
 
 _log = logging.getLogger(__name__)
@@ -23,10 +24,10 @@ def index():
     form = KmadForm()
     if (form.submit_job.data and form.validate_on_submit()
             and form.sequence.data and form.output_type.data
-            and form.gap_open_p.data and form.gap_ext_p.data
-            and form.end_gap_p.data and form.ptm_score.data
-            and form.domain_score.data and form.motif_score.data
-            and form.first_seq_gapped and form.seq_limit.data):
+            and form.gop.data and form.gep.data and form.egp.data
+            and form.ptm_score.data and form.domain_score.data
+            and form.motif_score.data and form.gapped
+            and form.seq_limit.data):
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
         if form.output_type.data == "predict":
             strategy = PredictStrategy(seq_data, form.prediction_method.data)
@@ -49,8 +50,16 @@ def index():
                 str(form.domain_score.data), str(form.motif_score.data),
                 ast.literal_eval(form.gapped.data), form.usr_features.data,
                 form.alignment_method.data)
+            celery_id = strategy()
         elif form.output_type.data == 'predict_and_align':
-            pass
+            strategy = PredictAndAlignStrategy(
+                seq_data, form.prediction_method.data, str(form.gop.data),
+                str(form.gep.data), str(form.egp.data),
+                str(form.ptm_score.data), str(form.domain_score.data),
+                str(form.motif_score.data), ast.literal_eval(form.gapped.data),
+                form.usr_features.data
+            )
+            celery_id = strategy()
         else:
             abort(500, description='Unknown output type')
         _log.info("Job has id '{}'".format(celery_id))

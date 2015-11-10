@@ -73,9 +73,9 @@ KMAD
                 <div id = "gap_open_div" class="form-group"
                   style="margin:20px;">
                   <div class="row">
-                    <div class="col-md-8">{{ form.gap_open_p.label }}</div>
+                    <div class="col-md-8">{{ form.gop.label }}</div>
                     <div class="col-md-4">{{
-                      form.gap_open_p(class_='form-control gap-form',
+                      form.gop(class_='form-control gap-form',
                       pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
                       negative")}}
                     </div>
@@ -86,9 +86,9 @@ KMAD
               <div class="col-md-6">
                 <div id = "gap_ext_div" class="form-group" style="margin:20px;">
                   <div class="row">
-                    <div class="col-md-8">{{ form.gap_ext_p.label }}</div>
+                    <div class="col-md-8">{{ form.gep.label }}</div>
                     <div class="col-md-4">{{
-                      form.gap_ext_p(class_='form-control gap-form',
+                      form.gep(class_='form-control gap-form',
                       pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
                       negative")}}
                     </div>
@@ -101,9 +101,9 @@ KMAD
               <div class="col-md-6">
                 <div id = "end_gap_div" class="form-group" style="margin:20px;">
                   <div class="row">
-                    <div class="col-md-8">{{ form.end_gap_p.label }}</div>
+                    <div class="col-md-8">{{ form.egp.label }}</div>
                     <div class="col-md-4">{{
-                      form.end_gap_p(class_='form-control gap-form',
+                      form.egp(class_='form-control gap-form',
                       pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
                       negative")}}
                     </div>
@@ -172,10 +172,10 @@ KMAD
           <div class="col-md-6">
             <div id = "gapped_div" class="form-group"
               style="margin:20px;">
-              {{ form.first_seq_gapped.label }}
+              {{ form.gapped.label }}
               <table>
                 <tr>
-                  {% for subfield in form.first_seq_gapped %}
+                  {% for subfield in form.gapped %}
                   <th>
                     {{ subfield }}
                     {{ subfield.label }}

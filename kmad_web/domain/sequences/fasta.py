@@ -1,8 +1,6 @@
 import logging
 import re
 
-
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
@@ -91,3 +89,8 @@ def check_fasta(sequence_data):
     else:
         alright = False
     return alright
+
+
+def get_first_seq(fasta_sequences):
+    first_seq = '\n'.join(unwrap(fasta_sequences.splitlines())[:2])
+    return first_seq

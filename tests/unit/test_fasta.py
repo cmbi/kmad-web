@@ -25,3 +25,9 @@ def test_make_fasta():
     assert_raises(RuntimeError, f.make_fasta, seq)
     seq = ">1\nSEQ\n>1\nSE#\n>1\nSEQ"
     assert_raises(RuntimeError, f.make_fasta, seq)
+
+
+def test_get_first_seq():
+    multi_fasta = ">1\nSEQ\nSEQ\n>2\nSEQ"
+    expected = ">1\nSEQSEQ"
+    eq_(expected, f.get_first_seq(multi_fasta))

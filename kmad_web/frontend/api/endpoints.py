@@ -94,6 +94,7 @@ def get_kmad_result(output_type, id):
     result = task.AsyncResult(id).get()
     _log.debug("Result: {}".format(result))
     response = {'result': result}
+    _log.info(response)
     return jsonify(response)
 
 

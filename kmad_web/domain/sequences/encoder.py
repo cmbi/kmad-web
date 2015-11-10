@@ -3,8 +3,6 @@ import string
 
 from collections import OrderedDict
 
-
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
@@ -22,6 +20,7 @@ class SequencesEncoder(object):
         self._create_code_alphabet()
 
     def encode(self, sequences, aligned_mode=False):
+        _log.info("Encoding sequences")
         self._sequences = sequences
         self._create_codon_sequences()
         # make code dicts for motifs and domains

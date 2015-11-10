@@ -4,7 +4,6 @@ import subprocess
 from kmad_web.services.types import ServiceError
 
 
-logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 

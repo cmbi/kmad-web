@@ -188,23 +188,23 @@ KMAD {{ output_type | replace('_', ' ')}}
                   "{{ url_for('kmad.get_kmad_result', output_type=output_type, id=celery_id) }}",
                   function(data) {
                   if ("{{ output_type }}" == 'predict' || "{{ output_type }}" == 'predict_and_align'){ 
-                      var proseq = new ProteinSequences("canvas",
-                          data['result']['prediction'],
-                          data['result']['sequence']);
-                      proseq.update()
-                      $('#collapseOne').addClass('in');
-                      var prediction_data =
-                      get_text_data(data['result']['prediction']['filtered'],
-                          data['result']['sequence']);
-                      document.getElementById('download_pred_input').value = prediction_data;
-                      $('#download_pred_button').removeClass('disabled');
-                      document.getElementById('download_pred_button').style.display = "";
+                    var proseq = new ProteinSequences("canvas",
+                        data['result']['prediction'],
+                        data['result']['sequence']);
+                    proseq.update()
+                    $('#collapseOne').addClass('in');
+                    var prediction_data =
+                    get_text_data(data['result']['prediction']['filtered'],
+                        data['result']['sequence']);
+                    document.getElementById('download_pred_input').value = prediction_data;
+                    $('#download_pred_button').removeClass('disabled');
+                    document.getElementById('download_pred_button').style.display = "";
                     }
                     if ("{{ output_type }}" != 'predict'){
-                      var raw_alignment = data['result']['alignment']['raw'];
+                      var raw_alignment = data['result']['fasta_file'];
                       if (raw_alignment.length > 0) {
                         document.getElementById('download_al_input').value = raw_alignment;
-                        var processed_alignment = data['result']['alignment']['processed'];
+                        // var processed_alignment = data['result']['alignment']['processed'];
                         var encoded_alignment = data['result']['alignment']['encoded'];
                         var feature_codemap = data['result']['feature_codemap'];
                         draw_alignment('canvas_regular', processed_alignment);
