@@ -2,13 +2,25 @@ import json
 import requests
 
 from mock import patch, Mock
-from nose.tools import eq_, assert_raises
+from nose.tools import eq_, assert_raises, with_setup
 
 from kmad_web.services.elm import ElmService
 from kmad_web.services.types import ServiceError
+from kmad_web.services.helpers.cache import cache_manager as cm
+
+
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
 
 
 @patch('requests.get')
+@with_setup(setup, teardown)
 def test_get_instances_success(mock_requests_get):
     mock = Mock(spec=requests.Response)
     mock.status_code = 200
@@ -24,6 +36,7 @@ def test_get_instances_success(mock_requests_get):
 
 
 @patch('requests.get')
+@with_setup(setup, teardown)
 def test_get_instances_failure(mock_requests_get):
     mock_requests_get.side_effect = requests.HTTPError
     test_id = "TAU_HUMAN"
@@ -32,6 +45,7 @@ def test_get_instances_failure(mock_requests_get):
     assert_raises(ServiceError, elm.get_instances, test_id)
 
 
+@with_setup(setup, teardown)
 def test_get_motif_go_terms():
     test_id = "MOD_PIKK_1"
     elm = ElmService("http://elm.eu.org/")

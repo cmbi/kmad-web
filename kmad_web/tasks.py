@@ -58,7 +58,7 @@ def process_prediction_results(predictions, fasta_sequence):
     consensus = processor.get_consensus_disorder(predictions)
     predictions['consensus'] = consensus
     predictions['filtered'] = processor.filter_out_short_stretches(consensus)
-    prediction_text = processor.make_text(predictions)
+    prediction_text = processor.make_text(predictions, sequence)
     return {'prediction': predictions, 'sequence': sequence,
             'prediction_text': prediction_text}
 

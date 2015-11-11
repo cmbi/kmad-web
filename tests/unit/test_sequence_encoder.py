@@ -23,6 +23,11 @@ def test_encode():
                  'start': 1,
                  'end': 3}
             ],
+            'motifs_filtered': [
+                {'id': 'test_motif',
+                 'start': 1,
+                 'end': 3}
+            ],
             'domains': [
                 {'accession': 'test_domain_1', 'start': 1, 'end': 1},
                 {'accession': 'test_domain_2', 'start': 2, 'end': 3},

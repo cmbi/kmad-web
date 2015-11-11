@@ -68,31 +68,39 @@ class TestTasks(object):
 
     @patch('kmad_web.tasks.os.path.exists')
     @patch('kmad_web.tasks.PredictionProcessor.process_prediction')
-    @patch('subprocess.call')
-    @patch('subprocess.check_output')
-    @patch('kmad_web.tasks.open',
-           mock_open(read_data='prediction_out'),
-           create=True)
-    def test_run_single_predictor(self, mock_subprocess, mock_call,
-                                  mock_check_output, mock_os):
-        filename = 'testdata/test.fasta'
-        methods = ['psipred', 'predisorder', 'disopred', 'spine', 'globplot',
+    @patch('kmad_web.tasks.iupred')
+    @patch('kmad_web.tasks.psipred')
+    @patch('kmad_web.tasks.disopred')
+    @patch('kmad_web.tasks.predisorder')
+    @patch('kmad_web.tasks.globplot')
+    @patch('kmad_web.tasks.spined')
+    def test_run_single_predictor(self, mock_spined, mock_globplot,
+                                  mock_predisorder, mock_disopred, mock_psipred,
+                                  mock_iupred, mock_process, mock_os):
+        fasta = '>1\nSEQSEQ'
+        methods = ['psipred', 'predisorder', 'disopred', 'spined', 'globplot',
                    'iupred']
 
-        pred = [1, 1, 2]
+        pred = "prediction"
+        mock_disopred.return_value = pred
+        mock_psipred.return_value = pred
+        mock_iupred.return_value = pred
+        mock_predisorder.return_value = pred
+        mock_globplot.return_value = pred
+        mock_spined.return_value = pred
+        mock_process.return_value = pred
+
         mock_os.return_value = True
 
         from kmad_web.tasks import run_single_predictor
 
         for pred_name in methods:
             expected = {pred_name: pred}
-            mock_call.return_value = pred
-            mock_check_output.return_value = pred
 
-            result = run_single_predictor(filename, pred_name)
+            result = run_single_predictor(fasta, pred_name)
             eq_(result, expected)
 
-        result = run_single_predictor(filename, pred_name)
+        result = run_single_predictor(fasta, pred_name)
         eq_(result,  expected)
 
     def test_process_prediction_results(self):
@@ -105,7 +113,16 @@ class TestTasks(object):
         from kmad_web.tasks import process_prediction_results
 
         result = process_prediction_results(predictions_in, fasta_seq)
+        prediction_text = "ResNo AA consensus filtered disopred predisorder\n" \
+                          "1 S 1 1 0 2\n" \
+                          "2 E 1 1 0 2\n" \
+                          "3 Q 0 0 0 0\n" \
+                          "4 S 0 0 0 0\n" \
+                          "5 E 2 2 2 2\n" \
+                          "6 Q 2 2 2 2"
+
         expected = {
+            'prediction_text': prediction_text,
             'prediction': {
                 'disopred': [0, 0, 0, 0, 2, 2],
                 'predisorder': [2, 2, 0, 0, 2, 2],

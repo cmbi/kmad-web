@@ -2,10 +2,22 @@ import json
 import requests
 
 from mock import patch, Mock
-from nose.tools import eq_, assert_raises
+from nose.tools import eq_, assert_raises, with_setup
+from kmad_web.services.helpers.cache import cache_manager as cm
+
+
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
 
 
 @patch('requests.get')
+@with_setup(setup, teardown)
 def test_get_fasta_success(mock_requests_get):
 
     from kmad_web.services.uniprot import UniprotService
@@ -24,6 +36,7 @@ def test_get_fasta_success(mock_requests_get):
 
 
 @patch('requests.get')
+@with_setup(setup, teardown)
 def test_get_fasta_failure(mock_requests_get):
 
     from kmad_web.services.uniprot import UniprotService
@@ -37,6 +50,7 @@ def test_get_fasta_failure(mock_requests_get):
 
 
 @patch('requests.get')
+@with_setup(setup, teardown)
 def test_get_txt_success(mock_requests_get):
 
     from kmad_web.services.uniprot import UniprotService
@@ -55,6 +69,7 @@ def test_get_txt_success(mock_requests_get):
 
 
 @patch('requests.get')
+@with_setup(setup, teardown)
 def test_get_txt_failure(mock_requests_get):
 
     from kmad_web.services.uniprot import UniprotService

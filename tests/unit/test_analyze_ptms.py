@@ -1,4 +1,4 @@
-from nose.tools import eq_, ok_
+from nose.tools import eq_, ok_, with_setup
 
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.features.analysis.ptms import (analyze_ptms,
@@ -7,8 +7,20 @@ from kmad_web.domain.features.analysis.ptms import (analyze_ptms,
                                                     _check_local_similarity)
 from kmad_web.domain.features.analysis.helpers import (
     group_features_positionwise)
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
+
+
+@with_setup(setup, teardown)
 def test_analyze_ptms():
     sequences = [
         {

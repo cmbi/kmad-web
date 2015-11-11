@@ -6,10 +6,10 @@ from kmad_web.domain.disorder_prediction.processor import PredictionProcessor
 def test_process_prediction():
     p = PredictionProcessor()
 
-    with open('tests/unit/testdata/test.spine') as a:
+    with open('tests/unit/testdata/test.spined') as a:
         prediction = a.read()
     expected = [0, 2, 2]
-    eq_(expected, p.process_prediction(prediction, 'spine'))
+    eq_(expected, p.process_prediction(prediction, 'spined'))
 
     with open('tests/unit/testdata/test.disopred') as a:
         prediction = a.read()

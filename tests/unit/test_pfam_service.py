@@ -1,14 +1,25 @@
 import requests
-import xmltodict
 
 from mock import patch, Mock
-from nose.tools import eq_, assert_raises
+from nose.tools import eq_, assert_raises, with_setup
 
 from kmad_web.services.pfam import PfamService
+from kmad_web.services.helpers.cache import cache_manager as cm
+
+
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
 
 
 @patch('kmad_web.services.pfam.requests.post')
 @patch('kmad_web.services.pfam.requests.get')
+@with_setup(setup, teardown)
 def test_search_success(mock_requests_get, mock_requests_post):
 
     mock_response_post = Mock()
@@ -30,6 +41,7 @@ def test_search_success(mock_requests_get, mock_requests_post):
 
 @patch('kmad_web.services.pfam.requests.post')
 @patch('kmad_web.services.pfam.requests.get')
+@with_setup(setup, teardown)
 def test_search_failure(mock_requests_get, mock_requests_post):
 
     from kmad_web.services.pfam import PfamService

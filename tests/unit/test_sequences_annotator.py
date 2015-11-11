@@ -1,10 +1,22 @@
 from mock import patch
-from nose.tools import eq_
+from nose.tools import eq_, with_setup
 
 from kmad_web.domain.sequences.annotator import SequencesAnnotator
+from kmad_web.services.helpers.cache import cache_manager as cm
+
+
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
 
 
 @patch('kmad_web.domain.sequences.annotator.PfamFeatureProvider')
+@with_setup(setup, teardown)
 def test_annotate_domains(mock_pfam):
     sequences = [{'seq': 'SEQSEQ'}, {'seq': 'SEQSEQ'}]
     domains = [{'accession': 'TEST1'}]
@@ -19,6 +31,7 @@ def test_annotate_domains(mock_pfam):
 
 
 @patch('kmad_web.domain.sequences.annotator.ElmFeatureProvider')
+@with_setup(setup, teardown)
 def test_annotate_motifs(mock_elm):
     go_terms = []
     sequences = [{'seq': 'SEQSEQ', 'id': 'TEST1'}, {'seq': 'SEQSEQ', 'id': ''}]
@@ -39,6 +52,7 @@ def test_annotate_motifs(mock_elm):
 
 @patch('kmad_web.domain.sequences.annotator.UniprotFeatureProvider')
 @patch('kmad_web.domain.sequences.annotator.NetphosFeatureProvider')
+@with_setup(setup, teardown)
 def test_annotate_ptms(mock_netphos, mock_uniprot):
     sequences = [{'seq': 'SEQSEQ', 'id': 'seq_id'},
                  {'seq': 'SEQSEQ', 'id': ""}]
@@ -60,6 +74,7 @@ def test_annotate_ptms(mock_netphos, mock_uniprot):
 @patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_domains')
 @patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_ptms')
 @patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_motifs')
+@with_setup(setup, teardown)
 def test_annotate(mock_motifs, mock_ptms, mock_domains, mock_go_terms):
     crambin = 'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'
     seq = [{'seq': 'SEQSEQ', 'id': 'TEST_ID'},
