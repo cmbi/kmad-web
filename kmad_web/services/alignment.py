@@ -2,6 +2,7 @@ import subprocess
 
 from kmad_web.default_settings import CLUSTALO, CLUSTALW, MAFFT, MUSCLE, TCOFFEE
 from kmad_web.services.types import ServiceError
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
 class ClustaloService(object):
@@ -9,6 +10,7 @@ class ClustaloService(object):
         self._path = CLUSTALO
         self._suffix = "_al"
 
+    @cm.cache('redis')
     def align(self, filename):
         out_filename = filename + self._suffix
         args = [self._path, '-i', filename, '-o', out_filename]
@@ -26,6 +28,7 @@ class ClustalwService(object):
         self._path = CLUSTALW
         self._suffix = "_al"
 
+    @cm.cache('redis')
     def align(self, filename):
         out_filename = filename + self._suffix
         args = [
@@ -48,6 +51,7 @@ class MafftService(object):
         self._path = MAFFT
         self._suffix = "_al"
 
+    @cm.cache('redis')
     def align(self, filename):
         out_filename = filename + self._suffix
         args = [self._path, filename]
@@ -65,6 +69,7 @@ class MuscleService(object):
         self._path = MUSCLE
         self._suffix = "_al"
 
+    @cm.cache('redis')
     def align(self, filename):
         out_filename = filename + self._suffix
 
@@ -84,6 +89,7 @@ class TcoffeeService(object):
         self._path = TCOFFEE
         self._suffix = "_al"
 
+    @cm.cache('redis')
     def align(self, filename):
         out_filename = filename + self._suffix
 

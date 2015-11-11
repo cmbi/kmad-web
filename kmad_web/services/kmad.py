@@ -4,7 +4,8 @@ import tempfile
 
 from kmad_web.domain.features.user_features import UserFeaturesParser
 from kmad_web.domain.sequences.fasta import (check_fasta, get_first_seq,
-                                             make_fasta, parse_fasta)
+                                             make_fasta, parse_fasta,
+                                             parse_fasta_alignment)
 
 
 _log = logging.getLogger(__name__)
@@ -177,7 +178,10 @@ class RefineStrategy(object):
         self._gapped = gapped
         self._usr_features = usr_features
         self._multi_fasta = sequence_data.count('>') > 1
-        self._alignment_method = alignment_method
+        if alignment_method != 'None':
+            self._alignment_method = alignment_method
+        else:
+            self._alignment_method = ""
 
     def __call__(self):
 
@@ -197,12 +201,13 @@ class RefineStrategy(object):
                 create_fles.s(aligned_mode=True)
             ]
         elif self._multi_fasta and self._alignment_method:
+            sequences = parse_fasta(self._fasta)
             tasks = [
-                prealign.s(self._alignment_method),
+                prealign.s(sequences, self._alignment_method),
                 create_fles.s(aligned_mode=True)
             ]
         elif self._multi_fasta and not self._alignment_method:
-            sequences = parse_fasta(self._fasta)
+            sequences = parse_fasta_alignment(self._fasta)
             tasks = [create_fles.s(sequences, aligned_mode=True)]
         else:
             raise RuntimeError("sequence data holds a single sequence, but no"
@@ -219,8 +224,8 @@ class RefineStrategy(object):
 
 
 class AnnotateStrategy(object):
-    def __init__(self, sequences):
-        self._sequences = sequences
+    def __init__(self, sequence_data):
+        self._sequences = parse_fasta_alignment(sequence_data)
 
     def __call__(self):
         from kmad_web.tasks import annotate

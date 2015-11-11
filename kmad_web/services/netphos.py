@@ -2,6 +2,7 @@ import os
 import subprocess
 
 from kmad_web.services.types import ServiceError
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
 class NetphosService(object):
@@ -16,6 +17,7 @@ class NetphosService(object):
     def path(self, path):
         self._path = path
 
+    @cm.cache('redis')
     def predict(self, fasta_filename):
         try:
             netphos_exists = os.path.exists(self._path)

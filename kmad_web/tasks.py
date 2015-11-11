@@ -189,8 +189,8 @@ def annotate(sequences):
     encoder.encode(sequences, aligned_mode=True)
     return {
         'sequences': sequences,
-        'motif_code_dict': encoder.motif_code_dict,
-        'domain_code_dict': encoder.domain_code_dict
+        'motif_code_dict': invert_dict(encoder.motif_code_dict),
+        'domain_code_dict': invert_dict(encoder.domain_code_dict)
     }
 
 
@@ -353,6 +353,8 @@ def get_task(output_type):
         task = analyze_ptms
     elif output_type == 'motifs':
         task = analyze_motifs
+    elif output_type == 'annotate':
+        task = annotate
     elif output_type == 'predict':
         task = process_prediction_results
     else:

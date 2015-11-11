@@ -5,6 +5,7 @@ import time
 import xmltodict
 
 from kmad_web.services.types import ServiceError, TimeoutError
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 _log = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class PfamService(object):
     def url(self, url):
         self._url = url
 
+    @cm.cache('redis')
     def search(self, fasta_sequence, timeout=7200, poll=7):
         if self._url is None:
             raise ServiceError("PfamService hasn't been configured")

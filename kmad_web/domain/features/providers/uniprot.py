@@ -30,11 +30,16 @@ class UniprotFeatureProvider(object):
         eco_code = eco[0]
         levels_dict = {'0000269': 0, '0000314': 0, '0000353': 0, '0000315': 0,
                        '0000316': 0, '0000270': 0, '0000250': 1, '0000266': 1,
+                       '0000244': 1, '0000213': 2, '0000312': 1, '0000313': 2,
                        '0000247': 1, '0000255': 1, '0000317': 1, '0000318': 1,
                        '0000319': 1, '0000320': 1, '0000321': 1, '0000245': 1,
                        '0000304': 2, '0000303': 2, '0000305': 2, '0000307': 2,
                        '0000501': 3}
-        return levels_dict[eco_code]
+        if eco_code in levels_dict.keys():
+            return levels_dict[eco_code]
+        else:
+            # if the eco_code is not known return the lowest annotation level
+            return 3
 
     def _get_ptm_type(self, ptm_info):
         types_dict = OrderedDict([

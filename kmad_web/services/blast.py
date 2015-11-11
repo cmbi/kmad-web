@@ -2,6 +2,7 @@ import logging
 import subprocess
 
 from kmad_web.services.types import ServiceError
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
 _log = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ class BlastService(object):
 
     :param fasta_filename: path to the query fasta file
     """
+    @cm.cache('redis')
     def run_blast(self, fasta_filename):
         args = ['blastp', '-query', fasta_filename, '-evalue', '1e-5',
                 '-num_threads', '15', '-db', self._db_path,

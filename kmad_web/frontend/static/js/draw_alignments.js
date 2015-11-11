@@ -393,7 +393,6 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
     aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
   }
   // color spectrum for features
-  // var ctx=$("#" + canvas_id).get(0).getContext("2d");
   var ctx = native_layer.getContext()._context;
 
   ctx.fillStyle = '#EEEEEE';
@@ -430,14 +429,18 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
   // 
   var x = 10;
   var y = 30;
+  var longest_header = 0;
   // draw headers
   ctx.fillStyle = "#515454";
   for (var i in sequences) {
-    ctx.fillText(i['header'], x, y)
+    ctx.fillText(sequences[i]['header'], x, y)
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
     y += ROW_HEIGHT;
   }
   // draw numbering
-  x = 160;
+  x = longest_header * 6 + 10;
   y = 10;
   for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
@@ -448,7 +451,7 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
   }
   y = 20;
   for (var i =0; i < sequences.length; i++) {
-    x = 160;
+    x = longest_header * 6 + 10;
     for (var j = 0; j < sequences[i]['encoded_aligned'].length; j += codon_length) {
       draw_residue(j, i, x, y);
       x += 10;

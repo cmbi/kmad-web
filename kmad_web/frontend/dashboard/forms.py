@@ -128,7 +128,7 @@ class KmadForm(Form):
         # and if seq lengths are equal
         if (form.output_type.data == 'annotate'
                 or (form.output_type.data == 'refine'
-                    and form.alignment_method.data == 'none')):
+                    and form.alignment_method.data == 'None')):
             if field.data.count('>') < 2:
                 raise validators.ValidationError('In the refinement (if no \
                                                  method for initial alignment \
@@ -222,7 +222,7 @@ class KmadForm(Form):
                  ('t_coffee', 'T-Coffee'),
                  ('muscle', 'MUSCLE'),
                  ('mafft', 'MAFFT'),
-                 ('none', 'Provide your own alignment for refinement')],
+                 ('None', 'Provide your own alignment for refinement')],
         default='clustalo')
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
@@ -242,11 +242,6 @@ class KmadForm(Form):
     # remove_feature = SubmitField()
     remove_feature = SubmitField()
     seq_limit = IntegerField(u'max. sequence number', default=35)
-    filter_motifs = SelectField(u'motif filtering',
-                                choices=[('True',
-                                          'filter out motifs in structured regions'),
-                                         ('False', 'use all motifs')],
-                                default='False')
 
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")

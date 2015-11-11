@@ -5,6 +5,7 @@ import requests
 from BeautifulSoup import BeautifulSoup
 
 from kmad_web.services.types import ServiceError
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
 class ElmService(object):
@@ -19,6 +20,7 @@ class ElmService(object):
     def url(self, url):
         self._url = url
 
+    @cm.cache('redis')
     def get_instances(self, uniprot_id):
         try:
             url = os.path.join(self._url,
@@ -44,6 +46,7 @@ class ElmService(object):
             result = request.text
         return result
 
+    @cm.cache('redis')
     def get_motif_go_terms(self, motif_id):
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
         page = requests.get(url).text

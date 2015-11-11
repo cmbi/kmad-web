@@ -1,8 +1,8 @@
 import logging
-import requests
 
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers import soap
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 _log = logging.getLogger(__name__)
 
@@ -20,16 +20,7 @@ class GoService(object):
     def url(self, url):
         self._url = url
 
-    def get_go_terms(self):
-        try:
-            request = requests.get(self._url)
-            if request.status_code != 200:
-                raise ServiceError(request.status_code)
-        except requests.HTTPError as e:
-                raise ServiceError(e)
-        else:
-            self._go_terms = request.text
-
+    @cm.cache('redis')
     def call(self, method, *args, **kwargs):
         _log.info("Calling go search method '{}'".format(method))
         if self._url is None:

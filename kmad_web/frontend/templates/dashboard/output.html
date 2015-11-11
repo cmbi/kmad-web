@@ -199,56 +199,42 @@ $(document).ready(function() {
                             document.getElementById('download_pred_button').style.display = "";
                             }
                             if ("{{ output_type }}" != 'predict'){
-                            var raw_alignment = data['result']['fasta_file'];
-                            if (raw_alignment.length > 0) {
-                            document.getElementById('download_al_input').value = raw_alignment;
-                            var sequences = data['result']['sequences'];
-                            var motif_code_dict = data['result']['motif_code_dict'];
-                            var domain_code_dict = data['result']['domain_code_dict'];
-                            draw_alignment('canvas_regular', sequences);
-                            var codon_length = 7;
-                            // if ("{{ output_type }}" == 'predict_and_align') {
-                            //   var disorder_predictions = data['result']['prediction'];
-                            //   var filtered_motifs_alignment = data['result']['alignment']['filtered_motifs'];
-                            //   // draw_filtered_motifs('canvas_filtered_motif', 
-                            //   //     encoded_alignment, codon_length,
-                            //   //     feature_codemap['motifs'],
-                            //   //     disorder_predictions);
-                            //   draw_alignment_with_features('canvas_motif', 
-                            //       filtered_motifs_alignment, codon_length,
-                            //       feature_codemap['motifs'], 'motif');
-                            //   var filtered_motif_legend = new MotifsLegend(
-                            //       'legend_canvas_filtered_motif',
-                            //       feature_codemap['motifs']);
-                            //   filtered_motif_legend.update();
-                            // }
-                            draw_alignment_ptms('canvas_ptm', sequences, 
-                                codon_length);
-                            draw_alignment_with_features('canvas_motif', 
-                                    sequences, codon_length, motif_code_dict, 'motif');
-                            draw_alignment_with_features('canvas_domain', 
-                                    sequences, codon_length,
-                                    domain_code_dict, 'domain');
-                            var ptm_legend = new PTMsLegend('legend_canvas_ptm');
-                            ptm_legend.update();
-                            var motif_legend = new MotifsLegend(
-                                    'legend_canvas_motif', motif_code_dict);
-                            motif_legend.update();
-                            var domain_legend = new DomainsLegend(
-                                    'legend_canvas_domain', domain_code_dict);
-                            domain_legend.update();
-                            $('#download_al_button').removeClass('disabled');
-                            document.getElementById('download_alignment').style.display = "";
-                            $('#collapseTwo').addClass('in');
-                            $('#collapseThree').addClass('in');
-                            } else {
-                                document.getElementById('status').innerHTML = "FAILURE";
-                                $('#status').removeClass("label-default label-info label-success")
-                                    .addClass("label-warning");
-                                $('#panel0').removeClass("panel-default panel-info panel-success")
-                                    .addClass("panel-warning");
-                                document.getElementById('job_message').innerHTML = 'No sequences found with BLAST. Nothing to align.';
-                            }
+                                var raw_alignment = data['result']['fasta_file'];
+                                if ((raw_alignment && raw_alignment.length > 0)
+                                    || "{{ output_type }}" == 'annotate') {
+                                    document.getElementById('download_al_input').value = raw_alignment;
+                                    var sequences = data['result']['sequences'];
+                                    var motif_code_dict = data['result']['motif_code_dict'];
+                                    var domain_code_dict = data['result']['domain_code_dict'];
+                                    draw_alignment('canvas_regular', sequences);
+                                    var codon_length = 7;
+                                    draw_alignment_ptms('canvas_ptm', sequences, 
+                                        codon_length);
+                                    draw_alignment_with_features('canvas_motif', 
+                                            sequences, codon_length, motif_code_dict, 'motif');
+                                    draw_alignment_with_features('canvas_domain', 
+                                            sequences, codon_length,
+                                            domain_code_dict, 'domain');
+                                    var ptm_legend = new PTMsLegend('legend_canvas_ptm');
+                                    ptm_legend.update();
+                                    var motif_legend = new MotifsLegend(
+                                            'legend_canvas_motif', motif_code_dict);
+                                    motif_legend.update();
+                                    var domain_legend = new DomainsLegend(
+                                            'legend_canvas_domain', domain_code_dict);
+                                    domain_legend.update();
+                                    $('#download_al_button').removeClass('disabled');
+                                    document.getElementById('download_alignment').style.display = "";
+                                    $('#collapseTwo').addClass('in');
+                                    $('#collapseThree').addClass('in');
+                                } else {
+                                    document.getElementById('status').innerHTML = "FAILURE";
+                                    $('#status').removeClass("label-default label-info label-success")
+                                        .addClass("label-warning");
+                                    $('#panel0').removeClass("panel-default panel-info panel-success")
+                                        .addClass("panel-warning");
+                                    document.getElementById('job_message').innerHTML = 'No sequences found with BLAST. Nothing to align.';
+                                }
                             }
                             });
                 }

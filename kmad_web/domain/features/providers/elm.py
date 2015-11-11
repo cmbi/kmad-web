@@ -1,9 +1,12 @@
+import logging
 import math
 import re
 
 from kmad_web.default_settings import ELM_URL, ELMDB_PATH
 from kmad_web.services.elm import ElmService
 from kmad_web.parsers.elm import ElmParser
+
+_log = logging.getLogger(__name__)
 
 
 class ElmFeatureProvider(object):
@@ -45,19 +48,20 @@ class ElmFeatureProvider(object):
         motifs = []
         for m_id in self._full_motif_classes:
             m = self._full_motif_classes[m_id]
-            if m['GO'].intersection(self._go_terms):
-                for match in m['compiled_regex'].finditer(sequence):
-                    motif = {}
-                    motif['start'] = match.span()[0] + 1
-                    motif['end'] = match.span()[1]
-                    # calc 0-1 probbaility from the ELM's e-value like
-                    # probability
-                    motif['probability'] = 1 + 1/math.log(
-                        float(m['probability']))
-                    motif['id'] = m_id
-                    motif['class'] = m['class']
-                    motif['pattern'] = m['pattern']
-                    motifs.append(motif)
+            if all([m[k] for k in m]):
+                if m['GO'].intersection(self._go_terms):
+                    for match in m['compiled_regex'].finditer(sequence):
+                        motif = {}
+                        motif['start'] = match.span()[0] + 1
+                        motif['end'] = match.span()[1]
+                        # calc 0-1 probbaility from the ELM's e-value like
+                        # probability
+                        motif['probability'] = 1 + 1/math.log(
+                            float(m['probability']))
+                        motif['id'] = m_id
+                        motif['class'] = m['class']
+                        motif['pattern'] = m['pattern']
+                        motifs.append(motif)
         return motifs
 
     def _get_more_info(self, motif_instances):
