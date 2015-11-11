@@ -1,15 +1,11 @@
 import json
 import logging
 import os
-import subprocess
 import tempfile
+import requests
 import urllib2
 
 from celery import current_app as celery_app
-
-from kmad_web.default_settings import (DISOPRED, GLOBPLOT, IUPRED, IUPRED_DIR,
-                                       PREDISORDER, PSIPRED, SPINE,
-                                       SPINE_OUTPUT_DIR)
 
 from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.disorder_prediction.processor import PredictionProcessor
@@ -18,7 +14,7 @@ from kmad_web.domain.sequences.annotator import SequencesAnnotator
 from kmad_web.domain.sequences.encoder import SequencesEncoder
 from kmad_web.domain.sequences.fasta import (parse_fasta_alignment,
                                              sequences2fasta)
-from kmad_web.domain.fles import write_fles, parse_fles, fles2fasta
+from kmad_web.domain.fles import make_fles, parse_fles, fles2fasta
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.updaters.elm import ElmUpdater
 from kmad_web.services.alignment import (ClustaloService, ClustalwService,
@@ -27,8 +23,16 @@ from kmad_web.services.alignment import (ClustaloService, ClustalwService,
 from kmad_web.domain.features.analysis import ptms as ap
 from kmad_web.domain.features.analysis import motifs as am
 from kmad_web.helpers import invert_dict
+from kmad_web.services.iupred import iupred
+from kmad_web.services.psipred import psipred
+from kmad_web.services.disopred import disopred
+from kmad_web.services.predisorder import predisorder
+from kmad_web.services.globplot import globplot
+from kmad_web.services.spined import spined
+from kmad_web.services.kmad_aligner import kmad
+from kmad_web.services.types import ServiceError
 
-from kmad_web.default_settings import KMAD, BLAST_DB
+from kmad_web.default_settings import BLAST_DB, D2P2_URL
 
 
 _log = logging.getLogger(__name__)
@@ -37,53 +41,10 @@ _log = logging.getLogger(__name__)
 @celery_app.task
 def run_single_predictor(fasta_file, pred_name):
     _log.info("Run single predictor: {}".format(pred_name))
-    env = {}
-    if pred_name == "spine":
-        tmp_name = fasta_file.split('/')[-1].split('.')[0]
-        out_file = os.path.join(SPINE_OUTPUT_DIR, tmp_name + '.spd')
-        tmp_path = '/'.join(fasta_file.split("/")[:-1])
-        method = SPINE
-        args = [method, tmp_path, tmp_name]
-    elif pred_name == "disopred":
-        out_file = '.'.join(fasta_file.split('.')[:-1])+".diso"
-        method = DISOPRED
-        args = [method, fasta_file]
-    elif pred_name == "predisorder":
-        out_file = '.'.join(fasta_file.split('.')[:-1])+".predisorder"
-        method = PREDISORDER
-        args = [method, fasta_file, out_file]
-    elif pred_name == "psipred":
-        out_file = ('.'.join(fasta_file.split('.')[:-1])+".ss2").split('/')[-1]
-        method = PSIPRED
-        args = [method, fasta_file]
-    elif pred_name == 'globplot':
-        method = GLOBPLOT
-        out_file = '.'.join(fasta_file.split('.')[:-1])+".gplot"
-        args = [method, '10', '8', '75', '8', '8',
-                fasta_file, '>', out_file]
-    elif pred_name == 'iupred':
-        method = IUPRED
-        args = [method, fasta_file, 'long']
-        env = {"IUPred_PATH": IUPRED_DIR}
-
-    try:
-        data = subprocess.check_output(args, env=env)
-        _log.info("Ran command: {}".format(
-            subprocess.list2cmdline(args)
-        ))
-    except (subprocess.CalledProcessError, OSError) as e:
-        _log.error("Error: {}".format(e))
-
-    if pred_name not in ['globplot', 'iupred']:
-        if os.path.exists(out_file):
-            with open(out_file) as f:
-                data = f.read()
-        else:
-            raise RuntimeError("Output file {} doesn't exist".format(
-                out_file))
+    data = globals()[pred_name](fasta_file)
     processor = PredictionProcessor()
-    data = processor.process_prediction(data, pred_name)
-    return {pred_name: data}
+    prediction = processor.process_prediction(data, pred_name)
+    return {pred_name: prediction}
 
 
 @celery_app.task
@@ -99,7 +60,7 @@ def process_prediction_results(predictions, fasta_sequence):
     consensus = processor.get_consensus_disorder(predictions)
     predictions['consensus'] = consensus
     predictions['filtered'] = processor.filter_out_short_stretches(consensus)
-    prediction_text = processor.make_text(predictions)
+    prediction_text = processor.make_text(predictions, sequence)
     return {'prediction': predictions, 'sequence': sequence,
             'prediction_text': prediction_text}
 
@@ -151,8 +112,12 @@ def get_sequences_from_blast(blast_result):
     sequences = []
     uniprot = UniprotSequenceProvider()
     for s in blast_result['blast_result']:
-        sequence = uniprot.get_sequence(s['id'])
-        sequences.append(sequence)
+        try:
+            sequence = uniprot.get_sequence(s['id'])
+            sequences.append(sequence)
+        except ServiceError:
+            _log.warning("Couldn't get sequence for id: {}".format(s['id']))
+    _log.debug("Got {} sequences".format(len(sequences)))
     return sequences
 
 
@@ -173,8 +138,9 @@ def create_fles(sequences, aligned_mode=False):
     annotator.annotate(sequences)
     encoder = SequencesEncoder()
     encoder.encode(sequences, aligned_mode)
+    fles_file = make_fles(sequences, aligned_mode)
     return {
-        'fles_path': write_fles(sequences, aligned_mode),
+        'fles_file': fles_file,
         'sequences': sequences,
         'motif_code_dict': encoder.motif_code_dict,
         'domain_code_dict': encoder.domain_code_dict
@@ -215,34 +181,18 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
         but in all alignment rounds profile length is equal
         query sequence length)
     """
-    _log.info("Running KMAD")
-    fles_path = create_fles_result['fles_path']
+    _log.info("Running KMAD alignment [task]")
+    fles_file = create_fles_result['fles_file']
     sequences = create_fles_result['sequences']
-    args = [KMAD, '-i', fles_path, '-o', fles_path, '-g', gop, '-e', gep,
-            '-n', egp, '-p', ptm_score, '-m', motif_score, '-d', domain_score,
-            '--out-encoded', '-c', '7']
-    result_path = fles_path + '_al'
-    # additional parameters
-    if conf_path:
-        args.extend(['--conf', conf_path])
-    if refine:
-        args.extend(['--refine'])
-    if gapped:
-        args.extend(['--gapped'])
-    elif full_ungapped:
-        args.extend(['--full_ungapped'])
-
-    try:
-        subprocess.call(args)
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(e)
-    else:
-        return {
-            'fles_path': result_path,
-            'sequences': sequences,
-            'motif_code_dict': create_fles_result['motif_code_dict'],
-            'domain_code_dict': create_fles_result['domain_code_dict']
-        }
+    result_path = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
+                             motif_score, conf_path, gapped, full_ungapped,
+                             refine)
+    return {
+        'fles_path': result_path,
+        'sequences': sequences,
+        'motif_code_dict': create_fles_result['motif_code_dict'],
+        'domain_code_dict': create_fles_result['domain_code_dict']
+    }
 
 
 @celery_app.task
@@ -293,22 +243,25 @@ def analyze_motifs(process_kmad_result, fasta_sequence, position, mutant_aa):
 @celery_app.task
 def query_d2p2(blast_result):
     _log.info("Running query_d2p2")
-    data = []
+    result = []
     try:
         if blast_result['exact_hit']['found']:
             seq_id = blast_result['exact_hit']['seq_id']
-            data = 'seqids=["%s"]' % seq_id
-            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-            response = json.loads(urllib2.urlopen(request).read())
-            if response[seq_id]:
-                prediction = \
-                    response[seq_id][0][2]['disorder']['consensus']
+            url = os.path.join(D2P2_URL, '["{}"]'.format(seq_id))
+            response = requests.get(url)
+            response.raise_for_status()
+            res_json = json.loads(response.text)
+            if 'error' not in res_json.keys() and res_json[seq_id]:
+                prediction = res_json[seq_id][0][2]['disorder']['consensus']
                 processor = PredictionProcessor()
-                data = processor.process_prediction(prediction, 'd2p2')
-    except urllib2.HTTPError and urllib2.URLError:
+                result = processor.process_prediction(prediction, 'd2p2')
+            else:
+                _log.debug("D2P2 error: {}".format(result))
+    except (requests.exceptions.HTTPError,
+            requests.exceptions.ConnectionError):
         _log.debug("D2P2 HTTP/URL Error")
-    if data:
-        return {'d2p2': data}
+    if result:
+        return {'d2p2': result}
     else:
         return None
 
@@ -333,7 +286,7 @@ def combine_alignment_and_prediction(results):
 
 
 @celery_app.task
-def update_elmdb(output_filename):
+def update_elmdb():
     elm = ElmUpdater()
     elm.update()
 

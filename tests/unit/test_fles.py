@@ -1,7 +1,7 @@
 from mock import patch, PropertyMock
 from nose.tools import eq_
 
-from kmad_web.domain.fles import write_fles, parse_fles, fles2fasta
+from kmad_web.domain.fles import make_fles, write_fles, parse_fles, fles2fasta
 
 
 def test_parse_fles():
@@ -46,3 +46,23 @@ def test_write_fles(mock_tmp):
     ]
 
     eq_(tmp_name, write_fles(sequences))
+
+
+def test_make_fles():
+    sequences = [
+        {
+            'header': '>1',
+            'encoded_seq': 'SAAAAAAEAAAAAAQAAAAAA',
+            'encoded_aligned': '-AAAAAASAAAAAAEAAAAAAQAAAAAA'
+        },
+        {
+            'header': '>2',
+            'encoded_seq': 'PAAAAAASAAAAAAEAAAAAA',
+            'encoded_aligned': 'PAAAAAASAAAAAAEAAAAAA-AAAAAA'
+        }
+    ]
+    expected = '>1\nSAAAAAAEAAAAAAQAAAAAA\n>2\nPAAAAAASAAAAAAEAAAAAA\n'
+    eq_(expected, make_fles(sequences, aligned_mode=False))
+    expected = '>1\n-AAAAAASAAAAAAEAAAAAAQAAAAAA\n' \
+               '>2\nPAAAAAASAAAAAAEAAAAAA-AAAAAA\n'
+    eq_(expected, make_fles(sequences, aligned_mode=True))

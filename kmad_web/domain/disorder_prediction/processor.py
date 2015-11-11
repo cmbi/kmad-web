@@ -7,9 +7,9 @@ _log = logging.getLogger(__name__)
 class PredictionProcessor(object):
     def process_prediction(self, prediction, pred_name):
         # 0 - structured, 2 - disordered
-        if pred_name == "spine":
+        if pred_name == "spined":
             prediction_lines = prediction.splitlines()
-            disorder_list = self._process_spine(prediction_lines)
+            disorder_list = self._process_spined(prediction_lines)
         elif pred_name == "disopred":
             prediction_lines = prediction.splitlines()
             disorder_list = self._process_disopred(prediction_lines)
@@ -96,7 +96,7 @@ class PredictionProcessor(object):
                 disorder_list += [0]
         return disorder_list
 
-    def _process_spine(self, prediction_lines):
+    def _process_spined(self, prediction_lines):
         disorder_list = []
         disorder_symbol = 'D'
         for i, lineI in enumerate(prediction_lines):
@@ -170,6 +170,18 @@ class PredictionProcessor(object):
                 disorder_list.append(0)
         return disorder_list
 
-    # TODO: be serious
-    def make_text(self, predictions):
-        return "prediction text"
+    def make_text(self, predictions, sequence):
+        pred_text = []
+        order = ['consensus', 'filtered', 'disopred', 'globplot', 'iupred',
+                 'predisorder', 'psipred', 'globplot', 'spined']
+        methods = sorted(predictions.keys(), key=lambda x: order.index(x))
+        pred_text.append("ResNo AA {}".format(
+            ' '.join(methods)
+        ))
+        for j in xrange(len(sequence)):
+            pred_text.append("{} {} {}".format(
+                str(j + 1), sequence[j],
+                ' '.join([str(predictions[m][j]) for m in methods])
+            ))
+
+        return '\n'.join(pred_text)

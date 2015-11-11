@@ -1,6 +1,8 @@
 import logging
 import tempfile
 
+from celery import chain, group
+
 
 from kmad_web.domain.features.user_features import UserFeaturesParser
 from kmad_web.domain.sequences.fasta import (check_fasta, get_first_seq,
@@ -31,7 +33,6 @@ class MotifsStrategy(object):
         self._full_ungapped = 'True'
 
     def __call__(self):
-        from celery import chain
         from kmad_web.tasks import (run_blast, get_sequences_from_blast,
                                     create_fles, run_kmad, analyze_motifs,
                                     process_kmad_alignment)
@@ -68,7 +69,6 @@ class PtmsStrategy(object):
         self._full_ungapped = 'True'
 
     def __call__(self):
-        from celery import chain
         from kmad_web.tasks import (run_blast, get_sequences_from_blast,
                                     create_fles, run_kmad, analyze_ptms,
                                     process_kmad_alignment)
@@ -93,7 +93,6 @@ class PredictStrategy(object):
         self._prediction_methods = prediction_methods
 
     def __call__(self):
-        from celery import chain, group
         from kmad_web.tasks import (run_blast, query_d2p2, run_single_predictor,
                                     process_prediction_results)
 
@@ -141,7 +140,6 @@ class AlignStrategy(object):
         from kmad_web.tasks import (create_fles, get_sequences_from_blast,
                                     run_kmad, run_blast,
                                     process_kmad_alignment)
-        from celery import chain
 
         user_feat_parser = UserFeaturesParser()
         config_path = user_feat_parser.write_conf_file(self._usr_features)
@@ -188,7 +186,6 @@ class RefineStrategy(object):
         from kmad_web.tasks import (create_fles, get_sequences_from_blast,
                                     run_kmad, run_blast, prealign,
                                     process_kmad_alignment)
-        from celery import chain
 
         user_feat_parser = UserFeaturesParser()
         config_path = user_feat_parser.write_conf_file(self._usr_features)
@@ -228,6 +225,7 @@ class AnnotateStrategy(object):
         self._sequences = parse_fasta_alignment(sequence_data)
 
     def __call__(self):
+
         from kmad_web.tasks import annotate
 
         job = annotate.delay(self._sequences)
@@ -250,7 +248,6 @@ class PredictAndAlignStrategy(object):
         self._prediction_methods = prediction_methods
 
     def __call__(self):
-        from celery import chain, group
         from kmad_web.tasks import (create_fles, run_blast, query_d2p2,
                                     get_sequences_from_blast, run_kmad,
                                     process_kmad_alignment,

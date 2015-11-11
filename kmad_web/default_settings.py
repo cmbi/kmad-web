@@ -37,6 +37,7 @@ ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
 PFAM_URL = "http://pfam.xfam.org/search/sequence"
+D2P2_URL = "http://d2p2.pro/api/seqid"
 KMAD = "kmad"
 
 # paths
@@ -50,8 +51,8 @@ TCOFFEE = '/usr/local/bin/t_coffee'
 # predictors
 IUPRED = ""
 IUPRED_DIR = ""
-SPINE = "/srv/kmad/spined/spined"
-SPINE_OUTPUT_DIR = "/srv/kmad/spined/predout/"
+SPINED = "/srv/kmad/spined/spined"
+SPINED_OUTPUT_DIR = "/srv/kmad/spined/predout/"
 DISOPRED = ""
 PREDISORDER = ""
 PSIPRED = ""

@@ -9,14 +9,11 @@ _log.addHandler(sh)
 _log.setLevel(logging.DEBUG)
 
 import json
-import os
 import random
+import requests
 import time
 
-import requests
 from nose.tools import eq_
-
-from kmad_web import paths
 
 
 KMAD_URL = 'http://127.0.0.1:5000/api/'
@@ -28,39 +25,42 @@ class TestApi(object):
 
     def _test_sequences(self, test_sequences):
         for i in range(len(test_sequences)):
-            sequence = test_sequences[i]
-            output_types = ['predict', 'ptms', 'motifs', 'refine', 'align']
-            for output_type in output_types:
-                url_create = FMT_CREATE.format(KMAD_URL, output_type)
-                data = self._get_data(output_type, sequence)
-                print url_create
-                r = requests.post(url_create, data=data)
-                r.raise_for_status()
-                job_id = json.loads(r.text)['id']
-
-                while True:
-                    url_status = FMT_STATUS.format(KMAD_URL,
-                                                   output_type,
-                                                   job_id)
-                    r = requests.get(url_status)
+            for sequence in test_sequences:
+                _log.info("testing sequence: {}".format(
+                    sequence.splitlines()[0].split()[0]
+                ))
+                output_types = ['predict', 'ptms', 'motifs', 'refine', 'align']
+                for output_type in output_types:
+                    _log.info("Testing output_type: {}".format(output_type))
+                    url_create = FMT_CREATE.format(KMAD_URL, output_type)
+                    data = self._get_data(output_type, sequence)
+                    _log.debug("Posting data: {}".format(data))
+                    r = requests.post(url_create, data=data)
                     r.raise_for_status()
+                    job_id = json.loads(r.text)['id']
 
-                    status = json.loads(r.text)['status']
-                    msg = None
-                    try:
-                        msg = json.loads(r.text)['message']
-                    except KeyError:
-                        pass
+                    while True:
+                        url_status = FMT_STATUS.format(KMAD_URL,
+                                                       output_type,
+                                                       job_id)
+                        r = requests.get(url_status)
+                        r.raise_for_status()
 
-                    if status in ['SUCCESS', 'FAILURE', 'REVOKED']:
-                        eq_(status,
-                            'SUCCESS', "{} - {} failed: '{}'".format(
-                                output_type, sequence, msg))
-                        break
-                    else:
-                        _log.debug('Waiting 10 more seconds...')
-                        time.sleep(10)
-                _log.info('Done!')
+                        status = json.loads(r.text)['status']
+                        msg = None
+                        try:
+                            msg = json.loads(r.text)['message']
+                        except KeyError:
+                            pass
+
+                        if status in ['SUCCESS', 'FAILURE', 'REVOKED']:
+                            eq_(status,
+                                'SUCCESS', "{} - {} failed: '{}'".format(
+                                    output_type, sequence, msg))
+                            break
+                        else:
+                            time.sleep(10)
+                    _log.info('Done!')
 
     def test_sequence(self):
         """Tests that disorder can be predicted for random sequences.
@@ -69,7 +69,7 @@ class TestApi(object):
         and perform all actions
         using the KMAD API
         """
-        test_sequences = [open('tests/integration/SIAL_HUMAN.fasta').read()]
+        test_sequences = [self._get_random_sequence() for i in range(5)]
         self._test_sequences(test_sequences)
 
     def _get_data(self, output_type, fasta_content):
@@ -122,3 +122,8 @@ class TestApi(object):
         rand_int = random.randrange(0, 19)
         return aas[rand_int]
 
+    def _get_random_sequence(self):
+        response = requests.get(
+            'http://uniprot.org/uniprot/?query=protein&random=yes&format=fasta')
+        fasta = response.text
+        return fasta

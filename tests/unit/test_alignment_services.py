@@ -1,13 +1,25 @@
 import os
 
-from nose.tools import ok_, assert_raises
+from nose.tools import ok_, assert_raises, with_setup
 
 from kmad_web.services.alignment import (ClustaloService, ClustalwService,
                                          MafftService, MuscleService,
                                          TcoffeeService)
 from kmad_web.services.types import ServiceError
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
+
+
+@with_setup(setup, teardown)
 def test_clustalo_service():
     clustalo = ClustaloService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
@@ -19,6 +31,7 @@ def test_clustalo_service():
     assert_raises(ServiceError, clustalo.align, test_filename)
 
 
+@with_setup(setup, teardown)
 def test_clustalw_service():
     clustalw = ClustalwService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
@@ -32,6 +45,7 @@ def test_clustalw_service():
     assert_raises(ServiceError, clustalw.align, test_filename)
 
 
+@with_setup(setup, teardown)
 def test_mafft_service():
     mafft = MafftService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
@@ -43,6 +57,7 @@ def test_mafft_service():
     assert_raises(ServiceError, mafft.align, test_filename)
 
 
+@with_setup(setup, teardown)
 def test_muscle_service():
     muscle = MuscleService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
@@ -54,6 +69,7 @@ def test_muscle_service():
     assert_raises(ServiceError, muscle.align, test_filename)
 
 
+@with_setup(setup, teardown)
 def test_tcoffee_service():
     tcoffee = TcoffeeService()
     test_filename = "tests/unit/testdata/test_multi.fasta"

@@ -44,9 +44,10 @@ class ElmParser(object):
         elm_list = elm_data.splitlines()
         header_len = 6
         for line in elm_list[header_len:]:
-            line_list = re.split(r'\t+', line)
+            line_list = [i.rstrip('"').lstrip('"')
+                         for i in re.split(r'\t+', line)]
             elm_id = line_list[1]
             self.motif_classes[elm_id] = {}
-            self.motif_classes[elm_id]['class'] = line_list[2]
+            self.motif_classes[elm_id]['class'] = line_list[2].rstrip('.')
             self.motif_classes[elm_id]['pattern'] = line_list[3]
             self.motif_classes[elm_id]['probability'] = line_list[4]

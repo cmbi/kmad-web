@@ -1,8 +1,20 @@
-from nose.tools import eq_
+from nose.tools import eq_, with_setup
 
 from kmad_web.services.go import GoService
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
+
+
+@with_setup(setup, teardown)
 def test_call():
     method = "getTermParents"
     go_term = "GO:0001940"
