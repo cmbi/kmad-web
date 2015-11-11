@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import subprocess
 import tempfile
 import urllib2
 
@@ -14,7 +13,7 @@ from kmad_web.domain.sequences.annotator import SequencesAnnotator
 from kmad_web.domain.sequences.encoder import SequencesEncoder
 from kmad_web.domain.sequences.fasta import (parse_fasta_alignment,
                                              sequences2fasta)
-from kmad_web.domain.fles import write_fles, parse_fles, fles2fasta
+from kmad_web.domain.fles import make_fles, parse_fles, fles2fasta
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.updaters.elm import ElmUpdater
 from kmad_web.services.alignment import (ClustaloService, ClustalwService,
@@ -133,8 +132,9 @@ def create_fles(sequences, aligned_mode=False):
     annotator.annotate(sequences)
     encoder = SequencesEncoder()
     encoder.encode(sequences, aligned_mode)
+    fles_file = make_fles(sequences, aligned_mode)
     return {
-        'fles_path': write_fles(sequences, aligned_mode),
+        'fles_file': fles_file,
         'sequences': sequences,
         'motif_code_dict': encoder.motif_code_dict,
         'domain_code_dict': encoder.domain_code_dict
@@ -176,9 +176,9 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
         query sequence length)
     """
     _log.info("Running KMAD alignment [task]")
-    fles_path = create_fles_result['fles_path']
+    fles_file = create_fles_result['fles_file']
     sequences = create_fles_result['sequences']
-    result_path = kmad.align(fles_path, gop, gep, egp, ptm_score, domain_score,
+    result_path = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
                              motif_score, conf_path, gapped, full_ungapped,
                              refine)
     return {

@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import tempfile
 
 from kmad_web.services.types import ServiceError
 from kmad_web.default_settings import KMAD
@@ -15,10 +16,16 @@ class KmadAligner(object):
         self._path = path
 
     @cm.cache('redis')
-    def align(self, fles_path, gop, gep, egp, ptm_score, domain_score,
+    def align(self, fles_file, gop, gep, egp, ptm_score, domain_score,
               motif_score, conf_path, gapped, full_ungapped,
               refine):
         _log.info("Running KMAD alignment [service]")
+
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+        with tmp_file as f:
+            f.write(fles_file)
+        fles_path = tmp_file.name
+
         args = [self._path, '-i', fles_path, '-o', fles_path, '-g', gop,
                 '-e', gep, '-n', egp, '-p', ptm_score, '-m', motif_score,
                 '-d', domain_score, '--out-encoded', '-c', '7']

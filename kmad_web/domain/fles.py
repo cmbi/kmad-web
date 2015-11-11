@@ -21,6 +21,17 @@ def write_fles(sequences, aligned_mode=False):
     return tmp_file.name
 
 
+def make_fles(sequences, aligned_mode=False):
+    out_text = ""
+    sequence_key = 'encoded_seq'
+    _log.debug("ALigned mode: {}".format(aligned_mode))
+    if aligned_mode:
+        sequence_key = 'encoded_aligned'
+    for s in sequences:
+        out_text += "{}\n{}\n".format(s['header'], s[sequence_key])
+    return out_text
+
+
 def parse_fles(fles_file):
     fles_lines = fles_file.splitlines()
     alignment = []
