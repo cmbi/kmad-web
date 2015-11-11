@@ -7,10 +7,6 @@ import urllib2
 
 from celery import current_app as celery_app
 
-from kmad_web.default_settings import (DISOPRED, GLOBPLOT, IUPRED, IUPRED_DIR,
-                                       PREDISORDER, PSIPRED, SPINE,
-                                       SPINE_OUTPUT_DIR)
-
 from kmad_web.domain.blast.provider import BlastResultProvider
 from kmad_web.domain.disorder_prediction.processor import PredictionProcessor
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
@@ -27,8 +23,15 @@ from kmad_web.services.alignment import (ClustaloService, ClustalwService,
 from kmad_web.domain.features.analysis import ptms as ap
 from kmad_web.domain.features.analysis import motifs as am
 from kmad_web.helpers import invert_dict
+from kmad_web.services.iupred import iupred
+from kmad_web.services.psipred import psipred
+from kmad_web.services.disopred import disopred
+from kmad_web.services.predisorder import predisorder
+from kmad_web.services.globplot import globplot
+from kmad_web.services.spined import spined
+from kmad_web.services.kmad_aligner import kmad
 
-from kmad_web.default_settings import KMAD, BLAST_DB
+from kmad_web.default_settings import BLAST_DB
 
 
 _log = logging.getLogger(__name__)
@@ -37,53 +40,10 @@ _log = logging.getLogger(__name__)
 @celery_app.task
 def run_single_predictor(fasta_file, pred_name):
     _log.info("Run single predictor: {}".format(pred_name))
-    env = {}
-    if pred_name == "spine":
-        tmp_name = fasta_file.split('/')[-1].split('.')[0]
-        out_file = os.path.join(SPINE_OUTPUT_DIR, tmp_name + '.spd')
-        tmp_path = '/'.join(fasta_file.split("/")[:-1])
-        method = SPINE
-        args = [method, tmp_path, tmp_name]
-    elif pred_name == "disopred":
-        out_file = '.'.join(fasta_file.split('.')[:-1])+".diso"
-        method = DISOPRED
-        args = [method, fasta_file]
-    elif pred_name == "predisorder":
-        out_file = '.'.join(fasta_file.split('.')[:-1])+".predisorder"
-        method = PREDISORDER
-        args = [method, fasta_file, out_file]
-    elif pred_name == "psipred":
-        out_file = ('.'.join(fasta_file.split('.')[:-1])+".ss2").split('/')[-1]
-        method = PSIPRED
-        args = [method, fasta_file]
-    elif pred_name == 'globplot':
-        method = GLOBPLOT
-        out_file = '.'.join(fasta_file.split('.')[:-1])+".gplot"
-        args = [method, '10', '8', '75', '8', '8',
-                fasta_file, '>', out_file]
-    elif pred_name == 'iupred':
-        method = IUPRED
-        args = [method, fasta_file, 'long']
-        env = {"IUPred_PATH": IUPRED_DIR}
-
-    try:
-        data = subprocess.check_output(args, env=env)
-        _log.info("Ran command: {}".format(
-            subprocess.list2cmdline(args)
-        ))
-    except (subprocess.CalledProcessError, OSError) as e:
-        _log.error("Error: {}".format(e))
-
-    if pred_name not in ['globplot', 'iupred']:
-        if os.path.exists(out_file):
-            with open(out_file) as f:
-                data = f.read()
-        else:
-            raise RuntimeError("Output file {} doesn't exist".format(
-                out_file))
+    data = globals()[pred_name](fasta_file)
     processor = PredictionProcessor()
-    data = processor.process_prediction(data, pred_name)
-    return {pred_name: data}
+    prediction = processor.process_prediction(data, pred_name)
+    return {pred_name: prediction}
 
 
 @celery_app.task
@@ -215,34 +175,18 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
         but in all alignment rounds profile length is equal
         query sequence length)
     """
-    _log.info("Running KMAD")
+    _log.info("Running KMAD alignment [task]")
     fles_path = create_fles_result['fles_path']
     sequences = create_fles_result['sequences']
-    args = [KMAD, '-i', fles_path, '-o', fles_path, '-g', gop, '-e', gep,
-            '-n', egp, '-p', ptm_score, '-m', motif_score, '-d', domain_score,
-            '--out-encoded', '-c', '7']
-    result_path = fles_path + '_al'
-    # additional parameters
-    if conf_path:
-        args.extend(['--conf', conf_path])
-    if refine:
-        args.extend(['--refine'])
-    if gapped:
-        args.extend(['--gapped'])
-    elif full_ungapped:
-        args.extend(['--full_ungapped'])
-
-    try:
-        subprocess.call(args)
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(e)
-    else:
-        return {
-            'fles_path': result_path,
-            'sequences': sequences,
-            'motif_code_dict': create_fles_result['motif_code_dict'],
-            'domain_code_dict': create_fles_result['domain_code_dict']
-        }
+    result_path = kmad.align(fles_path, gop, gep, egp, ptm_score, domain_score,
+                             motif_score, conf_path, gapped, full_ungapped,
+                             refine)
+    return {
+        'fles_path': result_path,
+        'sequences': sequences,
+        'motif_code_dict': create_fles_result['motif_code_dict'],
+        'domain_code_dict': create_fles_result['domain_code_dict']
+    }
 
 
 @celery_app.task

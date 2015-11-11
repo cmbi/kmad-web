@@ -229,7 +229,7 @@ class KmadForm(Form):
         choices=[('d2p2', 'D2P2'),
                  ('globplot', 'GlobPlot'),
                  ('disopred', 'DISOPRED'),
-                 ('spine', 'SPINE-D'),
+                 ('spined', 'SPINE-D'),
                  ('iupred', 'IUPred'),
                  ('psipred', 'PSIPRED'),
                  ('predisorder', 'PreDisorder')],

@@ -50,8 +50,8 @@ TCOFFEE = '/usr/local/bin/t_coffee'
 # predictors
 IUPRED = ""
 IUPRED_DIR = ""
-SPINE = "/srv/kmad/spined/spined"
-SPINE_OUTPUT_DIR = "/srv/kmad/spined/predout/"
+SPINED = "/srv/kmad/spined/spined"
+SPINED_OUTPUT_DIR = "/srv/kmad/spined/predout/"
 DISOPRED = ""
 PREDISORDER = ""
 PSIPRED = ""
