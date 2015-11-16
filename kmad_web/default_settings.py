@@ -51,7 +51,7 @@ TCOFFEE = '/usr/local/bin/t_coffee'
 # predictors
 IUPRED = "/srv/kmad/iupred/iupred"
 IUPRED_DIR = "/srv/kmad/iupred/"
-SPINED = "/srv/kmad/spined/spined"
+SPINED = "/srv/kmad/spined/bin/run_spine-d"
 SPINED_OUTPUT_DIR = "/srv/kmad/spined/predout/"
 DISOPRED = "/srv/kmad/disopred/run_disopred.pl"
 PREDISORDER = "/srv/kmad/predisorder/bin/predict_diso.sh"
