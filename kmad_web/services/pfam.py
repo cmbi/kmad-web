@@ -2,6 +2,7 @@ import logging
 import requests
 import time
 import xmltodict
+from xml.parsers.expat import ExpatError
 
 from kmad_web.services.types import ServiceError, TimeoutError
 from kmad_web.services.helpers.cache import cache_manager as cm
@@ -46,10 +47,10 @@ class PfamService(object):
         except requests.HTTPError as e:
                 raise ServiceError(e)
         else:
-            result = xmltodict.parse(request.text)
             try:
+                result = xmltodict.parse(request.text)
                 result_url = result['jobs']['job']['result_url']
-            except KeyError as e:
+            except (KeyError, ExpatError) as e:
                 raise ServiceError(
                     "{}\nUnexpected response from Pfam".format(e.message))
         return result_url
