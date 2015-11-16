@@ -173,7 +173,7 @@ class PredictionProcessor(object):
     def make_text(self, predictions, sequence):
         pred_text = []
         order = ['consensus', 'filtered', 'disopred', 'globplot', 'iupred',
-                 'predisorder', 'psipred', 'globplot', 'spined']
+                 'predisorder', 'psipred', 'globplot', 'spined', 'd2p2']
         methods = sorted(predictions.keys(), key=lambda x: order.index(x))
         pred_text.append("ResNo AA {}".format(
             ' '.join(methods)
