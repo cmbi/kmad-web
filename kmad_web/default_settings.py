@@ -38,7 +38,7 @@ GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
 PFAM_URL = "http://pfam.xfam.org/search/sequence"
 D2P2_URL = "http://d2p2.pro/api/seqid"
-KMAD = "kmad"
+KMAD = "/usr/local/bin/kmad"
 
 # paths
 ELMDB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'
@@ -49,12 +49,12 @@ MUSCLE = '/usr/local/bin/muscle'
 MAFFT = '/usr/local/bin/mafft'
 TCOFFEE = '/usr/local/bin/t_coffee'
 # predictors
-IUPRED = ""
-IUPRED_DIR = ""
+IUPRED = "/srv/kmad/iupred/iupred"
+IUPRED_DIR = "/srv/kmad/iupred/"
 SPINED = "/srv/kmad/spined/spined"
 SPINED_OUTPUT_DIR = "/srv/kmad/spined/predout/"
-DISOPRED = ""
-PREDISORDER = ""
-PSIPRED = ""
+DISOPRED = "/srv/kmad/disopred/run_disopred.pl"
+PREDISORDER = "/srv/kmad/predisorder/bin/predict_diso.sh"
+PSIPRED = "/srv/kmad/psipred/runpsipred"
 GLOBPLOT = "/usr/local/bin/GlobPipe.py"
 BLAST_DB = "/home/joanna/data/uniprot_sprot"
