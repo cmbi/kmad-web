@@ -2,6 +2,7 @@ from mock import mock_open, patch, PropertyMock
 from nose.tools import eq_, ok_, raises
 
 from kmad_web.factory import create_app, create_celery_app
+from kmad_web.services.types import ServiceError
 
 
 class TestTasks(object):
@@ -206,6 +207,15 @@ class TestTasks(object):
 
         eq_(sequences, get_sequences_from_blast(blast_result))
 
+    @patch('kmad_web.tasks._log.warning')
+    def test_get_sequences_from_blast_exception(self, mock_log):
+
+        from kmad_web.tasks import get_sequences_from_blast
+
+        blast_result = {'blast_result': [{'id': 'stupid_id'}]}
+        get_sequences_from_blast(blast_result)
+        mock_log.assert_called_once()
+
     @patch('kmad_web.tasks.make_fles')
     @patch('kmad_web.tasks.SequencesEncoder')
     @patch('kmad_web.tasks.SequencesAnnotator')
@@ -267,3 +277,142 @@ class TestTasks(object):
             'sequences': 'test'
         }
         eq_(expected, combine_alignment_and_prediction(task_input))
+
+    @patch('kmad_web.tasks.make_fles')
+    @patch('kmad_web.tasks.SequencesEncoder')
+    @patch('kmad_web.tasks.SequencesAnnotator')
+    def test_create_fles(self, mock_annotator, mock_encoder, mock_make_fles):
+
+        from kmad_web.tasks import create_fles
+
+        sequences = 'TEST_SEQUENCES'
+        test_fles = "TEST_FLES"
+        mock_make_fles.return_value = test_fles
+        motifs = 'test_motifs'
+        domains = 'test_domains'
+        type(mock_encoder.return_value).motif_code_dict = PropertyMock(
+            return_value=motifs)
+        type(mock_encoder.return_value).domain_code_dict = PropertyMock(
+            return_value=domains)
+        expected = {
+            'fles_file': test_fles,
+            'sequences': sequences,
+            'motif_code_dict': 'test_motifs',
+            'domain_code_dict': 'test_domains'
+        }
+        eq_(expected, create_fles(sequences))
+
+    @patch('kmad_web.tasks.kmad.align')
+    def test_run_kmad(self, mock_kmad):
+        from kmad_web.tasks import run_kmad
+        fles_file = 'test_fles'
+        sequences = 'test_sequences'
+        fles_path = 'test_fles_path'
+        motifs = 'test_motifs'
+        domains = 'test_domains'
+        mock_kmad.return_value = fles_path
+
+        create_fles_result = {
+            'fles_file': fles_file,
+            'sequences': sequences,
+            'motif_code_dict': motifs,
+            'domain_code_dict': domains
+        }
+        expected = {
+            'fles_path': fles_path,
+            'sequences': sequences,
+            'motif_code_dict': motifs,
+            'domain_code_dict': domains
+        }
+        eq_(expected, run_kmad(create_fles_result, '', '', '', '', '', ''))
+
+    @patch('kmad_web.tasks.os.path.exists')
+    @patch('kmad_web.tasks.open',
+           mock_open(read_data='>1\nSAAAAAAEAAAAAAQAAAAAA\n'),
+           create=True)
+    def test_process_kmad_alignment(self, mock_path_exists):
+
+        from kmad_web.tasks import process_kmad_alignment
+
+        motifs = {'MOTIF_AA': 'aa'}
+        domains = {'DOMAIN_AA': 'aa'}
+        sequences = [{'header': '>1', 'seq': 'SEQ'}]
+        run_kmad_result = {
+            'fles_path': 'fles_path',
+            'sequences': sequences,
+            'motif_code_dict': motifs,
+            'domain_code_dict': domains
+        }
+
+        expected = {
+            'fles_file': '>1\nSAAAAAAEAAAAAAQAAAAAA\n',
+            'fasta_file': '>1\nSEQ',
+            'sequences': [
+                {
+                    'header': '>1',
+                    'seq': 'SEQ',
+                    'encoded_aligned': 'SAAAAAAEAAAAAAQAAAAAA',
+                    'aligned': 'SEQ'
+                }
+            ],
+            'motif_code_dict': {'aa': 'MOTIF_AA'},
+            'domain_code_dict': {'aa': 'DOMAIN_AA'}
+
+        }
+
+        eq_(expected, process_kmad_alignment(run_kmad_result))
+
+    @raises(RuntimeError)
+    def test_process_kmad_alignment_error(self):
+
+        from kmad_web.tasks import process_kmad_alignment
+
+        run_kmad_result = {
+            'fles_path': 'nonexistent path',
+            'sequences': 'sequences',
+            'motif_code_dict': 'motifs',
+            'domain_code_dict': 'domains'
+        }
+
+        process_kmad_alignment(run_kmad_result)
+
+    @patch('kmad_web.tasks.Mutation')
+    @patch('kmad_web.tasks.ap.analyze_ptms')
+    def test_analyze_ptms(self, mock_analyze, mock_mutation):
+
+        from kmad_web.tasks import analyze_ptms
+        from kmad_web.domain.mutation import Mutation
+
+        sequence = {'seq': 'SEQ', 'aligned': '-SEQ'}
+        sequences = [{'seq': 'SEQ', 'aligned': '-SEQ'}]
+        process_kmad_result = {'sequences': sequences}
+        position = 1
+        mutant_aa = 'R'
+        fasta_sequence = '>1\nSEQ'
+        mutation = Mutation(sequence, position, mutant_aa)
+        mock_mutation.return_value = mutation
+        mock_analyze.return_value = 'ANALYSIS RESULT'
+        analyze_ptms(process_kmad_result, fasta_sequence, position, mutant_aa)
+
+        mock_analyze.assert_called_once_with(mutation, sequences)
+
+    @patch('kmad_web.tasks.Mutation')
+    @patch('kmad_web.tasks.am.analyze_motifs')
+    def test_analyze_motifs(self, mock_analyze, mock_mutation):
+
+        from kmad_web.tasks import analyze_motifs
+        from kmad_web.domain.mutation import Mutation
+
+        sequence = {'seq': 'SEQ', 'aligned': '-SEQ'}
+        sequences = [{'seq': 'SEQ', 'aligned': '-SEQ'}]
+        process_kmad_result = {'sequences': sequences}
+        position = 1
+        mutant_aa = 'R'
+        fasta_sequence = '>1\nSEQ'
+        mutation = Mutation(sequence, position, mutant_aa)
+        mock_mutation.return_value = mutation
+        mock_analyze.return_value = 'ANALYSIS RESULT'
+        analyze_motifs(process_kmad_result, fasta_sequence, position, mutant_aa)
+
+        mock_analyze.assert_called_once_with(mutation, sequences)
+
