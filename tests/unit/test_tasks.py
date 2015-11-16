@@ -1,4 +1,4 @@
-from mock import mock_open, patch
+from mock import mock_open, patch, PropertyMock
 from nose.tools import eq_, ok_, raises
 
 from kmad_web.factory import create_app, create_celery_app
@@ -15,7 +15,9 @@ class TestTasks(object):
 
     def test_get_task(self):
 
-        from kmad_web.tasks import (get_task, process_prediction_results,
+        from kmad_web.tasks import (get_task, annotate,
+                                    combine_alignment_and_prediction,
+                                    process_prediction_results,
                                     process_kmad_alignment, analyze_ptms,
                                     analyze_motifs)
 
@@ -36,6 +38,16 @@ class TestTasks(object):
 
         output_type = 'motifs'
         expected = analyze_motifs
+        result = get_task(output_type)
+        eq_(result, expected)
+
+        output_type = 'annotate'
+        expected = annotate
+        result = get_task(output_type)
+        eq_(result, expected)
+
+        output_type = 'predict_and_align'
+        expected = combine_alignment_and_prediction
         result = get_task(output_type)
         eq_(result, expected)
 
@@ -182,3 +194,76 @@ class TestTasks(object):
             }
         }
         eq_(expected, run_blast(fasta_seq))
+
+    @patch('kmad_web.tasks.UniprotSequenceProvider.get_sequence')
+    def test_get_sequences_from_blast(self, mock_provider):
+        sequences = ['seq1', 'seq2']
+        mock_provider.side_effect = sequences
+        blast_result = {'blast_result':
+                        [{'id': '1'}, {'id': '2'}]
+                        }
+        from kmad_web.tasks import get_sequences_from_blast
+
+        eq_(sequences, get_sequences_from_blast(blast_result))
+
+    @patch('kmad_web.tasks.make_fles')
+    @patch('kmad_web.tasks.SequencesEncoder')
+    @patch('kmad_web.tasks.SequencesAnnotator')
+    def test_annotate(self, mock_annotator, mock_encoder, mock_fles):
+
+        from kmad_web.tasks import annotate
+
+        motif_dict = {'motif_aa': 'aa'}
+        domain_dict = {'domain_aa': 'aa'}
+        fles_file = 'fles_file'
+        type(mock_encoder.return_value).motif_code_dict = PropertyMock(
+            return_value=motif_dict)
+        type(mock_encoder.return_value).domain_code_dict = PropertyMock(
+            return_value=domain_dict)
+        mock_fles.return_value = fles_file
+
+        sequences = 'sequences'
+        expected = {
+            'motif_code_dict': {'aa': 'motif_aa'},
+            'domain_code_dict': {'aa': 'domain_aa'},
+            'sequences': sequences
+        }
+
+        eq_(expected, annotate(sequences))
+
+    @patch('kmad_web.tasks.ElmUpdater.update')
+    def test_update_elmdb(self, mock_update):
+        from kmad_web.tasks import update_elmdb
+
+        update_elmdb()
+        mock_update.assert_called_once()
+
+    def test_combine_alignment_and_prediciton(self):
+        from kmad_web.tasks import combine_alignment_and_prediction
+        task_input = [
+            {
+                'fles_file': 'test',
+                'fasta_file': 'test',
+                'sequences': 'test',
+                'motif_code_dict': 'test',
+                'domain_code_dict': 'test'
+            },
+            {
+                'prediction': 'test',
+                'prediction_text': 'test',
+                'sequence': 'test'
+            }
+        ]
+
+        expected = {
+            'fles_file': 'test',
+            'fasta_file': 'test',
+            'sequences': 'test',
+            'motif_code_dict': 'test',
+            'domain_code_dict': 'test',
+            'prediction': 'test',
+            'prediction_text': 'test',
+            'sequence': 'test',
+            'sequences': 'test'
+        }
+        eq_(expected, combine_alignment_and_prediction(task_input))

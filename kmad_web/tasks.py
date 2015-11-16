@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import tempfile
+import requests
 import urllib2
 
 from celery import current_app as celery_app
@@ -29,8 +30,9 @@ from kmad_web.services.predisorder import predisorder
 from kmad_web.services.globplot import globplot
 from kmad_web.services.spined import spined
 from kmad_web.services.kmad_aligner import kmad
+from kmad_web.services.types import ServiceError
 
-from kmad_web.default_settings import BLAST_DB
+from kmad_web.default_settings import BLAST_DB, D2P2_URL
 
 
 _log = logging.getLogger(__name__)
@@ -110,8 +112,11 @@ def get_sequences_from_blast(blast_result):
     sequences = []
     uniprot = UniprotSequenceProvider()
     for s in blast_result['blast_result']:
-        sequence = uniprot.get_sequence(s['id'])
-        sequences.append(sequence)
+        try:
+            sequence = uniprot.get_sequence(s['id'])
+            sequences.append(sequence)
+        except ServiceError:
+            _log.warning("Couldn't get sequence for id: {}".format(s['id']))
     return sequences
 
 
@@ -237,22 +242,25 @@ def analyze_motifs(process_kmad_result, fasta_sequence, position, mutant_aa):
 @celery_app.task
 def query_d2p2(blast_result):
     _log.info("Running query_d2p2")
-    data = []
+    result = []
     try:
         if blast_result['exact_hit']['found']:
             seq_id = blast_result['exact_hit']['seq_id']
-            data = 'seqids=["%s"]' % seq_id
-            request = urllib2.Request('http://d2p2.pro/api/seqid', data)
-            response = json.loads(urllib2.urlopen(request).read())
-            if response[seq_id]:
-                prediction = \
-                    response[seq_id][0][2]['disorder']['consensus']
+            url = os.path.join(D2P2_URL, '["{}"]'.format(seq_id))
+            response = requests.get(url)
+            response.raise_for_status()
+            res_json = json.loads(response.text)
+            if 'error' not in res_json.keys() and res_json[seq_id]:
+                prediction = res_json[seq_id][0][2]['disorder']['consensus']
                 processor = PredictionProcessor()
-                data = processor.process_prediction(prediction, 'd2p2')
-    except urllib2.HTTPError and urllib2.URLError:
+                result = processor.process_prediction(prediction, 'd2p2')
+            else:
+                _log.debug("D2P2 error: {}".format(result))
+    except (requests.exceptions.HTTPError,
+            requests.exceptions.ConnectionError):
         _log.debug("D2P2 HTTP/URL Error")
-    if data:
-        return {'d2p2': data}
+    if result:
+        return {'d2p2': result}
     else:
         return None
 
@@ -277,7 +285,7 @@ def combine_alignment_and_prediction(results):
 
 
 @celery_app.task
-def update_elmdb(output_filename):
+def update_elmdb():
     elm = ElmUpdater()
     elm.update()
 

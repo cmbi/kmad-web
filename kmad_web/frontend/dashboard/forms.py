@@ -130,7 +130,8 @@ class KmadForm(Form):
                 or (form.output_type.data == 'refine'
                     and form.alignment_method.data == 'None')):
             if field.data.count('>') < 2:
-                raise validators.ValidationError('In the refinement (if no \
+                raise validators.ValidationError('In the annotation and \
+                                                 refinement modes (if no \
                                                  method for initial alignment \
                                                  is specified) and \
                                                  annotation modes \

@@ -37,6 +37,7 @@ ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
 PFAM_URL = "http://pfam.xfam.org/search/sequence"
+D2P2_URL = "http://d2p2.pro/api/seqid"
 KMAD = "kmad"
 
 # paths

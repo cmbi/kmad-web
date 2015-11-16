@@ -58,7 +58,10 @@ KMAD
           <div id="sequence_div" class="form-group">
             <div style="margin:10px;">
               {{ form.sequence(class="form-control",
-              placeholder='Enter a protein sequence',
+              placeholder='Enter protein sequence(s)' 
+              + ' - if you submit a single'
+              + ' sequence a BLAST search against SwissProt will be'
+              + ' performed first to obtain sequences for alignment',
               style="height:180px;resize:none;") }}
             </div>
             <div class="help-block with-errors"></div>
