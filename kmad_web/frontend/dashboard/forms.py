@@ -200,8 +200,6 @@ class KmadForm(Form):
                                                    'refine alignment'),
                                                   ('predict_and_align',
                                                    'predict and align'),
-                                                  ('predict_and_align2',
-                                                   'predict and align2'),
                                                   ('predict',
                                                    'predict disorder'),
                                                   ('annotate',
