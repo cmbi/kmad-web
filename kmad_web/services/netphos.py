@@ -24,7 +24,7 @@ class NetphosService(object):
             fasta_exists = os.path.exists(fasta_filename)
             if netphos_exists and fasta_exists:
                 args = [self._path, fasta_filename]
-                result = subprocess.check_output(args)
+                result = subprocess.check_output(args, stderr=subprocess.PIPE)
             elif not netphos_exists:
                 raise ServiceError("Netphos not found: {}".format(self._path))
             else:

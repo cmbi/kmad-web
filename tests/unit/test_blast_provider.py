@@ -1,10 +1,22 @@
-from mock import patch, MagicMock, PropertyMock
-from nose.tools import eq_, ok_
+from mock import patch, PropertyMock
+from nose.tools import eq_, ok_, with_setup
 
 from kmad_web.domain.blast.provider import BlastResultProvider
+from kmad_web.services.helpers.cache import cache_manager as cm
+
+
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
 
 
 @patch('kmad_web.services.blast.subprocess.check_output')
+@with_setup(setup, teardown)
 def test_get_result(mock_check_output):
     fasta_file = ">1\nSEQSEQSEQ\n"
     blast_result = "test,sp|P01542|CRAM_CRAAB,100.00," \

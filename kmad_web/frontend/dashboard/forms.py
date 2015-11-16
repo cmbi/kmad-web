@@ -130,7 +130,8 @@ class KmadForm(Form):
                 or (form.output_type.data == 'refine'
                     and form.alignment_method.data == 'None')):
             if field.data.count('>') < 2:
-                raise validators.ValidationError('In the refinement (if no \
+                raise validators.ValidationError('In the annotation and \
+                                                 refinement modes (if no \
                                                  method for initial alignment \
                                                  is specified) and \
                                                  annotation modes \
@@ -199,6 +200,8 @@ class KmadForm(Form):
                                                    'refine alignment'),
                                                   ('predict_and_align',
                                                    'predict and align'),
+                                                  ('predict_and_align2',
+                                                   'predict and align2'),
                                                   ('predict',
                                                    'predict disorder'),
                                                   ('annotate',
@@ -229,7 +232,7 @@ class KmadForm(Form):
         choices=[('d2p2', 'D2P2'),
                  ('globplot', 'GlobPlot'),
                  ('disopred', 'DISOPRED'),
-                 ('spine', 'SPINE-D'),
+                 ('spined', 'SPINE-D'),
                  ('iupred', 'IUPred'),
                  ('psipred', 'PSIPRED'),
                  ('predisorder', 'PreDisorder')],
