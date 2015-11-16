@@ -23,7 +23,7 @@ class PfamService(object):
 
     @cm.cache('redis')
     def search(self, fasta_sequence, timeout=7200, poll=7):
-        _log.info("Running Pfam search")
+        _log.info("Running Pfam search: {}".format(fasta_sequence))
         if self._url is None:
             raise ServiceError("PfamService hasn't been configured")
         result_url = self._create(fasta_sequence)

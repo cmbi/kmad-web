@@ -1,7 +1,18 @@
-from mock import patch
-from nose.tools import eq_
+from mock import patch, PropertyMock
+from nose.tools import eq_, with_setup
 
 from kmad_web.domain.updaters.elm import ElmUpdater
+from kmad_web.services.helpers.cache import cache_manager as cm
+
+
+def setup():
+    cm.load_config({
+        'redis': {'redis.backend': 'dogpile.cache.null'}
+    })
+
+
+def teardown():
+    cm.reset()
 
 
 @patch('kmad_web.domain.updaters.elm.ElmUpdater._not_ok')
@@ -26,3 +37,21 @@ def test_update(mock_get_all_classes, mock_json_dump,
                      }
     elm.update()
     eq_(list(mock_json_dump.call_args)[0][0], expected_json)
+
+
+@patch('kmad_web.domain.updaters.elm.ElmService.get_motif_go_terms')
+@patch('kmad_web.domain.updaters.elm.GoProvider')
+@with_setup(setup, teardown)
+def test_get_extended_go_terms(mock_go, mock_get_go):
+
+    from kmad_web.domain.updaters.elm import ElmUpdater
+
+    elm = ElmUpdater()
+    mock_get_go.return_value = set(['GO:0000001'])
+    parents = set(['GO:0000101', 'GO:0000102'])
+    children = set(['GO:0000111', 'GO:0000112'])
+    type(mock_go.return_value).children = PropertyMock(return_value=children)
+    type(mock_go.return_value).parents = PropertyMock(return_value=parents)
+    expected = set(['GO:0000001', 'GO:0000101', 'GO:0000102',
+                    'GO:0000111', 'GO:0000112'])
+    eq_(expected, elm._get_extended_go_terms("motif_id"))

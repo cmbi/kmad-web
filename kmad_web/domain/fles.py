@@ -6,14 +6,7 @@ _log = logging.getLogger(__name__)
 
 
 def write_fles(sequences, aligned_mode=False):
-    out_text = ""
-    sequence_key = 'encoded_seq'
-    _log.debug("ALigned mode: {}".format(aligned_mode))
-    if aligned_mode:
-        sequence_key = 'encoded_aligned'
-    for s in sequences:
-        out_text += "{}\n{}\n".format(s['header'], s[sequence_key])
-
+    out_text = make_fles(sequences, aligned_mode)
     tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
     with tmp_file as f:
         f.write(out_text)

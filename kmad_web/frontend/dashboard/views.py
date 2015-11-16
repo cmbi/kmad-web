@@ -26,7 +26,7 @@ def index():
             and form.sequence.data and form.output_type.data
             and form.gop.data and form.gep.data and form.egp.data
             and form.ptm_score.data and form.domain_score.data
-            and form.motif_score.data and form.gapped
+            and form.motif_score.data and form.gapped.data
             and form.seq_limit.data):
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
         if form.output_type.data == "predict":
@@ -161,16 +161,6 @@ def yasara_example():
     return render_template('dashboard/yasara_example.html')
 
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
-
-
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
@@ -191,19 +181,3 @@ def download_alignment():
     return send_file(strIO,
                      attachment_filename="kmad_alignment.txt",
                      as_attachment=True)
-
-
-def check_auth(username, password):
-    """
-    This function is called to check if a username /
-    password combination is valid.
-    """
-    return username == 'human' and password == 'Platypu5'
-
-
-def authenticate():
-    """Sends a 401 response that enables basic auth"""
-    return Response(
-        'Could not verify your access level for that URL.\n'
-        'You have to login with proper credentials', 401,
-        {'WWW-Authenticate': 'Basic realm="Login Required"'})

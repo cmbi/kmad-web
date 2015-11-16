@@ -13,8 +13,6 @@ class GlobplotService(object):
     def __call__(self, fasta_filename):
         args = [self._path, '10', '8', '75', '8', '8',
                 fasta_filename]
-        import time
-        time.sleep(20)
         try:
             data = subprocess.check_output(args)
             if not data:

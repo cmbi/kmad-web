@@ -40,7 +40,7 @@ class KmadAligner(object):
             args.extend(['--full_ungapped'])
 
         try:
-            subprocess.call(args)
+            subprocess.call(args, stderr=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
         if os.path.exists(result_path):

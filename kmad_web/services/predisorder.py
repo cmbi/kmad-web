@@ -3,12 +3,14 @@ import subprocess
 
 from kmad_web.default_settings import PREDISORDER
 from kmad_web.services.types import ServiceError
+from kmad_web.services.helpers.cache import cache_manager as cm
 
 
 class PredisorderService(object):
     def __init__(self, path):
         self._path = path
 
+    @cm.cache('redis')
     def __call__(self, fasta_filename):
         out_file = '.'.join(fasta_filename.split('.')[:-1])+".predisorder"
         args = [self._path, fasta_filename, out_file]

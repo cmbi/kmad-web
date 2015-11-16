@@ -44,9 +44,9 @@ def make_fasta(sequence_data):
     if check_fasta(sequence_data):
         return sequence_data
     else:
-        if not sequence_data.isalpha():
+        if not ''.join(sequence_data.split()).isalpha():
             raise RuntimeError("Sequence has to consist of only alphabetic "
-                               "characters")
+                               "characters: {}".format(sequence_data))
         return ">sequence\n{}\n".format(sequence_data)
 
 

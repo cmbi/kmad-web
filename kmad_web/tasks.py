@@ -117,6 +117,7 @@ def get_sequences_from_blast(blast_result):
             sequences.append(sequence)
         except ServiceError:
             _log.warning("Couldn't get sequence for id: {}".format(s['id']))
+    _log.debug("Got {} sequences".format(len(sequences)))
     return sequences
 
 

@@ -38,16 +38,18 @@ class ElmUpdater(object):
         with open(self._elmdb_path, 'w') as outfile:
             json.dump(full_motif_classes, outfile, indent=4)
 
-    # TODO: cache
     def _get_extended_go_terms(self, motif_id):
         _log.debug("Getting GO terms for the {} motif".format(motif_id))
         elm_service = ElmService(ELM_URL)
         go_terms = elm_service.get_motif_go_terms(motif_id)
         for go_term in list(go_terms):
             if go_term not in self._go_families.keys():
+                _log.debug("go: {}".format(go_term))
                 go = GoProvider()
                 go.get_parent_terms(go_term)
                 go.get_children_terms(go_term)
+                _log.debug("go parents: {}".format(go.parents))
+                _log.debug("go children: {}".format(go.children))
                 go_family = go.parents.union(go.children)
                 self._go_families[go_term] = go_family
             else:
