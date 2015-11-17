@@ -26,7 +26,7 @@ def create_kmad(output_type):
     """
     form = request.form
     if output_type == "predict":
-        methods = form['prediction_methods']
+        methods = form.get('prediction_methods').split()
         strategy = PredictStrategy(form['seq_data'], methods)
     elif output_type == 'align':
         usr_features = []
@@ -45,7 +45,6 @@ def create_kmad(output_type):
             usr_features, form['alignment_method']
         )
     elif output_type == 'ptms':
-        _log.debug('hmd')
         strategy = PtmsStrategy(form['seq_data'], int(form['position']),
                                 form['mutant_aa'])
     elif output_type == 'motifs':
@@ -91,9 +90,7 @@ def get_kmad_result(output_type, id):
 
     task = get_task(output_type)
     result = task.AsyncResult(id).get()
-    _log.debug("Result: {}".format(result))
     response = {'result': result}
-    _log.info(response)
     return jsonify(response)
 
 
