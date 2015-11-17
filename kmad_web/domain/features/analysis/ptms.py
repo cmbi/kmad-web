@@ -194,10 +194,11 @@ def _calc_ptm_conservation(sequences, position, ptm_name):
     count = 0
     first_four = True
     for i, s in enumerate(sequences):
-        pos = get_seq_position(s['aligned'], position)
-        if ptm_name in [i['name'] for i in s['feat_pos'][pos]['ptms']]:
-            count += 1
-        elif i < 4:
-            first_four = False
+        if s['aligned'][position] != '-':
+            pos = get_seq_position(s['aligned'], position)
+            if ptm_name in [i['name'] for i in s['feat_pos'][pos]['ptms']]:
+                count += 1
+            elif i < 4:
+                first_four = False
     conservation = float(count) / len(sequences)
     return {'all': conservation, 'first_four': first_four}
