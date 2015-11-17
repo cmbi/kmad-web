@@ -14,11 +14,11 @@ def analyze_ptms(mutation, sequences):
         'residues': [
             {
                 'position': 1,  # 1-based!
-                'ptms': [{
+                'ptms': {
                 'phosphorylation': {'wild': '0', 'mutant': '3'}
                 # 0 - no PTM, 2 - some possibility of a PTM,
                 # 3 - very high possibility of a PTM, 4 - annotated PTM
-                }],
+                },
             }
         ]
     }
