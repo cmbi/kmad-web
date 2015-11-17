@@ -51,6 +51,7 @@ def run_single_predictor(fasta_file, pred_name):
 def process_prediction_results(predictions, fasta_sequence):
     _log.info("Processing prediction results")
     sequence = ''.join(fasta_sequence.splitlines()[1:])
+    predictions = filter(None, predictions)
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
     # -> merge into one dictionary
