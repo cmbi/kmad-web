@@ -29,9 +29,11 @@ class SpinedService(object):
         args = [self._path, tmp_path, tmp_name]
         try:
             subprocess.call(args)
+            os.remove(fasta_filename)
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
+                os.remove(out_file)
                 return data
             else:
                 raise ServiceError("Didn't find the output file: {}".format(
