@@ -1,5 +1,6 @@
 import os
 import subprocess
+import tempfile
 
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
@@ -18,17 +19,21 @@ class NetphosService(object):
         self._path = path
 
     @cm.cache('redis')
-    def predict(self, fasta_filename):
+    def predict(self, fasta_sequence):
         try:
+            tmp_file = tempfile.NamedTemporaryFile(
+                suffix=".fasta", delete=False)
+            with tmp_file as f:
+                f.write(fasta_sequence)
+            fasta_filename = tmp_file.name
+
             netphos_exists = os.path.exists(self._path)
-            fasta_exists = os.path.exists(fasta_filename)
-            if netphos_exists and fasta_exists:
+            if netphos_exists:
                 args = [self._path, fasta_filename]
                 result = subprocess.check_output(args, stderr=subprocess.PIPE)
-            elif not netphos_exists:
-                raise ServiceError("Netphos not found: {}".format(self._path))
+                os.remove(fasta_filename)
             else:
-                raise ServiceError("File not found: {}".format(fasta_filename))
+                raise ServiceError("Netphos not found: {}".format(self._path))
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
         return result

@@ -1,6 +1,11 @@
+import logging
+
 from kmad_web.default_settings import UNIPROT_URL
 from kmad_web.services.uniprot import UniprotService
 from kmad_web.parsers.uniprot import UniprotParser
+
+_log = logging.getLogger(__name__)
+
 
 class UniprotGoTermProvider(object):
     def __init__(self):

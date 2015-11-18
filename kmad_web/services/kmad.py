@@ -96,10 +96,6 @@ class PredictStrategy(object):
         from kmad_web.tasks import (run_blast, query_d2p2, run_single_predictor,
                                     process_prediction_results)
 
-        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-        with tmp_file as f:
-            f.write(self._fasta_sequence)
-
         if 'd2p2' in self._prediction_methods:
             prediction_tasks = [
                 chain(
@@ -275,7 +271,7 @@ class PredictAndAlignStrategy(object):
         for pred_name in self._prediction_methods:
             if pred_name != 'd2p2':
                 prediction_tasks += [run_single_predictor.s(
-                    self._fasta_sequence, pred_name)]
+                    single_fasta_seq, pred_name)]
 
         prediction_tasks += [process_prediction_results.s(single_fasta_seq)]
 

@@ -58,21 +58,6 @@ def test_search(mock_requests):
     eq_("<?xml pfam_result", pfam.search(test_seq))
 
 
-# @patch('kmad_web.services.pfam.requests.post')
-# @patch('kmad_web.services.pfam.requests.get')
-# @with_setup(setup, teardown)
-# def test_search_failure(mock_requests_get, mock_requests_post):
-#
-#     from kmad_web.services.pfam import PfamService
-#     from kmad_web.services.types import ServiceError
-#
-#     mock_requests_post.side_effect = requests.HTTPError
-#
-#     test_seq = ">test_seq\nABCD\n"
-#     url = "http://pfam.xfam.org/search/sequence"
-#     pfam = PfamService(url=url)
-#     assert_raises(ServiceError, pfam.search, test_seq)
-
 @with_setup(setup, teardown)
 @requests_mock.Mocker()
 def test_search_failure(mock_requests):

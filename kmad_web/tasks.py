@@ -92,13 +92,10 @@ def prealign(sequences, alignment_method):
 
 @celery_app.task
 def run_blast(fasta_sequence):
-    _log.info("Running blast")
-    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    with tmp_file as f:
-        f.write(fasta_sequence)
+    _log.info("Running blast[task]")
 
     blast = BlastResultProvider(BLAST_DB)
-    blast_result = blast.get_result(tmp_file.name)
+    blast_result = blast.get_result(fasta_sequence)
     exact_hit = blast.get_exact_hit(blast_result)
     return {
         'blast_result': blast_result,

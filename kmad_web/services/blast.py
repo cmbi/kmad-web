@@ -1,5 +1,7 @@
 import logging
+import os
 import subprocess
+import tempfile
 
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
@@ -25,11 +27,18 @@ class BlastService(object):
     :param fasta_filename: path to the query fasta file
     """
     @cm.cache('redis')
-    def run_blast(self, fasta_filename):
+    def run_blast(self, fasta_sequence):
+
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+        with tmp_file as f:
+            f.write(fasta_sequence)
+        fasta_filename = tmp_file.name
+
         args = ['blastp', '-query', fasta_filename, '-evalue', '1e-5',
                 '-num_threads', '15', '-db', self._db_path,
                 '-outfmt', self._outfmt]
         try:
             self.result = subprocess.check_output(args)
+            os.remove(fasta_filename)
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)
