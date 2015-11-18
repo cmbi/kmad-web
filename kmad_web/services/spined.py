@@ -1,9 +1,12 @@
+import logging
 import os
 import subprocess
 
 from kmad_web.default_settings import SPINED, SPINED_OUTPUT_DIR
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class SpinedService(object):
@@ -12,6 +15,7 @@ class SpinedService(object):
 
     @cm.cache('redis')
     def __call__(self, fasta_filename):
+        _log.info("Calling SpinedService")
         tmp_name = fasta_filename.split('/')[-1].split('.')[0]
         out_file = os.path.join(SPINED_OUTPUT_DIR, tmp_name + '.spd')
         tmp_path = '/'.join(fasta_filename.split("/")[:-1])

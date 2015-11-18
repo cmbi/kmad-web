@@ -3,7 +3,6 @@ import logging
 import os
 import tempfile
 import requests
-import urllib2
 
 from celery import current_app as celery_app
 
@@ -40,7 +39,7 @@ _log = logging.getLogger(__name__)
 
 @celery_app.task
 def run_single_predictor(fasta_file, pred_name):
-    _log.info("Run single predictor: {}".format(pred_name))
+    _log.info("Run single predictor: {}[task]".format(pred_name))
     data = globals()[pred_name](fasta_file)
     processor = PredictionProcessor()
     prediction = processor.process_prediction(data, pred_name)

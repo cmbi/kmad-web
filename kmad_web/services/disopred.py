@@ -1,9 +1,12 @@
+import logging
 import os
 import subprocess
 
 from kmad_web.default_settings import DISOPRED
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class DisopredService(object):
@@ -12,6 +15,7 @@ class DisopredService(object):
 
     @cm.cache('redis')
     def __call__(self, fasta_filename):
+        _log.info("Calling DisopredService")
         out_file = '.'.join(fasta_filename.split('.')[:-1])+".diso"
         args = [self._path, fasta_filename]
         try:

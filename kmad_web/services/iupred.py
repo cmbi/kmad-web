@@ -1,8 +1,11 @@
+import logging
 import subprocess
 
 from kmad_web.default_settings import IUPRED, IUPRED_DIR
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class IupredService(object):
@@ -12,6 +15,7 @@ class IupredService(object):
 
     @cm.cache('redis')
     def __call__(self, fasta_filename):
+        _log.info("Calling IupredService")
         args = [self._path, fasta_filename, 'long']
         env = {"IUPred_PATH": self._dir}
         try:

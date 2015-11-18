@@ -1,8 +1,11 @@
+import logging
 import subprocess
 
 from kmad_web.default_settings import GLOBPLOT
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class GlobplotService(object):
@@ -11,6 +14,7 @@ class GlobplotService(object):
 
     @cm.cache('redis')
     def __call__(self, fasta_filename):
+        _log.info("Calling GlobplotService")
         args = [self._path, '10', '8', '75', '8', '8',
                 fasta_filename]
         try:
