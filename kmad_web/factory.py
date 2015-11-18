@@ -57,15 +57,6 @@ def create_app(settings=None):
                               "Message:\n" +
                               "%(message)s"))
 
-    # Only log to the console during development and production, but not
-    # during testing.
-    if not app.testing:  # pragma: no cover
-        ch = logging.StreamHandler()
-        formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s')
-        ch.setFormatter(formatter)
-        root_logger.addHandler(ch)
-
     # Only log debug messages during development
     if app.debug:   # pragma: no cover
         root_logger.setLevel(logging.DEBUG)
