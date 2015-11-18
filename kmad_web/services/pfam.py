@@ -11,8 +11,9 @@ _log = logging.getLogger(__name__)
 
 
 class PfamService(object):
-    def __init__(self, url=None):
+    def __init__(self, url=None, ID_URL_CREATE=None):
         self._url = url
+        self._ID_URL_CREATE = ID_URL_CREATE
 
     @property
     def url(self):
@@ -21,6 +22,21 @@ class PfamService(object):
     @url.setter
     def url(self, url):
         self._url = url
+
+    @cm.cache('redis')
+    def get_by_id(self, uniprot_id):
+        _log.info("Getting Pfam result for id {}".format(uniprot_id))
+        try:
+            url = self._ID_URL_CREATE.format(uniprot_id)
+            request = requests.get(url)
+            request.raise_for_status()
+            if request.text.startswith("<?xml"):
+                _log.info("Found a Pfam result for id {}".format(uniprot_id))
+                return request.text
+            else:
+                return None
+        except requests.HTTPError:
+            return None
 
     @cm.cache('redis')
     def search(self, fasta_sequence, timeout=7200, poll=7):

@@ -23,4 +23,5 @@ def test_get_domains(mock_service, mock_parser):
         'end': '0'
     }]
 
-    eq_(expected, pfam_provider.get_domains({'header': '>1', 'seq': 'SEQ'}))
+    eq_(expected, pfam_provider.get_domains(
+        {'header': '>1', 'seq': 'SEQ', 'id': 'seq_id'}))
