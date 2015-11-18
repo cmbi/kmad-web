@@ -77,3 +77,8 @@ class SequencesAnnotator(object):
             pfam = PfamFeatureProvider()
             s['domains'] = pfam.get_domains(s)
             time.sleep(self._poll)
+
+    def _annotate_secondary_structure(self):
+        for s in self.sequences:
+            uniprot = UniprotFeatureProvider()
+            s['secondary_structure'] = uniprot.get_secondary_structure(s)
