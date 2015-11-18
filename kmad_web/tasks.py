@@ -21,6 +21,7 @@ from kmad_web.services.alignment import (ClustaloService, ClustalwService,
                                          TcoffeeService)
 from kmad_web.domain.features.analysis import ptms as ap
 from kmad_web.domain.features.analysis import motifs as am
+from kmad_web.domain.sequences.fasta import parse_fasta
 from kmad_web.helpers import invert_dict
 from kmad_web.services.iupred import iupred
 from kmad_web.services.psipred import psipred
@@ -98,6 +99,7 @@ def run_blast(fasta_sequence):
     blast_result = blast.get_result(fasta_sequence)
     exact_hit = blast.get_exact_hit(blast_result)
     return {
+        'query_fasta': fasta_sequence,
         'blast_result': blast_result,
         'exact_hit': {
             'seq_id': exact_hit,
@@ -110,7 +112,23 @@ def run_blast(fasta_sequence):
 def get_sequences_from_blast(blast_result):
     sequences = []
     uniprot = UniprotSequenceProvider()
-    for s in blast_result['blast_result']:
+
+    query_seq = parse_fasta(blast_result['query_fasta'])[0]
+    query_seq['id'] = ""
+    sequences.append(query_seq)
+
+    first_blast_seq = \
+        uniprot.get_sequence(blast_result['blast_result'][0]['id'])
+
+    # if the first sequence from blast is not the same as query sequence then
+    # add it to sequence
+    # if it is the same then assign it's ID to the query sequence
+    if first_blast_seq['seq'] != query_seq['seq']:
+        sequences.append(first_blast_seq)
+    else:
+        sequences[0]['id'] = first_blast_seq['id']
+
+    for s in blast_result['blast_result'][1:]:
         try:
             sequence = uniprot.get_sequence(s['id'])
             sequences.append(sequence)

@@ -31,8 +31,9 @@ class PfamFeatureProvider(object):
 
             for d in pfam_parser.domains:
                 domain = {}
-                for key in ['accession', 'start', 'end']:
-                    domain[key] = d[key]
+                domain['start'] = d['start']
+                domain['end'] = d['end']
+                domain['accession'] = d['accession'].split('.')[0]
                 domains.append(domain)
         except ServiceError as e:
             _log.info("Pfam service returns an error: {},"
