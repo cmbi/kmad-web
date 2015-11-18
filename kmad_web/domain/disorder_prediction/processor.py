@@ -172,16 +172,17 @@ class PredictionProcessor(object):
 
     def make_text(self, predictions, sequence):
         pred_text = []
-        order = ['consensus', 'filtered', 'disopred', 'globplot', 'iupred',
-                 'predisorder', 'psipred', 'globplot', 'spined', 'd2p2']
-        methods = sorted(predictions.keys(), key=lambda x: order.index(x))
-        pred_text.append("ResNo AA {}".format(
-            ' '.join(methods)
-        ))
-        for j in xrange(len(sequence)):
-            pred_text.append("{} {} {}".format(
-                str(j + 1), sequence[j],
-                ' '.join([str(predictions[m][j]) for m in methods])
+        if predictions:
+            order = ['consensus', 'filtered', 'disopred', 'globplot', 'iupred',
+                     'predisorder', 'psipred', 'globplot', 'spined', 'd2p2']
+            methods = sorted(predictions.keys(), key=lambda x: order.index(x))
+            pred_text.append("ResNo AA {}".format(
+                ' '.join(methods)
             ))
+            for j in xrange(len(sequence)):
+                pred_text.append("{} {} {}".format(
+                    str(j + 1), sequence[j],
+                    ' '.join([str(predictions[m][j]) for m in methods])
+                ))
 
         return '\n'.join(pred_text)

@@ -51,16 +51,18 @@ def run_single_predictor(fasta_file, pred_name):
 def process_prediction_results(predictions, fasta_sequence):
     _log.info("Processing prediction results")
     sequence = ''.join(fasta_sequence.splitlines()[1:])
-    predictions = filter(None, predictions)
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
     # -> merge into one dictionary
     if type(predictions) is list:
+        predictions = filter(None, predictions)
         predictions = {x.keys()[0]: x.values()[0] for x in predictions}
     processor = PredictionProcessor()
-    consensus = processor.get_consensus_disorder(predictions)
-    predictions['consensus'] = consensus
-    predictions['filtered'] = processor.filter_out_short_stretches(consensus)
+    if predictions:
+        consensus = processor.get_consensus_disorder(predictions)
+        predictions['consensus'] = consensus
+        predictions['filtered'] = processor.filter_out_short_stretches(
+            consensus)
     prediction_text = processor.make_text(predictions, sequence)
     return {'prediction': predictions, 'sequence': sequence,
             'prediction_text': prediction_text}

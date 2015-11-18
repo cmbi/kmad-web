@@ -26,7 +26,7 @@ def create_kmad(output_type):
     """
     form = request.form
     if output_type == "predict":
-        methods = form.get('prediction_methods').split()
+        methods = form['prediction_methods'].split()
         strategy = PredictStrategy(form['seq_data'], methods)
     elif output_type == 'align':
         usr_features = []
