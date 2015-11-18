@@ -17,7 +17,6 @@ class BlastService(object):
     """
     def __init__(self, db_path):
         self._db_path = db_path
-        self.result = None
         self._outfmt = "10 qseqid sseqid pident mismatch evalue bitscore slen" \
                        " qlen"
 
@@ -38,7 +37,8 @@ class BlastService(object):
                 '-num_threads', '15', '-db', self._db_path,
                 '-outfmt', self._outfmt]
         try:
-            self.result = subprocess.check_output(args)
+            result =  subprocess.check_output(args)
             os.remove(fasta_filename)
+            return result
         except subprocess.CalledProcessError as e:
             raise ServiceError(e)

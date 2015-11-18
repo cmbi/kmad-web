@@ -17,9 +17,9 @@ class BlastResultProvider(object):
     """
     def get_result(self, fasta_filename):
         blast_service = BlastService(self._db_path)
-        blast_service.run_blast(fasta_filename)
+        blast_result = blast_service.run_blast(fasta_filename)
         blast_parser = BlastParser()
-        blast_parser.parse(blast_service.result)
+        blast_parser.parse(blast_result)
         result = blast_parser.blast_hits
         return result
 
