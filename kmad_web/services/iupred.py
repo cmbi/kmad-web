@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import tempfile
 
 from kmad_web.default_settings import IUPRED, IUPRED_DIR
 from kmad_web.services.types import ServiceError
@@ -14,8 +15,14 @@ class IupredService(object):
         self._dir = iupred_dir
 
     @cm.cache('redis')
-    def __call__(self, fasta_filename):
+    def __call__(self, fasta_sequence):
         _log.info("Calling IupredService")
+
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+        with tmp_file as f:
+            f.write(fasta_sequence)
+        fasta_filename = tmp_file.name
+
         args = [self._path, fasta_filename, 'long']
         env = {"IUPred_PATH": self._dir}
         try:

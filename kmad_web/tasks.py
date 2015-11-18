@@ -38,9 +38,9 @@ _log = logging.getLogger(__name__)
 
 
 @celery_app.task
-def run_single_predictor(fasta_file, pred_name):
+def run_single_predictor(fasta_sequence, pred_name):
     _log.info("Run single predictor: {}[task]".format(pred_name))
-    data = globals()[pred_name](fasta_file)
+    data = globals()[pred_name](fasta_sequence)
     processor = PredictionProcessor()
     prediction = processor.process_prediction(data, pred_name)
     return {pred_name: prediction}

@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import tempfile
 
 from kmad_web.default_settings import DISOPRED
 from kmad_web.services.types import ServiceError
@@ -14,8 +15,14 @@ class DisopredService(object):
         self._path = path
 
     @cm.cache('redis')
-    def __call__(self, fasta_filename):
+    def __call__(self, fasta_sequence):
         _log.info("Calling DisopredService")
+
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
+        with tmp_file as f:
+            f.write(fasta_sequence)
+        fasta_filename = tmp_file.name
+
         out_file = '.'.join(fasta_filename.split('.')[:-1])+".diso"
         args = [self._path, fasta_filename]
         try:

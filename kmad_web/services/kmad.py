@@ -111,8 +111,8 @@ class PredictStrategy(object):
             prediction_tasks = []
         for pred_name in self._prediction_methods:
             if pred_name != 'd2p2':
-                prediction_tasks += [run_single_predictor.s(tmp_file.name,
-                                                            pred_name)]
+                prediction_tasks += [run_single_predictor.s(
+                    self._fasta_sequence, pred_name)]
         workflow = chain(
             group(prediction_tasks),
             process_prediction_results.s(self._fasta_sequence)
@@ -274,8 +274,8 @@ class PredictAndAlignStrategy(object):
             prediction_tasks = []
         for pred_name in self._prediction_methods:
             if pred_name != 'd2p2':
-                prediction_tasks += [run_single_predictor.s(tmp_file.name,
-                                                            pred_name)]
+                prediction_tasks += [run_single_predictor.s(
+                    self._fasta_sequence, pred_name)]
 
         prediction_tasks += [process_prediction_results.s(single_fasta_seq)]
 
