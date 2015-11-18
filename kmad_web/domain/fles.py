@@ -17,7 +17,6 @@ def write_fles(sequences, aligned_mode=False):
 def make_fles(sequences, aligned_mode=False):
     out_text = ""
     sequence_key = 'encoded_seq'
-    _log.debug("ALigned mode: {}".format(aligned_mode))
     if aligned_mode:
         sequence_key = 'encoded_aligned'
     for s in sequences:

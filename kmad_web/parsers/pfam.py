@@ -50,29 +50,28 @@ class PfamParser(object):
 
     def parse_id_result(self, pfam_result):
         pfam_dict = xmltodict.parse(pfam_result)
-        matches = pfam_dict['pfam']['entry']['matches']
+        matches = pfam_dict['pfam']['entry']['matches']['match']
         if not isinstance(matches, list):
             # if there are multiple domains found matches is a list, otherwise
             # it is an OrderedDict
             matches = [matches]
-        for m_i in matches:
-            m = m_i['match']
-
+        for m in matches:
             # if there are multiple matches for one domain m['location']
             # is a list, otherwise it is an OrderedDict
-            if not isinstance(m['location'], list):
-                location = [m['location']]
-            else:
-                location = m['location']
-            for l in location:
-                domain = {}
-                # information about this domain class
-                domain['accession'] = m['@accession']
-                domain['id'] = m['@id']
-                domain['type'] = m['@type']
-                if '@class' in m.keys():
-                    domain['class'] = m['@class']
-                # information about this domain location
-                for k in l.keys():
-                    domain[k.lstrip('@')] = l[k]
-                self._domains.append(domain)
+            if 'location' in m.keys():
+                if not isinstance(m['location'], list):
+                    location = [m['location']]
+                else:
+                    location = m['location']
+                for l in location:
+                    domain = {}
+                    # information about this domain class
+                    domain['accession'] = m['@accession']
+                    domain['id'] = m['@id']
+                    domain['type'] = m['@type']
+                    if '@class' in m.keys():
+                        domain['class'] = m['@class']
+                    # information about this domain location
+                    for k in l.keys():
+                        domain[k.lstrip('@')] = l[k]
+                    self._domains.append(domain)
