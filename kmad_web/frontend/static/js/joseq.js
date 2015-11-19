@@ -483,3 +483,110 @@ register_link = function(src, name, feature_type, canvas_id) {
   });
 }
 
+StructureLegend = function(container_id) {
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  
+  //var container_height = 40*this.data.length;
+  var container_height = 200;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    height: 185,
+    width: 900 
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  var color_map = {'T': '#49ce6c', 'H': '#3e87d8', 'S': '#e15555',
+      'C': '#e1d131', 'M': '#4e63ce'
+  }
+
+  this.draw_residue = function(res_char, strct_code, x, y) {
+    var letter_col = color_map[strct_code];
+    var rect_w = 10;
+    var rect_h = 15;
+
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: rect_w,
+        height: rect_h,
+        fill: letter_col,
+    });
+    
+    this.seq_layer.add(text_rect);
+  }
+  this.draw = function() {
+    var x = 10;
+    var y = 20;
+    this.draw_residue('      ', 'H', x, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "helix",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    y += 30;
+    this.seq_layer.add(res_text);
+    this.draw_residue('      ', 'M', x, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "transmembrane helix",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    y += 30;
+    this.seq_layer.add(res_text);
+    this.draw_residue('      ', 'T', x, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "turn",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    y += 30;
+    this.seq_layer.add(res_text);
+    this.draw_residue('      ', 'S', x, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "strand",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    y += 30;
+    this.seq_layer.add(res_text);
+    this.draw_residue('      ', 'C', x, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "cysteine bridge",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    y += 30;
+    this.seq_layer.add(res_text);
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}

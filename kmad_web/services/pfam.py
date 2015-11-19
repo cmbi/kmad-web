@@ -39,8 +39,8 @@ class PfamService(object):
             return None
 
     @cm.cache('redis')
-    def search(self, fasta_sequence, timeout=7200, poll=7):
-        _log.info("Running Pfam search: {}".format(fasta_sequence))
+    def search(self, fasta_sequence, timeout=1200, poll=7):
+        _log.info("Running Pfam search")
         if self._url is None:
             raise ServiceError("PfamService hasn't been configured")
         result_url = self._create(fasta_sequence)
@@ -58,6 +58,7 @@ class PfamService(object):
     def _create(self, fasta_sequence):
         try:
             data = {'seq': fasta_sequence, 'output': 'xml'}
+            _log.debug("Submitting sequence:\n{}".format(fasta_sequence))
             request = requests.post(self._url, data=data)
             request.raise_for_status()
         except requests.HTTPError as e:
@@ -69,6 +70,7 @@ class PfamService(object):
             except (KeyError, ExpatError) as e:
                 raise ServiceError(
                     "{}\nUnexpected response from Pfam".format(e.message))
+
         return result_url
 
     def _status(self, url):
@@ -85,4 +87,6 @@ class PfamService(object):
                 status = "SUCCESS"
             else:
                 status = "PENDING"
+            _log.debug("Pfam status: {}".format(status))
+            _log.debug("Pfam response: {}".format(request.text))
             return {"status": status, "result": request.text}

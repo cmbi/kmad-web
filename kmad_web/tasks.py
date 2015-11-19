@@ -6,7 +6,7 @@ import requests
 
 from celery import current_app as celery_app
 
-from kmad_web.domain.blast.provider import BlastResultProvider
+from kmad_web.domain.blast.provider import blast
 from kmad_web.domain.disorder_prediction.processor import PredictionProcessor
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequencesAnnotator
@@ -95,7 +95,6 @@ def prealign(sequences, alignment_method):
 def run_blast(fasta_sequence):
     _log.info("Running blast[task]")
 
-    blast = BlastResultProvider(BLAST_DB)
     blast_result = blast.get_result(fasta_sequence)
     exact_hit = blast.get_exact_hit(blast_result)
     return {

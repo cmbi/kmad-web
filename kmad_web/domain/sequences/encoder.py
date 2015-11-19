@@ -194,7 +194,7 @@ class SequencesEncoder(object):
                               for r in s['seq']]
 
     def _encode_structure(self):
-        order = ['TURN', 'TRANSMEM', 'STRAND', 'HELIX', 'DISULFID']
+        order = ['TURN', 'HELIX', 'TRANSMEM', 'STRAND', 'DISULFID']
         strct_dict = {'TURN': 'T', 'TRANSMEM': 'M', 'STRAND': 'S', 'HELIX': 'H',
                       'DISULFID': 'C'}
         pos = self._strct_pos

@@ -1,5 +1,6 @@
 from kmad_web.services.blast import BlastService
 from kmad_web.parsers.blast import BlastParser
+from kmad_web.default_settings import BLAST_DB
 
 
 class BlastResultProvider(object):
@@ -33,6 +34,8 @@ class BlastResultProvider(object):
     def find_closest_hit(self, fasta_sequence):
         blast_hits = self.get_result(fasta_sequence)
         if float(blast_hits[0]['pident']) >= 80:
-            return blast_hits[0]['id']
+            return blast_hits[0]
         else:
             return ''
+
+blast = BlastResultProvider(BLAST_DB)

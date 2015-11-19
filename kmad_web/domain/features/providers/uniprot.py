@@ -2,8 +2,9 @@ from collections import OrderedDict
 
 from kmad_web.default_settings import UNIPROT_URL
 from kmad_web.services.uniprot import UniprotService
+from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.services.types import ServiceError
-from kmad_web.domain.blast.provider import BlastResultProvider
+from kmad_web.domain.blast.provider import blast
 from kmad_web.domain.features.helpers.homology import transfer_data_from_homologue
 from kmad_web.parsers.uniprot import UniprotParser
 
@@ -30,11 +31,12 @@ class UniprotFeatureProvider(object):
         if sequence['id']:
             strct_elements = self._get_secondary_structure(sequence['id'])
         else:
-            blast = BlastResultProvider()
             closest_hit = blast.find_closest_hit(sequence['seq'])
             if closest_hit:
                 result = self._get_secondary_structure(
                     closest_hit['id'])
+                uniprot = UniprotSequenceProvider()
+                closest_hit['seq'] = uniprot.get_sequence(closest_hit['id'])['seq']
                 strct_elements = transfer_data_from_homologue(
                     sequence['seq'], closest_hit['seq'], result)
         return strct_elements

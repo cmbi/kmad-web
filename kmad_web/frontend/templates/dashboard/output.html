@@ -66,80 +66,92 @@ KMAD {{ output_type | replace('_', ' ')}}
                         btn-primary btn-s" onclick="changeMode('motif')">
                         <strong>Motifs</strong>
                     </button>
-                </button>
-                <button type="submit" id="domain_mode_button" class="btn
-                    btn-primary btn-s" onclick="changeMode('domain')">
-                    <strong>Domains</strong>
-                </button>
-            </div>
-            <a class="btn btn-default btn-xs" id="download_regular_canvas_button"
-                style="float:right;"><strong>PNG</strong></a>
-            <a class="btn btn-default btn-xs" id="download_ptm_canvas_button"
-                style="float:right;display:none;"><strong>PNG</strong></a>
-            <a class="btn btn-default btn-xs" id="download_motif_canvas_button"
-                style="float:right;display:none;"><strong>PNG</strong></a>
-            <a class="btn btn-default btn-xs" id="download_domain_canvas_button"
-                style="float:right;display:none;"><strong>PNG</strong></a>
-
-            <br>
-            <br>
-            <div class="jumbotron" style="overflow:auto;">
-                <div id="canvases"
-                    style="position:relative;height:300px;width:100%">
-                    <div id="canvas_regular"
-                        style="overflow:auto;position:absolute;left:0px;
-                        top:0px;"></div>
-                    <div id="canvas_ptm"
-                        style="overflow:auto;position:absolute;left:0px;
-                        top:0px;display:none;"></div>
-                    <div id="canvas_motif"
-                        style="overflow:auto;position:absolute;left:0px;
-                        top:0px;display:none;"></div>
-                    <div id="canvas_domain"
-                        style="overflow:auto;position:absolute;left:0px;
-                        top:0px;display:none;"></div>
+                    <button type="submit" id="domain_mode_button" class="btn
+                        btn-primary btn-s" onclick="changeMode('domain')">
+                        <strong>Domains</strong>
+                    </button>
+                    <button type="submit" id="structure_mode_button" class="btn
+                        btn-primary btn-s" onclick="changeMode('structure')">
+                        <strong>Secondary structure</strong>
+                    </button>
                 </div>
-            </div>
-            <div id="legend_canvases_container" style="display:none;">
+                <a class="btn btn-default btn-xs" id="download_regular_canvas_button"
+                    style="float:right;"><strong>PNG</strong></a>
+                <a class="btn btn-default btn-xs" id="download_ptm_canvas_button"
+                    style="float:right;display:none;"><strong>PNG</strong></a>
+                <a class="btn btn-default btn-xs" id="download_motif_canvas_button"
+                    style="float:right;display:none;"><strong>PNG</strong></a>
+                <a class="btn btn-default btn-xs" id="download_domain_canvas_button"
+                    style="float:right;display:none;"><strong>PNG</strong></a>
+                <a class="btn btn-default btn-xs" id="download_structure_canvas_button"
+                    style="float:right;display:none;"><strong>PNG</strong></a>
+
                 <br>
-                <span class="panel-title-text">Color legend</span>
                 <br>
                 <div class="jumbotron" style="overflow:auto;">
-                    <div id="legend_canvases" style="position:relative; height:auto;
-                        width:100%">
-                        <div id="legend_canvas" style="position:absolute; left:0px;
-                            top:0px; overflow:auto; height:auto; width:100%;">
-                        </div>
-                        <div id="legend_canvas_ptm" style="position:absolute;
-                            left:0px; top:0px; overflow:auto;
-                            height:auto; width:100%; display:none;">
-                        </div>
-                        <div id="legend_canvas_motif" style="position:absolute;
-                            left:0px; top:0px;
-                            overflow:auto;
-                            height:auto; width:100%; display:none;">
-                        </div>
-                        <div id="legend_canvas_domain" style="position:absolute;
-                            left:0px; top:0px; overflow:auto;
-                            height:auto; width:100%; display:none;">
+                    <div id="canvases"
+                        style="position:relative;height:300px;width:100%">
+                        <div id="canvas_regular"
+                            style="overflow:auto;position:absolute;left:0px;
+                            top:0px;"></div>
+                        <div id="canvas_ptm"
+                            style="overflow:auto;position:absolute;left:0px;
+                            top:0px;display:none;"></div>
+                        <div id="canvas_motif"
+                            style="overflow:auto;position:absolute;left:0px;
+                            top:0px;display:none;"></div>
+                        <div id="canvas_domain"
+                            style="overflow:auto;position:absolute;left:0px;
+                            top:0px;display:none;"></div>
+                        <div id="canvas_structure"
+                            style="overflow:auto;position:absolute;left:0px;
+                            top:0px;display:none;"></div>
+                    </div>
+                </div>
+                <div id="legend_canvases_container" style="display:none;">
+                    <br>
+                    <span class="panel-title-text">Color legend</span>
+                    <br>
+                    <div class="jumbotron" style="overflow:auto;">
+                        <div id="legend_canvases" style="position:relative; height:auto;
+                            width:100%">
+                            <div id="legend_canvas" style="position:absolute; left:0px;
+                                top:0px; overflow:auto; height:auto; width:100%;">
+                            </div>
+                            <div id="legend_canvas_ptm" style="position:absolute;
+                                left:0px; top:0px; overflow:auto;
+                                height:auto; width:100%; display:none;">
+                            </div>
+                            <div id="legend_canvas_motif" style="position:absolute;
+                                left:0px; top:0px;
+                                overflow:auto;
+                                height:auto; width:100%; display:none;">
+                            </div>
+                            <div id="legend_canvas_domain" style="position:absolute;
+                                left:0px; top:0px; overflow:auto;
+                                height:auto; width:100%; display:none;">
+                            </div>
+                            <div id="legend_canvas_structure" style="position:absolute;
+                                left:0px; top:0px; overflow:auto;
+                                height:auto; width:100%; display:none;">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class=panel-footer>
-        <div id="download_alignment" style="display:none;">
-            <form action="{{ url_for("dashboard.download_alignment") }}" method=POST style="clear:both;" >
-                <input type="hidden" id="download_al_input" name="alignment" style="display:none;"/>
-                <button type="submit" id="download_al_button" class="btn btn-primary btn-xs disabled" style="float:right;" value="Submit">
-                    <span class="glyphicon glyphicon-save"></span> Download
-                </button>
-            </form>
-            <div class="clearfix"></div>
+        <div class=panel-footer>
+            <div id="download_alignment" style="display:none;">
+                <form action="{{ url_for("dashboard.download_alignment") }}" method=POST style="clear:both;" >
+                    <input type="hidden" id="download_al_input" name="alignment" style="display:none;"/>
+                    <button type="submit" id="download_al_button" class="btn btn-primary btn-xs disabled" style="float:right;" value="Submit">
+                        <span class="glyphicon glyphicon-save"></span> Download
+                    </button>
+                </form>
+                <div class="clearfix"></div>
+            </div>
         </div>
-    </div>
-</div>                
+    </div>                
 </div>
 {% endblock %}
 
@@ -199,42 +211,46 @@ $(document).ready(function() {
                             document.getElementById('download_pred_button').style.display = "";
                             }
                             if ("{{ output_type }}" != 'predict'){
-                                var raw_alignment = data['result']['fasta_file'];
-                                if ((raw_alignment && raw_alignment.length > 0)
-                                    || "{{ output_type }}" == 'annotate') {
-                                    document.getElementById('download_al_input').value = raw_alignment;
-                                    var sequences = data['result']['sequences'];
-                                    var motif_code_dict = data['result']['motif_code_dict'];
-                                    var domain_code_dict = data['result']['domain_code_dict'];
-                                    draw_alignment('canvas_regular', sequences);
-                                    var codon_length = 7;
-                                    draw_alignment_ptms('canvas_ptm', sequences, 
-                                        codon_length);
-                                    draw_alignment_with_features('canvas_motif', 
-                                            sequences, codon_length, motif_code_dict, 'motif');
-                                    draw_alignment_with_features('canvas_domain', 
-                                            sequences, codon_length,
-                                            domain_code_dict, 'domain');
-                                    var ptm_legend = new PTMsLegend('legend_canvas_ptm');
-                                    ptm_legend.update();
-                                    var motif_legend = new MotifsLegend(
-                                            'legend_canvas_motif', motif_code_dict);
-                                    motif_legend.update();
-                                    var domain_legend = new DomainsLegend(
-                                            'legend_canvas_domain', domain_code_dict);
-                                    domain_legend.update();
-                                    $('#download_al_button').removeClass('disabled');
-                                    document.getElementById('download_alignment').style.display = "";
-                                    $('#collapseTwo').addClass('in');
-                                    $('#collapseThree').addClass('in');
-                                } else {
-                                    document.getElementById('status').innerHTML = "FAILURE";
-                                    $('#status').removeClass("label-default label-info label-success")
-                                        .addClass("label-warning");
-                                    $('#panel0').removeClass("panel-default panel-info panel-success")
-                                        .addClass("panel-warning");
-                                    document.getElementById('job_message').innerHTML = 'No sequences found with BLAST. Nothing to align.';
-                                }
+                            var raw_alignment = data['result']['fasta_file'];
+                            if ((raw_alignment && raw_alignment.length > 0)
+                                || "{{ output_type }}" == 'annotate') {
+                            document.getElementById('download_al_input').value = raw_alignment;
+                            var sequences = data['result']['sequences'];
+                            var motif_code_dict = data['result']['motif_code_dict'];
+                            var domain_code_dict = data['result']['domain_code_dict'];
+                            draw_alignment('canvas_regular', sequences);
+                            var codon_length = 7;
+                            draw_alignment_ptms('canvas_ptm', sequences, 
+                                    codon_length);
+                            draw_alignment_with_features('canvas_motif', 
+                                    sequences, codon_length, motif_code_dict, 'motif');
+                            draw_alignment_with_structure('canvas_structure', sequences);
+                            draw_alignment_with_features('canvas_domain', 
+                                    sequences, codon_length,
+                                    domain_code_dict, 'domain');
+                            var ptm_legend = new PTMsLegend('legend_canvas_ptm');
+                            ptm_legend.update();
+                            var motif_legend = new MotifsLegend(
+                                    'legend_canvas_motif', motif_code_dict);
+                            motif_legend.update();
+                            var domain_legend = new DomainsLegend(
+                                    'legend_canvas_domain', domain_code_dict);
+                            domain_legend.update();
+                            var strct_legend = new StructureLegend(
+                                    'legend_canvas_structure');
+                            strct_legend.update();
+                            $('#download_al_button').removeClass('disabled');
+                            document.getElementById('download_alignment').style.display = "";
+                            $('#collapseTwo').addClass('in');
+                            $('#collapseThree').addClass('in');
+                            } else {
+                                document.getElementById('status').innerHTML = "FAILURE";
+                                $('#status').removeClass("label-default label-info label-success")
+                                    .addClass("label-warning");
+                                $('#panel0').removeClass("panel-default panel-info panel-success")
+                                    .addClass("panel-warning");
+                                document.getElementById('job_message').innerHTML = 'No sequences found with BLAST. Nothing to align.';
+                            }
                             }
                             });
                 }
