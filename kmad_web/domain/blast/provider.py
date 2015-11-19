@@ -15,9 +15,9 @@ class BlastResultProvider(object):
     :param fasta_filename: path to the query fasta file
     :return: blast result
     """
-    def get_result(self, fasta_filename):
+    def get_result(self, fasta_sequence):
         blast_service = BlastService(self._db_path)
-        blast_result = blast_service.run_blast(fasta_filename)
+        blast_result = blast_service.run_blast(fasta_sequence)
         blast_parser = BlastParser()
         blast_parser.parse(blast_result)
         result = blast_parser.blast_hits
