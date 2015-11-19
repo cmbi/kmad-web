@@ -1,10 +1,10 @@
-import re
-
 from collections import OrderedDict
 
 from kmad_web.default_settings import UNIPROT_URL
 from kmad_web.services.uniprot import UniprotService
-from kmad_web.services.blast import BlastResultProvider
+from kmad_web.services.types import ServiceError
+from kmad_web.domain.blast.provider import BlastResultProvider
+from kmad_web.domain.features.helpers import transfer_data_from_homologue
 from kmad_web.parsers.uniprot import UniprotParser
 
 
@@ -35,16 +35,19 @@ class UniprotFeatureProvider(object):
             if closest_hit:
                 result = self._get_secondary_structure(
                     closest_hit['id'])
-                strct_elements = self._transfer_data_from_homologue(
+                strct_elements = transfer_data_from_homologue(
                     sequence['seq'], closest_hit['seq'], result)
         return strct_elements
 
-    def _get_secondary_structure(uniprot_id):
+    def _get_secondary_structure(seq_id):
         uniprot_service = UniprotService(UNIPROT_URL)
-        uniprot_txt = uniprot_service.get_txt(uniprot_id)
-        uniprot_parser = UniprotParser()
-        uniprot_parser.parse_structure(uniprot_txt)
-        return uniprot_parser.structure
+        try:
+            uniprot_txt = uniprot_service.get_txt(seq_id)
+            uniprot_parser = UniprotParser()
+            uniprot_parser.parse_structure(uniprot_txt)
+            return uniprot_parser.structure
+        except ServiceError:
+            return []
 
     def _get_annotation_level(self, eco):
         # the first eco code is always the 'best' one ( = highest annotation

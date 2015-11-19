@@ -29,3 +29,6 @@ class BlastResultProvider(object):
             return blast_hits[0]['id']
         else:
             return ''
+
+    def find_closest_hit(self, fast):
+        pass
