@@ -40,7 +40,7 @@ draw_alignment = function(container_id, sequences) {
   for (key in aa_to_color) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
-  var container_width = sequences[0]['aligned'].length * 13 + 160;
+  var container_width = sequences[0]['aligned'].length * 30 + 16;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
   var stage = new Kinetic.Stage({
     container: container_id,

@@ -45,6 +45,7 @@ class UniprotFeatureProvider(object):
             uniprot_txt = uniprot_service.get_txt(seq_id)
             uniprot_parser = UniprotParser()
             uniprot_parser.parse_structure(uniprot_txt)
+            print uniprot_parser.structure
             return uniprot_parser.structure
         except ServiceError:
             return []

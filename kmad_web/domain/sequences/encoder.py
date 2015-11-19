@@ -17,6 +17,7 @@ class SequencesEncoder(object):
         self._ptm_pos = 4
         # motif code is 2 chars long
         self._motif_pos = 5
+        self._strct_pos = 1
         self._create_code_alphabet()
 
     def encode(self, sequences, aligned_mode=False):
@@ -40,6 +41,7 @@ class SequencesEncoder(object):
         self._encode_ptms()
         self._encode_motifs()
         self._encode_domains()
+        self._encode_structure()
         self._create_encoded_sequences()
         if aligned_mode:
             self._create_encoded_aligned_sequences()
@@ -190,3 +192,19 @@ class SequencesEncoder(object):
         for s in self._sequences:
             s['codon_seq'] = [[r, 'A', 'A', 'A', 'A', 'A', 'A']
                               for r in s['seq']]
+
+    def _encode_structure(self):
+        order = ['TURN', 'TRANSMEM', 'STRAND', 'HELIX', 'DISULFID']
+        strct_dict = {'TURN': 'T', 'TRANSMEM': 'M', 'STRAND': 'S', 'HELIX': 'H',
+                      'DISULFID': 'C'}
+        pos = self._strct_pos
+        for s in self._sequences:
+            strct = sorted(s['secondary_structure'],
+                           key=lambda x: order.index(x['name']))
+            for s in strct:
+                strct_code = strct_dict[s['name']]
+                if 'start' in s.keys():
+                    for i in range(int(s['start']) - 1, int(s['end'])):
+                        s['codon_seq'][i][pos] = strct_code
+                elif 'position' in s.keys():
+                    s['codon_seq'][s['position']][pos] = strct_code
