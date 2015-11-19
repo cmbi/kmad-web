@@ -153,6 +153,7 @@ class PredictionProcessor(object):
         dis_regions = [i.split('-')
                        for i in prediction_lines[0].split(':')[-1].split(', ')]
         disorder_list = [0 for i in xrange(seqlength)]
+        print dis_regions
         for i in dis_regions:
             start = int(i[0]) - 1
             end = int(i[1])
