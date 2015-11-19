@@ -40,7 +40,7 @@ draw_alignment = function(container_id, sequences) {
   for (key in aa_to_color) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
-  var container_width = sequences[0]['aligned'].length * 13 + 160;
+  var container_width = sequences[0]['aligned'].length * 20 + 130;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -230,7 +230,7 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = sequences[0]['aligned'].length * 13 + 160;
+  var container_width = sequences[0]['aligned'].length * 20 + 130;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
 
   var stage = new Kinetic.Stage({
@@ -355,7 +355,7 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = sequences[0]['aligned'].length * 13 + 180;
+  var container_width = sequences[0]['aligned'].length * 20 + 130;
   var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
 
   var stage = new Kinetic.Stage({
