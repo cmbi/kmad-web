@@ -207,4 +207,4 @@ class SequencesEncoder(object):
                     for i in range(int(e['start']) - 1, int(e['end'])):
                         s['codon_seq'][i][pos] = strct_code
                 elif 'position' in e.keys():
-                    s['codon_seq'][e['position']][pos] = strct_code
+                    s['codon_seq'][e['position'] - 1][pos] = strct_code

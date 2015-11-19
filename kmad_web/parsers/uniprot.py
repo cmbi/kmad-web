@@ -28,7 +28,6 @@ class UniprotParser(object):
         for i in txt_file.splitlines():
             if (i.startswith('FT') and len(i.split()) > 1
                     and i.split()[1] in strct_list):
-                print "line: {}".format(i)
                 if i.split()[1] != 'DISULFID':
                     feature = {}
                     feature['name'] = i.split()[1]
@@ -41,7 +40,7 @@ class UniprotParser(object):
                     feature1['position'] = int(i.split()[2])
                     feature2 = {}
                     feature2['name'] = i.split()[1]
-                    feature2['position'] = int(i.split()[2])
+                    feature2['position'] = int(i.split()[3])
                     self.structure.extend([feature1, feature2])
 
     def parse_go_terms(self, txtfile):
