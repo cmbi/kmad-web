@@ -230,7 +230,7 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = sequences[0]['aligned'].length * 13 + 160;
+  var container_width = sequences[0]['aligned'].length * 30 + 16;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
 
   var stage = new Kinetic.Stage({
@@ -355,7 +355,7 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = sequences[0]['aligned'].length * 13 + 180;
+  var container_width = sequences[0]['aligned'].length * 30 + 16;
   var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
 
   var stage = new Kinetic.Stage({

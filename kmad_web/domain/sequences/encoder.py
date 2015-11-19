@@ -201,10 +201,10 @@ class SequencesEncoder(object):
         for s in self._sequences:
             strct = sorted(s['secondary_structure'],
                            key=lambda x: order.index(x['name']))
-            for s in strct:
-                strct_code = strct_dict[s['name']]
-                if 'start' in s.keys():
-                    for i in range(int(s['start']) - 1, int(s['end'])):
+            for e in strct:
+                strct_code = strct_dict[e['name']]
+                if 'start' in e.keys():
+                    for i in range(int(e['start']) - 1, int(e['end'])):
                         s['codon_seq'][i][pos] = strct_code
-                elif 'position' in s.keys():
-                    s['codon_seq'][s['position']][pos] = strct_code
+                elif 'position' in e.keys():
+                    s['codon_seq'][e['position']][pos] = strct_code

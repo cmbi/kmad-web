@@ -25,9 +25,10 @@ class UniprotParser(object):
 
     def parse_structure(self, txt_file):
         strct_list = ['HELIX', 'TURN', 'STRAND', 'DISULFID', 'TRANSMEM']
-        for i in txt_file:
+        for i in txt_file.splitlines():
             if (i.startswith('FT') and len(i.split()) > 1
                     and i.split()[1] in strct_list):
+                print "line: {}".format(i)
                 if i.split()[1] != 'DISULFID':
                     feature = {}
                     feature['name'] = i.split()[1]
