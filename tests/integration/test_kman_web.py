@@ -124,6 +124,6 @@ class TestApi(object):
 
     def _get_random_sequence(self):
         response = requests.get(
-            'http://uniprot.org/uniprot/?query=protein&random=yes&format=fasta')
+            'http://uniprot.org/uniprot/?query=protein&random=yes&format=fasta&fil=reviewed:yes')
         fasta = response.text
         return fasta

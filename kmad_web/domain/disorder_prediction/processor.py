@@ -153,12 +153,12 @@ class PredictionProcessor(object):
         dis_regions = [i.split('-')
                        for i in prediction_lines[0].split(':')[-1].split(', ')]
         disorder_list = [0 for i in xrange(seqlength)]
-        print dis_regions
         for i in dis_regions:
-            start = int(i[0]) - 1
-            end = int(i[1])
-            for j in xrange(start, end):
-                disorder_list[j] = 2
+            if i[0] and i[1]:
+                start = int(i[0]) - 1
+                end = int(i[1])
+                for j in xrange(start, end):
+                    disorder_list[j] = 2
         return disorder_list
 
     def _process_iupred(self, prediction_lines):
