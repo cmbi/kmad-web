@@ -178,6 +178,7 @@ class TestTasks(object):
         mock_res.return_value = 'blast_result'
         mock_hit.return_value = 'exact_hit'
         expected = {
+            'query_fasta': '>1\nSEQSEQ\n',
             'blast_result': 'blast_result',
             'exact_hit': {
                 'seq_id': 'exact_hit',
@@ -188,6 +189,7 @@ class TestTasks(object):
 
         mock_hit.return_value = 'exact_hit'
         expected = {
+            'query_fasta': '>1\nSEQSEQ\n',
             'blast_result': 'blast_result',
             'exact_hit': {
                 'seq_id': 'exact_hit',
@@ -198,11 +200,14 @@ class TestTasks(object):
 
     @patch('kmad_web.tasks.UniprotSequenceProvider.get_sequence')
     def test_get_sequences_from_blast(self, mock_provider):
-        sequences = ['seq1', 'seq2']
+        sequences = [{'header': '>1', 'seq': 'seq1', 'id': '1'},
+                     {'header': '>2', 'seq': 'seq2', 'id': '2'}]
         mock_provider.side_effect = sequences
-        blast_result = {'blast_result':
-                        [{'id': '1'}, {'id': '2'}]
-                        }
+        blast_result = {
+            'query_fasta': '>1\nseq1',
+            'blast_result':
+            [{'id': '1'}, {'id': '2'}]
+        }
         from kmad_web.tasks import get_sequences_from_blast
 
         eq_(sequences, get_sequences_from_blast(blast_result))
@@ -212,7 +217,12 @@ class TestTasks(object):
 
         from kmad_web.tasks import get_sequences_from_blast
 
-        blast_result = {'blast_result': [{'id': 'stupid_id'}]}
+        blast_result = {
+            'query_fasta': '>1\nquery_fasta',
+            'blast_result': [
+                {'id': 'stupid_id'}
+            ]
+        }
         get_sequences_from_blast(blast_result)
         mock_log.assert_called_once()
 

@@ -117,15 +117,20 @@ def get_sequences_from_blast(blast_result):
     query_seq['id'] = ""
     sequences.append(query_seq)
 
-    first_blast_seq = \
-        uniprot.get_sequence(blast_result['blast_result'][0]['id'])
+    try:
+        first_blast_seq = \
+            uniprot.get_sequence(blast_result['blast_result'][0]['id'])
+    except ServiceError:
+        first_blast_seq = ""
+        _log.warning("Couldn't get sequence for id: {}".format(
+            blast_result['blast_result'][0]['id']))
 
     # if the first sequence from blast is not the same as query sequence then
     # add it to sequence
     # if it is the same then assign it's ID to the query sequence
-    if first_blast_seq['seq'] != query_seq['seq']:
+    if first_blast_seq and first_blast_seq['seq'] != query_seq['seq']:
         sequences.append(first_blast_seq)
-    else:
+    elif first_blast_seq and 'id' in first_blast_seq.keys():
         sequences[0]['id'] = first_blast_seq['id']
 
     for s in blast_result['blast_result'][1:]:

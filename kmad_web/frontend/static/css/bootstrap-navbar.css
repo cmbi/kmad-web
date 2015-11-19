@@ -1,7 +1,9 @@
+/*
 .navbar-inverse {
   background-color: #252525;
   background-image: none;
 }
+*/
 
 .navbar-brand {
   height: 60px;
@@ -46,6 +48,7 @@
 .navbar {
  min-height: 60px;
 }
+/*
 
 .navbar-inverse .navbar-brand-active{
     color: #822EAF;
@@ -87,6 +90,7 @@
 .navbar-inverse .navbar-brand-active:hover span span span {
     color: #D02E8A;
 }
+*/
 
 .navbar-inverse .navbar-nav > li > a {
   color: #ccc;
