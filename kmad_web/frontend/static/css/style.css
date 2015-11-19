@@ -1,5 +1,5 @@
 body {
-  background-color: #444;
+  background-color: #EFEFEF;
 }
 
 .panel-title-text {
@@ -14,25 +14,21 @@ body {
 }
 
 .kmad-k {
-    color: #7109AA;
     font-size: 120%;
     font-weight: bold;
 }
 
 .kmad-m {
-    color: #FFFF00;
     font-size: 120%;
     font-weight: bold;
 }
 
 .kmad-a {
-    color: #7BB800;
     font-size: 120%;
     font-weight: bold;
 }
 
 .kmad-n {
-    color: #9E0059;
     font-size: 120%;
     font-weight: bold;
 }

@@ -8,6 +8,7 @@ class UniprotParser(object):
     def __init__(self):
         self.go_terms = []
         self.ptms = []
+        self.structure = []
 
     def parse_ptms(self, txt_file):
         txt_list = txt_file.splitlines()
@@ -21,6 +22,26 @@ class UniprotParser(object):
                     feature['pub_med'] = self._get_pubmed_ids(txt_list, i)
                     feature['eco'] = self._get_eco_codes(txt_list, i)
                     self.ptms.append(feature)
+
+    def parse_structure(self, txt_file):
+        strct_list = ['HELIX', 'TURN', 'STRAND', 'DISULFID', 'TRANSMEM']
+        for i in txt_file:
+            if (i.startswith('FT') and len(i.split()) > 1
+                    and i.split()[1] in strct_list):
+                if i.split()[1] != 'DISULFID':
+                    feature = {}
+                    feature['name'] = i.split()[1]
+                    feature['start'] = int(i.split()[2])
+                    feature['end'] = int(i.split()[3])
+                    self.structure.append(feature)
+                else:
+                    feature1 = {}
+                    feature1['name'] = i.split()[1]
+                    feature1['position'] = int(i.split()[2])
+                    feature2 = {}
+                    feature2['name'] = i.split()[1]
+                    feature2['position'] = int(i.split()[2])
+                    self.structure.extend([feature1, feature2])
 
     def parse_go_terms(self, txtfile):
         for line in txtfile.splitlines():

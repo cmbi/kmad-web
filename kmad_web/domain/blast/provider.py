@@ -30,5 +30,9 @@ class BlastResultProvider(object):
         else:
             return ''
 
-    def find_closest_hit(self, fast):
-        pass
+    def find_closest_hit(self, fasta_sequence):
+        blast_hits = self.get_result(fasta_sequence)
+        if float(blast_hits[0]['pident']) >= 80:
+            return blast_hits[0]['id']
+        else:
+            return ''

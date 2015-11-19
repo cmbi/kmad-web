@@ -206,11 +206,11 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     _log.info("Running KMAD alignment [task]")
     fles_file = create_fles_result['fles_file']
     sequences = create_fles_result['sequences']
-    result_path = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
+    result_file = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
                              motif_score, conf_path, gapped, full_ungapped,
                              refine)
     return {
-        'fles_path': result_path,
+        'fles_file': result_file,
         'sequences': sequences,
         'motif_code_dict': create_fles_result['motif_code_dict'],
         'domain_code_dict': create_fles_result['domain_code_dict']
@@ -220,17 +220,10 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
 @celery_app.task
 def process_kmad_alignment(run_kmad_result):
     _log.info("Processing KMAD result")
-    fles_path = run_kmad_result['fles_path']
+    fles_file = run_kmad_result['fles_file']
     sequences = run_kmad_result['sequences']
     codon_length = 7
 
-    if not os.path.exists(fles_path):
-        raise RuntimeError(
-            "Couldn't find the alignment file: {}".format(fles_path)
-        )
-
-    with open(fles_path) as a:
-        fles_file = a.read()
     alignment = parse_fles(fles_file)
     fasta_file = fles2fasta(fles_file)
 

@@ -39,6 +39,7 @@ class SequencesAnnotator(object):
         self._annotate_ptms()
         self._annotate_motifs(go_terms)
         self._annotate_domains()
+        self._annotate_secondary_structure()
 
     def _get_go_terms(self):
         uniprot = UniprotGoTermProvider()
