@@ -17,16 +17,15 @@ def teardown():
     cm.reset()
 
 
-@patch('kmad_web.services.kmad_aligner.os.path.exists')
+@patch('kmad_web.services.kmad_aligner.open')
 @patch('kmad_web.services.kmad_aligner.tempfile.NamedTemporaryFile')
 @patch('kmad_web.services.kmad_aligner.subprocess.call')
 @with_setup(setup, teardown)
-def test_kmad_aligner(mock_call, mock_temp, mock_exists):
+def test_kmad_aligner(mock_call, mock_temp, mock_open):
 
     from kmad_web.services.kmad_aligner import kmad
 
     type(mock_temp.return_value).name = PropertyMock(return_value='tempname')
-    mock_exists.return_value = True
 
     eq_('tempname_al', kmad.align('', '', '', '', '', '', '', '', '', '', ''))
     mock_call.reset_mock()
@@ -48,7 +47,6 @@ def test_kmad_aligner(mock_call, mock_temp, mock_exists):
     mock_call.assert_called_once_with(args, stderr=-1)
     mock_call.reset_mock()
 
-    mock_exists.return_value = False
     assert_raises(ServiceError, kmad.align, '', '', '', '', '', '', '', '',
                   '', '', '')
 

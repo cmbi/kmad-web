@@ -167,8 +167,8 @@ class TestTasks(object):
             eq_(expected, result)
 
     @patch('kmad_web.tasks.tempfile')
-    @patch('kmad_web.tasks.BlastResultProvider.get_result')
-    @patch('kmad_web.tasks.BlastResultProvider.get_exact_hit')
+    @patch('kmad_web.tasks.blast.get_result')
+    @patch('kmad_web.tasks.blast.get_exact_hit')
     def test_run_blast(self, mock_hit, mock_res, mock_tmp):
 
         from kmad_web.tasks import run_blast
@@ -212,20 +212,6 @@ class TestTasks(object):
 
         eq_(sequences, get_sequences_from_blast(blast_result))
 
-    @patch('kmad_web.tasks._log.warning')
-    def test_get_sequences_from_blast_exception(self, mock_log):
-
-        from kmad_web.tasks import get_sequences_from_blast
-
-        blast_result = {
-            'query_fasta': '>1\nquery_fasta',
-            'blast_result': [
-                {'id': 'stupid_id'}
-            ]
-        }
-        get_sequences_from_blast(blast_result)
-        mock_log.assert_called_once()
-
     @patch('kmad_web.tasks.make_fles')
     @patch('kmad_web.tasks.SequencesEncoder')
     @patch('kmad_web.tasks.SequencesAnnotator')
@@ -256,7 +242,7 @@ class TestTasks(object):
         from kmad_web.tasks import update_elmdb
 
         update_elmdb()
-        mock_update.assert_called_once()
+        mock_update.assert_any_call()
 
     def test_combine_alignment_and_prediciton(self):
         from kmad_web.tasks import combine_alignment_and_prediction
@@ -329,7 +315,7 @@ class TestTasks(object):
             'domain_code_dict': domains
         }
         expected = {
-            'fles_path': fles_path,
+            'fles_file': fles_path,
             'sequences': sequences,
             'motif_code_dict': motifs,
             'domain_code_dict': domains
@@ -348,7 +334,7 @@ class TestTasks(object):
         domains = {'DOMAIN_AA': 'aa'}
         sequences = [{'header': '>1', 'seq': 'SEQ'}]
         run_kmad_result = {
-            'fles_path': 'fles_path',
+            'fles_file': '>1\nSAAAAAAEAAAAAAQAAAAAA\n',
             'sequences': sequences,
             'motif_code_dict': motifs,
             'domain_code_dict': domains
@@ -371,20 +357,6 @@ class TestTasks(object):
         }
 
         eq_(expected, process_kmad_alignment(run_kmad_result))
-
-    @raises(RuntimeError)
-    def test_process_kmad_alignment_error(self):
-
-        from kmad_web.tasks import process_kmad_alignment
-
-        run_kmad_result = {
-            'fles_path': 'nonexistent path',
-            'sequences': 'sequences',
-            'motif_code_dict': 'motifs',
-            'domain_code_dict': 'domains'
-        }
-
-        process_kmad_alignment(run_kmad_result)
 
     @patch('kmad_web.tasks.Mutation')
     @patch('kmad_web.tasks.ap.analyze_ptms')

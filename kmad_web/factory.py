@@ -67,11 +67,13 @@ def create_app(settings=None):
             '%(asctime)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
         root_logger.addHandler(ch)
-
-        root_logger.setLevel(logging.DEBUG)
+        if app.debug:
+            root_logger.setLevel(logging.DEBUG)
+        else:
+            root_logger.setLevel(logging.INFO)
         root_logger.propagate = False
     else:
-        root_logger.setLevel(logging.INFO)
+        root_logger.setLevel(logging.DEBUG)
 
     # Use ProxyFix to correct URL's when redirecting.
     from kmad_web.middleware import ReverseProxied

@@ -211,8 +211,8 @@ class KmadForm(Form):
     motif_score = FloatField(u'motif score', default=4)
 
     gapped = RadioField(u'First sequence:',
-                        choices=[('True', 'without gaps'),
-                                 ('False', 'with gaps')],
+                        choices=[('False', 'without gaps'),
+                                 ('True', 'with gaps')],
                         default='False')
 
     alignment_method = RadioField(
