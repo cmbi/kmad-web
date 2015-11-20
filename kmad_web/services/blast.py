@@ -35,7 +35,7 @@ class BlastService(object):
 
         args = ['blastp', '-query', fasta_filename, '-evalue', '1e-5',
                 '-num_threads', '15', '-db', self._db_path,
-                '-outfmt', self._outfmt]
+                '-outfmt', self._outfmt, '-max_target_seqs', '50']
         try:
             _log.debug("Running BLAST with command {}".format(
                 subprocess.list2cmdline(args)

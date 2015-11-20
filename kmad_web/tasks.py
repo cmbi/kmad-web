@@ -245,6 +245,7 @@ def process_kmad_alignment(run_kmad_result):
 
 @celery_app.task
 def analyze_ptms(process_kmad_result, fasta_sequence, position, mutant_aa):
+    _log.info("Analyzing PTMs")
     sequences = process_kmad_result['sequences']
     mutation = Mutation(sequences[0], position, mutant_aa)
     result = ap.analyze_ptms(mutation, sequences)
@@ -253,6 +254,7 @@ def analyze_ptms(process_kmad_result, fasta_sequence, position, mutant_aa):
 
 @celery_app.task
 def analyze_motifs(process_kmad_result, fasta_sequence, position, mutant_aa):
+    _log.info("Analyzing motifs")
     sequences = process_kmad_result['sequences']
     mutation = Mutation(sequences[0], position, mutant_aa)
     result = am.analyze_motifs(mutation, sequences)
