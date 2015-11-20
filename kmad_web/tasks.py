@@ -6,7 +6,7 @@ import requests
 
 from celery import current_app as celery_app
 
-from kmad_web.domain.blast.provider import BlastResultProvider
+from kmad_web.domain.blast.provider import blast
 from kmad_web.domain.disorder_prediction.processor import PredictionProcessor
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequencesAnnotator
@@ -95,7 +95,6 @@ def prealign(sequences, alignment_method):
 def run_blast(fasta_sequence):
     _log.info("Running blast[task]")
 
-    blast = BlastResultProvider(BLAST_DB)
     blast_result = blast.get_result(fasta_sequence)
     exact_hit = blast.get_exact_hit(blast_result)
     return {
@@ -116,30 +115,30 @@ def get_sequences_from_blast(blast_result):
     query_seq = parse_fasta(blast_result['query_fasta'])[0]
     query_seq['id'] = ""
     sequences.append(query_seq)
-
-    try:
-        first_blast_seq = \
-            uniprot.get_sequence(blast_result['blast_result'][0]['id'])
-    except ServiceError:
-        first_blast_seq = ""
-        _log.warning("Couldn't get sequence for id: {}".format(
-            blast_result['blast_result'][0]['id']))
-
-    # if the first sequence from blast is not the same as query sequence then
-    # add it to sequence
-    # if it is the same then assign it's ID to the query sequence
-    if first_blast_seq and first_blast_seq['seq'] != query_seq['seq']:
-        sequences.append(first_blast_seq)
-    elif first_blast_seq and 'id' in first_blast_seq.keys():
-        sequences[0]['id'] = first_blast_seq['id']
-
-    for s in blast_result['blast_result'][1:]:
+    if blast_result['blast_result']:
         try:
-            sequence = uniprot.get_sequence(s['id'])
-            sequences.append(sequence)
+            first_blast_seq = \
+                uniprot.get_sequence(blast_result['blast_result'][0]['id'])
         except ServiceError:
-            _log.warning("Couldn't get sequence for id: {}".format(s['id']))
-    _log.info("Got {} sequences".format(len(sequences)))
+            first_blast_seq = ""
+            _log.warning("Couldn't get sequence for id: {}".format(
+                blast_result['blast_result'][0]['id']))
+
+        # if the first sequence from blast is not the same as query sequence then
+        # add it to sequence
+        # if it is the same then assign it's ID to the query sequence
+        if first_blast_seq and first_blast_seq['seq'] != query_seq['seq']:
+            sequences.append(first_blast_seq)
+        elif first_blast_seq and 'id' in first_blast_seq.keys():
+            sequences[0]['id'] = first_blast_seq['id']
+
+        for s in blast_result['blast_result'][1:]:
+            try:
+                sequence = uniprot.get_sequence(s['id'])
+                sequences.append(sequence)
+            except ServiceError:
+                _log.warning("Couldn't get sequence for id: {}".format(s['id']))
+        _log.info("Got {} sequences".format(len(sequences)))
     return sequences
 
 
@@ -206,11 +205,11 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     _log.info("Running KMAD alignment [task]")
     fles_file = create_fles_result['fles_file']
     sequences = create_fles_result['sequences']
-    result_path = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
+    result_file = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
                              motif_score, conf_path, gapped, full_ungapped,
                              refine)
     return {
-        'fles_path': result_path,
+        'fles_file': result_file,
         'sequences': sequences,
         'motif_code_dict': create_fles_result['motif_code_dict'],
         'domain_code_dict': create_fles_result['domain_code_dict']
@@ -220,17 +219,10 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
 @celery_app.task
 def process_kmad_alignment(run_kmad_result):
     _log.info("Processing KMAD result")
-    fles_path = run_kmad_result['fles_path']
+    fles_file = run_kmad_result['fles_file']
     sequences = run_kmad_result['sequences']
     codon_length = 7
 
-    if not os.path.exists(fles_path):
-        raise RuntimeError(
-            "Couldn't find the alignment file: {}".format(fles_path)
-        )
-
-    with open(fles_path) as a:
-        fles_file = a.read()
     alignment = parse_fles(fles_file)
     fasta_file = fles2fasta(fles_file)
 

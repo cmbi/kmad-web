@@ -39,6 +39,7 @@ class SequencesAnnotator(object):
         self._annotate_ptms()
         self._annotate_motifs(go_terms)
         self._annotate_domains()
+        self._annotate_secondary_structure()
 
     def _get_go_terms(self):
         uniprot = UniprotGoTermProvider()
@@ -77,3 +78,8 @@ class SequencesAnnotator(object):
             pfam = PfamFeatureProvider()
             s['domains'] = pfam.get_domains(s)
             time.sleep(self._poll)
+
+    def _annotate_secondary_structure(self):
+        for s in self.sequences:
+            uniprot = UniprotFeatureProvider()
+            s['secondary_structure'] = uniprot.get_secondary_structure(s)

@@ -40,6 +40,10 @@ draw_alignment = function(container_id, sequences) {
   for (key in aa_to_color) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
+<<<<<<< HEAD
+  var container_width = sequences[0]['aligned'].length * 20 + 130;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
+=======
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
     if (sequences[i]['header'].length > longest_header) {
@@ -48,6 +52,7 @@ draw_alignment = function(container_id, sequences) {
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+>>>>>>> feature-annotate-secondary-structure
   var stage = new Kinetic.Stage({
     container: container_id,
     width: container_width,

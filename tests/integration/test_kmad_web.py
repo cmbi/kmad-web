@@ -124,6 +124,17 @@ class TestApi(object):
 
     def _get_random_sequence(self):
         response = requests.get(
-            'http://uniprot.org/uniprot/?query=protein&random=yes&format=fasta')
+            'http://uniprot.org/uniprot/?query=protein&random=yes&format=fasta&fil=reviewed:yes')
         fasta = response.text
+        random_cut = random.choice([True, False])
+        if random_cut:
+            left_cut = random.choice([True, False])
+            if left_cut:
+                fasta = fasta.splitlines()[0] + '\n' + ''.join(fasta.splitlines()[1:])[1:]
+                _log.info("N-terminal cut")
+            else:
+                fasta = fasta[:-1]
+                _log.info("C-terminal cut")
+        else:
+            _log.info("Full sequence")
         return fasta
