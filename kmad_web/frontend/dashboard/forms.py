@@ -8,7 +8,6 @@ from wtforms.fields import (FloatField, IntegerField, SelectField,
                             SubmitField, RadioField)
 from wtforms.widgets import html_params, HTMLString
 
-logging.basicConfig(propagate=False)
 _log = logging.getLogger(__name__)
 
 

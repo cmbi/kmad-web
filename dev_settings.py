@@ -1,5 +1,5 @@
 # Flask
-DEBUG = False
+DEBUG = True
 SECRET_KEY = 'development_key'
 
 # Debug toolbar
