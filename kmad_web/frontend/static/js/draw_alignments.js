@@ -32,17 +32,16 @@ draw_residue_rect = function(residues, x, y, context, rect_color) {
   return x;
 }
 
-draw_alignment = function(container_id, data) {
+draw_alignment = function(container_id, sequences) {
   var start = Date.now();
   const ROW_HEIGHT = 15;
-  const ROWS = data.length;
+  const ROWS = sequences.length;
   aa_to_hex = {};
   for (key in aa_to_color) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
-  var container_width = data[0][1].length * 10.5 + 160;
+  var container_width = sequences[0]['aligned'].length * 20 + 130;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
-
   var stage = new Kinetic.Stage({
     container: container_id,
     width: container_width,
@@ -65,15 +64,19 @@ draw_alignment = function(container_id, data) {
 
   ctx.fillStyle = "#515454";
   // draw sequence headers
-  for (var i = 0; i < data.length; i++) {
+  var longest_header = 0;
+  for (var i = 0; i < sequences.length; i++) {
     y = 30 + i * ROW_HEIGHT;
-    ctx.fillText(data[i][0], x, y)
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
+    ctx.fillText(sequences[i]['header'], x, y)
   }
 
   // draw numbering
-  x = 160;
+  x = longest_header * 6 + 10;
   y = 10;
-  for (var i = 0; i < data[0][1].length; i++) {
+  for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
       ctx.fillText(i.toString(), x, y)
       ctx.fillText('I', x, y + 10)
@@ -84,12 +87,12 @@ draw_alignment = function(container_id, data) {
   var res;
   var residues = [];
   var current_color;
-  var last_index = data[0][1].length - 1;
-  for (var i = 0; i < data.length; i++) {
-    x = 160;
+  var last_index = sequences[0]['aligned'].length - 1;
+  for (var i = 0; i < sequences.length; i++) {
+    x = longest_header * 6 + 10;
     y = 20 + (i * ROW_HEIGHT);
-    for (var j = 0; j < data[i][1].length; j++) {
-      res = data[i][1].charAt(j);
+    for (var j = 0; j < sequences[i]['aligned'].length; j++) {
+      res = sequences[i]['aligned'].charAt(j);
       res_up = res.toUpperCase();
       if (residues.length > 0) {
         if (current_color != aa_to_hex[res_up]) {
@@ -109,8 +112,6 @@ draw_alignment = function(container_id, data) {
       function() {
          downloadCanvasFromStage(this, "alignment.png", stage);
   }, false);
-  console.debug("draw_alignment");
-  // console.debug(data[0][0]);
 }
 
 
@@ -221,142 +222,15 @@ group_coords = function(feature_coords, feature_names, single_width) {
 }
 
 
-draw_filtered_motifs = function(container_id, data, codon_length,
-    feature_codemap, disorder_predictions) {
-  var start = Date.now();
-  const ROW_HEIGHT = 15;
-  const ROWS = data.length;
-  const FONT_SIZE = 13;
-  const FONT_FAMILY = "Monospace";
-  var dis_length = disorder_predictions.length;
-  var disorder = disorder_predictions[dis_length - 1][1];
-  console.debug("pred: " + disorder);
-
-  var container_width = data[0][1].length * 1.5 + 180;
-  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
-
-  var stage = new Kinetic.Stage({
-    container: container_id,
-    width: container_width,
-    height: container_height,
-    listening: true
-  });
-
-  var tooltip_layer = new Kinetic.Layer();
-  var shapes_layer = new Kinetic.Layer();
-  var native_layer = new Kinetic.Layer();
-
-  stage.add(native_layer);
-  stage.add(tooltip_layer);
-  stage.add(shapes_layer);
-
-  document.getElementById(container_id).style.width = container_width;
-  document.getElementById(container_id).style.height = container_height + 10;
-  
-
-  var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
-                       'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
-                       'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
-                       'white':'#FFFFFF'};
-  aa_to_hex ={};
-  for (key in aa_to_color) {
-    aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
-  }
-  // color spectrum for features
-  var feature_colors = ColorRange(feature_codemap.length);
-  var ctx = native_layer.getContext()._context;
-
-  ctx.fillStyle = '#EEEEEE';
-  ctx.fillRect(0, 0, container_width, container_height);
-
-  var index_add = 3;
-  var char_index = 6;
-  var feature_code;
-  var r;
-  var r_up;
-  var letter_col;
-  var rect_width = 10;
-  var rect_height = 15;
-  var is_feature;
-  var feature_coords = [];
-  var feature_names = [];
-  draw_residue = function(res_num, seq_num, x, y) {
-    feature_code = data[seq_num][1].substring(res_num + 2 + index_add,
-                                              res_num + 4 + index_add);
-    r = data[seq_num][1].charAt(res_num);
-
-    letter_col = color_to_hex['gray'];
-    if (feature_code == 'AA') {
-      letter_col = aa_to_hex[r.toUpperCase()];
-    }
-    else {
-        var feat_number = 0;
-        for (var i = 0; i < feature_codemap.length; i++) {
-          if (feature_codemap[i][0] == feature_code) {
-            feat_number = i;
-            break;    
-          }
-        }
-        feature_coords = feature_coords.concat([[x, y, rect_width, rect_height]]);
-        feature_names = feature_names.concat(feature_codemap[feat_number][1]);
-        letter_col = feature_colors[feat_number];
-    }
-      ctx.fillStyle = letter_col;
-      ctx.fillRect(x, y, rect_width, rect_height);
-      ctx.fillStyle = "#000000";
-      ctx.fillText(r, x + 1, y + 10)
-  }
-  // 
-  var x = 10;
-  var y = 30;
-  ctx.fillStyle = "#515454";
-  // draw headers
-  for (var i = 0; i < data.length; i++) {
-    y = 30 + i * ROW_HEIGHT;
-    ctx.fillText(data[i][0], x, y)
-  }
-
-  // draw numbering
-  x = 160;
-  y = 10;
-  for (var i = 0; i < data[0][1].length / codon_length; i++) {
-    if (i % 5 == 0) {
-      ctx.fillText(i.toString(), x, y)
-      ctx.fillText('I', x, y + 10)
-      x += 50;
-    }
-  }
-
-  for (var i = 0; i < data.length; i++) {
-    x = 160;
-    y = 20+(i * ROW_HEIGHT);
-    for (var j = 0; j < data[i][1].length; j+=codon_length) {
-      draw_residue(j, i, x, y);
-      x += 10;
-    }
-  }
-  coords_and_names =  group_coords(feature_coords, feature_names, rect_width);
-  feature_coords = coords_and_names[0];
-  feature_names = coords_and_names[1];
-  create_tooltip(feature_coords, feature_names, shapes_layer,
-      tooltip_layer, 'motif', container_id);
-
-  document.getElementById("download_filtered_motif_canvas_button").addEventListener('click',
-      function() {
-         downloadCanvasFromStage(this, "alignment_"+feature_type+".png", stage);
-  }, false);
-
-}
-
-draw_alignment_with_features = function(container_id, data, codon_length,
+draw_alignment_with_features = function(container_id, sequences, codon_length,
     feature_codemap, feature_type) {
   var start = Date.now();
   const ROW_HEIGHT = 15;
-  const ROWS = data.length;
+  const ROWS = sequences.length;
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = data[0][1].length * 1.5 + 180;
+  var container_width = sequences[0]['aligned'].length * 20 + 130;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
 
   var stage = new Kinetic.Stage({
@@ -387,7 +261,9 @@ draw_alignment_with_features = function(container_id, data, codon_length,
     aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
   }
   // color spectrum for features
-  var feature_colors = ColorRange(feature_codemap.length);
+  var codemap_length = Object.keys(feature_codemap).length;
+  var feature_colors = ColorRange(codemap_length);
+  var color_map = ColorMap(feature_colors, feature_codemap);
   var ctx = native_layer.getContext()._context;
 
   ctx.fillStyle = '#EEEEEE';
@@ -409,25 +285,18 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   var feature_coords = [];
   var feature_names = [];
   draw_residue = function(res_num, seq_num, x, y) {
-    feature_code = data[seq_num][1].substring(res_num + 2 + index_add,
+    feature_code = sequences[seq_num]['encoded_aligned'].substring(res_num + 2 + index_add,
                                               res_num + 4 + index_add);
-    r = data[seq_num][1].charAt(res_num);
+    r = sequences[seq_num]['encoded_aligned'].charAt(res_num);
 
     letter_col = color_to_hex['gray'];
     if (feature_code == 'AA') {
       letter_col = aa_to_hex[r.toUpperCase()];
     }
     else {
-      var feat_number = 0;
-      for (var i = 0; i < feature_codemap.length; i++) {
-        if (feature_codemap[i][0] == feature_code) {
-          feat_number = i;
-          break;    
-        }
-      }
+      letter_col = color_map[feature_code];
       feature_coords = feature_coords.concat([[x, y, rect_width, rect_height]]);
-      feature_names = feature_names.concat(feature_codemap[feat_number][1]);
-      letter_col = feature_colors[feat_number];
+      feature_names = feature_names.concat(feature_codemap[feature_code]);
     }
       ctx.fillStyle = letter_col;
       ctx.fillRect(x, y, rect_width, rect_height);
@@ -439,15 +308,19 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   var y = 30;
   ctx.fillStyle = "#515454";
   // draw headers
-  for (var i = 0; i < data.length; i++) {
+  var longest_header = 0;
+  for (var i = 0; i < sequences.length; i++) {
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
     y = 30 + i * ROW_HEIGHT;
-    ctx.fillText(data[i][0], x, y)
+    ctx.fillText(sequences[i]['header'], x, y)
   }
 
   // draw numbering
-  x = 160;
+  x = longest_header * 6 + 10;
   y = 10;
-  for (var i = 0; i < data[0][1].length / codon_length; i++) {
+  for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
       ctx.fillText(i.toString(), x, y)
       ctx.fillText('I', x, y + 10)
@@ -455,10 +328,10 @@ draw_alignment_with_features = function(container_id, data, codon_length,
     }
   }
 
-  for (var i = 0; i < data.length; i++) {
-    x = 160;
+  for (var i = 0; i < sequences.length; i++) {
+    x = longest_header * 6 + 10;
     y = 20+(i * ROW_HEIGHT);
-    for (var j = 0; j < data[i][1].length; j+=codon_length) {
+    for (var j = 0; j < sequences[i]['encoded_aligned'].length; j+=codon_length) {
       draw_residue(j, i, x, y);
       x += 10;
     }
@@ -468,7 +341,6 @@ draw_alignment_with_features = function(container_id, data, codon_length,
   feature_names = coords_and_names[1];
   create_tooltip(feature_coords, feature_names, shapes_layer,
       tooltip_layer, feature_type, container_id);
-  console.debug("draw_alignmenti_with_features " + feature_type);
 
   document.getElementById('download_' + feature_type + "_canvas_button").addEventListener('click',
       function() {
@@ -477,14 +349,13 @@ draw_alignment_with_features = function(container_id, data, codon_length,
 
 }
 
-draw_alignment_ptms = function(container_id, data, codon_length) {
-  var start = Date.now();
+draw_alignment_ptms = function(container_id, sequences, codon_length) {
   const ROW_HEIGHT = 15;
-  const ROWS = data.length;
+  const ROWS = sequences.length;
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = data[0][1].length * 1.5 + 180;
+  var container_width = sequences[0]['aligned'].length * 20 + 130;
   var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
 
   var stage = new Kinetic.Stage({
@@ -522,7 +393,6 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
     aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
   }
   // color spectrum for features
-  // var ctx=$("#" + canvas_id).get(0).getContext("2d");
   var ctx = native_layer.getContext()._context;
 
   ctx.fillStyle = '#EEEEEE';
@@ -536,10 +406,10 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
 
 
   draw_residue = function(res_num, seq_num, x, y) {
-    r = data[seq_num][1].charAt(res_num);
+    r = sequences[seq_num]['encoded_aligned'].charAt(res_num);
     r_up = r.toUpperCase(); 
     letter_col = aa_to_hex['gray'];
-    ptm_code = data[seq_num][1].charAt(res_num + 4);
+    ptm_code = sequences[seq_num]['encoded_aligned'].charAt(res_num + 4);
     if (r == '-') {
       letter_col = '#FFFFFF';
     }
@@ -559,34 +429,182 @@ draw_alignment_ptms = function(container_id, data, codon_length) {
   // 
   var x = 10;
   var y = 30;
+  var longest_header = 0;
   // draw headers
   ctx.fillStyle = "#515454";
-  for (var i = 0; i < data.length; i++) {
-    y = 30 + i * ROW_HEIGHT;
-    ctx.fillText(data[i][0], x, y)
+  for (var i in sequences) {
+    ctx.fillText(sequences[i]['header'], x, y)
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
+    y += ROW_HEIGHT;
   }
   // draw numbering
-  x = 160;
+  x = longest_header * 6 + 10;
   y = 10;
-  for (var i = 0; i < data[0][1].length / codon_length; i++) {
+  for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
       ctx.fillText(i.toString(), x, y)
       ctx.fillText('I', x, y + 10)
       x += 50;
     }
   }
-  for (var i = 0; i < data.length; i++) {
-    x = 160;
-    y = 20+(i * ROW_HEIGHT);
-    for (var j = 0; j < data[i][1].length; j += codon_length) {
+  y = 20;
+  for (var i =0; i < sequences.length; i++) {
+    x = longest_header * 6 + 10;
+    for (var j = 0; j < sequences[i]['encoded_aligned'].length; j += codon_length) {
       draw_residue(j, i, x, y);
       x += 10;
     }
+    y += ROW_HEIGHT;
   }
   document.getElementById('download_ptm_canvas_button').addEventListener('click',
       function() {
          downloadCanvasFromStage(this, "alignment_ptms.png", stage);
   }, false);
-  console.debug("draw_alignment_ptms");
-  console.debug(Date.now() - start);
+}
+
+ColorMap = function(colors, feature_codemap) {
+    var color_map = new Object();
+    var count = 0;
+    for (var f in feature_codemap) {
+        color_map[f] = colors[count];
+        count += 1;
+    }
+    return color_map;
+}
+
+
+MotifsLegend = function(container_id, motifs) {
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  
+  //var container_height = 40*this.data.length;
+  var container_height = 210;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
+  var motifs_length = Object.keys(motifs).length
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    height: container_height - 15,
+    width: 260 * (1 + Math.floor(motifs_length / 6))
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  var motifs_length = Object.keys(motifs).length
+  var motif_colors = ColorRange(motifs_length);
+  var color_map = ColorMap(motif_colors, motifs);
+  this.draw_residue = function(res_string, motif_code, x, y) {
+    var letter_col = color_map[motif_code];
+    var rect_w = 30;
+    var rect_h = 15;
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: rect_w,
+        height: rect_h,
+        fill: letter_col,
+    });
+    this.seq_layer.add(text_rect);
+  }
+  this.draw = function() {
+    var x = 10;
+    var y = 20;
+    var c = 0;
+    for (var i in motifs) {
+      if (c % 6 == 0 && c != 0) {
+        x = x + 260;
+        y = 20;
+      }
+      this.draw_residue('   ', i, x, y);
+      var res_text = new Kinetic.Text({
+        x: x + 80,
+        y: y,
+        text: motifs[i],
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'black'
+      });
+      register_link(res_text, motifs[i], 'motif', container_id);
+      this.seq_layer.add(res_text);
+      y = y + 30;
+      c += 1;
+    }
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
+}
+DomainsLegend = function(container_id, domains) {
+  const SEQ_LAYER_OFFSET_X = 50;
+  const FONT_FAMILY = "Monospace";
+  const FONT_SIZE = 15;
+  const ROW_HEIGHT = 15;
+  const ROW_MARGIN_T = 0;
+  
+  //var container_height = 40*this.data.length;
+  var container_height = 210;
+  this.domains = domains;
+  document.getElementById(container_id).style.height = container_height.toString() + 'px';
+  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
+  var domains_length = Object.keys(domains).length;
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    height: container_height - 15,
+    width: 260 * (1 + Math.floor(domains_length / 6))
+  });
+  this.v_header_layer = new Kinetic.Layer();
+  this.seq_layer = new Kinetic.Layer();
+  var domains_length = Object.keys(domains).length;
+  var domain_colors = ColorRange(domains_length);
+  var color_map = ColorMap(domain_colors, domains);
+  this.draw_residue = function(res_string, domain_code, x, y) {
+    var letter_col = color_map[domain_code];
+    var rect_w = 30;
+    var rect_h = 15;
+    var text_rect = new Kinetic.Rect({
+        x: x-0.25,
+        y: y,
+        width: rect_w,
+        height: rect_h,
+        fill: letter_col,
+    });
+    this.seq_layer.add(text_rect);
+  }
+  this.draw = function() {
+    var x = 10;
+    var y = 20;
+    var c = 0;
+    for (var i in domains) {
+      if (c % 6 == 0 && c != 0) {
+        x = x + 260;
+        y = 20;
+      }
+      this.draw_residue('   ', i, x, y);
+      var res_text = new Kinetic.Text({
+        x: x + 80,
+        y: y,
+        text: domains[i],
+        fontSize: FONT_SIZE,
+        fontStyle: 'bold',
+        fontFamily: FONT_FAMILY,
+        fill: 'black'
+      });
+      register_link(res_text, domains[i], 'domain', container_id);
+      this.seq_layer.add(res_text);
+      y = y + 30;
+      c += 1;
+    }
+    stage.add(this.v_header_layer);
+    stage.add(this.seq_layer);
+  }
+  this.update = function() {
+    this.draw();
+  }
 }

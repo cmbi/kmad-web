@@ -1,5 +1,5 @@
 changeMode = function(newMode) {
-  modes = ["regular", "ptm", "domain", "motif", "filtered_motif"];
+  modes = ["regular", "ptm", "domain", "motif"];
   $('#' + newMode + '_mode_button').addClass('disabled');
   if (newMode != "regular") {
     document.getElementById('legend_canvases_container').style.display = ''; 
@@ -12,9 +12,10 @@ changeMode = function(newMode) {
   for (i in modes) {
     m = modes[i];
     if (m != newMode) {
+      console.debug("dbsadb");
+      console.debug(m);
       document.getElementById('canvas_' + m).style.display = 'none'; 
-      document.getElementById(
-          'download_' + m + '_canvas_button').style.display = 'none'; 
+      document.getElementById('download_' + m + '_canvas_button').style.display = 'none'; 
       $('#' + m + '_mode_button').removeClass('disabled');
       $('#' + m + '_mode_button').removeClass('active');
       if (m != "regular") {

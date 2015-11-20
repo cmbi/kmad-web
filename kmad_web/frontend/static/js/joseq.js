@@ -1,4 +1,4 @@
-ProteinSequences = function(container_id, data) {
+ProteinSequences = function(container_id, data, sequence) {
   // TODO: Check arguments are same length
   // TODO: Private methods are actually publicly visible.
   // TODO: All methods are recreated per instance. Is this a problem?
@@ -9,24 +9,26 @@ ProteinSequences = function(container_id, data) {
   // TODO: Multiple types of info in tooltips
 
   // Constants
-  const MAX_RES_PER_ROW = data[1][1].length;
+  this.methods = ['filtered', 'consensus'];
+  for (var m in data) {
+      if (m != 'consensus' && m != 'filtered'){
+        this.methods.push(m);
+      }
+  }
+  const MAX_RES_PER_ROW = data[this.methods[0]].length;
   const SEQ_LAYER_OFFSET_X = 50;
   const FONT_FAMILY = "Monospace";
   const FONT_SIZE = 16;
   const ROW_HEIGHT = 36;
   const ROW_MARGIN_T = 0;
-  const ROWS = data.length;
-
+  const ROWS = this.methods.length + 1;
 
   // Attributes
-  this.seq = data[0];
-  this.disorder = [];
-  for (var i = 1; i < data.length; i++){
-    this.disorder.push(data[i])
-  }
+  this.seq = sequence;
+  this.data = data;
   var container_height = ROWS * ROW_HEIGHT;
   document.getElementById(container_id).style.height = (container_height + 60).toString() + 'px';
-  var cont_width = 350 + this.disorder[0][1].length * 10;
+  var cont_width = 350 + MAX_RES_PER_ROW * 10;
   if (cont_width < 650) {
     cont_width = 650;
   }
@@ -40,9 +42,9 @@ ProteinSequences = function(container_id, data) {
 
 
   // Private methods
-  this.draw_residue = function(res_num, seq_num, x, y) {
+  this.draw_residue = function(res_num, method, x, y) {
     var r = this.seq.charAt(res_num);
-    var d = this.disorder[seq_num][1][res_num];
+    var d = this.data[method][res_num];
      
     var letter_col;
     if (d == 0){
@@ -144,7 +146,7 @@ ProteinSequences = function(container_id, data) {
     });
     this.v_header_layer.add(res_num_leg);
 
-    for (var i = 0; i < this.disorder.length; i++) {
+    for (var i = 0; i < this.methods.length; i++) {
       x = 10;
       y = 40 + ((i + 1) * ROW_HEIGHT) + ROW_MARGIN_T;
 
@@ -152,7 +154,7 @@ ProteinSequences = function(container_id, data) {
       var method_name = new Kinetic.Text({
         x: x,
         y: y,
-        text: this.disorder[i][0],       //method name
+        text: this.methods[i],       //method name
         fontSize: FONT_SIZE,
         fontStyle: 'bold',
         fontFamily: FONT_FAMILY,
@@ -165,15 +167,15 @@ ProteinSequences = function(container_id, data) {
 
       // iterate over all residues, use the colour according to the disorder
       // prediction
-      for (var j = 0; j < this.disorder[i][1].length; j++)
+      for (var j = 0; j < this.seq.length; j++)
       {
-        var res_text_width = this.draw_residue(j, i, x, y);
+        var res_text_width = this.draw_residue(j, this.methods[i], x, y);
         x = x + res_text_width;
       }
     }
     x = 50;
     y = 55;
-    for (var i = 1; i < this.disorder[0][1].length + 1; i++) {
+    for (var i = 0; i < MAX_RES_PER_ROW; i++) {
       if (i % 5 == 0) {
         var ruler_text = new Kinetic.Text({
           x: x,
@@ -481,130 +483,3 @@ register_link = function(src, name, feature_type, canvas_id) {
   });
 }
 
-MotifsLegend = function(container_id, motifs) {
-  const SEQ_LAYER_OFFSET_X = 50;
-  const FONT_FAMILY = "Monospace";
-  const FONT_SIZE = 15;
-  const ROW_HEIGHT = 15;
-  const ROW_MARGIN_T = 0;
-  
-  //var container_height = 40*this.data.length;
-  var container_height = 210;
-  document.getElementById(container_id).style.height = container_height.toString() + 'px';
-  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
-  var stage = new Kinetic.Stage({
-    container: container_id,
-    height: container_height - 15,
-    width: 260 * (1 + Math.floor(motifs.length / 6))
-  });
-  this.v_header_layer = new Kinetic.Layer();
-  this.seq_layer = new Kinetic.Layer();
-  var motif_colors = ColorRange(motifs.length);
-  this.draw_residue = function(res_string, motif_index, x, y) {
-    var letter_col = motif_colors[motif_index];
-    var rect_w = 30;
-    var rect_h = 15;
-    
-    var text_rect = new Kinetic.Rect({
-        x: x-0.25,
-        y: y,
-        width: rect_w,
-        height: rect_h,
-        fill: letter_col,
-    });
-    
-    this.seq_layer.add(text_rect);
-  }
-  this.draw = function() {
-    var x = 10;
-    var y = 20;
-    for (var i = 0; i < motifs.length; i++) {
-      if (i % 6 == 0 && i != 0) {
-        x = x + 260;
-        y = 20;
-      }
-      this.draw_residue('   ', i, x, y);
-      var res_text = new Kinetic.Text({
-        x: x + 80,
-        y: y,
-        text: motifs[i][1],
-        fontSize: FONT_SIZE,
-        fontStyle: 'bold',
-        fontFamily: FONT_FAMILY,
-        fill: 'black'
-      });
-      register_link(res_text, motifs[i][1], 'motif', container_id);
-      this.seq_layer.add(res_text);
-      y = y + 30;
-    }
-    stage.add(this.v_header_layer);
-    stage.add(this.seq_layer);
-  }
-  this.update = function() {
-    this.draw();
-  }
-}
-DomainsLegend = function(container_id, domains) {
-  const SEQ_LAYER_OFFSET_X = 50;
-  const FONT_FAMILY = "Monospace";
-  const FONT_SIZE = 15;
-  const ROW_HEIGHT = 15;
-  const ROW_MARGIN_T = 0;
-  
-  //var container_height = 40*this.data.length;
-  var container_height = 210;
-  this.domains = domains;
-  document.getElementById(container_id).style.height = container_height.toString() + 'px';
-  document.getElementById("legend_canvases").style.height = container_height.toString() + 'px';
-  var stage = new Kinetic.Stage({
-    container: container_id,
-    height: container_height - 15,
-    width: 260 * (1 + Math.floor(domains.length / 6))
-  });
-  this.v_header_layer = new Kinetic.Layer();
-  this.seq_layer = new Kinetic.Layer();
-  var domain_colors = ColorRange(domains.length);
-  this.draw_residue = function(res_string, domain_index, x, y) {
-    var letter_col = domain_colors[domain_index];
-    var rect_w = 30;
-    var rect_h = 15;
-    
-    var text_rect = new Kinetic.Rect({
-        x: x-0.25,
-        y: y,
-        width: rect_w,
-        height: rect_h,
-        fill: letter_col,
-    });
-    
-    this.seq_layer.add(text_rect);
-  }
-  this.draw = function() {
-    var x = 10;
-    var y = 20;
-    for (var i = 0; i < domains.length; i++) {
-      if (i % 6 == 0 && i != 0) {
-        x = x + 260;
-        y = 20;
-      }
-      this.draw_residue('   ', i, x, y);
-      var res_text = new Kinetic.Text({
-        x: x + 80,
-        y: y,
-        text: domains[i][1],
-        fontSize: FONT_SIZE,
-        fontStyle: 'bold',
-        fontFamily: FONT_FAMILY,
-        fill: 'black'
-      });
-      register_link(res_text, domains[i][1], 'domain', container_id);
-      this.seq_layer.add(res_text);
-      y = y + 30;
-    }
-    stage.add(this.v_header_layer);
-    stage.add(this.seq_layer);
-  }
-  this.update = function() {
-    this.draw();
-  }
-}

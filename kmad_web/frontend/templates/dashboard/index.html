@@ -58,7 +58,10 @@ KMAD
           <div id="sequence_div" class="form-group">
             <div style="margin:10px;">
               {{ form.sequence(class="form-control",
-              placeholder='Enter a protein sequence',
+              placeholder='Enter protein sequence(s)' 
+              + ' - if you submit a single'
+              + ' sequence a BLAST search against SwissProt will be'
+              + ' performed first to obtain sequences for alignment',
               style="height:180px;resize:none;") }}
             </div>
             <div class="help-block with-errors"></div>
@@ -73,9 +76,9 @@ KMAD
                 <div id = "gap_open_div" class="form-group"
                   style="margin:20px;">
                   <div class="row">
-                    <div class="col-md-8">{{ form.gap_open_p.label }}</div>
+                    <div class="col-md-8">{{ form.gop.label }}</div>
                     <div class="col-md-4">{{
-                      form.gap_open_p(class_='form-control gap-form',
+                      form.gop(class_='form-control gap-form',
                       pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
                       negative")}}
                     </div>
@@ -86,9 +89,9 @@ KMAD
               <div class="col-md-6">
                 <div id = "gap_ext_div" class="form-group" style="margin:20px;">
                   <div class="row">
-                    <div class="col-md-8">{{ form.gap_ext_p.label }}</div>
+                    <div class="col-md-8">{{ form.gep.label }}</div>
                     <div class="col-md-4">{{
-                      form.gap_ext_p(class_='form-control gap-form',
+                      form.gep(class_='form-control gap-form',
                       pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
                       negative")}}
                     </div>
@@ -101,9 +104,9 @@ KMAD
               <div class="col-md-6">
                 <div id = "end_gap_div" class="form-group" style="margin:20px;">
                   <div class="row">
-                    <div class="col-md-8">{{ form.end_gap_p.label }}</div>
+                    <div class="col-md-8">{{ form.egp.label }}</div>
                     <div class="col-md-4">{{
-                      form.end_gap_p(class_='form-control gap-form',
+                      form.egp(class_='form-control gap-form',
                       pattern="^-[0-9]*\.?[0-9]+", title="Gap penalties have to be
                       negative")}}
                     </div>
@@ -172,10 +175,10 @@ KMAD
           <div class="col-md-6">
             <div id = "gapped_div" class="form-group"
               style="margin:20px;">
-              {{ form.first_seq_gapped.label }}
+              {{ form.gapped.label }}
               <table>
                 <tr>
-                  {% for subfield in form.first_seq_gapped %}
+                  {% for subfield in form.gapped %}
                   <th>
                     {{ subfield }}
                     {{ subfield.label }}
@@ -185,14 +188,6 @@ KMAD
                 </tr>
               </table>
             </div>
-          </div>
-          <div class="col-md-3">
-                <div id="filterMotifs" class="form-group" style="margin:20px;">
-                  <div id="filter_motifs_inner_div">
-                    {{ form.filter_motifs.label(class="control-label")}}
-                    {{ form.filter_motifs(class_='form-control') }}
-                  </div>
-                </div>
           </div>
         </div>
         <div class="row">
@@ -286,10 +281,6 @@ KMAD
             height:100%;margin:20px;padding-top:10px;">
             <div id="prediction_method_inner_div">
               {{ form.prediction_method.label(class="control-label")}}
-              <br>
-              <span style="font-size:7;color:grey;">Disorder
-                predictors will only be ran if the sequence is not in
-                the D<sup>2</sup>P<sup>2</sup> database</span>
               <br>
               <br>
               {{ form.prediction_method }}

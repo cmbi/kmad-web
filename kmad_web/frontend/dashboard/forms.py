@@ -8,7 +8,7 @@ from wtforms.fields import (FloatField, IntegerField, SelectField,
                             SubmitField, RadioField)
 from wtforms.widgets import html_params, HTMLString
 
-logging.basicConfig()
+logging.basicConfig(propagate=False)
 _log = logging.getLogger(__name__)
 
 
@@ -50,7 +50,6 @@ class UsrFeatureEntryForm(Form):
                 i_list = i.split('-')
                 non_int = not all(e.isdigit() and int(e) > 0 for e in i_list)
                 if non_int or len(i_list) not in [1, 2]:
-                    _log.debug("item: {}".format(i_list))
                     raise validators.ValidationError('Feature positions need \
                                                       to be listed in a comma \
                                                       separated format, e.g. \
@@ -110,7 +109,7 @@ def check_if_fasta(sequences):
                                           acid codes')
 
 
-class KmanForm(Form):
+class KmadForm(Form):
     def validate_sequence(form, field):
         i = 0
         seq_list = field.data.splitlines()
@@ -129,9 +128,10 @@ class KmanForm(Form):
         # and if seq lengths are equal
         if (form.output_type.data == 'annotate'
                 or (form.output_type.data == 'refine'
-                    and form.alignment_method.data == 'none')):
+                    and form.alignment_method.data == 'None')):
             if field.data.count('>') < 2:
-                raise validators.ValidationError('In the refinement (if no \
+                raise validators.ValidationError('In the annotation and \
+                                                 refinement modes (if no \
                                                  method for initial alignment \
                                                  is specified) and \
                                                  annotation modes \
@@ -163,17 +163,17 @@ class KmanForm(Form):
                                                      should be just plain \
                                                      sequences in FASTA format)')
 
-    def validate_gap_open_p(form, field):
+    def validate_gop(form, field):
         if field.data >= 0:
             raise validators.ValidationError("gap penalty values \
                                              have to be negative")
 
-    def validate_gap_ext_p(form, field):
+    def validate_gep(form, field):
         if field.data >= 0:
             raise validators.ValidationError("gap penalty values \
                                              have to be negative")
 
-    def validate_end_gap_p(form, field):
+    def validate_egp(form, field):
         if field.data >= 0:
             raise validators.ValidationError("gap penalty values \
                                              have to be negative")
@@ -204,17 +204,17 @@ class KmanForm(Form):
                                                    'predict disorder'),
                                                   ('annotate',
                                                    'annotate alignment')])
-    gap_open_p = FloatField(u'gap opening penalty', default=-12)
-    gap_ext_p = FloatField(u'gap extension penalty', default=-1.2)
-    end_gap_p = FloatField(u'end gap penalty', default=-1.2)
+    gop = FloatField(u'gap opening penalty', default=-12)
+    gep = FloatField(u'gap extension penalty', default=-1.2)
+    egp = FloatField(u'end gap penalty', default=-1.2)
     ptm_score = FloatField(u'PTM score', default=10)
     domain_score = FloatField(u'domain score', default=4)
     motif_score = FloatField(u'motif score', default=4)
 
-    first_seq_gapped = RadioField(u'First sequence:',
-                                  choices=[('ungapped', 'without gaps'),
-                                           ('gapped', 'with gaps')],
-                                  default='ungapped')
+    gapped = RadioField(u'First sequence:',
+                        choices=[('True', 'without gaps'),
+                                 ('False', 'with gaps')],
+                        default='False')
 
     alignment_method = RadioField(
         u'Alignment method:',
@@ -223,13 +223,14 @@ class KmanForm(Form):
                  ('t_coffee', 'T-Coffee'),
                  ('muscle', 'MUSCLE'),
                  ('mafft', 'MAFFT'),
-                 ('none', 'Provide your own alignment for refinement')],
+                 ('None', 'Provide your own alignment for refinement')],
         default='clustalo')
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
-        choices=[('globplot', 'GlobPlot'),
+        choices=[('d2p2', 'D2P2'),
+                 ('globplot', 'GlobPlot'),
                  ('disopred', 'DISOPRED'),
-                 ('spine', 'SPINE-D'),
+                 ('spined', 'SPINE-D'),
                  ('iupred', 'IUPred'),
                  ('psipred', 'PSIPRED'),
                  ('predisorder', 'PreDisorder')],
@@ -242,11 +243,6 @@ class KmanForm(Form):
     # remove_feature = SubmitField()
     remove_feature = SubmitField()
     seq_limit = IntegerField(u'max. sequence number', default=35)
-    filter_motifs = SelectField(u'motif filtering',
-                                choices=[('True',
-                                          'filter out motifs in structured regions'),
-                                         ('False', 'use all motifs')],
-                                default='False')
 
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")

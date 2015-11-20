@@ -35,6 +35,9 @@ def create_app(settings=None):
     # a better way. Having the email handler configured at the root means all
     # child loggers inherit it.
     from kmad_web import _log as root_logger
+    from kmad_web.services.helpers.cache import cache_manager as cm
+
+    cm.load_config(app.config['CACHE_CONFIG'])
 
     # Only log to email during production.
     if not app.debug and not app.testing:  # pragma: no cover
@@ -53,15 +56,6 @@ def create_app(settings=None):
                               "Time: %(asctime)s\n" +
                               "Message:\n" +
                               "%(message)s"))
-
-    # Only log to the console during development and production, but not
-    # during testing.
-    if not app.testing:  # pragma: no cover
-        ch = logging.StreamHandler()
-        formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s')
-        ch.setFormatter(formatter)
-        root_logger.addHandler(ch)
 
     # Only log debug messages during development
     if app.debug:   # pragma: no cover

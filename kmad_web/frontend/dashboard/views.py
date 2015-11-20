@@ -2,15 +2,16 @@ import ast
 import logging
 import StringIO
 
-from celery import chain
 from flask import abort
 from flask import (Blueprint, render_template, request, redirect, url_for,
                    send_file, Response)
 from functools import wraps
 
-from kmad_web.services import files, fieldlist_helper
-from kmad_web.frontend.dashboard.forms import KmanForm
-from kmad_web.services.kmad import KmanStrategyFactory
+from kmad_web.services.helpers import fieldlist
+from kmad_web.frontend.dashboard.forms import KmadForm
+from kmad_web.services.kmad import (AlignStrategy, AnnotateStrategy,
+                                    RefineStrategy, PredictStrategy,
+                                    PredictAndAlignStrategy)
 
 
 _log = logging.getLogger(__name__)
@@ -20,94 +21,45 @@ bp = Blueprint('dashboard', __name__)
 
 @bp.route("/", methods=['POST', 'GET'])
 def index():
-    form = KmanForm()
+    form = KmadForm()
     if (form.submit_job.data and form.validate_on_submit()
             and form.sequence.data and form.output_type.data
-            and form.gap_open_p.data and form.gap_ext_p.data
-            and form.end_gap_p.data and form.ptm_score.data
-            and form.domain_score.data and form.motif_score.data
-            and form.first_seq_gapped and form.seq_limit.data):
-        _log.debug("validation")
+            and form.gop.data and form.gep.data and form.egp.data
+            and form.ptm_score.data and form.domain_score.data
+            and form.motif_score.data and form.gapped.data
+            and form.seq_limit.data):
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
-        strategy = KmanStrategyFactory.create(form.output_type.data)
-
-        _log.debug("Using '{}'".format(strategy.__class__.__name__))
-
-        single_fasta_filename, multi_fasta_filename, multi_seq_input = (
-            files.write_fasta(seq_data))
-        from kmad_web.tasks import run_blast, filter_blast, analyze_mutation
-
         if form.output_type.data == "predict":
-            workflow = strategy(seq_data, single_fasta_filename,
-                                multi_fasta_filename,
-                                form.prediction_method.data,
-                                multi_seq_input)
-            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
-                        workflow)()
-            celery_id = job.id
-            _log.debug(form.prediction_method.data)
-        elif form.output_type.data in ['align', 'refine']:
-            workflow = strategy(seq_data, single_fasta_filename,
-                                multi_fasta_filename, form.gap_open_p.data,
-                                form.gap_ext_p.data, form.end_gap_p.data,
-                                form.ptm_score.data, form.domain_score.data,
-                                form.motif_score.data, multi_seq_input,
-                                form.usr_features.data, form.output_type.data,
-                                form.first_seq_gapped.data,
-                                form.alignment_method.data,
-                                ast.literal_eval(form.filter_motifs.data))
-            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
-                        workflow)()
-            celery_id = job.id
-            _log.debug("UsrFeatures: {}".format(form.usr_features.data))
+            strategy = PredictStrategy(seq_data, form.prediction_method.data)
+            celery_id = strategy()
+        elif form.output_type.data == "align":
+            strategy = AlignStrategy(
+                seq_data, str(form.gop.data), str(form.gep.data),
+                str(form.egp.data), str(form.ptm_score.data),
+                str(form.domain_score.data), str(form.motif_score.data),
+                ast.literal_eval(form.gapped.data), form.usr_features.data
+            )
+            celery_id = strategy()
         elif form.output_type.data == 'annotate':
-            workflow = strategy(seq_data, single_fasta_filename,
-                                multi_fasta_filename)
-            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
-                        workflow)()
-            celery_id = job.id
+            strategy = AnnotateStrategy(seq_data)
+            celery_id = strategy()
+        elif form.output_type.data == 'refine':
+            strategy = RefineStrategy(
+                seq_data, str(form.gop.data), str(form.gep.data),
+                str(form.egp.data), str(form.ptm_score.data),
+                str(form.domain_score.data), str(form.motif_score.data),
+                ast.literal_eval(form.gapped.data), form.usr_features.data,
+                form.alignment_method.data)
+            celery_id = strategy()
         elif form.output_type.data == 'predict_and_align':
-            workflow = strategy(seq_data, single_fasta_filename,
-                                multi_fasta_filename, form.gap_open_p.data,
-                                form.gap_ext_p.data, form.end_gap_p.data,
-                                form.ptm_score.data, form.domain_score.data,
-                                form.motif_score.data,
-                                form.prediction_method.data, multi_seq_input,
-                                form.usr_features.data,
-                                form.first_seq_gapped.data,
-                                form.alignment_method.data,
-                                ast.literal_eval(form.filter_motifs.data))
-
-            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
-                        workflow)()
-
-            celery_id = job.id
-            # IDEA: Could have the strategies (AlignStrategy and
-            # PredictStrategy) return the celery workflow (without running it).
-            # The workflow would be run here. For this specific elif block,
-            # you'd first chain the workflows together.
-        elif form.output_type.data == 'hope':
-            workflow = strategy(seq_data, single_fasta_filename,
-                                multi_fasta_filename, form.gap_open_p.data,
-                                form.gap_ext_p.data, form.end_gap_p.data,
-                                form.ptm_score.data, form.domain_score.data,
-                                form.motif_score.data,
-                                form.prediction_method.data, multi_seq_input,
-                                form.usr_features.data,
-                                form.first_seq_gapped.data)
-
-            job = chain(run_blast.s(single_fasta_filename, form.seq_limit.data),
-                        filter_blast.s(),
-                        workflow, analyze_mutation.s(form.mutation_site,
-                                                     form.new_aa,
-                                                     single_fasta_filename))()
-
-            celery_id = job.id
-            # 0. Blast
-            # 0.1 Filter Blast result
-            # 2. Call PredictAndAlign
-            # 4. Run workflows in a chain
-            pass
+            strategy = PredictAndAlignStrategy(
+                seq_data, form.prediction_method.data, str(form.gop.data),
+                str(form.gep.data), str(form.egp.data),
+                str(form.ptm_score.data), str(form.domain_score.data),
+                str(form.motif_score.data), ast.literal_eval(form.gapped.data),
+                form.usr_features.data
+            )
+            celery_id = strategy()
         else:
             abort(500, description='Unknown output type')
         _log.info("Job has id '{}'".format(celery_id))
@@ -115,12 +67,14 @@ def index():
         return redirect(url_for('dashboard.output',
                                 output_type=form.output_type.data,
                                 celery_id=celery_id))
+    # usr_features form handling
     elif form.add_feature.data:
         form.usr_features.append_entry()
     trash_it_data = [i['trash_it'] for i in form.usr_features.data]
     if any(trash_it_data):
         del_index = trash_it_data.index(True)
-        fieldlist_helper.delete(form.usr_features, del_index)
+        fieldlist.delete(form.usr_features, del_index)
+
     _log.info("Rendering index page")
     return render_template('dashboard/index.html', form=form)
 
@@ -207,16 +161,6 @@ def yasara_example():
     return render_template('dashboard/yasara_example.html')
 
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
-
-
 @bp.route('/download', methods=['POST'])
 def download():
     prediction = str(request.form['prediction'])
@@ -237,18 +181,3 @@ def download_alignment():
     return send_file(strIO,
                      attachment_filename="kmad_alignment.txt",
                      as_attachment=True)
-
-
-def check_auth(username, password):
-    """This function is called to check if a username /
-    password combination is valid.
-    """
-    return username == 'human' and password == 'Platypu5'
-
-
-def authenticate():
-    """Sends a 401 response that enables basic auth"""
-    return Response(
-        'Could not verify your access level for that URL.\n'
-        'You have to login with proper credentials', 401,
-        {'WWW-Authenticate': 'Basic realm="Login Required"'})
