@@ -31,14 +31,15 @@ class SequencesAnnotator(object):
                  'ptms': ptm_list,
                 }]
     """
-    def annotate(self, sequences):
+    def annotate(self, sequences, use_pfam):
         self.sequences = sequences
         _log.info("Annotating sequences")
         self._add_missing_uniprot_ids()
         go_terms = self._get_go_terms()
         self._annotate_ptms()
         self._annotate_motifs(go_terms)
-        self._annotate_domains()
+        if use_pfam:
+            self._annotate_domains()
         self._annotate_secondary_structure()
 
     def _get_go_terms(self):

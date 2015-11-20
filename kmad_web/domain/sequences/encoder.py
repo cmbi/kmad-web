@@ -20,14 +20,18 @@ class SequencesEncoder(object):
         self._strct_pos = 1
         self._create_code_alphabet()
 
-    def encode(self, sequences, aligned_mode=False):
+    def encode(self, sequences, aligned_mode=False, use_pfam=True):
         _log.info("Encoding sequences")
         self._sequences = sequences
         self._create_codon_sequences()
         # make code dicts for motifs and domains
         # (code dict for PTMs is constant)
         self.motif_code_dict = self._create_motif_code_dict()
-        self.domain_code_dict = self._create_domain_code_dict()
+        if use_pfam:
+            self.domain_code_dict = self._create_domain_code_dict()
+            self._encode_domains()
+        else:
+            self.domain_code_dict = {}
         self._ptm_code_dict = OrderedDict([
             ('phosphorylation', ["N", "O", "P", "Q", "d"]),
             ('acetylation',     ["B", "C", "D", "E"]),
@@ -40,7 +44,6 @@ class SequencesEncoder(object):
         # all feature positions are 1-based!
         self._encode_ptms()
         self._encode_motifs()
-        self._encode_domains()
         self._encode_structure()
         self._create_encoded_sequences()
         if aligned_mode:

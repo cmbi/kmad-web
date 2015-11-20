@@ -9,8 +9,9 @@ def group_features_positionwise(sequences):
             new_pos['ptms'] = _get_ptms_from_position(r, s['ptms'])
             new_pos['motifs'] = _get_motifs_from_position(
                 r, s['motifs'])
-            new_pos['domains'] = _get_domains_from_position(
-                r, s['domains'])
+            if 'domains' in s.keys():
+                new_pos['domains'] = _get_domains_from_position(
+                    r, s['domains'])
             s['feat_pos'].append(new_pos)
 
 

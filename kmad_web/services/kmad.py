@@ -39,7 +39,7 @@ class MotifsStrategy(object):
         workflow = chain(
             run_blast.s(self._fasta_sequence),
             get_sequences_from_blast.s(),
-            create_fles.s(),
+            create_fles.s(use_pfam=False),
             run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
                        self._domain_score, self._motif_score,
                        full_ungapped=self._full_ungapped),
@@ -75,7 +75,7 @@ class PtmsStrategy(object):
         workflow = chain(
             run_blast.s(self._fasta_sequence),
             get_sequences_from_blast.s(),
-            create_fles.s(),
+            create_fles.s(use_pfam=False),
             run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
                        self._domain_score, self._motif_score,
                        full_ungapped=self._full_ungapped),
