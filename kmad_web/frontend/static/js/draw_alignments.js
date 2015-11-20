@@ -232,10 +232,6 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-<<<<<<< HEAD
-  var container_width = sequences[0]['aligned'].length * 20 + 130;
-  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
-=======
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
     if (sequences[i]['header'].length > longest_header) {
@@ -244,7 +240,6 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
->>>>>>> feature-annotate-secondary-structure
 
   var stage = new Kinetic.Stage({
     container: container_id,
