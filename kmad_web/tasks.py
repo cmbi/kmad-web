@@ -94,6 +94,7 @@ def prealign(sequences, alignment_method):
 @celery_app.task
 def run_blast(fasta_sequence):
     _log.info("Running blast[task]")
+    _log.debug("Runing blast with sequence {}".format(fasta_sequence))
 
     blast_result = blast.get_result(fasta_sequence)
     exact_hit = blast.get_exact_hit(blast_result)
@@ -109,6 +110,8 @@ def run_blast(fasta_sequence):
 
 @celery_app.task
 def get_sequences_from_blast(blast_result):
+    _log.info("Getting sequences from {} BLAST results".format(
+        len(blast_result['blast_result'])))
     sequences = []
     uniprot = UniprotSequenceProvider()
 
@@ -154,7 +157,8 @@ def create_fles(sequences, aligned_mode=False):
     :param sequences: list sequence dictionaries ({'header': '', 'seq': ''})
     :return: filename
     """
-    _log.info("Creating a FLES file")
+    _log.info("Creating FLES file from {} sequences with aligned_mode {}".format(
+        len(sequences), aligned_mode))
     annotator = SequencesAnnotator()
     annotator.annotate(sequences)
     encoder = SequencesEncoder()
@@ -170,6 +174,7 @@ def create_fles(sequences, aligned_mode=False):
 
 @celery_app.task
 def annotate(sequences):
+    _log.info("Annotating {} sequences".format(len(sequences)))
     annotator = SequencesAnnotator()
     annotator.annotate(sequences)
     encoder = SequencesEncoder()
@@ -188,7 +193,7 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     """
     Run KMAD on the given fles_filename and return aligned sequences (dict)
 
-    :param fles_path: path to the FLES file (with encoded sequences)
+    :param create_fles_result: result of the create_fles task
     :param gop: gap opening penalty
     :param gep: gap extension penalty
     :param egp: end gap penalty

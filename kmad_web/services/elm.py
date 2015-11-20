@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import requests
@@ -6,6 +7,8 @@ from BeautifulSoup import BeautifulSoup
 
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class ElmService(object):
@@ -22,6 +25,9 @@ class ElmService(object):
 
     @cm.cache('redis')
     def get_instances(self, uniprot_id):
+        _log.info("Getting motif instances from ELM for uniprot id: {}".format(
+            uniprot_id
+        ))
         try:
             url = os.path.join(self._url,
                                "instances.gff?q={}".format(uniprot_id))
@@ -35,6 +41,7 @@ class ElmService(object):
         return result
 
     def get_all_classes(self):
+        _log.info("Getting all motif classes from ELM")
         try:
             url = os.path.join(self._url, "elms", "elms_index.tsv")
             request = requests.get(url)
@@ -48,6 +55,9 @@ class ElmService(object):
 
     @cm.cache('redis')
     def get_motif_go_terms(self, motif_id):
+        _log.info("Getting GO terms for motif {}".format(
+            motif_id
+        ))
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
         page = requests.get(url).text
         soup = BeautifulSoup(page)

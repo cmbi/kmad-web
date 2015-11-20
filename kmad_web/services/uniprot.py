@@ -1,8 +1,11 @@
+import logging
 import os
 import requests
 
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class UniprotService(object):
@@ -19,6 +22,8 @@ class UniprotService(object):
 
     @cm.cache('redis')
     def get_txt(self, uniprot_id):
+        _log.info("Getting txt data from Uniprot for uniprot id {}".format(
+            uniprot_id))
         try:
             url = os.path.join(self._url, uniprot_id + ".txt")
             request = requests.get(url)
@@ -32,6 +37,8 @@ class UniprotService(object):
 
     @cm.cache('redis')
     def get_fasta(self, uniprot_id):
+        _log.info("Getting fasta from Uniprot for uniprot id {}".format(
+            uniprot_id))
         try:
             url = os.path.join(self._url, uniprot_id + ".fasta")
             request = requests.get(url)
