@@ -40,11 +40,16 @@ class UniprotParser(object):
                 else:
                     feature1 = {}
                     feature1['name'] = i.split()[1]
-                    feature1['position'] = int(i.split()[2])
+                    position = i.split()[2]
+                    if position.isdigit():
+                        feature1['position'] = int(position)
+                        self.structure.append(feature1)
                     feature2 = {}
                     feature2['name'] = i.split()[1]
-                    feature2['position'] = int(i.split()[3])
-                    self.structure.extend([feature1, feature2])
+                    position = i.split()[3]
+                    if position.isdigit():
+                        feature2['position'] = int(position)
+                        self.structure.append(feature2)
 
     def parse_go_terms(self, txtfile):
         for line in txtfile.splitlines():

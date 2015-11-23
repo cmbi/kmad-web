@@ -81,6 +81,7 @@ class SequencesAnnotator(object):
             time.sleep(self._poll)
 
     def _annotate_secondary_structure(self):
+        _log.info("Annotating sequences with secondary structure")
         for s in self.sequences:
             uniprot = UniprotFeatureProvider()
             s['secondary_structure'] = uniprot.get_secondary_structure(s)
