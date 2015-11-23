@@ -52,9 +52,6 @@ class UniprotFeatureProvider(object):
             return []
 
     def _get_annotation_level(self, eco):
-        # the first eco code is always the 'best' one ( = highest annotation
-        # level), therefore taking only the first one
-        eco_code = eco[0]
         levels_dict = {'0000269': 0, '0000314': 0, '0000353': 0, '0000315': 0,
                        '0000316': 0, '0000270': 0, '0000250': 1, '0000266': 1,
                        '0000244': 1, '0000213': 2, '0000312': 1, '0000313': 2,
@@ -62,8 +59,10 @@ class UniprotFeatureProvider(object):
                        '0000319': 1, '0000320': 1, '0000321': 1, '0000245': 1,
                        '0000304': 2, '0000303': 2, '0000305': 2, '0000307': 2,
                        '0000501': 3}
-        if eco_code in levels_dict.keys():
-            return levels_dict[eco_code]
+        # the first eco code is always the 'best' one ( = highest annotation
+        # level), therefore taking only the first one
+        if len(eco) > 0 and eco[0] in levels_dict.keys():
+            return levels_dict[eco[0]]
         else:
             # if the eco_code is not known return the lowest annotation level
             return 3
