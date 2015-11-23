@@ -21,8 +21,8 @@ class BlastResultProvider(object):
         blast_result = blast_service.run_blast(fasta_sequence, seq_limit)
         blast_parser = BlastParser()
         blast_parser.parse(blast_result)
-        result = blast_parser.blast_hits
-        return result
+        filtered = self._filter_out_duplicates(blast_parser.blast_hits)
+        return filtered
 
     def get_exact_hit(self, blast_hits):
         if (blast_hits and blast_hits[0]['slen'] == blast_hits[0]['qlen']
@@ -37,5 +37,15 @@ class BlastResultProvider(object):
             return blast_hits[0]
         else:
             return ''
+
+    def _filter_out_duplicates(self, blast_hits):
+        filtered_hits = []
+        ids_set = set()
+        for h in blast_hits:
+            if h['id'] not in ids_set:
+                filtered_hits.append(h)
+                ids_set.add(h['id'])
+        return filtered_hits
+
 
 blast = BlastResultProvider(BLAST_DB)
