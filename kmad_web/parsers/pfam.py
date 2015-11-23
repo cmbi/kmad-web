@@ -50,6 +50,8 @@ class PfamParser(object):
 
     def parse_id_result(self, pfam_result):
         pfam_dict = xmltodict.parse(pfam_result)
+        if 'matches' not in pfam_dict['pfam']['entry'].keys():
+            return
         matches = pfam_dict['pfam']['entry']['matches']['match']
         if not isinstance(matches, list):
             # if there are multiple domains found matches is a list, otherwise
