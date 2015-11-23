@@ -23,6 +23,8 @@ class PfamParser(object):
     """
     def parse(self, pfam_result):
         pfam_dict = xmltodict.parse(pfam_result)
+        if 'pfam' not in pfam_dict.keys():
+            return
         matches = pfam_dict['pfam']['results']['matches']['protein']\
                            ['database']['match']
         if not isinstance(matches, list):
