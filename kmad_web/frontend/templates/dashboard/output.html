@@ -218,16 +218,16 @@ $(document).ready(function() {
                             var sequences = data['result']['sequences'];
                             var motif_code_dict = data['result']['motif_code_dict'];
                             var domain_code_dict = data['result']['domain_code_dict'];
-                            // draw_alignment('canvas_regular', sequences);
+                            draw_alignment('canvas_regular', sequences);
                             var codon_length = 7;
-                            // draw_alignment_ptms('canvas_ptm', sequences, 
-                            //         codon_length);
-                            // draw_alignment_with_features('canvas_motif', 
-                            //         sequences, codon_length, motif_code_dict, 'motif');
-                            // draw_alignment_with_structure('canvas_structure', sequences);
-                            // draw_alignment_with_features('canvas_domain', 
-                            //         sequences, codon_length,
-                            //         domain_code_dict, 'domain');
+                            draw_alignment_ptms('canvas_ptm', sequences, 
+                                    codon_length);
+                            draw_alignment_with_features('canvas_motif', 
+                                    sequences, codon_length, motif_code_dict, 'motif');
+                            draw_alignment_with_structure('canvas_structure', sequences);
+                            draw_alignment_with_features('canvas_domain', 
+                                    sequences, codon_length,
+                                    domain_code_dict, 'domain');
                             var ptm_legend = new PTMsLegend('legend_canvas_ptm');
                             ptm_legend.update();
                             var motif_legend = new MotifsLegend(
