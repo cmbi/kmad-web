@@ -1,3 +1,5 @@
+import logging
+
 from collections import OrderedDict
 
 from kmad_web.default_settings import UNIPROT_URL
@@ -7,6 +9,8 @@ from kmad_web.services.types import ServiceError
 from kmad_web.domain.blast.provider import blast
 from kmad_web.domain.features.helpers.homology import transfer_data_from_homologue
 from kmad_web.parsers.uniprot import UniprotParser
+
+_log = logging.getLogger(__name__)
 
 
 class UniprotFeatureProvider(object):
@@ -42,6 +46,7 @@ class UniprotFeatureProvider(object):
         return strct_elements
 
     def _get_secondary_structure(self, seq_id):
+        _log.info("Getting secondary structure for id {}".format(seq_id))
         uniprot_service = UniprotService(UNIPROT_URL)
         try:
             uniprot_txt = uniprot_service.get_txt(seq_id)
