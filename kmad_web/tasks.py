@@ -39,12 +39,14 @@ _log = logging.getLogger(__name__)
 
 
 @celery_app.task
-def run_single_predictor(fasta_sequence, pred_name):
-    _log.info("Run single predictor: {}[task]".format(pred_name))
-    data = globals()[pred_name](fasta_sequence)
+def run_single_predictor(previous={}, fasta="", predictor=""):
+    _log.info("Run single predictor: {}[task]".format(predictor))
+    data = globals()[predictor](fasta)
     processor = PredictionProcessor()
-    prediction = processor.process_prediction(data, pred_name)
-    return {pred_name: prediction}
+    prediction = processor.process_prediction(data, predictor)
+    # return {predictor: prediction}
+    previous[predictor] = prediction
+    return previous
 
 
 @celery_app.task
@@ -64,6 +66,8 @@ def process_prediction_results(predictions, fasta_sequence):
         predictions['filtered'] = processor.filter_out_short_stretches(
             consensus)
     prediction_text = processor.make_text(predictions, sequence)
+    _log.debug("Finished processing prediction results: "
+               "{}".format(predictions.keys()))
     return {'prediction': predictions, 'sequence': sequence,
             'prediction_text': prediction_text}
 
@@ -92,11 +96,11 @@ def prealign(sequences, alignment_method):
 
 
 @celery_app.task
-def run_blast(fasta_sequence):
+def run_blast(fasta_sequence, seq_limit):
     _log.info("Running blast[task]")
     _log.debug("Runing blast with sequence {}".format(fasta_sequence))
 
-    blast_result = blast.get_result(fasta_sequence)
+    blast_result = blast.get_result(fasta_sequence, seq_limit)
     exact_hit = blast.get_exact_hit(blast_result)
     return {
         'query_fasta': fasta_sequence,
@@ -234,6 +238,7 @@ def process_kmad_alignment(run_kmad_result):
     for s_index, s in enumerate(alignment):
         sequences[s_index]['encoded_aligned'] = s['encoded_seq']
         sequences[s_index]['aligned'] = s['encoded_seq'][::codon_length]
+    _log.debug("Finished processing KMAD result")
     return {
         'fles_file': fles_file,
         'fasta_file': fasta_file,
@@ -304,6 +309,11 @@ def combine_alignment_and_prediction(results):
     combined = results[1]
     combined.update(results[0])
     return combined
+
+
+@celery_app.task
+def stupid_task(previous_result=None):
+    return previous_result
 
 
 @celery_app.task

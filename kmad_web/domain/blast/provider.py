@@ -16,9 +16,9 @@ class BlastResultProvider(object):
     :param fasta_filename: path to the query fasta file
     :return: blast result
     """
-    def get_result(self, fasta_sequence):
+    def get_result(self, fasta_sequence, seq_limit):
         blast_service = BlastService(self._db_path)
-        blast_result = blast_service.run_blast(fasta_sequence)
+        blast_result = blast_service.run_blast(fasta_sequence, seq_limit)
         blast_parser = BlastParser()
         blast_parser.parse(blast_result)
         result = blast_parser.blast_hits
@@ -31,8 +31,8 @@ class BlastResultProvider(object):
         else:
             return ''
 
-    def find_closest_hit(self, fasta_sequence):
-        blast_hits = self.get_result(fasta_sequence)
+    def find_closest_hit(self, fasta_sequence, seq_limit=1):
+        blast_hits = self.get_result(fasta_sequence, seq_limit)
         if float(blast_hits[0]['pident']) >= 80:
             return blast_hits[0]
         else:

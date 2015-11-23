@@ -37,8 +37,8 @@ def index():
                 seq_data, str(form.gop.data), str(form.gep.data),
                 str(form.egp.data), str(form.ptm_score.data),
                 str(form.domain_score.data), str(form.motif_score.data),
-                ast.literal_eval(form.gapped.data), form.usr_features.data
-            )
+                ast.literal_eval(form.gapped.data), form.usr_features.data,
+                form.seq_limit.data)
             celery_id = strategy()
         elif form.output_type.data == 'annotate':
             strategy = AnnotateStrategy(seq_data)
@@ -57,8 +57,7 @@ def index():
                 str(form.gep.data), str(form.egp.data),
                 str(form.ptm_score.data), str(form.domain_score.data),
                 str(form.motif_score.data), ast.literal_eval(form.gapped.data),
-                form.usr_features.data
-            )
+                form.usr_features.data, form.seq_limit.data)
             celery_id = strategy()
         else:
             abort(500, description='Unknown output type')

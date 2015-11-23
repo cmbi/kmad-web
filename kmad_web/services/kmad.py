@@ -31,13 +31,14 @@ class MotifsStrategy(object):
         self._motif_score = '4'
         self._domain_score = '4'
         self._full_ungapped = 'True'
+        self._seq_limit = 70
 
     def __call__(self):
         from kmad_web.tasks import (run_blast, get_sequences_from_blast,
                                     create_fles, run_kmad, analyze_motifs,
                                     process_kmad_alignment)
         workflow = chain(
-            run_blast.s(self._fasta_sequence),
+            run_blast.s(self._fasta_sequence, self._seq_limit),
             get_sequences_from_blast.s(),
             create_fles.s(use_pfam=False),
             run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
@@ -67,13 +68,14 @@ class PtmsStrategy(object):
         self._motif_score = '4'
         self._domain_score = '4'
         self._full_ungapped = 'True'
+        self._seq_limit = 70
 
     def __call__(self):
         from kmad_web.tasks import (run_blast, get_sequences_from_blast,
                                     create_fles, run_kmad, analyze_ptms,
                                     process_kmad_alignment)
         workflow = chain(
-            run_blast.s(self._fasta_sequence),
+            run_blast.s(self._fasta_sequence, self._seq_limit),
             get_sequences_from_blast.s(),
             create_fles.s(use_pfam=False),
             run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
@@ -99,7 +101,7 @@ class PredictStrategy(object):
         if 'd2p2' in self._prediction_methods:
             prediction_tasks = [
                 chain(
-                    run_blast.s(self._fasta_sequence),
+                    run_blast.s(self._fasta_sequence, seq_limit=1),
                     query_d2p2.s()
                 )
             ]
@@ -107,8 +109,14 @@ class PredictStrategy(object):
             prediction_tasks = []
         for pred_name in self._prediction_methods:
             if pred_name != 'd2p2':
-                prediction_tasks += [run_single_predictor.s(
-                    self._fasta_sequence, pred_name)]
+                if len(prediction_tasks) > 0:
+                    prediction_tasks += [run_single_predictor.s(
+                        fasta=self._fasta_sequence, predictor=pred_name)]
+                else:
+                    prediction_tasks += [run_single_predictor.s(
+                        previous={}, fasta=self._fasta_sequence,
+                        predictor=pred_name)]
+
         workflow = chain(
             group(prediction_tasks),
             process_prediction_results.s(self._fasta_sequence)
@@ -119,7 +127,7 @@ class PredictStrategy(object):
 
 class AlignStrategy(object):
     def __init__(self, sequence_data, gop, gep, egp, ptm_score,
-                 domain_score, motif_score, gapped, usr_features):
+                 domain_score, motif_score, gapped, usr_features, seq_limit):
         self._fasta = make_fasta(sequence_data)
         self._gop = gop
         self._gep = gep
@@ -130,6 +138,7 @@ class AlignStrategy(object):
         self._gapped = gapped
         self._usr_features = usr_features
         self._multi_fasta = sequence_data.count('>') > 1
+        self._seq_limit = seq_limit
 
     def __call__(self):
 
@@ -144,7 +153,7 @@ class AlignStrategy(object):
             sequences = parse_fasta(self._fasta)
             tasks = [create_fles.s(sequences)]
         else:
-            tasks = [run_blast.s(self._fasta),
+            tasks = [run_blast.s(self._fasta, self._seq_limit),
                      get_sequences_from_blast.s(),
                      create_fles.s()]
         tasks.extend([
@@ -161,7 +170,7 @@ class AlignStrategy(object):
 class RefineStrategy(object):
     def __init__(self, sequence_data, gop, gep, egp, ptm_score,
                  domain_score, motif_score, gapped, usr_features,
-                 alignment_method=None):
+                 alignment_method=None, seq_limit=70):
         self._fasta = make_fasta(sequence_data)
         self._gop = gop
         self._gep = gep
@@ -172,6 +181,7 @@ class RefineStrategy(object):
         self._gapped = gapped
         self._usr_features = usr_features
         self._multi_fasta = sequence_data.count('>') > 1
+        self._seq_limit = seq_limit
         if alignment_method != 'None':
             self._alignment_method = alignment_method
         else:
@@ -188,7 +198,7 @@ class RefineStrategy(object):
 
         if not self._multi_fasta and self._alignment_method:
             tasks = [
-                run_blast.s(self._fasta),
+                run_blast.s(self._fasta, self._seq_limit),
                 get_sequences_from_blast.s(),
                 prealign.s(self._alignment_method),
                 create_fles.s(aligned_mode=True)
@@ -230,7 +240,8 @@ class AnnotateStrategy(object):
 
 class PredictAndAlignStrategy(object):
     def __init__(self, sequence_data, prediction_methods, gop, gep, egp,
-                 ptm_score, domain_score, motif_score, gapped, usr_features):
+                 ptm_score, domain_score, motif_score, gapped, usr_features,
+                 seq_limit):
         self._fasta = make_fasta(sequence_data)
         self._gop = gop
         self._gep = gep
@@ -242,6 +253,7 @@ class PredictAndAlignStrategy(object):
         self._usr_features = usr_features
         self._multi_fasta = sequence_data.count('>') > 1
         self._prediction_methods = prediction_methods
+        self._seq_limit = seq_limit
 
     def __call__(self):
         from kmad_web.tasks import (create_fles, run_blast, query_d2p2,
@@ -262,7 +274,7 @@ class PredictAndAlignStrategy(object):
         if 'd2p2' in self._prediction_methods:
             prediction_tasks = [
                 chain(
-                    run_blast.s(single_fasta_seq),
+                    run_blast.s(single_fasta_seq, seq_limit=1),
                     query_d2p2.s()
                 )
             ]
@@ -270,16 +282,21 @@ class PredictAndAlignStrategy(object):
             prediction_tasks = []
         for pred_name in self._prediction_methods:
             if pred_name != 'd2p2':
-                prediction_tasks += [run_single_predictor.s(
-                    single_fasta_seq, pred_name)]
+                if len(prediction_tasks) > 0:
+                    prediction_tasks += [run_single_predictor.s(
+                        fasta=single_fasta_seq, predictor=pred_name)]
+                else:
+                    prediction_tasks += [run_single_predictor.s(
+                        previous={}, fasta=single_fasta_seq,
+                        predictor=pred_name)]
 
-        prediction_tasks += [process_prediction_results.s(single_fasta_seq)]
+        # prediction_tasks += [process_prediction_results.s(single_fasta_seq)]
 
         if self._multi_fasta:
             sequences = parse_fasta(self._fasta)
             alignment_tasks = [create_fles.s(sequences)]
         else:
-            alignment_tasks = [run_blast.s(self._fasta),
+            alignment_tasks = [run_blast.s(self._fasta, self._seq_limit),
                                get_sequences_from_blast.s(),
                                create_fles.s()]
         alignment_tasks.extend([
@@ -288,10 +305,13 @@ class PredictAndAlignStrategy(object):
                        self._gapped),
             process_kmad_alignment.s()
         ])
+        prediction_tasks += [process_prediction_results.s(single_fasta_seq)]
         workflow = chain(
             group(
                 chain(alignment_tasks),
-                chain(prediction_tasks)
+                chain(
+                    prediction_tasks
+                )
             ),
             combine_alignment_and_prediction.s()
         )
