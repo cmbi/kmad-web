@@ -47,7 +47,13 @@ draw_alignment = function(container_id, sequences) {
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  if (container_width > 30000){
+      container_width = 30000;
+  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+  if (container_height > 30000){
+      container_height = 30000;
+  }
   var stage = new Kinetic.Stage({
     container: container_id,
     width: container_width,
@@ -239,7 +245,13 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  if (container_width > 30000){
+      container_width = 30000;
+  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+  if (container_height > 30000){
+      container_height = 30000;
+  }
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -370,7 +382,13 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  if (container_width > 30000){
+      container_width = 30000;
+  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+  if (container_height > 30000){
+      container_height = 30000;
+  }
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -637,7 +655,13 @@ draw_alignment_with_structure = function(container_id, sequences) {
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  if (container_width > 30000){
+      container_width = 30000;
+  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+  if (container_height > 30000){
+      container_height = 30000;
+  }
 
   var stage = new Kinetic.Stage({
     container: container_id,
