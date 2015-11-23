@@ -80,7 +80,7 @@ class TestApi(object):
                     'domain_score': 10, 'motif_score': 3,
                     'usr_features': [],
                     'output_type': output_type,
-                    'gapped': False}
+                    'gapped': False, 'seq_limit': 35}
         elif output_type == 'predict':
             prediction_methods = 'globplot'
             data = {'seq_data': fasta_content,
@@ -92,7 +92,8 @@ class TestApi(object):
                     'domain_score': 10, 'motif_score': 3,
                     'usr_features': [],
                     'output_type': output_type,
-                    'gapped': False, 'alignment_method': 'clustalo'}
+                    'gapped': False, 'alignment_method': 'clustalo',
+                    'seq_limit': 35}
         elif output_type == 'ptms':
             position = self._get_random_position(fasta_content)
             mutant_aa = self._get_random_mutant_aa(position, fasta_content)

@@ -34,16 +34,14 @@ def create_kmad(output_type):
             form['seq_data'], str(form['gop']), str(form['gep']),
             str(form['egp']), str(form['ptm_score']), str(form['domain_score']),
             str(form['motif_score']), ast.literal_eval(form['gapped']),
-            usr_features
-        )
+            usr_features, str(form['seq_limit']))
     elif output_type == 'refine':
         usr_features = []
         strategy = RefineStrategy(
             form['seq_data'], str(form['gop']), str(form['gep']),
             str(form['egp']), str(form['ptm_score']), str(form['domain_score']),
             str(form['motif_score']), ast.literal_eval(form['gapped']),
-            usr_features, form['alignment_method']
-        )
+            usr_features, form['alignment_method'], str(form['seq_limit']))
     elif output_type == 'ptms':
         strategy = PtmsStrategy(form['seq_data'], int(form['position']),
                                 form['mutant_aa'])
