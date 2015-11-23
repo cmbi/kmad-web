@@ -47,8 +47,11 @@ class PfamService(object):
         start_time = time.time()
         while True:
             r = self._status(result_url)
-            if r['status'] == "SUCCESS":
+            if (r['status'] == "SUCCESS"
+                    and not r['result'].startswith('<error>')):
                 return r['result']
+            elif r['result'].startswith('<error>'):
+                raise ServiceError("Pfam service returned an error")
             else:
                 now = time.time()
                 if now - start_time > timeout:
