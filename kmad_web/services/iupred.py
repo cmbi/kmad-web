@@ -31,7 +31,7 @@ class IupredService(object):
                 _log.error("No prediction was returned")
                 raise ServiceError("No prediction was returned")
             return data
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, OSError) as e:
             _log.error(e.message)
             raise ServiceError(e.message)
 
