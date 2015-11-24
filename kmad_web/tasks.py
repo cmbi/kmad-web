@@ -52,6 +52,7 @@ def run_single_predictor(previous={}, fasta="", predictor=""):
 @celery_app.task
 def process_prediction_results(predictions, fasta_sequence):
     _log.info("Processing prediction results")
+    _log.debug("Prediction: {}".format(predictions))
     sequence = ''.join(fasta_sequence.splitlines()[1:])
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
@@ -65,11 +66,11 @@ def process_prediction_results(predictions, fasta_sequence):
         predictions['consensus'] = consensus
         predictions['filtered'] = processor.filter_out_short_stretches(
             consensus)
-    prediction_text = processor.make_text(predictions, sequence)
-    _log.debug("Finished processing prediction results: "
-               "{}".format(predictions.keys()))
-    return {'prediction': predictions, 'sequence': sequence,
-            'prediction_text': prediction_text}
+        prediction_text = processor.make_text(predictions, sequence)
+        _log.debug("Finished processing prediction results: "
+                   "{}".format(predictions.keys()))
+        return {'prediction': predictions, 'sequence': sequence,
+                'prediction_text': prediction_text}
 
 
 @celery_app.task
