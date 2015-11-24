@@ -213,6 +213,8 @@ class RefineStrategy(object):
             sequences = parse_fasta_alignment(self._fasta)
             tasks = [create_fles.s(sequences, aligned_mode=True)]
         else:
+            _log.error("Seuqence data holds one sequence not prealignment"
+                       " method was speciified")
             raise RuntimeError("sequence data holds a single sequence, but no"
                                " prealignment method is specified")
         tasks.extend([

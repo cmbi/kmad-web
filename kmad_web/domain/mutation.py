@@ -1,3 +1,7 @@
+import logging
+
+
+_log = logging.getLogger(__name__)
 
 
 class Mutation(object):
@@ -23,6 +27,9 @@ class Mutation(object):
     def _mutate(self):
         tmp_seq = list(self.wild_sequence)
         if self.position >= len(tmp_seq):
+            _log.error("Mutation position {} is higher"
+                       " than sequence length {}".format(
+                           self.position, len(tmp_seq)))
             raise RuntimeError(
                 "Mutation position {} is higher than sequence length {}".format(
                     self.position, len(tmp_seq)

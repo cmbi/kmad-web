@@ -33,6 +33,9 @@ class ElmUpdater(object):
         # make json serializable
         self._make_json_friendly(full_motif_classes)
         if self._not_ok(full_motif_classes.keys()):
+            _log.error("Update raises a RuntimeError,"
+                       " full_motif_classes not ok;"
+                       " full_motif_classes: {}".format(full_motif_classes))
             raise RuntimeError("ElmUpdater: not enough motif classes")
         # write processed motif_classes to a json file
         with open(self._elmdb_path, 'w') as outfile:
