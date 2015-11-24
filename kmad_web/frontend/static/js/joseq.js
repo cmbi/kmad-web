@@ -32,6 +32,12 @@ ProteinSequences = function(container_id, data, sequence) {
   if (cont_width < 650) {
     cont_width = 650;
   }
+  if (cont_width > 30000 || container_height > 30000) {
+      document.getElementById("canvases").style.display="none";
+      document.getElementById("collapseTwo").style.display="none";
+      window.alert("Sorry, this sequence is too long to visualize the prediction. You can still download the text file with prediction.");
+      return 0;
+  }
   var stage = new Kinetic.Stage({
     container: container_id,
     width: cont_width,

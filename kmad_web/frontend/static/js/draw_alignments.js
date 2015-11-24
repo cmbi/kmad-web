@@ -47,12 +47,12 @@ draw_alignment = function(container_id, sequences) {
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
-  if (container_width > 30000){
-      container_width = 30000;
-  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
-  if (container_height > 30000){
-      container_height = 30000;
+  if (container_width > 30000 || container_height > 30000) {
+      document.getElementById("canvases").style.display="none";
+      document.getElementById("collapseTwo").style.display="none";
+      window.alert("Sorry, this alignment is too large to visualize it. You can still download the alignment in FASTA format");
+      return 0;
   }
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -245,12 +245,10 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
-  if (container_width > 30000){
-      container_width = 30000;
-  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
-  if (container_height > 30000){
-      container_height = 30000;
+
+  if (container_width > 30000 || container_height > 30000) {
+    return 0;
   }
 
   var stage = new Kinetic.Stage({
@@ -382,12 +380,10 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
-  if (container_width > 30000){
-      container_width = 30000;
-  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
-  if (container_height > 30000){
-      container_height = 30000;
+
+  if (container_width > 30000 || container_height > 30000) {
+    return 0;
   }
 
   var stage = new Kinetic.Stage({
@@ -655,12 +651,10 @@ draw_alignment_with_structure = function(container_id, sequences) {
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
-  if (container_width > 30000){
-      container_width = 30000;
-  }
   var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
-  if (container_height > 30000){
-      container_height = 30000;
+
+  if (container_width > 30000 || container_height > 30000) {
+    return 0;
   }
 
   var stage = new Kinetic.Stage({
