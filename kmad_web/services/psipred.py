@@ -35,9 +35,12 @@ class PsipredService(object):
                 os.remove(out_file)
                 return data
             else:
+                _log.error("Didn't find the output file: {}".format(
+                    out_file))
                 raise ServiceError("Didn't find the output file: {}".format(
                     out_file))
         except subprocess.CalledProcessError as e:
+            _log.error(e.message)
             raise ServiceError(e.message)
 
 psipred = PsipredService(PSIPRED)

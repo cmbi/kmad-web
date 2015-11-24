@@ -1,8 +1,11 @@
+import logging
 import subprocess
 
 from kmad_web.default_settings import CLUSTALO, CLUSTALW, MAFFT, MUSCLE, TCOFFEE
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class ClustaloService(object):
@@ -18,6 +21,7 @@ class ClustaloService(object):
         try:
             subprocess.call(args, stderr=subprocess.PIPE)
         except (subprocess.CalledProcessError, OSError) as e:
+            _log.error("ClustaloService returned an error: {}".format(e))
             raise ServiceError(e)
 
         return out_filename
@@ -41,6 +45,7 @@ class ClustalwService(object):
             subprocess.call(args, stderr=subprocess.PIPE,
                             stdout=subprocess.PIPE)
         except (subprocess.CalledProcessError, OSError) as e:
+            _log.error("ClustalwService returned an error: {}".format(e))
             raise ServiceError(e)
 
         return out_filename
@@ -59,6 +64,7 @@ class MafftService(object):
             with open(out_filename, 'w') as out:
                 subprocess.call(args, stdout=out, stderr=subprocess.PIPE)
         except (subprocess.CalledProcessError, OSError) as e:
+            _log.error("MafftService returned an error: {}".format(e))
             raise ServiceError(e)
 
         return out_filename
@@ -79,6 +85,7 @@ class MuscleService(object):
             subprocess.call(args, stderr=subprocess.PIPE,
                             stdout=subprocess.PIPE)
         except (subprocess.CalledProcessError, OSError) as e:
+            _log.error("MuscleService returned an error: {}".format(e))
             raise ServiceError(e)
 
         return out_filename
@@ -102,6 +109,7 @@ class TcoffeeService(object):
             subprocess.call(args, stderr=subprocess.PIPE,
                             stdout=subprocess.PIPE)
         except (subprocess.CalledProcessError, OSError) as e:
+            _log.error("TcoffeeService returned an error: {}".format(e))
             raise ServiceError(e)
 
         return out_filename

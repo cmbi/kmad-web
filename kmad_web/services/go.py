@@ -24,6 +24,7 @@ class GoService(object):
     def call(self, method, *args, **kwargs):
         _log.info("Calling go search method '{}'".format(method))
         if self._url is None:
+            _log.error("Goservice hasn't been configured")
             raise ServiceError("GoService hasn't been configured")
 
         if 'soap_timeout' not in kwargs:

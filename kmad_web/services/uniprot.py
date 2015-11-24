@@ -43,8 +43,11 @@ class UniprotService(object):
             url = os.path.join(self._url, uniprot_id + ".fasta")
             request = requests.get(url)
             if request.status_code != 200:
+                _log.error("Couldn't get fasta from Uniprot: {}".format(
+                    request.status_code))
                 raise ServiceError(request.status_code)
         except requests.HTTPError as e:
+                _log.error("Couldn't get fasta from Uniprot: {}".format(e))
                 raise ServiceError(e)
         else:
             result = request.text

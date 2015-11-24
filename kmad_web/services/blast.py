@@ -44,4 +44,5 @@ class BlastService(object):
             os.remove(fasta_filename)
             return result
         except subprocess.CalledProcessError as e:
+            _log.error("BlastService returned an error: {}".format(e))
             raise ServiceError(e)

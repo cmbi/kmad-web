@@ -40,8 +40,10 @@ class NetphosService(object):
                 result = subprocess.check_output(args, stderr=subprocess.PIPE)
                 os.remove(fasta_filename)
             else:
+                _log.error("NetPhos not found: {}".format(self._path))
                 raise ServiceError("Netphos not found: {}".format(self._path))
         except subprocess.CalledProcessError as e:
+            _log.error("NetPhos service returned an error: {}".format(e))
             raise ServiceError(e)
         return result
 

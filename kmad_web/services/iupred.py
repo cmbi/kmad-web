@@ -28,9 +28,11 @@ class IupredService(object):
         try:
             data = subprocess.check_output(args, env=env)
             if not data:
+                _log.error("No prediction was returned")
                 raise ServiceError("No prediction was returned")
             return data
         except subprocess.CalledProcessError as e:
+            _log.error(e.message)
             raise ServiceError(e.message)
 
 iupred = IupredService(IUPRED, IUPRED_DIR)

@@ -51,8 +51,10 @@ class KmadAligner(object):
                 result_file = a.read()
             return result_file
         except subprocess.CalledProcessError as e:
+            _log.error("KMAD returned an error: {}".format(e))
             raise ServiceError(e)
         else:
+            _log.error("KMAD result not found: {}".format(result_path))
             raise ServiceError("KMAD result not found: {}".format(result_path))
 
 kmad = KmadAligner(KMAD)

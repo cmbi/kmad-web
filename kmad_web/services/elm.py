@@ -33,9 +33,12 @@ class ElmService(object):
                                "instances.gff?q={}".format(uniprot_id))
             request = requests.get(url)
             if request.status_code != 200:
+                _log.error("ELM returned an error: {}".format(
+                    request.status_code))
                 raise ServiceError(request.status_code)
         except requests.HTTPError as e:
-                raise ServiceError(e)
+            _log.error("ELM returned an error: {}".format(e))
+            raise ServiceError(e)
         else:
             result = request.text
         return result
@@ -46,9 +49,12 @@ class ElmService(object):
             url = os.path.join(self._url, "elms", "elms_index.tsv")
             request = requests.get(url)
             if request.status_code != 200:
+                _log.error("ELM returned an error: {}".format(
+                    request.status_code))
                 raise ServiceError(request.status_code)
         except requests.HTTPError as e:
-                raise ServiceError(e)
+            _log.error("ELM returned an error: {}".format(e))
+            raise ServiceError(e)
         else:
             result = request.text
         return result
@@ -59,18 +65,22 @@ class ElmService(object):
             motif_id
         ))
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
-        page = requests.get(url).text
-        soup = BeautifulSoup(page)
-        goterms_div = soup.find('div', {'id': 'ElmDetailGoterms'})
-        go_terms = set()
-        if goterms_div:
-            # need to get all links from the ElmDetailGoterms div
-            # - the GO term is extarcted from the link's url
-            links = goterms_div.findAll('a')
-            reg = re.compile('GTerm\?id=GO:(?P<go_term>[0-9]{7})')
-            for l in links:
-                for match in reg.finditer(str(l)):
-                    go_terms.add(match.groupdict('')['go_term'])
-        else:
-            print "No GO terms found for motif: {}".format(motif_id)
-        return go_terms
+        try:
+            page = requests.get(url).text
+            soup = BeautifulSoup(page)
+            goterms_div = soup.find('div', {'id': 'ElmDetailGoterms'})
+            go_terms = set()
+            if goterms_div:
+                # need to get all links from the ElmDetailGoterms div
+                # - the GO term is extarcted from the link's url
+                links = goterms_div.findAll('a')
+                reg = re.compile('GTerm\?id=GO:(?P<go_term>[0-9]{7})')
+                for l in links:
+                    for match in reg.finditer(str(l)):
+                        go_terms.add(match.groupdict('')['go_term'])
+            else:
+                print "No GO terms found for motif: {}".format(motif_id)
+            return go_terms
+        except requests.HTTPError as e:
+            _log.error("ELM returned an error: {}".format(e))
+            raise ServiceError(e)
