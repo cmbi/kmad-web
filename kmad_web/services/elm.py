@@ -36,7 +36,7 @@ class ElmService(object):
                 _log.error("ELM returned an error: {}".format(
                     request.status_code))
                 raise ServiceError(request.status_code)
-        except requests.HTTPError as e:
+        except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("ELM returned an error: {}".format(e))
             raise ServiceError(e)
         else:
@@ -52,7 +52,7 @@ class ElmService(object):
                 _log.error("ELM returned an error: {}".format(
                     request.status_code))
                 raise ServiceError(request.status_code)
-        except requests.HTTPError as e:
+        except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("ELM returned an error: {}".format(e))
             raise ServiceError(e)
         else:
@@ -81,7 +81,7 @@ class ElmService(object):
             else:
                 print "No GO terms found for motif: {}".format(motif_id)
             return go_terms
-        except requests.HTTPError as e:
+        except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("ELM returned an error: {}".format(e))
             raise ServiceError(e)
 
@@ -111,6 +111,6 @@ class ElmService(object):
                 _log.error("No class found for motif {}".format(motif_id))
                 raise ServiceError("No class found for motif {}".format(
                     motif_id))
-        except requests.HTTPError as e:
+        except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("ELM returned an error: {}".format(e))
             raise ServiceError(e)

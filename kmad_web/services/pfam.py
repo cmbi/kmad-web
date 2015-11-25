@@ -35,7 +35,7 @@ class PfamService(object):
                 return request.text
             else:
                 return None
-        except requests.HTTPError as e:
+        except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("Pfam error: {}".format(e))
             return None
 
@@ -67,7 +67,7 @@ class PfamService(object):
             _log.debug("Submitting sequence:\n{}".format(fasta_sequence))
             request = requests.post(self._url, data=data)
             request.raise_for_status()
-        except requests.HTTPError as e:
+        except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("Pfam returned an error: {}".format(e))
             raise ServiceError(e)
         else:
@@ -85,7 +85,7 @@ class PfamService(object):
         try:
             request = requests.get(url)
             request.raise_for_status()
-        except requests.HTTPError as e:
+        except (requests.ConnectionError, requests.HTTPError) as e:
             raise ServiceError(e)
         else:
             # The Pfam service returns XML when the result is ready, otherwise
