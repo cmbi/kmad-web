@@ -48,6 +48,6 @@ class ElmParser(object):
                          for i in re.split(r'\t+', line)]
             elm_id = line_list[1]
             self.motif_classes[elm_id] = {}
-            self.motif_classes[elm_id]['class'] = line_list[2].rstrip('.')
+            self.motif_classes[elm_id]['description'] = line_list[2].rstrip('.')
             self.motif_classes[elm_id]['pattern'] = line_list[3]
             self.motif_classes[elm_id]['probability'] = line_list[4]

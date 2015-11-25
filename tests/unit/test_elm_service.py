@@ -63,3 +63,10 @@ def test_get_all_classes(mock_requests):
     elm.get_all_classes()
     mock_requests.register_uri('GET', url, text='all classes', status_code=404)
     assert_raises(ServiceError, elm.get_all_classes)
+
+
+@with_setup(setup, teardown)
+def test_get_motif_class():
+    test_id = "MOD_PIKK_1"
+    elm = ElmService("http://elm.eu.org/")
+    eq_(elm.get_motif_class(test_id), "PIKK phosphorylation site")

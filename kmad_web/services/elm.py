@@ -84,3 +84,33 @@ class ElmService(object):
         except requests.HTTPError as e:
             _log.error("ELM returned an error: {}".format(e))
             raise ServiceError(e)
+
+    @cm.cache('redis')
+    def get_motif_class(self, motif_id):
+        _log.info("Getting class for motif id: {}".format(motif_id))
+        url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
+        try:
+            page = requests.get(url).text
+            soup = BeautifulSoup(page)
+            detail_table = soup.find('table', {'class': 'elm_detail'})
+            if not detail_table:
+                _log.error("No table with class elm_detail on"
+                           " the motif's website")
+                raise ServiceError("No table with class elm_detail on"
+                                   " the motif's website")
+            rows = detail_table.findAll("tr")
+            if not len(rows) > 1:
+                _log.error("No class found for motif {}".format(motif_id))
+                raise ServiceError("No class found for motif {}".format(
+                    motif_id))
+
+            cells = rows[1].findAll('td')
+            if cells:
+                return cells[0].text
+            else:
+                _log.error("No class found for motif {}".format(motif_id))
+                raise ServiceError("No class found for motif {}".format(
+                    motif_id))
+        except requests.HTTPError as e:
+            _log.error("ELM returned an error: {}".format(e))
+            raise ServiceError(e)

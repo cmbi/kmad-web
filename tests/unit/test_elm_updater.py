@@ -19,6 +19,7 @@ def teardown():
 @patch('kmad_web.domain.updaters.elm.ElmUpdater._get_extended_go_terms')
 @patch('kmad_web.domain.updaters.elm.json.dump')
 @patch('kmad_web.services.elm.ElmService.get_all_classes')
+@with_setup(setup, teardown)
 def test_update(mock_get_all_classes, mock_json_dump,
                 mock_get_extended_go_terms, mock_not_ok):
     with open('tests/unit/testdata/test_elm_classes.tsv') as a:
@@ -31,8 +32,9 @@ def test_update(mock_get_all_classes, mock_json_dump,
     expected_json = {'CLV_C14_Caspase3-7': {'GO': ['goterm1', 'goterm2'],
                                             'pattern':
                                                 '[DSTE][^P][^DEWHFYC]D[GSAN]',
-                                            'class': "Caspase-3 and "
-                                                     "Caspase-7 cleavage site",
+                                            'description': "Caspase-3 and "
+                                                "Caspase-7 cleavage site",
+                                            'class': "Caspase cleavage motif",
                                             'probability': '0.00309374033071'}
                      }
     elm.update()

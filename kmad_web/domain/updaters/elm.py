@@ -4,6 +4,7 @@ import time
 
 from kmad_web.parsers.elm import ElmParser
 from kmad_web.services.elm import ElmService
+from kmad_web.services.types import ServiceError
 from kmad_web.domain.go.providers.go import GoProvider
 from kmad_web.default_settings import ELM_URL, ELMDB_PATH
 
@@ -27,12 +28,19 @@ class ElmUpdater(object):
         # and parse it
         elm_parser.parse_motif_classes(elm_data)
         full_motif_classes = elm_parser.motif_classes.copy()
-        for motif_id in elm_parser.motif_classes:
+        print len(full_motif_classes)
+        for motif_id in elm_parser.motif_classes.keys():
+            print motif_id
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
+            try:
+                m_class = elm_service.get_motif_class(motif_id)
+                full_motif_classes[motif_id]['class'] = m_class
+            except ServiceError:
+                del full_motif_classes[motif_id]
         # make json serializable
         self._make_json_friendly(full_motif_classes)
-        if self._not_ok(full_motif_classes.keys()):
+        if self._not_ok(full_motif_classes):
             _log.error("Update raises a RuntimeError,"
                        " full_motif_classes not ok;"
                        " full_motif_classes: {}".format(full_motif_classes))
