@@ -1,7 +1,10 @@
+import logging
 import re
 
 from kmad_web.domain.features.analysis.helpers import (
     get_seq_range, group_features_positionwise)
+
+_log = logging.getLogger(__name__)
 
 
 def analyze_motifs(mutation, sequences):

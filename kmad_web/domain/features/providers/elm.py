@@ -36,7 +36,7 @@ class ElmFeatureProvider(object):
             motifs.extend(instances)
         # get predicted motifs
         instances = self._predict_motifs(sequence)
-        motifs.extend(instances)
+        self._add_predicted(motifs, instances)
         return motifs
 
     def _process_motif_classes(self):
@@ -141,3 +141,14 @@ class ElmFeatureProvider(object):
         for i in remove_indexes:
             del filtered_motifs[i]
         return filtered_motifs
+
+    def _add_predicted(self, annotated, predicted):
+        for mp in predicted:
+            found = False
+            for ma in annotated:
+                if (ma['class'] == mp['class'] and ma['start'] == mp['start']
+                        and ma['end'] == mp['end']):
+                    found = True
+                    break
+            if not found:
+                annotated.append(mp)
