@@ -9,7 +9,7 @@ CELERY_DEFAULT_QUEUE = 'kmad_web'
 CELERY_QUEUES = (
     Queue('kmad_web', Exchange('kmad_web'), routing_key='kmad_web'),
 )
-CELERY_RESULT_BACKEND = 'redis://localhost/2'
+CELERY_RESULT_BACKEND = 'redis://localhost/1'
 
 CELERYBEAT_SCHEDULE = {
     # Every month on the 1st at midnight
