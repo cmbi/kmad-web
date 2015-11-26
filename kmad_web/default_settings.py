@@ -25,7 +25,7 @@ CACHE_CONFIG = {
     'redis': {
         'redis.backend': 'dogpile.cache.redis',
         'redis.backend.arguments.host': 'localhost',
-        'redis.backend.arguments.port': 6479,
+        'redis.backend.arguments.port': 6379,
         'redis.backend.arguments.db': 9,
         'redis.backend.arguments.redis_expiration_time': 60*60*24*30,  # 30 days
         'redis.backend.arguments.distributed_lock': True
