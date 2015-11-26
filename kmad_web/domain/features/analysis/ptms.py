@@ -115,6 +115,8 @@ def _analyze_annotated_ptms(mutation, sequences, prediction_wild,
                 status_wild = '3'
             elif annotated_aa and conservation['all'] >= low_threshold:
                 status_wild = '2'
+            elif annotated_aa:
+                status_wild = '1'
         # determine mutant status
         annotated_aa = _check_if_annotated_aa(
             mutation, sequences, ptm_name, mutation.mutant_aa)
