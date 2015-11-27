@@ -1,5 +1,4 @@
 import logging
-
 from collections import OrderedDict
 
 from kmad_web.default_settings import UNIPROT_URL
@@ -18,16 +17,18 @@ class UniprotFeatureProvider(object):
     def get_ptms(self, uniprot_id):
         ptms = []
         uniprot_service = UniprotService(UNIPROT_URL)
-        uniprot_txt = uniprot_service.get_txt(uniprot_id)
         uniprot_parser = UniprotParser()
-        uniprot_parser.parse_ptms(uniprot_txt)
+        uniprot_xml = uniprot_service.get_xml(uniprot_id)
+        uniprot_parser.parse_ptms_xml(uniprot_xml)
         for p in uniprot_parser.ptms:
             ptm = {}
             ptm['name'] = self._get_ptm_type(p['info'])
-            if ptm['name']:
-                ptm['position'] = int(p['position'])
-                ptm['annotation_level'] = self._get_annotation_level(p['eco'])
-                ptms.append(ptm)
+            ptm['info'] = p['info']
+            if not ptm['name']:
+                ptm['name'] = ptm['info']
+            ptm['position'] = int(p['position'])
+            ptm['annotation_level'] = self._get_annotation_level(p['eco'])
+            ptms.append(ptm)
         return ptms
 
     def get_secondary_structure(self, sequence):
