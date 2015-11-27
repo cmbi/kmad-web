@@ -67,11 +67,12 @@ class UniprotFeatureProvider(object):
                        '0000501': 3}
         # the first eco code is always the 'best' one ( = highest annotation
         # level), therefore taking only the first one
-        if len(eco) > 0 and eco[0] in levels_dict.keys():
-            return levels_dict[eco[0]]
-        else:
-            # if the eco_code is not known return the lowest annotation level
-            return 3
+        lowest = 3
+        for e in eco:
+            if e in levels_dict.keys() and levels_dict[e] < lowest:
+                lowest = levels_dict[e]
+        return lowest
+
 
     def _get_ptm_type(self, ptm_info):
         types_dict = OrderedDict([

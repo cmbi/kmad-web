@@ -36,7 +36,7 @@ class UniprotParser(object):
                 ptm['position'] = position
                 ptm['info'] = feature_elem.get('description')
                 if evidence:
-                    ptm['eco'] = [refs[i] for i in evidence.split()]
+                    ptm['eco'] = [re.sub('ECO:', '', refs[i]) for i in evidence.split()]
                 else:
                     ptm['eco'] = []
                 self.ptms.append(ptm)
