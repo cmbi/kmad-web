@@ -4,8 +4,7 @@ import StringIO
 
 from flask import abort
 from flask import (Blueprint, render_template, request, redirect, url_for,
-                   send_file, Response)
-from functools import wraps
+                   send_file)
 
 from kmad_web.services.helpers import fieldlist
 from kmad_web.frontend.dashboard.forms import KmadForm
@@ -78,7 +77,7 @@ def index():
     return render_template('dashboard/index.html', form=form)
 
 
-@bp.route("/output/<output_type>/<celery_id>", methods=['GET'])
+@bp.route("/output/<output_type>/<celery_id>/", methods=['GET'])
 def output(output_type, celery_id):
     return render_template("dashboard/output.html",
                            output_type=output_type,
