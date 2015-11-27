@@ -23,6 +23,7 @@ from kmad_web.domain.features.analysis import ptms as ap
 from kmad_web.domain.features.analysis import motifs as am
 from kmad_web.domain.sequences.fasta import parse_fasta
 from kmad_web.helpers import invert_dict
+from kmad_web.parsers.uniprot import UniprotParser
 from kmad_web.services.iupred import iupred
 from kmad_web.services.psipred import psipred
 from kmad_web.services.disopred import disopred
@@ -30,9 +31,9 @@ from kmad_web.services.predisorder import predisorder
 from kmad_web.services.globplot import globplot
 from kmad_web.services.spined import spined
 from kmad_web.services.kmad_aligner import kmad
+from kmad_web.services.uniprot import UniprotService
 from kmad_web.services.types import ServiceError
-
-from kmad_web.default_settings import BLAST_DB, D2P2_URL
+from kmad_web.default_settings import D2P2_URL, UNIPROT_PTMS_URL
 
 
 _log = logging.getLogger(__name__)
@@ -321,6 +322,14 @@ def stupid_task(previous_result=None):
 def update_elmdb():
     elm = ElmUpdater()
     elm.update()
+
+
+@celery_app.task
+def update_ptm_map():
+    uniprot_service = UniprotService(UNIPROT_PTMS_URL)
+    ptmlist = uniprot_service.get_ptm_list()
+    uniprot_parser = UniprotParser()
+    uniprot_parser.update_ptm_map(ptmlist)
 
 
 def get_task(output_type):

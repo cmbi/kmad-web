@@ -2,11 +2,6 @@ from kmad_web.domain.features.analysis.helpers import (
     group_features_positionwise, get_seq_position)
 from kmad_web.domain.features.providers.netphos import NetphosFeatureProvider
 
-PTM_NAMES = [
-    'phosphorylation', 'acetylation', 'N-glycosylation', 'amidation',
-    'hydroxylation', 'methylation', 'O-glycosylation'
-]
-
 
 def analyze_ptms(mutation, sequences):
     """
@@ -15,7 +10,7 @@ def analyze_ptms(mutation, sequences):
             {
                 'position': 1,  # 1-based!
                 'ptms': {
-                'phosphorylation': {'wild': '0', 'mutant': '3'}
+                'phosphorylation': {'wild': '0', 'mutant': '3', 'info': 'Phosphoserine'}
                 # 0 - no PTM, 2 - some possibility of a PTM,
                 # 3 - very high possibility of a PTM, 4 - annotated PTM
                 },
@@ -23,6 +18,7 @@ def analyze_ptms(mutation, sequences):
         ]
     }
     """
+    ptm_names = _get_all_names(sequences)
     group_features_positionwise(sequences)
     # compare if the PTM predictions for the wild and mutant sequences
     # differ in the surrounding of the mutation site
@@ -31,7 +27,7 @@ def analyze_ptms(mutation, sequences):
     surrounding_phosphorylations = _analyze_predicted_phosph(
         mutation, sequences, prediction['differences'])
     ptms = _analyze_annotated_ptms(mutation, sequences, prediction['wild'],
-                                   prediction['mutant'])
+                                   prediction['mutant'], ptm_names)
     ptm_data = {'residues': surrounding_phosphorylations + [ptms]}
     return ptm_data
 
@@ -77,6 +73,7 @@ def _analyze_predicted_phosph(mutation, sequences, missing_predictions):
                             'phosphorylation': {
                                 'wild': '4',
                                 'mutant': '0',
+                                'info': ptm['info']
                             }
                         }
                     }
@@ -85,12 +82,21 @@ def _analyze_predicted_phosph(mutation, sequences, missing_predictions):
     return changes
 
 
+def _get_all_names(sequences):
+    ptm_names = []
+    for s in sequences:
+        for p in s['ptms']:
+            if p['name'] not in ptm_names:
+                ptm_names.append(p['name'])
+    return ptm_names
+
+
 # TODO: split it up in several functions to make it less complex
 def _analyze_annotated_ptms(mutation, sequences, prediction_wild,
-                            prediction_mutant):
+                            prediction_mutant, ptm_names):
     result = {'position': mutation.position + 1,
               'ptms': {}}
-    for ptm_name in PTM_NAMES:
+    for ptm_name in ptm_names:
         status_wild = '0'
         status_mutant = '0'
         high_threshold = 0.6
@@ -100,9 +106,11 @@ def _analyze_annotated_ptms(mutation, sequences, prediction_wild,
         # first determine wild_type status
         query_seq_ptms = sequences[0]['feat_pos'][mutation.position]['ptms']
         # check if it's annotated in the wild type
+        ptm_info = ""
         for p in query_seq_ptms:
             if ptm_name == p['name'] and p['annotation_level'] < 4:
                 status_wild = '4'
+                ptm_info = p['info']
                 break
         if (status_wild == '0' and (ptm_name != 'phosphorylation'
                                     or mutation.position in prediction_wild)):
@@ -132,7 +140,8 @@ def _analyze_annotated_ptms(mutation, sequences, prediction_wild,
         if status_wild != '0' or status_mutant != '0':
             result['ptms'][ptm_name] = {
                 'wild': status_wild,
-                'mutant': status_mutant
+                'mutant': status_mutant,
+                'info': ptm_info
             }
     return result
 

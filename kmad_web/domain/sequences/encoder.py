@@ -109,8 +109,9 @@ class SequencesEncoder(object):
             ptms = self._filter_ptms(s['ptms'])
             for p in ptms:
                 ptm_pos = p['position'] - 1
-                ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
-                s['codon_seq'][ptm_pos][codon_pos] = ptm_code
+                if p['name'] in self._ptm_code_dict:
+                    ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
+                    s['codon_seq'][ptm_pos][codon_pos] = ptm_code
 
     """
     Only one PTM can be encoded on a given position - in case of multiple PTMs

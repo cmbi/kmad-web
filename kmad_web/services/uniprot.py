@@ -21,6 +21,21 @@ class UniprotService(object):
         self._url = url
 
     @cm.cache('redis')
+    def get_xml(self, uniprot_id):
+        _log.info("Getting txt data from Uniprot for uniprot id {}".format(
+            uniprot_id))
+        try:
+            url = os.path.join(self._url, uniprot_id + ".xml")
+            request = requests.get(url)
+            if request.status_code != 200:
+                raise ServiceError(request.status_code)
+        except (requests.ConnectionError, requests.HTTPError) as e:
+                raise ServiceError(e)
+        else:
+            result = request.text
+        return result
+
+    @cm.cache('redis')
     def get_txt(self, uniprot_id):
         _log.info("Getting txt data from Uniprot for uniprot id {}".format(
             uniprot_id))
