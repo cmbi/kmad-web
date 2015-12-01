@@ -33,11 +33,11 @@ class ElmUpdater(object):
             print motif_id
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
-            try:
-                m_class = elm_service.get_motif_class(motif_id)
-                full_motif_classes[motif_id]['class'] = m_class
-            except ServiceError:
-                del full_motif_classes[motif_id]
+            # try:
+            #     m_class = elm_service.get_motif_class(motif_id)
+            #     full_motif_classes[motif_id]['class'] = m_class
+            # except ServiceError:
+            #     del full_motif_classes[motif_id]
         # make json serializable
         self._make_json_friendly(full_motif_classes)
         if self._not_ok(full_motif_classes):

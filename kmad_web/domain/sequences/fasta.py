@@ -49,7 +49,7 @@ def make_fasta(sequence_data):
                        ", sequence_data: {}".format(sequence_data))
             raise RuntimeError("Sequence has to consist of only alphabetic "
                                "characters: {}".format(sequence_data))
-        return ">sequence\n{}\n".format(sequence_data)
+        return ">sequence\n{}\n".format("".join(sequence_data.split()))
 
 
 def sequences2fasta(sequences):
