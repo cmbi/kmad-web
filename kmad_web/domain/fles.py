@@ -14,13 +14,16 @@ def write_fles(sequences, aligned_mode=False):
     return tmp_file.name
 
 
-def make_fles(sequences, aligned_mode=False):
+def make_fles(sequences, motifs_dict, aligned_mode=False):
     out_text = ""
     sequence_key = 'encoded_seq'
     if aligned_mode:
         sequence_key = 'encoded_aligned'
     for s in sequences:
         out_text += "{}\n{}\n".format(s['header'], s[sequence_key])
+    out_text += "## PROBABILITIES\n"
+    for m in motifs_dict.keys():
+        out_text += "{} {}\n".format(m, motifs_dict[m])
     return out_text
 
 
@@ -33,6 +36,16 @@ def parse_fles(fles_file):
         sequence['encoded_seq'] = fles_lines[l + 1]
         alignment.append(sequence)
     return alignment
+
+
+def get_motifs_dict(sequences):
+    motifs = {}
+    for s in sequences:
+        for m in s['motifs']:
+            if m not in motifs.keys() or \
+                    s['motifs'][m]['probability'] > motifs[m]:
+                motifs[m] = s['motifs'][m]['probability']
+    return motifs
 
 
 def fles2fasta(fles_file):

@@ -15,8 +15,8 @@ CELERYBEAT_SCHEDULE = {
     # Every month on the 1st at midnight
     'update_elmdb': {
         'task': 'kmad_web.tasks.update_elmdb',
-        'schedule': crontab(day_of_month=1, hour=0, minute=0),
-        'args': ('kmad_web/frontend/static/dbs/elm_complete.txt',)
+        'schedule': crontab(day_of_month=1, hour=12, minute=0),
+        'args': ()
     },
 }
 

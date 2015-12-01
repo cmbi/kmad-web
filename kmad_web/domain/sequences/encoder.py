@@ -27,6 +27,7 @@ class SequencesEncoder(object):
         # make code dicts for motifs and domains
         # (code dict for PTMs is constant)
         self.motif_code_dict = self._create_motif_code_dict()
+        self.motif_prob_dict = self._create_motif_prob_dict()
         if use_pfam:
             self.domain_code_dict = self._create_domain_code_dict()
             self._encode_domains()
@@ -212,3 +213,17 @@ class SequencesEncoder(object):
                         s['codon_seq'][i][pos] = strct_code
                 elif 'position' in e.keys():
                     s['codon_seq'][e['position'] - 1][pos] = strct_code
+
+    def _create_motif_prob_dict(self):
+        prob_dict = {}
+        for s in self._sequences:
+            for m in s['motifs_filtered']:
+                if m['id'] not in prob_dict.keys() or \
+                        prob_dict[m['id']] < m['probability']:
+                    prob_dict[m['id']] = m['probability']
+        code2prob = {}
+        for m in prob_dict:
+            for m_id, m_code in self.motif_code_dict.items():
+                if m == m_id:
+                    code2prob[m_code] = prob_dict[m]
+        return code2prob

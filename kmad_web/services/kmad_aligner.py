@@ -50,7 +50,7 @@ class KmadAligner(object):
             with open(result_path) as a:
                 result_file = a.read()
             # clean up
-            os.remove(tmp_file.name)
+            # os.remove(tmp_file.name)
             os.remove(result_path)
             return result_file
         except subprocess.CalledProcessError as e:
