@@ -23,12 +23,12 @@ class PfamParser(object):
     """
     def parse(self, pfam_result):
         pfam_dict = xmltodict.parse(pfam_result)
-        if ('pfam' not in pfam_dict.keys()
-                or 'results' not in pfam_dict['pfam'].keys()
-                or 'matches' not in pfam_dict['pfam']['results'].keys()):
+        try:
+            matches = pfam_dict['pfam']['results']['matches']['protein']\
+                               ['database']['match']
+        except AttributeError:
             return
-        matches = pfam_dict['pfam']['results']['matches']['protein']\
-                           ['database']['match']
+
         if not isinstance(matches, list):
             # if there are multiple domains found matches is a list, otherwise
             # it is an OrderedDict
