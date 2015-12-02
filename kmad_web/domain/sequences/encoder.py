@@ -110,7 +110,8 @@ class SequencesEncoder(object):
             ptms = self._filter_ptms(s['ptms'])
             for p in ptms:
                 ptm_pos = p['position'] - 1
-                if p['name'] in self._ptm_code_dict:
+                if ptm_pos < len(s['codon_seq']) \
+                        and p['name'] in self._ptm_code_dict:
                     ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
                     s['codon_seq'][ptm_pos][codon_pos] = ptm_code
 
@@ -173,7 +174,8 @@ class SequencesEncoder(object):
             for m in s['motifs_filtered']:
                 motif_code = self.motif_code_dict[m['id']]
                 for i in range(m['start'] - 1, m['end']):
-                    s['codon_seq'][i][pos:pos+2] = motif_code
+                    if i < len(s['codon_seq']):
+                        s['codon_seq'][i][pos:pos+2] = motif_code
 
     """
     Encodes domains on the sequences[lists of codons]
@@ -186,7 +188,8 @@ class SequencesEncoder(object):
             for d in s['domains']:
                 domain_code = self.domain_code_dict[d['accession']]
                 for i in range(int(d['start']) - 1, int(d['end'])):
-                    s['codon_seq'][i][pos:pos+2] = domain_code
+                    if i < len(s['codon_seq']):
+                        s['codon_seq'][i][pos:pos+2] = domain_code
 
     """
     From each string sequences it creates a codon sequence, e.g.
@@ -216,9 +219,11 @@ class SequencesEncoder(object):
                 strct_code = strct_dict[e['name']]
                 if 'start' in e.keys():
                     for i in range(int(e['start']) - 1, int(e['end'])):
-                        s['codon_seq'][i][pos] = strct_code
+                        if i < len(s['codon_seq']):
+                            s['codon_seq'][i][pos] = strct_code
                 elif 'position' in e.keys():
-                    s['codon_seq'][e['position'] - 1][pos] = strct_code
+                    if e['position'] - 1 < len(s['codon_seq']):
+                        s['codon_seq'][e['position'] - 1][pos] = strct_code
 
     def _create_motif_prob_dict(self):
         prob_dict = {}
