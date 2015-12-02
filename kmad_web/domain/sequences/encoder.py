@@ -127,7 +127,9 @@ class SequencesEncoder(object):
         for p in ptms_pos_wise.values():
             if len(p) > 1:
                 ptm = self._choose_ptm_to_encode(p)
-            else:
+                if not ptm:
+                    continue
+            elif p[0]['name'] in self._ptm_code_dict:
                 ptm = p[0]
             filtered_ptms.append(ptm)
         return filtered_ptms
@@ -135,17 +137,21 @@ class SequencesEncoder(object):
     def _choose_ptm_to_encode(self, ptms):
         # highest level -> lowest number
         # this only returns one PTM with the highest level
-        highest_level = min([p['annotation_level'] for p in ptms])
-        # find all PTMs with highest level
-        highest_level_ptms = [i for i in ptms
-                              if i['annotation_level'] == highest_level]
-        if len(highest_level_ptms) > 1:
-            # if there is mmore than one PTM with the highest level choose the
-            # one with lowest index in the ptm_code_dict
-            ptm = min(highest_level_ptms,
-                      key=lambda x: self._ptm_code_dict.keys().index(x['name']))
-        else:
-            ptm = highest_level_ptms[0]
+        encodable_ptms = [p for p in ptms
+                          if p['name'] in self._ptm_code_dict.keys()]
+        ptm = {}
+        if encodable_ptms:
+            highest_level = min([p['annotation_level'] for p in encodable_ptms])
+            # find all PTMs with highest level and names in our code dict
+            highest_level_ptms = [i for i in encodable_ptms
+                                  if (i['annotation_level'] == highest_level)]
+            if len(highest_level_ptms) > 1:
+                # if there is more than one PTM with the highest level choose the
+                # one with lowest index in the ptm_code_dict
+                ptm = min(highest_level_ptms,
+                          key=lambda x: self._ptm_code_dict.keys().index(x['name']))
+            else:
+                ptm = highest_level_ptms[0]
         return ptm
 
     def _group_ptms_by_position(self, ptms):
