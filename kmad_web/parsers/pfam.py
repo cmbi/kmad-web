@@ -26,7 +26,7 @@ class PfamParser(object):
         try:
             matches = pfam_dict['pfam']['results']['matches']['protein']\
                                ['database']['match']
-        except AttributeError:
+        except (AttributeError, TypeError):
             return
 
         if not isinstance(matches, list):
