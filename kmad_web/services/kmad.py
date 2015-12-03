@@ -1,7 +1,7 @@
 import logging
 import tempfile
 
-from celery import chain, group
+from celery import chain, chord, group
 
 
 from kmad_web.domain.features.user_features import UserFeaturesParser
@@ -116,8 +116,7 @@ class PredictStrategy(object):
                     prediction_tasks += [run_single_predictor.s(
                         previous={}, fasta=self._fasta_sequence,
                         predictor=pred_name)]
-
-        workflow = chain(
+        workflow = chord(
             group(prediction_tasks),
             process_prediction_results.s(self._fasta_sequence)
         )
