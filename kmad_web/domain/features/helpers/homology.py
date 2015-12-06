@@ -33,7 +33,9 @@ def _transfer_features_from_homologue(features, position_map, sequence1,
     new_features = []
     for f in features:
         # subtract 1 to get 0-based range
-        if 'start' in f.keys():
+        if ('start' in f.keys() and 'end' in f.keys()
+                and f['start'] in position_map.keys()
+                and f['end'] in position_map.keys()):
             frange = range(f['start'] - 1, f['end'])
             ident_positions = [i for i in frange
                                if (i in position_map.keys()
