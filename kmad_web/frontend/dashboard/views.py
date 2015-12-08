@@ -84,47 +84,47 @@ def output(output_type, celery_id):
                            celery_id=celery_id)
 
 
-@bp.route('/help', methods=['GET'])
+@bp.route('/help/', methods=['GET'])
 def help():
     return render_template('dashboard/help.html')
 
 
-@bp.route('/examples/<filename>', methods=['GET'])
+@bp.route('/examples/<filename>/', methods=['GET'])
 def alignment_example(filename):
     return render_template('dashboard/examples/{}.html'.format(filename))
 
 
-@bp.route('/disprot_clustal_examples', methods=['GET'])
+@bp.route('/disprot_clustal_examples/', methods=['GET'])
 def disprot_clustal_examples():
     return render_template('dashboard/disprot_clustal_examples.html')
 
 
-@bp.route('/disprot_tcoffee_examples', methods=['GET'])
+@bp.route('/disprot_tcoffee_examples/', methods=['GET'])
 def disprot_tcoffee_examples():
     return render_template('dashboard/disprot_tcoffee_examples.html')
 
 
-@bp.route('/reviewer_comments', methods=['GET'])
+@bp.route('/reviewer_comments/', methods=['GET'])
 def reviewer_comments():
     return render_template('dashboard/reviewer_comments.html')
 
 
-@bp.route('/methods', methods=['GET'])
+@bp.route('/methods/', methods=['GET'])
 def methods():
     return render_template('dashboard/methods.html')
 
 
-@bp.route('/about', methods=['GET'])
+@bp.route('/about/', methods=['GET'])
 def about():
     return render_template('dashboard/about.html')
 
 
-@bp.route('/standalone', methods=['GET'])
+@bp.route('/standalone/', methods=['GET'])
 def standalone():
     return render_template('dashboard/standalone.html')
 
 
-@bp.route('/additional_information', methods=['GET'])
+@bp.route('/additional_information/', methods=['GET'])
 def additional_information():
     return render_template('dashboard/additional_information.html')
 
@@ -134,27 +134,27 @@ def why():
     return render_template('dashboard/why.html')
 
 
-@bp.route('/comparison', methods=['GET'])
+@bp.route('/comparison/', methods=['GET'])
 def comparison():
     return render_template('dashboard/comparison.html')
 
 
-@bp.route('/balibase', methods=['GET'])
+@bp.route('/balibase/', methods=['GET'])
 def balibase():
     return render_template('dashboard/balibase.html')
 
 
-@bp.route('/prefab', methods=['GET'])
+@bp.route('/prefab/', methods=['GET'])
 def prefab():
     return render_template('dashboard/prefab.html')
 
 
-@bp.route('/cram', methods=['GET'])
+@bp.route('/cram/', methods=['GET'])
 def cram():
     return render_template('dashboard/cram.html')
 
 
-@bp.route('/1aiq_1b02', methods=['GET'])
+@bp.route('/1aiq_1b02/', methods=['GET'])
 def yasara_example():
     return render_template('dashboard/yasara_example.html')
 
