@@ -36,7 +36,7 @@ class PfamService(object):
             else:
                 return None
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("Pfam error: {}".format(e))
+            _log.info("Pfam error: {}".format(e))
             return None
 
     @cm.cache('redis')
@@ -52,12 +52,12 @@ class PfamService(object):
                     and not r['result'].startswith('<error>')):
                 return r['result']
             elif r['result'].startswith('<error>'):
-                _log.error("Pfam returned an error: {}".format(r['result']))
+                _log.info("Pfam returned an error: {}".format(r['result']))
                 raise ServiceError("Pfam service returned an error")
             else:
                 now = time.time()
                 if now - start_time > timeout:
-                    _log.error("Pfam raised a TimeoutError")
+                    _log.info("Pfam raised a TimeoutError")
                     raise TimeoutError("Pfam took too long")
                 time.sleep(poll)
 
@@ -68,14 +68,14 @@ class PfamService(object):
             request = requests.post(self._url, data=data)
             request.raise_for_status()
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("Pfam returned an error: {}".format(e))
+            _log.info("Pfam returned an error: {}".format(e))
             raise ServiceError(e)
         else:
             try:
                 result = xmltodict.parse(request.text)
                 result_url = result['jobs']['job']['result_url']
             except (KeyError, ExpatError) as e:
-                _log.error("Pfam returned an error: {}".format(e))
+                _log.info("Pfam returned an error: {}".format(e))
                 raise ServiceError(
                     "{}\nUnexpected response from Pfam".format(e.message))
 
