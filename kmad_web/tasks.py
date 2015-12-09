@@ -288,7 +288,7 @@ def query_d2p2(blast_result):
     except (requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError):
         _log.debug("D2P2 HTTP/URL Error")
-    if result:
+    if result and len(result) == blast_result['blast_result'][0]['qlen']:
         return {'d2p2': result}
     else:
         return None
