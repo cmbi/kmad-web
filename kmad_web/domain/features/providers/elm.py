@@ -49,7 +49,7 @@ class ElmFeatureProvider(object):
         for m_id in self._full_motif_classes:
             m = self._full_motif_classes[m_id]
             if all([m[k] for k in m]):
-                if m['GO'].intersection(self._go_terms):
+                if not self._go_terms or m['GO'].intersection(self._go_terms):
                     for match in m['compiled_regex'].finditer(sequence):
                         motif = {}
                         motif['start'] = match.span()[0] + 1
