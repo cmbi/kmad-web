@@ -6,7 +6,7 @@ import requests
 
 from celery import current_app as celery_app
 
-from kmad_web.domain.blast.provider import BlastResultProvider
+from kmad_web.domain.blast.provider import blast
 from kmad_web.domain.disorder_prediction.processor import PredictionProcessor
 from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.domain.sequences.annotator import SequencesAnnotator
@@ -23,6 +23,7 @@ from kmad_web.domain.features.analysis import ptms as ap
 from kmad_web.domain.features.analysis import motifs as am
 from kmad_web.domain.sequences.fasta import parse_fasta
 from kmad_web.helpers import invert_dict
+from kmad_web.parsers.uniprot import UniprotParser
 from kmad_web.services.iupred import iupred
 from kmad_web.services.psipred import psipred
 from kmad_web.services.disopred import disopred
@@ -30,26 +31,29 @@ from kmad_web.services.predisorder import predisorder
 from kmad_web.services.globplot import globplot
 from kmad_web.services.spined import spined
 from kmad_web.services.kmad_aligner import kmad
+from kmad_web.services.uniprot import UniprotService
 from kmad_web.services.types import ServiceError
-
-from kmad_web.default_settings import BLAST_DB, D2P2_URL
+from kmad_web.default_settings import D2P2_URL, UNIPROT_PTMS_URL
 
 
 _log = logging.getLogger(__name__)
 
 
 @celery_app.task
-def run_single_predictor(fasta_sequence, pred_name):
-    _log.info("Run single predictor: {}[task]".format(pred_name))
-    data = globals()[pred_name](fasta_sequence)
+def run_single_predictor(previous={}, fasta="", predictor=""):
+    _log.info("Run single predictor: {}[task]".format(predictor))
+    data = globals()[predictor](fasta)
     processor = PredictionProcessor()
-    prediction = processor.process_prediction(data, pred_name)
-    return {pred_name: prediction}
+    prediction = processor.process_prediction(data, predictor)
+    # return {predictor: prediction}
+    previous[predictor] = prediction
+    return previous
 
 
 @celery_app.task
 def process_prediction_results(predictions, fasta_sequence):
     _log.info("Processing prediction results")
+    _log.debug("Prediction: {}".format(predictions))
     sequence = ''.join(fasta_sequence.splitlines()[1:])
     # predictions are passed here as a list of single key dictionaries
     # or a single dictionary (if only one predictor was used)
@@ -63,9 +67,11 @@ def process_prediction_results(predictions, fasta_sequence):
         predictions['consensus'] = consensus
         predictions['filtered'] = processor.filter_out_short_stretches(
             consensus)
-    prediction_text = processor.make_text(predictions, sequence)
-    return {'prediction': predictions, 'sequence': sequence,
-            'prediction_text': prediction_text}
+        prediction_text = processor.make_text(predictions, sequence)
+        _log.debug("Finished processing prediction results: "
+                   "{}".format(predictions.keys()))
+        return {'prediction': predictions, 'sequence': sequence,
+                'prediction_text': prediction_text}
 
 
 @celery_app.task
@@ -92,11 +98,11 @@ def prealign(sequences, alignment_method):
 
 
 @celery_app.task
-def run_blast(fasta_sequence):
+def run_blast(fasta_sequence, seq_limit):
     _log.info("Running blast[task]")
+    _log.debug("Runing blast with sequence {}".format(fasta_sequence))
 
-    blast = BlastResultProvider(BLAST_DB)
-    blast_result = blast.get_result(fasta_sequence)
+    blast_result = blast.get_result(fasta_sequence, seq_limit)
     exact_hit = blast.get_exact_hit(blast_result)
     return {
         'query_fasta': fasta_sequence,
@@ -110,41 +116,43 @@ def run_blast(fasta_sequence):
 
 @celery_app.task
 def get_sequences_from_blast(blast_result):
+    _log.info("Getting sequences from {} BLAST results".format(
+        len(blast_result['blast_result'])))
     sequences = []
     uniprot = UniprotSequenceProvider()
 
     query_seq = parse_fasta(blast_result['query_fasta'])[0]
     query_seq['id'] = ""
     sequences.append(query_seq)
-
-    try:
-        first_blast_seq = \
-            uniprot.get_sequence(blast_result['blast_result'][0]['id'])
-    except ServiceError:
-        first_blast_seq = ""
-        _log.warning("Couldn't get sequence for id: {}".format(
-            blast_result['blast_result'][0]['id']))
-
-    # if the first sequence from blast is not the same as query sequence then
-    # add it to sequence
-    # if it is the same then assign it's ID to the query sequence
-    if first_blast_seq and first_blast_seq['seq'] != query_seq['seq']:
-        sequences.append(first_blast_seq)
-    elif first_blast_seq and 'id' in first_blast_seq.keys():
-        sequences[0]['id'] = first_blast_seq['id']
-
-    for s in blast_result['blast_result'][1:]:
+    if blast_result['blast_result']:
         try:
-            sequence = uniprot.get_sequence(s['id'])
-            sequences.append(sequence)
+            first_blast_seq = \
+                uniprot.get_sequence(blast_result['blast_result'][0]['id'])
         except ServiceError:
-            _log.warning("Couldn't get sequence for id: {}".format(s['id']))
-    _log.info("Got {} sequences".format(len(sequences)))
+            first_blast_seq = ""
+            _log.warning("Couldn't get sequence for id: {}".format(
+                blast_result['blast_result'][0]['id']))
+
+        # if the first sequence from blast is not the same as query sequence then
+        # add it to sequence
+        # if it is the same then assign it's ID to the query sequence
+        if first_blast_seq and first_blast_seq['seq'] != query_seq['seq']:
+            sequences.append(first_blast_seq)
+        elif first_blast_seq and 'id' in first_blast_seq.keys():
+            sequences[0]['id'] = first_blast_seq['id']
+
+        for s in blast_result['blast_result'][1:]:
+            try:
+                sequence = uniprot.get_sequence(s['id'])
+                sequences.append(sequence)
+            except ServiceError:
+                _log.warning("Couldn't get sequence for id: {}".format(s['id']))
+        _log.info("Got {} sequences".format(len(sequences)))
     return sequences
 
 
 @celery_app.task
-def create_fles(sequences, aligned_mode=False):
+def create_fles(sequences, aligned_mode=False, use_pfam=True):
     """
     Create FLES file (input file for KMAD)
     aligned_mode -> gets passed to the encoder, True if you want to encode
@@ -155,12 +163,13 @@ def create_fles(sequences, aligned_mode=False):
     :param sequences: list sequence dictionaries ({'header': '', 'seq': ''})
     :return: filename
     """
-    _log.info("Creating a FLES file")
+    _log.info("Creating FLES file from {} sequences with aligned_mode {}".format(
+        len(sequences), aligned_mode))
     annotator = SequencesAnnotator()
-    annotator.annotate(sequences)
+    annotator.annotate(sequences, use_pfam)
     encoder = SequencesEncoder()
-    encoder.encode(sequences, aligned_mode)
-    fles_file = make_fles(sequences, aligned_mode)
+    encoder.encode(sequences, aligned_mode, use_pfam)
+    fles_file = make_fles(sequences, encoder.motif_prob_dict, aligned_mode)
     return {
         'fles_file': fles_file,
         'sequences': sequences,
@@ -171,10 +180,11 @@ def create_fles(sequences, aligned_mode=False):
 
 @celery_app.task
 def annotate(sequences):
+    _log.info("Annotating {} sequences".format(len(sequences)))
     annotator = SequencesAnnotator()
-    annotator.annotate(sequences)
+    annotator.annotate(sequences, use_pfam=True)
     encoder = SequencesEncoder()
-    encoder.encode(sequences, aligned_mode=True)
+    encoder.encode(sequences, aligned_mode=True, use_pfam=True)
     return {
         'sequences': sequences,
         'motif_code_dict': invert_dict(encoder.motif_code_dict),
@@ -189,7 +199,7 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     """
     Run KMAD on the given fles_filename and return aligned sequences (dict)
 
-    :param fles_path: path to the FLES file (with encoded sequences)
+    :param create_fles_result: result of the create_fles task
     :param gop: gap opening penalty
     :param gep: gap extension penalty
     :param egp: end gap penalty
@@ -206,11 +216,11 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     _log.info("Running KMAD alignment [task]")
     fles_file = create_fles_result['fles_file']
     sequences = create_fles_result['sequences']
-    result_path = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
+    result_file = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
                              motif_score, conf_path, gapped, full_ungapped,
                              refine)
     return {
-        'fles_path': result_path,
+        'fles_file': result_file,
         'sequences': sequences,
         'motif_code_dict': create_fles_result['motif_code_dict'],
         'domain_code_dict': create_fles_result['domain_code_dict']
@@ -220,23 +230,17 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
 @celery_app.task
 def process_kmad_alignment(run_kmad_result):
     _log.info("Processing KMAD result")
-    fles_path = run_kmad_result['fles_path']
+    fles_file = run_kmad_result['fles_file']
     sequences = run_kmad_result['sequences']
     codon_length = 7
 
-    if not os.path.exists(fles_path):
-        raise RuntimeError(
-            "Couldn't find the alignment file: {}".format(fles_path)
-        )
-
-    with open(fles_path) as a:
-        fles_file = a.read()
     alignment = parse_fles(fles_file)
     fasta_file = fles2fasta(fles_file)
 
     for s_index, s in enumerate(alignment):
         sequences[s_index]['encoded_aligned'] = s['encoded_seq']
         sequences[s_index]['aligned'] = s['encoded_seq'][::codon_length]
+    _log.debug("Finished processing KMAD result")
     return {
         'fles_file': fles_file,
         'fasta_file': fasta_file,
@@ -248,6 +252,7 @@ def process_kmad_alignment(run_kmad_result):
 
 @celery_app.task
 def analyze_ptms(process_kmad_result, fasta_sequence, position, mutant_aa):
+    _log.info("Analyzing PTMs")
     sequences = process_kmad_result['sequences']
     mutation = Mutation(sequences[0], position, mutant_aa)
     result = ap.analyze_ptms(mutation, sequences)
@@ -256,6 +261,7 @@ def analyze_ptms(process_kmad_result, fasta_sequence, position, mutant_aa):
 
 @celery_app.task
 def analyze_motifs(process_kmad_result, fasta_sequence, position, mutant_aa):
+    _log.info("Analyzing motifs")
     sequences = process_kmad_result['sequences']
     mutation = Mutation(sequences[0], position, mutant_aa)
     result = am.analyze_motifs(mutation, sequences)
@@ -282,7 +288,7 @@ def query_d2p2(blast_result):
     except (requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError):
         _log.debug("D2P2 HTTP/URL Error")
-    if result:
+    if result and len(result) == blast_result['blast_result'][0]['qlen']:
         return {'d2p2': result}
     else:
         return None
@@ -308,9 +314,22 @@ def combine_alignment_and_prediction(results):
 
 
 @celery_app.task
+def stupid_task(previous_result=None):
+    return previous_result
+
+
+@celery_app.task
 def update_elmdb():
     elm = ElmUpdater()
     elm.update()
+
+
+@celery_app.task
+def update_ptm_map():
+    uniprot_service = UniprotService(UNIPROT_PTMS_URL)
+    ptmlist = uniprot_service.get_ptm_list()
+    uniprot_parser = UniprotParser()
+    uniprot_parser.update_ptm_map(ptmlist)
 
 
 def get_task(output_type):

@@ -8,7 +8,6 @@ from wtforms.fields import (FloatField, IntegerField, SelectField,
                             SubmitField, RadioField)
 from wtforms.widgets import html_params, HTMLString
 
-logging.basicConfig(propagate=False)
 _log = logging.getLogger(__name__)
 
 
@@ -212,8 +211,8 @@ class KmadForm(Form):
     motif_score = FloatField(u'motif score', default=4)
 
     gapped = RadioField(u'First sequence:',
-                        choices=[('True', 'without gaps'),
-                                 ('False', 'with gaps')],
+                        choices=[('False', 'without gaps'),
+                                 ('True', 'with gaps')],
                         default='False')
 
     alignment_method = RadioField(
@@ -242,7 +241,7 @@ class KmadForm(Form):
     add_feature = SubmitField()
     # remove_feature = SubmitField()
     remove_feature = SubmitField()
-    seq_limit = IntegerField(u'max. sequence number', default=35)
+    seq_limit = IntegerField(u'max. sequence number from BLAST', default=35)
 
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")

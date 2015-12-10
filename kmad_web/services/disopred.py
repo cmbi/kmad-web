@@ -34,9 +34,12 @@ class DisopredService(object):
                 os.remove(out_file)
                 return data
             else:
+                _log.error("Didn't find the output file: {}".format(
+                    out_file))
                 raise ServiceError("Didn't find the output file: {}".format(
                     out_file))
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, OSError) as e:
+            _log.error(e)
             raise ServiceError(e.message)
 
 disopred = DisopredService(DISOPRED)

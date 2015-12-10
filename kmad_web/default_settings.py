@@ -9,14 +9,18 @@ CELERY_DEFAULT_QUEUE = 'kmad_web'
 CELERY_QUEUES = (
     Queue('kmad_web', Exchange('kmad_web'), routing_key='kmad_web'),
 )
-CELERY_RESULT_BACKEND = 'redis://localhost/2'
+CELERY_RESULT_BACKEND = 'redis://localhost/1'
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 CELERYBEAT_SCHEDULE = {
     # Every month on the 1st at midnight
     'update_elmdb': {
         'task': 'kmad_web.tasks.update_elmdb',
         'schedule': crontab(day_of_month=1, hour=0, minute=0),
-        'args': ('kmad_web/frontend/static/dbs/elm_complete.txt',)
+        'args': ()
     },
 }
 
@@ -24,11 +28,11 @@ CELERYBEAT_SCHEDULE = {
 CACHE_CONFIG = {
     'redis': {
         'redis.backend': 'dogpile.cache.redis',
-        'redis.backend.arguments.host': 'localhost',
-        'redis.backend.arguments.port': 6479,
-        'redis.backend.arguments.db': 28,
-        'redis.backend.arguments.redis_expiration_time': 60*60*24*30,  # 30 days
-        'redis.backend.arguments.distributed_lock': True
+        'redis.arguments.host': 'localhost',
+        'redis.arguments.port': 6379,
+        'redis.arguments.db': 9,
+        'redis.arguments.redis_expiration_time': 60*60*24*30,  # 30 days
+        'redis.arguments.distributed_lock': True
     }
 }
 
@@ -36,6 +40,7 @@ CACHE_CONFIG = {
 ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
+UNIPROT_PTMS_URL = "http://www.uniprot.org/docs/ptmslist.txt"
 PFAM_URL = "http://pfam.xfam.org/search/sequence"
 PFAM_ID_URL = "http://pfam.xfam.org/protein/{}?output=xml"
 D2P2_URL = "http://d2p2.pro/api/seqid"

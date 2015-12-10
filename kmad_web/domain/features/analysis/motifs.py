@@ -1,7 +1,10 @@
+import logging
 import re
 
 from kmad_web.domain.features.analysis.helpers import (
     get_seq_range, group_features_positionwise)
+
+_log = logging.getLogger(__name__)
 
 
 def analyze_motifs(mutation, sequences):
@@ -12,6 +15,8 @@ def analyze_motifs(mutation, sequences):
                 'position': 1,  # 1-based!
                 'motifs': [{
                 'motif-id': {
+                             'start': 1,
+                             'end': 3,
                              'wild': '0',
                              'mutant': '3',
                              'class': 'motif-class',
@@ -106,6 +111,8 @@ def _process_motifs(mutation, wild_motifs, mutant_motifs):
         else:
             status_mutant = '0'
         motif_data['motifs'][m['id']] = {
+            'start': m['start'],
+            'end': m['end'],
             'wild': status_wild,
             'mutant': status_mutant,
             'probability': m['probability'],

@@ -39,6 +39,7 @@ def create_app(settings=None):
 
     cm.load_config(app.config['CACHE_CONFIG'])
 
+
     # Only log to email during production.
     if not app.debug and not app.testing:  # pragma: no cover
         mail_handler = SMTPHandler((app.config["MAIL_SERVER"],
@@ -58,10 +59,21 @@ def create_app(settings=None):
                               "%(message)s"))
 
     # Only log debug messages during development
-    if app.debug:   # pragma: no cover
-        root_logger.setLevel(logging.DEBUG)
+    if not app.testing:
+        # Only log to the console during development and production, but not
+        # during testing.
+        ch = logging.StreamHandler()
+        formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        root_logger.addHandler(ch)
+        if app.debug:
+            root_logger.setLevel(logging.DEBUG)
+        else:
+            root_logger.setLevel(logging.INFO)
+        root_logger.propagate = False
     else:
-        root_logger.setLevel(logging.INFO)
+        root_logger.setLevel(logging.DEBUG)
 
     # Use ProxyFix to correct URL's when redirecting.
     from kmad_web.middleware import ReverseProxied

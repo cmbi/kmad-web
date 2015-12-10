@@ -1,9 +1,12 @@
+import logging
 import os
 import subprocess
 import tempfile
 
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
+
+_log = logging.getLogger(__name__)
 
 
 class NetphosService(object):
@@ -20,6 +23,7 @@ class NetphosService(object):
 
     @cm.cache('redis')
     def predict(self, fasta_sequence):
+        _log.info("Getting prediction from NetPhos")
         try:
             tmp_file = tempfile.NamedTemporaryFile(
                 suffix=".fasta", delete=False)
@@ -30,11 +34,16 @@ class NetphosService(object):
             netphos_exists = os.path.exists(self._path)
             if netphos_exists:
                 args = [self._path, fasta_filename]
+                _log.debug("Calling NetPhos with command {}".format(
+                    subprocess.list2cmdline(args)
+                ))
                 result = subprocess.check_output(args, stderr=subprocess.PIPE)
                 os.remove(fasta_filename)
             else:
+                _log.error("NetPhos not found: {}".format(self._path))
                 raise ServiceError("Netphos not found: {}".format(self._path))
         except subprocess.CalledProcessError as e:
+            _log.error("NetPhos service returned an error: {}".format(e))
             raise ServiceError(e)
         return result
 

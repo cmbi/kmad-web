@@ -52,9 +52,11 @@ def test_analyze_motifs():
     expected = {'position': 2,
                 'motifs': {
                     'm1': {
+                        'start': 1, 'end': 3,
                         'class': 'c1', 'wild': '4', 'mutant': '0',
                         'probability': 1},
                     'm3': {
+                        'start': 1, 'end': 3,
                         'class': 'c3', 'wild': '4', 'mutant': '4',
                         'probability': 1}
                 }}

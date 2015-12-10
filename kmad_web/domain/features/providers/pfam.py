@@ -3,7 +3,7 @@ import logging
 from kmad_web.default_settings import PFAM_URL, PFAM_ID_URL
 from kmad_web.parsers.pfam import PfamParser
 from kmad_web.services.pfam import PfamService
-from kmad_web.services.types import ServiceError
+from kmad_web.services.types import ServiceError, TimeoutError
 
 
 _log = logging.getLogger(__name__)
@@ -35,9 +35,8 @@ class PfamFeatureProvider(object):
                 domain['end'] = d['end']
                 domain['accession'] = d['accession'].split('.')[0]
                 domains.append(domain)
-        except ServiceError as e:
+        except (ServiceError, TimeoutError) as e:
             _log.info("Pfam service returns an error: {},"
                       "skipping domain search for this sequence".format(
-                          e.message)
-                      )
+                          e.message))
         return domains

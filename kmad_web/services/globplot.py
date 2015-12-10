@@ -29,9 +29,11 @@ class GlobplotService(object):
             data = subprocess.check_output(args)
             os.remove(fasta_filename)
             if not data or not data.startswith('>'):
+                _log.error("No prediction was returned")
                 raise ServiceError("No prediction was returned")
             return data
         except subprocess.CalledProcessError as e:
+            _log.error(e)
             raise ServiceError(e.message)
 
 

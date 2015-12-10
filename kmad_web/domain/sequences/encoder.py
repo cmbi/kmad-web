@@ -17,16 +17,22 @@ class SequencesEncoder(object):
         self._ptm_pos = 4
         # motif code is 2 chars long
         self._motif_pos = 5
+        self._strct_pos = 1
         self._create_code_alphabet()
 
-    def encode(self, sequences, aligned_mode=False):
+    def encode(self, sequences, aligned_mode=False, use_pfam=True):
         _log.info("Encoding sequences")
         self._sequences = sequences
         self._create_codon_sequences()
         # make code dicts for motifs and domains
         # (code dict for PTMs is constant)
         self.motif_code_dict = self._create_motif_code_dict()
-        self.domain_code_dict = self._create_domain_code_dict()
+        self.motif_prob_dict = self._create_motif_prob_dict()
+        if use_pfam:
+            self.domain_code_dict = self._create_domain_code_dict()
+            self._encode_domains()
+        else:
+            self.domain_code_dict = {}
         self._ptm_code_dict = OrderedDict([
             ('phosphorylation', ["N", "O", "P", "Q", "d"]),
             ('acetylation',     ["B", "C", "D", "E"]),
@@ -39,7 +45,7 @@ class SequencesEncoder(object):
         # all feature positions are 1-based!
         self._encode_ptms()
         self._encode_motifs()
-        self._encode_domains()
+        self._encode_structure()
         self._create_encoded_sequences()
         if aligned_mode:
             self._create_encoded_aligned_sequences()
@@ -104,8 +110,10 @@ class SequencesEncoder(object):
             ptms = self._filter_ptms(s['ptms'])
             for p in ptms:
                 ptm_pos = p['position'] - 1
-                ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
-                s['codon_seq'][ptm_pos][codon_pos] = ptm_code
+                if ptm_pos < len(s['codon_seq']) \
+                        and p['name'] in self._ptm_code_dict:
+                    ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
+                    s['codon_seq'][ptm_pos][codon_pos] = ptm_code
 
     """
     Only one PTM can be encoded on a given position - in case of multiple PTMs
@@ -120,7 +128,9 @@ class SequencesEncoder(object):
         for p in ptms_pos_wise.values():
             if len(p) > 1:
                 ptm = self._choose_ptm_to_encode(p)
-            else:
+                if not ptm:
+                    continue
+            elif p[0]['name'] in self._ptm_code_dict:
                 ptm = p[0]
             filtered_ptms.append(ptm)
         return filtered_ptms
@@ -128,17 +138,21 @@ class SequencesEncoder(object):
     def _choose_ptm_to_encode(self, ptms):
         # highest level -> lowest number
         # this only returns one PTM with the highest level
-        highest_level = min([p['annotation_level'] for p in ptms])
-        # find all PTMs with highest level
-        highest_level_ptms = [i for i in ptms
-                              if i['annotation_level'] == highest_level]
-        if len(highest_level_ptms) > 1:
-            # if there is mmore than one PTM with the highest level choose the
-            # one with lowest index in the ptm_code_dict
-            ptm = min(highest_level_ptms,
-                      key=lambda x: self._ptm_code_dict.keys().index(x['name']))
-        else:
-            ptm = highest_level_ptms[0]
+        encodable_ptms = [p for p in ptms
+                          if p['name'] in self._ptm_code_dict.keys()]
+        ptm = {}
+        if encodable_ptms:
+            highest_level = min([p['annotation_level'] for p in encodable_ptms])
+            # find all PTMs with highest level and names in our code dict
+            highest_level_ptms = [i for i in encodable_ptms
+                                  if (i['annotation_level'] == highest_level)]
+            if len(highest_level_ptms) > 1:
+                # if there is more than one PTM with the highest level choose the
+                # one with lowest index in the ptm_code_dict
+                ptm = min(highest_level_ptms,
+                          key=lambda x: self._ptm_code_dict.keys().index(x['name']))
+            else:
+                ptm = highest_level_ptms[0]
         return ptm
 
     def _group_ptms_by_position(self, ptms):
@@ -160,7 +174,8 @@ class SequencesEncoder(object):
             for m in s['motifs_filtered']:
                 motif_code = self.motif_code_dict[m['id']]
                 for i in range(m['start'] - 1, m['end']):
-                    s['codon_seq'][i][pos:pos+2] = motif_code
+                    if i < len(s['codon_seq']):
+                        s['codon_seq'][i][pos:pos+2] = motif_code
 
     """
     Encodes domains on the sequences[lists of codons]
@@ -173,7 +188,8 @@ class SequencesEncoder(object):
             for d in s['domains']:
                 domain_code = self.domain_code_dict[d['accession']]
                 for i in range(int(d['start']) - 1, int(d['end'])):
-                    s['codon_seq'][i][pos:pos+2] = domain_code
+                    if i < len(s['codon_seq']):
+                        s['codon_seq'][i][pos:pos+2] = domain_code
 
     """
     From each string sequences it creates a codon sequence, e.g.
@@ -190,3 +206,35 @@ class SequencesEncoder(object):
         for s in self._sequences:
             s['codon_seq'] = [[r, 'A', 'A', 'A', 'A', 'A', 'A']
                               for r in s['seq']]
+
+    def _encode_structure(self):
+        order = ['TURN', 'HELIX', 'TRANSMEM', 'STRAND', 'DISULFID']
+        strct_dict = {'TURN': 'T', 'TRANSMEM': 'M', 'STRAND': 'S', 'HELIX': 'H',
+                      'DISULFID': 'C'}
+        pos = self._strct_pos
+        for s in self._sequences:
+            strct = sorted(s['secondary_structure'],
+                           key=lambda x: order.index(x['name']))
+            for e in strct:
+                strct_code = strct_dict[e['name']]
+                if 'start' in e.keys():
+                    for i in range(int(e['start']) - 1, int(e['end'])):
+                        if i < len(s['codon_seq']):
+                            s['codon_seq'][i][pos] = strct_code
+                elif 'position' in e.keys():
+                    if e['position'] - 1 < len(s['codon_seq']):
+                        s['codon_seq'][e['position'] - 1][pos] = strct_code
+
+    def _create_motif_prob_dict(self):
+        prob_dict = {}
+        for s in self._sequences:
+            for m in s['motifs_filtered']:
+                if m['id'] not in prob_dict.keys() or \
+                        prob_dict[m['id']] < m['probability']:
+                    prob_dict[m['id']] = m['probability']
+        code2prob = {}
+        for m in prob_dict:
+            for m_id, m_code in self.motif_code_dict.items():
+                if m == m_id:
+                    code2prob[m_code] = prob_dict[m]
+        return code2prob

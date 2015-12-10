@@ -26,8 +26,8 @@ class BlastService(object):
     :param fasta_filename: path to the query fasta file
     """
     @cm.cache('redis')
-    def run_blast(self, fasta_sequence):
-
+    def run_blast(self, fasta_sequence, seq_limit):
+        _log.info("Running BLAST [service]")
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
         with tmp_file as f:
             f.write(fasta_sequence)
@@ -35,10 +35,14 @@ class BlastService(object):
 
         args = ['blastp', '-query', fasta_filename, '-evalue', '1e-5',
                 '-num_threads', '15', '-db', self._db_path,
-                '-outfmt', self._outfmt]
+                '-outfmt', self._outfmt, '-max_target_seqs', str(seq_limit)]
         try:
-            result =  subprocess.check_output(args)
+            _log.debug("Running BLAST with command {}".format(
+                subprocess.list2cmdline(args)
+            ))
+            result = subprocess.check_output(args)
             os.remove(fasta_filename)
             return result
         except subprocess.CalledProcessError as e:
+            _log.error("BlastService returned an error: {}".format(e))
             raise ServiceError(e)

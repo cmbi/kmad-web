@@ -40,8 +40,20 @@ draw_alignment = function(container_id, sequences) {
   for (key in aa_to_color) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
   }
-  var container_width = sequences[0]['aligned'].length * 20 + 130;
-  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
+  var longest_header = 0;
+  for (var i = 0; i < sequences.length; i++) {
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
+  }
+  var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+  if (container_width > 30000 || container_height > 30000) {
+      document.getElementById("canvases").style.display="none";
+      document.getElementById("collapseTwo").style.display="none";
+      window.alert("Sorry, this alignment is too large to visualize it. You can still download the alignment in FASTA format");
+      return 0;
+  }
   var stage = new Kinetic.Stage({
     container: container_id,
     width: container_width,
@@ -64,12 +76,8 @@ draw_alignment = function(container_id, sequences) {
 
   ctx.fillStyle = "#515454";
   // draw sequence headers
-  var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
     y = 30 + i * ROW_HEIGHT;
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
-    }
     ctx.fillText(sequences[i]['header'], x, y)
   }
 
@@ -230,8 +238,18 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = sequences[0]['aligned'].length * 20 + 130;
-  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 50;
+  var longest_header = 0;
+  for (var i = 0; i < sequences.length; i++) {
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
+  }
+  var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+
+  if (container_width > 30000 || container_height > 30000) {
+    return 0;
+  }
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -274,7 +292,7 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   if (feature_type == 'motif') {
     index_add = 3;
     char_index = 6;
-  }
+  } 
   var feature_code;
   var r;
   var r_up;
@@ -355,8 +373,18 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
-  var container_width = sequences[0]['aligned'].length * 20 + 130;
-  var container_height = ROWS * ROW_HEIGHT * 1.5 + 40;
+  var longest_header = 0;
+  for (var i = 0; i < sequences.length; i++) {
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
+  }
+  var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+
+  if (container_width > 30000 || container_height > 30000) {
+    return 0;
+  }
 
   var stage = new Kinetic.Stage({
     container: container_id,
@@ -607,4 +635,137 @@ DomainsLegend = function(container_id, domains) {
   this.update = function() {
     this.draw();
   }
+}
+draw_alignment_with_structure = function(container_id, sequences) {
+  var start = Date.now();
+  const ROW_HEIGHT = 15;
+  const ROWS = sequences.length;
+  const FONT_SIZE = 13;
+  const FONT_FAMILY = "Monospace";
+  var codon_length = 7;
+
+  var longest_header = 0;
+  for (var i = 0; i < sequences.length; i++) {
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
+  }
+  var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
+  var container_height = (ROWS * ROW_HEIGHT * 1.1) + 20;
+
+  if (container_width > 30000 || container_height > 30000) {
+    return 0;
+  }
+
+  var stage = new Kinetic.Stage({
+    container: container_id,
+    width: container_width,
+    height: container_height,
+    listening: true
+  });
+
+  var tooltip_layer = new Kinetic.Layer();
+  var shapes_layer = new Kinetic.Layer();
+  var native_layer = new Kinetic.Layer();
+
+  stage.add(native_layer);
+  stage.add(tooltip_layer);
+  stage.add(shapes_layer);
+
+  document.getElementById(container_id).style.width = container_width;
+  document.getElementById(container_id).style.height = container_height + 10;
+  
+
+  var shaded_to_hex = {'gray':'#D9D9D9', 'red': '#FFBDBD', 'green':'#CCF0CC',
+                       'yellow':'#FFFFB5', 'blueishgreen': '#A6DED0',
+                       'blue':'#CFEFFF', 'purple':'#DECFFF', 'pink':'#FFCCE6',
+                       'white':'#FFFFFF'};
+
+  aa_to_hex ={};
+  for (key in aa_to_color) {
+    aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
+  }
+  // color spectrum for features
+  var color_map = {'T': '#49ce6c', 'H': '#3e87d8', 'S': '#e15555',
+      'C': '#e1d131', 'M': '#4e63ce'
+  }
+  var ctx = native_layer.getContext()._context;
+
+  ctx.fillStyle = '#EEEEEE';
+  ctx.fillRect(0, 0, container_width, container_height);
+
+  var index_add = 1;
+  var char_index = 7;
+  var feature_code;
+  var r;
+  var r_up;
+  var letter_col;
+  var rect_width = 10;
+  var rect_height = 15;
+  var is_feature;
+  var feature_coords = [];
+  var feature_names = [];
+  draw_residue = function(res_num, seq_num, x, y) {
+    feature_code = sequences[seq_num]['encoded_aligned'].charAt(res_num + index_add);
+    r = sequences[seq_num]['encoded_aligned'].charAt(res_num);
+
+    letter_col = color_to_hex['gray'];
+    if (feature_code == 'A') {
+      letter_col = aa_to_hex[r.toUpperCase()];
+    }
+    else {
+      letter_col = color_map[feature_code];
+      feature_coords = feature_coords.concat([[x, y, rect_width, rect_height]]);
+    }
+      ctx.fillStyle = letter_col;
+      ctx.fillRect(x, y, rect_width, rect_height);
+      ctx.fillStyle = "#000000";
+      ctx.fillText(r, x + 1, y + 10)
+  }
+  // 
+  var x = 10;
+  var y = 30;
+  ctx.fillStyle = "#515454";
+  // draw headers
+  var longest_header = 0;
+  for (var i = 0; i < sequences.length; i++) {
+    if (sequences[i]['header'].length > longest_header) {
+        longest_header = sequences[i]['header'].length;
+    }
+    y = 30 + i * ROW_HEIGHT;
+    ctx.fillText(sequences[i]['header'], x, y)
+  }
+
+  // draw numbering
+  x = longest_header * 6 + 10;
+  y = 10;
+  for (var i = 0; i < sequences[0]['aligned'].length; i++) {
+    if (i % 5 == 0) {
+      ctx.fillText(i.toString(), x, y)
+      ctx.fillText('I', x, y + 10)
+      x += 50;
+    }
+  }
+
+  for (var i = 0; i < sequences.length; i++) {
+    x = longest_header * 6 + 10;
+    y = 20+(i * ROW_HEIGHT);
+    for (var j = 0; j < sequences[i]['encoded_aligned'].length; j+=codon_length) {
+      draw_residue(j, i, x, y);
+      x += 10;
+    }
+  }
+  coords_and_names =  group_coords(feature_coords, feature_names, rect_width);
+  feature_coords = coords_and_names[0];
+  feature_names = coords_and_names[1];
+  /*
+  create_tooltip(feature_coords, feature_names, shapes_layer,
+      tooltip_layer, 'structure', container_id);
+  */
+
+  document.getElementById('download_structure_canvas_button').addEventListener('click',
+      function() {
+         downloadCanvasFromStage(this, "alignment_structure.png", stage);
+  }, false);
+
 }

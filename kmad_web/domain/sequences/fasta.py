@@ -45,9 +45,11 @@ def make_fasta(sequence_data):
         return sequence_data
     else:
         if not ''.join(sequence_data.split()).isalpha():
+            _log.error("make_fasta raises a RuntimeError"
+                       ", sequence_data: {}".format(sequence_data))
             raise RuntimeError("Sequence has to consist of only alphabetic "
                                "characters: {}".format(sequence_data))
-        return ">sequence\n{}\n".format(sequence_data)
+        return ">sequence\n{}\n".format("".join(sequence_data.split()))
 
 
 def sequences2fasta(sequences):
@@ -77,11 +79,15 @@ def check_fasta(sequence_data):
             for i, lineI in enumerate(data_lines[:-1]):
                 fasta_header = lineI.startswith('>')
                 if fasta_header and not alpha_or_dash(data_lines[i + 1]):
+                    _log.error("check fasta raises a RuntimeError,"
+                               " sequence_data: {}".format(sequence_data))
                     raise RuntimeError("This line is a header "
                                        "but next is not a sequence:\n{}".format(
                                            data_lines[i + 1]
                                        ))
                 elif not fasta_header and not alpha_or_dash(lineI):
+                    _log.error("check fasta raises a RuntimeError,"
+                               " sequence_data: {}".format(sequence_data))
                     raise RuntimeError("Line that is not a header"
                                        " and is not a sequence:\n{}".format(
                                            data_lines[i + 1]

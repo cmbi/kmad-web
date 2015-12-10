@@ -36,7 +36,7 @@ class ElmFeatureProvider(object):
             motifs.extend(instances)
         # get predicted motifs
         instances = self._predict_motifs(sequence)
-        motifs.extend(instances)
+        self._add_predicted(motifs, instances)
         return motifs
 
     def _process_motif_classes(self):
@@ -49,7 +49,7 @@ class ElmFeatureProvider(object):
         for m_id in self._full_motif_classes:
             m = self._full_motif_classes[m_id]
             if all([m[k] for k in m]):
-                if m['GO'].intersection(self._go_terms):
+                if not self._go_terms or m['GO'].intersection(self._go_terms):
                     for match in m['compiled_regex'].finditer(sequence):
                         motif = {}
                         motif['start'] = match.span()[0] + 1
@@ -141,3 +141,14 @@ class ElmFeatureProvider(object):
         for i in remove_indexes:
             del filtered_motifs[i]
         return filtered_motifs
+
+    def _add_predicted(self, annotated, predicted):
+        for mp in predicted:
+            found = False
+            for ma in annotated:
+                if (ma['class'] == mp['class'] and ma['start'] == mp['start']
+                        and ma['end'] == mp['end']):
+                    found = True
+                    break
+            if not found:
+                annotated.append(mp)

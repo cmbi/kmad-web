@@ -31,14 +31,16 @@ class SequencesAnnotator(object):
                  'ptms': ptm_list,
                 }]
     """
-    def annotate(self, sequences):
+    def annotate(self, sequences, use_pfam):
         self.sequences = sequences
         _log.info("Annotating sequences")
         self._add_missing_uniprot_ids()
         go_terms = self._get_go_terms()
         self._annotate_ptms()
         self._annotate_motifs(go_terms)
-        self._annotate_domains()
+        if use_pfam:
+            self._annotate_domains()
+        self._annotate_secondary_structure()
 
     def _get_go_terms(self):
         uniprot = UniprotGoTermProvider()
@@ -77,3 +79,9 @@ class SequencesAnnotator(object):
             pfam = PfamFeatureProvider()
             s['domains'] = pfam.get_domains(s)
             time.sleep(self._poll)
+
+    def _annotate_secondary_structure(self):
+        _log.info("Annotating sequences with secondary structure")
+        for s in self.sequences:
+            uniprot = UniprotFeatureProvider()
+            s['secondary_structure'] = uniprot.get_secondary_structure(s)

@@ -1,6 +1,11 @@
 body {
-  background-color: #444;
+  background-color: #EFEFEF;
 }
+.row{
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+
 
 .panel-title-text {
   color: #4C4C4C;
@@ -14,25 +19,21 @@ body {
 }
 
 .kmad-k {
-    color: #7109AA;
     font-size: 120%;
     font-weight: bold;
 }
 
 .kmad-m {
-    color: #FFFF00;
     font-size: 120%;
     font-weight: bold;
 }
 
 .kmad-a {
-    color: #7BB800;
     font-size: 120%;
     font-weight: bold;
 }
 
 .kmad-n {
-    color: #9E0059;
     font-size: 120%;
     font-weight: bold;
 }

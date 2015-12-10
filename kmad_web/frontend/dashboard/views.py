@@ -4,8 +4,7 @@ import StringIO
 
 from flask import abort
 from flask import (Blueprint, render_template, request, redirect, url_for,
-                   send_file, Response)
-from functools import wraps
+                   send_file)
 
 from kmad_web.services.helpers import fieldlist
 from kmad_web.frontend.dashboard.forms import KmadForm
@@ -37,8 +36,8 @@ def index():
                 seq_data, str(form.gop.data), str(form.gep.data),
                 str(form.egp.data), str(form.ptm_score.data),
                 str(form.domain_score.data), str(form.motif_score.data),
-                ast.literal_eval(form.gapped.data), form.usr_features.data
-            )
+                ast.literal_eval(form.gapped.data), form.usr_features.data,
+                form.seq_limit.data)
             celery_id = strategy()
         elif form.output_type.data == 'annotate':
             strategy = AnnotateStrategy(seq_data)
@@ -49,7 +48,7 @@ def index():
                 str(form.egp.data), str(form.ptm_score.data),
                 str(form.domain_score.data), str(form.motif_score.data),
                 ast.literal_eval(form.gapped.data), form.usr_features.data,
-                form.alignment_method.data)
+                form.alignment_method.data, form.seq_limit.data)
             celery_id = strategy()
         elif form.output_type.data == 'predict_and_align':
             strategy = PredictAndAlignStrategy(
@@ -57,8 +56,7 @@ def index():
                 str(form.gep.data), str(form.egp.data),
                 str(form.ptm_score.data), str(form.domain_score.data),
                 str(form.motif_score.data), ast.literal_eval(form.gapped.data),
-                form.usr_features.data
-            )
+                form.usr_features.data, form.seq_limit.data)
             celery_id = strategy()
         else:
             abort(500, description='Unknown output type')
@@ -79,84 +77,84 @@ def index():
     return render_template('dashboard/index.html', form=form)
 
 
-@bp.route("/output/<output_type>/<celery_id>", methods=['GET'])
+@bp.route("/output/<output_type>/<celery_id>/", methods=['GET'])
 def output(output_type, celery_id):
     return render_template("dashboard/output.html",
                            output_type=output_type,
                            celery_id=celery_id)
 
 
-@bp.route('/help', methods=['GET'])
+@bp.route('/help/', methods=['GET'])
 def help():
     return render_template('dashboard/help.html')
 
 
-@bp.route('/examples/<filename>', methods=['GET'])
+@bp.route('/examples/<filename>/', methods=['GET'])
 def alignment_example(filename):
     return render_template('dashboard/examples/{}.html'.format(filename))
 
 
-@bp.route('/disprot_clustal_examples', methods=['GET'])
+@bp.route('/disprot_clustal_examples/', methods=['GET'])
 def disprot_clustal_examples():
     return render_template('dashboard/disprot_clustal_examples.html')
 
 
-@bp.route('/disprot_tcoffee_examples', methods=['GET'])
+@bp.route('/disprot_tcoffee_examples/', methods=['GET'])
 def disprot_tcoffee_examples():
     return render_template('dashboard/disprot_tcoffee_examples.html')
 
 
-@bp.route('/reviewer_comments', methods=['GET'])
+@bp.route('/reviewer_comments/', methods=['GET'])
 def reviewer_comments():
     return render_template('dashboard/reviewer_comments.html')
 
 
-@bp.route('/methods', methods=['GET'])
+@bp.route('/methods/', methods=['GET'])
 def methods():
     return render_template('dashboard/methods.html')
 
 
-@bp.route('/about', methods=['GET'])
+@bp.route('/about/', methods=['GET'])
 def about():
     return render_template('dashboard/about.html')
 
 
-@bp.route('/standalone', methods=['GET'])
+@bp.route('/standalone/', methods=['GET'])
 def standalone():
     return render_template('dashboard/standalone.html')
 
 
-@bp.route('/additional_information', methods=['GET'])
+@bp.route('/additional_information/', methods=['GET'])
 def additional_information():
     return render_template('dashboard/additional_information.html')
 
 
-@bp.route('/why', methods=['GET'])
+@bp.route('/why/', methods=['GET'])
 def why():
     return render_template('dashboard/why.html')
 
 
-@bp.route('/comparison', methods=['GET'])
+@bp.route('/comparison/', methods=['GET'])
 def comparison():
     return render_template('dashboard/comparison.html')
 
 
-@bp.route('/balibase', methods=['GET'])
+@bp.route('/balibase/', methods=['GET'])
 def balibase():
     return render_template('dashboard/balibase.html')
 
 
-@bp.route('/prefab', methods=['GET'])
+@bp.route('/prefab/', methods=['GET'])
 def prefab():
     return render_template('dashboard/prefab.html')
 
 
-@bp.route('/cram', methods=['GET'])
+@bp.route('/cram/', methods=['GET'])
 def cram():
     return render_template('dashboard/cram.html')
 
 
-@bp.route('/1aiq_1b02', methods=['GET'])
+@bp.route('/1aiq_1b02/', methods=['GET'])
 def yasara_example():
     return render_template('dashboard/yasara_example.html')
 

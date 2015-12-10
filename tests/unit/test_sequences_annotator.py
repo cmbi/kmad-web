@@ -86,7 +86,7 @@ def test_annotate(mock_motifs, mock_ptms, mock_domains, mock_go_terms):
                 {'seq': crambin[:-1], 'id': ''}
                 ]
     seq_ann = SequencesAnnotator()
-    seq_ann.annotate(seq)
+    seq_ann.annotate(seq, use_pfam=True)
     eq_(expected, seq_ann.sequences)
 
 
