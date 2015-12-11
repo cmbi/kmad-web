@@ -69,7 +69,7 @@ class TestApi(object):
         and perform all actions
         using the KMAD API
         """
-        test_sequences = [self._get_random_sequence() for i in range(5)]
+        test_sequences = [self._get_random_sequence() for i in range(1)]
         self._test_sequences(test_sequences)
 
     def _get_data(self, output_type, fasta_content):
