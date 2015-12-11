@@ -27,7 +27,7 @@ def test_ptms_strategy(mock_chain):
 
 
 @patch('kmad_web.services.kmad.tempfile.NamedTemporaryFile')
-@patch('kmad_web.services.kmad.group.__call__')
+@patch('kmad_web.services.kmad.chord.__call__')
 @patch('kmad_web.services.kmad.chain.__call__')
 def test_predict_strategy(mock_chain, mock_group, mock_temp):
     test_id = '12345'
@@ -44,10 +44,10 @@ def test_align_strategy(mock_conf, mock_chain):
     mock_conf.return_value = 'conf_path'
     test_id = '12345'
     type(mock_chain.return_value).id = PropertyMock(return_value=test_id)
-    s = AlignStrategy('>1\nSEQ', '', '', '', '', '', '', '', '')
+    s = AlignStrategy('>1\nSEQ', '', '', '', '', '', '', '', '', '')
     eq_(test_id, s())
 
-    s = AlignStrategy('>1\nSEQ\n>2\nSEQSEQ', '', '', '', '', '', '', '', '')
+    s = AlignStrategy('>1\nSEQ\n>2\nSEQSEQ', '', '', '', '', '', '', '', '', '')
     eq_(test_id, s())
 
 
@@ -91,13 +91,13 @@ def test_predict_and_align(mock_conf, mock_chain, mock_group):
     test_id = '12345'
     type(mock_chain.return_value).id = PropertyMock(return_value=test_id)
     s = PredictAndAlignStrategy('>1\nSEQ', ['d2p2'], '', '', '', '', '', '', '',
-                                '')
+                                '', '')
     eq_(test_id, s())
 
     s = PredictAndAlignStrategy('>1\nSEQ\n>2\nSEQSEQ', ['d2p2'], '', '', '', '',
-                                '', '', '', '')
+                                '', '', '', '', '')
     eq_(test_id, s())
 
     s = PredictAndAlignStrategy('>1\nSEQ\n>2\nSEQSEQ', ['other_method'], '', '',
-                                '', '', '', '', '', '')
+                                '', '', '', '', '', '', '')
     eq_(test_id, s())

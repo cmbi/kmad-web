@@ -27,7 +27,8 @@ class TestEndpoints(object):
                                  'domain_score': 1, 'motif_score': 1,
                                  'usr_features': ['test'],
                                  'output_type': 'align',
-                                 'gapped': False})
+                                 'gapped': False, 'seq_limit': 35})
+        print rv.data
         response = json.loads(rv.data)
         eq_(rv.status_code, 202)
         ok_('id' in response)
