@@ -49,6 +49,6 @@ def _transfer_features_from_homologue(features, position_map, sequence1,
         elif ('position' in f.keys() and f['position'] in position_map.keys()
               and sequence1[position_map[f['position']]] == sequence2[f['position']]):
             feature = f.copy()
-            feature['postion'] = position_map[f['position']]
+            feature['position'] = position_map[f['position']]
             new_features.append(feature)
     return new_features

@@ -126,13 +126,15 @@ class SequencesEncoder(object):
         filtered_ptms = []
         ptms_pos_wise = self._group_ptms_by_position(all_ptms)
         for p in ptms_pos_wise.values():
+            ptm = {}
             if len(p) > 1:
                 ptm = self._choose_ptm_to_encode(p)
                 if not ptm:
                     continue
             elif p[0]['name'] in self._ptm_code_dict:
                 ptm = p[0]
-            filtered_ptms.append(ptm)
+            if ptm:
+                filtered_ptms.append(ptm)
         return filtered_ptms
 
     def _choose_ptm_to_encode(self, ptms):

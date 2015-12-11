@@ -74,6 +74,7 @@ class TestTasks(object):
 
         # check: sequence found in d2p2
         blast_result = {
+            'blast_result': [{'qlen': 758}],
             'exact_hit': {'found': True, 'seq_id': 'P10636'}
         }
         result = query_d2p2(blast_result)
@@ -106,15 +107,12 @@ class TestTasks(object):
         mock_os.return_value = True
 
         from kmad_web.tasks import run_single_predictor
-
         for pred_name in methods:
+            previous = {}
             expected = {pred_name: pred}
 
-            result = run_single_predictor(fasta, pred_name)
+            result = run_single_predictor(previous, fasta, pred_name)
             eq_(result, expected)
-
-        result = run_single_predictor(fasta, pred_name)
-        eq_(result,  expected)
 
     def test_process_prediction_results(self):
         fasta_seq = '>1\nSEQSEQ\n'
@@ -185,7 +183,7 @@ class TestTasks(object):
                 'found': True
             }
         }
-        eq_(expected, run_blast(fasta_seq))
+        eq_(expected, run_blast(fasta_seq, 10000))
 
         mock_hit.return_value = 'exact_hit'
         expected = {
@@ -196,7 +194,7 @@ class TestTasks(object):
                 'found': True
             }
         }
-        eq_(expected, run_blast(fasta_seq))
+        eq_(expected, run_blast(fasta_seq, 10000))
 
     @patch('kmad_web.tasks.UniprotSequenceProvider.get_sequence')
     def test_get_sequences_from_blast(self, mock_provider):

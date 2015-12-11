@@ -1,17 +1,7 @@
 import logging
-import tempfile
 
 
 _log = logging.getLogger(__name__)
-
-
-def write_fles(sequences, aligned_mode=False):
-    out_text = make_fles(sequences, aligned_mode)
-    tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    with tmp_file as f:
-        f.write(out_text)
-
-    return tmp_file.name
 
 
 def make_fles(sequences, motifs_dict, aligned_mode=False):

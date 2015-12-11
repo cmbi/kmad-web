@@ -20,14 +20,17 @@ def test_encode():
             ],
             'motifs': [
                 {'id': 'test_motif',
+                 'probability': 1,
                  'start': 1,
                  'end': 3}
             ],
             'motifs_filtered': [
                 {'id': 'test_motif',
+                 'probability': 1,
                  'start': 1,
                  'end': 3}
             ],
+            'secondary_structure': [],
             'domains': [
                 {'accession': 'test_domain_1', 'start': 1, 'end': 1},
                 {'accession': 'test_domain_2', 'start': 2, 'end': 3},
@@ -56,14 +59,17 @@ def test_encode():
             ],
             'motifs': [
                 {'id': 'test_motif',
+                 'probability': 1,
                  'start': 1,
                  'end': 3}
             ],
             'motifs_filtered': [
                 {'id': 'test_motif',
+                 'probability': 1,
                  'start': 1,
                  'end': 3}
             ],
+            'secondary_structure': [],
             'domains': [
                 {'accession': 'test_domain_1', 'start': 1, 'end': 1},
                 {'accession': 'test_domain_2', 'start': 2, 'end': 3},

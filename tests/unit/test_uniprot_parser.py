@@ -7,7 +7,7 @@ def test_parse_txt():
         test_txt = a.read()
     uniprot = UniprotParser()
     uniprot.parse_ptms(test_txt)
-    exp_ptms = {'info': 'Phosphoserine; by PDPK1 and TTBK1.',
+    exp_ptms = {'info': 'Phosphoserine',
                 'position': '515',
                 'eco': ['0000269'],
                 'type': 'MOD_RES',

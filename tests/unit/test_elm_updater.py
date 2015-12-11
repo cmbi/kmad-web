@@ -32,8 +32,9 @@ def test_update(mock_get_all_classes, mock_json_dump,
     expected_json = {'CLV_C14_Caspase3-7': {'GO': ['goterm1', 'goterm2'],
                                             'pattern':
                                                 '[DSTE][^P][^DEWHFYC]D[GSAN]',
+                                            'class': 'Caspase cleavage motif',
                                             'description': "Caspase-3 and "
-                                                "Caspase-7 cleavage site",
+                                                "Caspase-7 cleavage site.",
                                             'class': "Caspase cleavage motif",
                                             'probability': '0.00309374033071'}
                      }

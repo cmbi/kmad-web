@@ -18,7 +18,8 @@ def test_parse_motif_classes():
     elm_parser = ElmParser()
     elm_parser.parse_motif_classes(elm_data)
     expected = {'CLV_C14_Caspase3-7': {
-        'class': 'Caspase-3 and Caspase-7 cleavage site',
+        'description': 'Caspase-3 and Caspase-7 cleavage site.',
+        'class': 'Caspase cleavage motif',
         'pattern': '[DSTE][^P][^DEWHFYC]D[GSAN]',
         'probability': '0.00309374033071'
         }

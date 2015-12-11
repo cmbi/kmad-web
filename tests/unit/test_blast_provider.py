@@ -37,7 +37,7 @@ def test_get_result(mock_check_output):
             'bitscore': '93.2'
         }
     ]
-    eq_(blast_hits, blast.get_result(fasta_file))
+    eq_(blast_hits, blast.get_result(fasta_file, 1000))
 
 
 def test_get_exact_hit():

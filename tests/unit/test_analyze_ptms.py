@@ -4,7 +4,8 @@ from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.features.analysis.ptms import (analyze_ptms,
                                                     _analyze_predicted_phosph,
                                                     _analyze_annotated_ptms,
-                                                    _check_local_similarity)
+                                                    _check_local_similarity,
+                                                    _get_all_names)
 from kmad_web.domain.features.analysis.helpers import (
     group_features_positionwise)
 from kmad_web.services.helpers.cache import cache_manager as cm
@@ -27,9 +28,9 @@ def test_analyze_ptms():
             'seq': 'ABC',
             'ptms': [
                 {'name': 'phosphorylation', 'position': 2,
-                 'annotation_level': 2},
+                 'annotation_level': 2, 'info': ""},
                 {'name': 'phosphorylation', 'position': 3,
-                 'annotation_level': 2}
+                 'annotation_level': 2, 'info': ""}
             ],
             'motifs': [],
             'domains': [],
@@ -39,9 +40,9 @@ def test_analyze_ptms():
             'seq': 'ABC',
             'ptms': [
                 {'name': 'phosphorylation', 'position': 2,
-                 'annotation_level': 2},
+                 'annotation_level': 2, 'info': ""},
                 {'name': 'amidation', 'position': 2,
-                 'annotation_level': 2}
+                 'annotation_level': 2, 'info': ""}
             ],
             'motifs': [],
             'domains': [],
@@ -51,9 +52,9 @@ def test_analyze_ptms():
             'seq': 'ABC',
             'ptms': [
                 {'name': 'phosphorylation', 'position': 2,
-                 'annotation_level': 2},
+                 'annotation_level': 2, 'info': ""},
                 {'name': 'amidation', 'position': 2,
-                 'annotation_level': 2}
+                 'annotation_level': 2, 'info': ""}
             ],
             'motifs': [],
             'domains': [],
@@ -63,7 +64,7 @@ def test_analyze_ptms():
             'seq': 'AXC',
             'ptms': [
                 {'name': 'amidation', 'position': 2,
-                 'annotation_level': 2}
+                 'annotation_level': 2, 'info': ""}
             ],
             'motifs': [],
             'domains': [],
@@ -77,8 +78,8 @@ def test_analyze_ptms():
         'residues': [
             {'position': 2,
              'ptms': {
-                 'amidation': {'wild': '3', 'mutant': '3'},
-                 'phosphorylation': {'wild': '4', 'mutant': '0'}
+                 'amidation': {'wild': '3', 'mutant': '3', 'info': ""},
+                 'phosphorylation': {'wild': '4', 'mutant': '0', 'info': ""}
              }}]}
     eq_(expected, analyze_ptms(m, sequences))
 
@@ -89,9 +90,9 @@ def test_analyze_predicted_phosph():
             'seq': 'SSS',
             'ptms': [
                 {'name': 'phosphorylation', 'position': 2,
-                 'annotation_level': 2},
+                 'annotation_level': 2, 'info': ""},
                 {'name': 'phosphorylation', 'position': 3,
-                 'annotation_level': 2}
+                 'annotation_level': 2, 'info': ""}
             ],
             'motifs': [],
             'domains': [],
@@ -120,7 +121,7 @@ def test_analyze_predicted_phosph():
     expected = [
         {'position': 2,
          'ptms': {
-             'phosphorylation': {'wild': '4', 'mutant': '0'}
+             'phosphorylation': {'wild': '4', 'mutant': '0', 'info': ""}
          }}
     ]
     eq_(expected, _analyze_predicted_phosph(m, sequences, missing))
@@ -196,11 +197,12 @@ def test_analyze_annotated_ptms():
 
     pos = 2
     new_aa = 'X'
+    ptm_names = _get_all_names(sequences)
     m = Mutation(sequences[0], pos, new_aa)
     group_features_positionwise(sequences)
     expected = {'position': 2, 'ptms': {'amidation':
-                                        {'wild': '3', 'mutant': '3'}}}
-    eq_(expected, _analyze_annotated_ptms(m, sequences, [], []))
+                                        {'wild': '3', 'mutant': '3', 'info': ""}}}
+    eq_(expected, _analyze_annotated_ptms(m, sequences, [], [], ptm_names))
 
     sequences = [
         {
@@ -253,9 +255,10 @@ def test_analyze_annotated_ptms():
     new_aa = 'A'
     m = Mutation(sequences[0], pos, new_aa)
     group_features_positionwise(sequences)
+    ptm_names = _get_all_names(sequences)
     expected = {'position': 2, 'ptms': {'amidation':
-                                        {'wild': '3', 'mutant': '0'}}}
-    eq_(expected, _analyze_annotated_ptms(m, sequences, [], []))
+                                        {'wild': '3', 'mutant': '0', 'info': ""}}}
+    eq_(expected, _analyze_annotated_ptms(m, sequences, [], [], ptm_names))
 
     sequences = [
         {
@@ -276,7 +279,7 @@ def test_analyze_annotated_ptms():
             'seq': 'ABC',
             'ptms': [
                 {'name': 'amidation', 'position': 2,
-                 'annotation_level': 2}
+                 'annotation_level': 2, 'info': ""}
             ],
             'motifs': [],
             'domains': [],
@@ -286,7 +289,7 @@ def test_analyze_annotated_ptms():
             'seq': 'AXC',
             'ptms': [
                 {'name': 'amidation', 'position': 2,
-                 'annotation_level': 2}
+                 'annotation_level': 2, 'info': ""}
             ],
             'motifs': [],
             'domains': [],
@@ -297,7 +300,8 @@ def test_analyze_annotated_ptms():
     pos = 2
     new_aa = 'X'
     m = Mutation(sequences[0], pos, new_aa)
+    ptm_names = _get_all_names(sequences)
     group_features_positionwise(sequences)
     expected = {'position': 2, 'ptms': {'amidation':
-                                        {'wild': '2', 'mutant': '2'}}}
-    eq_(expected, _analyze_annotated_ptms(m, sequences, [], []))
+                                        {'wild': '2', 'mutant': '2', 'info': ""}}}
+    eq_(expected, _analyze_annotated_ptms(m, sequences, [], [], ptm_names))
