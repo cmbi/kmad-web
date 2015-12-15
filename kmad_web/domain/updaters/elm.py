@@ -28,9 +28,7 @@ class ElmUpdater(object):
         # and parse it
         elm_parser.parse_motif_classes(elm_data)
         full_motif_classes = elm_parser.motif_classes.copy()
-        print len(full_motif_classes)
         for motif_id in elm_parser.motif_classes.keys():
-            print motif_id
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
             # try:

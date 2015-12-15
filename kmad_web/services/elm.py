@@ -79,7 +79,7 @@ class ElmService(object):
                     for match in reg.finditer(str(l)):
                         go_terms.add(match.groupdict('')['go_term'])
             else:
-                print "No GO terms found for motif: {}".format(motif_id)
+                _log.debug("No GO terms found for motif: {}".format(motif_id))
             return go_terms
         except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("ELM returned an error: {}".format(e))

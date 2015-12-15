@@ -180,8 +180,6 @@ class PredictionProcessor(object):
             pred_text.append("ResNo AA {}".format(
                 ' '.join(methods)
             ))
-            for m in methods:
-                print len(predictions[m]), len(sequence)
             for j in xrange(len(sequence)):
                 pred_text.append("{} {} {}".format(
                     str(j + 1), sequence[j],
