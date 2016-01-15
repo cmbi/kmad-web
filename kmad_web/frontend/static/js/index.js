@@ -8,16 +8,19 @@ function show_forms_predict() {
 }
 function show_forms_refine() {
   $('#alignmentMethod').removeClass('hidden');
+  $('#gapped_div').addClass('hidden');
   $('#predictionMethod').addClass('hidden');
 }
 function show_forms_panda() {
   $('#predictionMethod').removeClass('hidden');
   $('#alignment_options_div').removeClass('hidden');
+  $('#gapped_div').removeClass('hidden');
   $('#alignmentMethod').addClass('hidden');
 }
 function show_forms_align() {
   $('#predictionMethod').addClass('hidden');
   $('#alignment_options_div').removeClass('hidden');
+  $('#gapped_div').removeClass('hidden');
   $('#alignmentMethod').addClass('hidden');
 }
 function hide_forms() {
