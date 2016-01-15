@@ -49,7 +49,7 @@ def index():
                 seq_data, str(form.gop.data), str(form.gep.data),
                 str(form.egp.data), str(form.ptm_score.data),
                 str(form.domain_score.data), str(form.motif_score.data),
-                gapped.data, form.usr_features.data,
+                gapped, form.usr_features.data,
                 form.alignment_method.data, form.seq_limit.data)
             celery_id = strategy()
         elif form.output_type.data == 'predict_and_align':
