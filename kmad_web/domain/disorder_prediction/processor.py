@@ -66,11 +66,9 @@ class PredictionProcessor(object):
                 # if not change it to another state & add the elements form
                 # the curr_state to the new_cons
                 next_state = disorder_list[i]
-                if (curr_length < 4
-                        and curr_length < prev_length
-                        and prev_state == next_state
-                        and curr_length < self._find_next_length(disorder_list,
-                                                                 i)):
+                if (curr_length < 4 and curr_length < prev_length and
+                        prev_state == next_state and
+                        curr_length < self._find_next_length(disorder_list, i)):
                     # add curr_length elements of previous(=next) state
                     new_cons += [prev_state for j in range(curr_length)]
                 else:
@@ -177,6 +175,11 @@ class PredictionProcessor(object):
             order = ['consensus', 'filtered', 'disopred', 'globplot', 'iupred',
                      'predisorder', 'psipred', 'globplot', 'spined', 'd2p2']
             methods = sorted(predictions.keys(), key=lambda x: order.index(x))
+            filtered = filter(lambda x: len(x) == len(sequence), predictions)
+            if len(predictions) != len(filtered):
+                _log.warn("Not all predictions are of the same length as the "
+                          "sequence")
+                predictions = filtered
             pred_text.append("ResNo AA {}".format(
                 ' '.join(methods)
             ))
