@@ -67,6 +67,8 @@ class ElmFeatureProvider(object):
     def _get_more_info(self, motif_instances):
         instances = []
         for m in motif_instances:
+            if m['id'] not in self._full_motif_classes.keys():
+                continue
             m_class = self._full_motif_classes[m['id']]
             new = m.copy()
             new['probability'] = 1
@@ -120,17 +122,18 @@ class ElmFeatureProvider(object):
                 for it_j, m_j in enumerate(motifs):
                     if it_i != it_j and it_j not in remove_indexes:
                         # motif i starts inside the motif j
-                        check = (m_i['start'] >= m_j['start']
-                                 and m_i['start'] <= m_j['end'])
-                        if check:
-                            if m_i['probability'] > m_j['probability']:
-                                remove_indexes.add(it_j)
-                            elif m_i['probability'] < m_j['probability']:
-                                remove_indexes.add(it_i)
-                                break
-                            elif remove_equal:
-                                remove_indexes.add(it_i)
-                                break
+                        check = (m_i['start'] >= m_j['start'] and
+                                 m_i['start'] <= m_j['end'])
+                        if not check:
+                            continue
+                        if m_i['probability'] > m_j['probability']:
+                            remove_indexes.add(it_j)
+                        elif m_i['probability'] < m_j['probability']:
+                            remove_indexes.add(it_i)
+                            break
+                        elif remove_equal:
+                            remove_indexes.add(it_i)
+                            break
         return remove_indexes
 
     def _remove_motifs(self, motifs, remove_indexes):
@@ -146,8 +149,9 @@ class ElmFeatureProvider(object):
         for mp in predicted:
             found = False
             for ma in annotated:
-                if (ma['class'] == mp['class'] and ma['start'] == mp['start']
-                        and ma['end'] == mp['end']):
+                if (ma['class'] == mp['class'] and
+                        ma['start'] == mp['start'] and
+                        ma['end'] == mp['end']):
                     found = True
                     break
             if not found:
