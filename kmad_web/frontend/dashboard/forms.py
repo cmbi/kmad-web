@@ -233,7 +233,7 @@ class KmadForm(Form):
                  ('iupred', 'IUPred'),
                  ('psipred', 'PSIPRED'),
                  ('predisorder', 'PreDisorder')],
-        default=['globplot'],
+        default=['globplot', 'd2p2'],
         option_widget=widgets.CheckboxInput(),
         widget=MyListWidget(
             html_tag='collist',
