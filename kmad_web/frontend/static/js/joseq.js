@@ -499,8 +499,8 @@ StructureLegend = function(container_id) {
   });
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
-  var color_map = {'T': '#90558a', 'H': '#3e87d8', 'S': '#e15555',
-      'C': '#e1d131', 'M': '#4e63ce'
+  var color_map = {'M': '#90558a', 'H': '#3e87d8', 'S': '#e15555',
+      'C': '#e1d131', 'T': '#49ce6c'
   }
 
   this.draw_residue = function(res_char, strct_code, x, y) {

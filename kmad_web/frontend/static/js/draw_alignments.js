@@ -686,8 +686,8 @@ draw_alignment_with_structure = function(container_id, sequences) {
     aa_to_hex[key] = shaded_to_hex[aa_to_color[key]];
   }
   // color spectrum for features
-  var color_map = {'T': '#90558a', 'H': '#3e87d8', 'S': '#e15555',
-      'C': '#e1d131', 'M': '#4e63ce'
+  var color_map = {'T': '#49ce6c', 'H': '#3e87d8', 'S': '#e15555',
+      'C': '#e1d131', 'M': '#90558a'
   }
   var ctx = native_layer.getContext()._context;
 
