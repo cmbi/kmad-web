@@ -233,7 +233,7 @@ class KmadForm(Form):
                  ('iupred', 'IUPred'),
                  ('psipred', 'PSIPRED'),
                  ('predisorder', 'PreDisorder')],
-        default=['globplot', 'd2p2'],
+        default=['globplot'],
         option_widget=widgets.CheckboxInput(),
         widget=MyListWidget(
             html_tag='collist',
@@ -246,4 +246,4 @@ class KmadForm(Form):
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")
 
-    zsubmit_job = SubmitField("Submit")
+    submit_job = SubmitField("Submit")
