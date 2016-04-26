@@ -332,7 +332,7 @@ PTMsLegend = function(container_id) {
     var res_text = new Kinetic.Text({
       x: x,
       y: y,
-      text: "Color intensities indicate the level of annotation",
+      text: "Color intensities indicate the level of annotation (from highest to lowest)",
       fontSize: FONT_SIZE,
       fontStyle: 'bold',
       fontFamily: FONT_FAMILY,
@@ -349,6 +349,18 @@ PTMsLegend = function(container_id) {
       x: x + 60,
       y: y,
       text: "phosphorylated residues",
+      fontSize: FONT_SIZE,
+      fontStyle: 'bold',
+      fontFamily: FONT_FAMILY,
+      fill: 'black'
+    });
+    this.seq_layer.add(res_text);
+    y = y + 30; 
+    this.draw_residue(' ', 'd', x, y);
+    var res_text = new Kinetic.Text({
+      x: x + 60,
+      y: y,
+      text: "predicted phosphorylation",
       fontSize: FONT_SIZE,
       fontStyle: 'bold',
       fontFamily: FONT_FAMILY,
