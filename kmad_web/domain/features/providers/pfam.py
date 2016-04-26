@@ -31,8 +31,8 @@ class PfamFeatureProvider(object):
 
             for d in pfam_parser.domains:
                 domain = {}
-                domain['start'] = d['start']
-                domain['end'] = d['end']
+                domain['start'] = d['ali_start']
+                domain['end'] = d['ali_end']
                 domain['accession'] = d['accession'].split('.')[0]
                 domains.append(domain)
         except (ServiceError, TimeoutError) as e:

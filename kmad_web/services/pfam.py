@@ -2,6 +2,7 @@ import logging
 import requests
 import time
 import xmltodict
+
 from xml.parsers.expat import ExpatError
 
 from kmad_web.services.types import ServiceError, TimeoutError
