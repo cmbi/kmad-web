@@ -1,4 +1,5 @@
 from nose.tools import eq_, ok_, with_setup
+from mock import patch
 
 from kmad_web.domain.mutation import Mutation
 from kmad_web.domain.features.analysis.ptms import (analyze_ptms,
@@ -22,7 +23,9 @@ def teardown():
 
 
 @with_setup(setup, teardown)
-def test_analyze_ptms():
+@patch('kmad_web.domain.features.providers.netphos.NetphosFeatureProvider.get_phosphorylations')
+def test_analyze_ptms(mock_netphos):
+    mock_netphos.return_value = []
     sequences = [
         {
             'seq': 'ABC',

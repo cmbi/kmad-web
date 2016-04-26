@@ -175,7 +175,8 @@ class PredictionProcessor(object):
             order = ['consensus', 'filtered', 'disopred', 'globplot', 'iupred',
                      'predisorder', 'psipred', 'globplot', 'spined', 'd2p2']
             methods = sorted(predictions.keys(), key=lambda x: order.index(x))
-            filtered = filter(lambda x: len(x) == len(sequence), predictions)
+            filtered = {k: v for k, v in predictions.iteritems() if
+                        len(v) == len(sequence)}
             if len(predictions) != len(filtered):
                 _log.warn("Not all predictions are of the same length as the "
                           "sequence")

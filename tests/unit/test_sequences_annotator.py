@@ -1,6 +1,9 @@
+import os
+
 from mock import patch
 from nose.tools import eq_, with_setup
 
+from kmad_web.default_settings import BLASTP
 from kmad_web.domain.sequences.annotator import SequencesAnnotator
 from kmad_web.services.helpers.cache import cache_manager as cm
 
@@ -76,6 +79,8 @@ def test_annotate_ptms(mock_netphos, mock_uniprot):
 @patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_motifs')
 @with_setup(setup, teardown)
 def test_annotate(mock_motifs, mock_ptms, mock_domains, mock_go_terms):
+    if not os.path.exists(BLASTP):
+        return
     crambin = 'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'
     seq = [{'seq': 'SEQSEQ', 'id': 'TEST_ID'},
            {'seq': crambin, 'id': ''},

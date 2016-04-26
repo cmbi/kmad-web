@@ -2,8 +2,6 @@ import logging
 import os
 import re
 
-from kmad_web.parsers.types import ParserError
-
 
 _log = logging.getLogger(__name__)
 
@@ -21,17 +19,19 @@ class PhosphositeParser(object):
         self._path = path
 
     def get_ptm_sites(self, uniprot_id, ptm_type):
-        filename = {'phosph': 'Phosphorylation_site_dataset',
-                    'acet': 'Acetylation_site_dataset',
-                    'meth': 'Methylation_site_dataset'
-                    }
+        filename = {
+            'phosph': 'Phosphorylation_site_dataset',
+            'acet': 'Acetylation_site_dataset',
+            'meth': 'Methylation_site_dataset'
+        }
+        ptm_sites = []
         full_path = os.path.join(self._path, filename[ptm_type])
         if os.path.exists(full_path):
             with open(full_path) as a:
                 psite_db = a.read()
             ptm_sites = self.parse_db(psite_db, uniprot_id)
         else:
-            raise ParserError("Database not found: {}".format(full_path))
+            _log.warning("Database not found: {}".format(full_path))
         return ptm_sites
 
     def parse_db(self, psite_db, uniprot_id):

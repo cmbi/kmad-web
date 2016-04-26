@@ -2,6 +2,7 @@ import os
 
 from nose.tools import ok_, assert_raises, with_setup
 
+from kmad_web.default_settings import CLUSTALO, CLUSTALW, MAFFT, MUSCLE, TCOFFEE
 from kmad_web.services.alignment import (ClustaloService, ClustalwService,
                                          MafftService, MuscleService,
                                          TcoffeeService)
@@ -21,6 +22,8 @@ def teardown():
 
 @with_setup(setup, teardown)
 def test_clustalo_service():
+    if not os.path.exists(CLUSTALO):
+        return
     clustalo = ClustaloService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
     out = clustalo.align(test_filename)
@@ -33,6 +36,8 @@ def test_clustalo_service():
 
 @with_setup(setup, teardown)
 def test_clustalw_service():
+    if not os.path.exists(CLUSTALW):
+        return
     clustalw = ClustalwService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
     dnd = "tests/unit/testdata/test_multi.dnd"
@@ -47,6 +52,8 @@ def test_clustalw_service():
 
 @with_setup(setup, teardown)
 def test_mafft_service():
+    if not os.path.exists(MAFFT):
+        return
     mafft = MafftService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
     out = mafft.align(test_filename)
@@ -59,6 +66,8 @@ def test_mafft_service():
 
 @with_setup(setup, teardown)
 def test_muscle_service():
+    if not os.path.exists(MUSCLE):
+        return
     muscle = MuscleService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
     out = muscle.align(test_filename)
@@ -71,6 +80,8 @@ def test_muscle_service():
 
 @with_setup(setup, teardown)
 def test_tcoffee_service():
+    if not os.path.exists(TCOFFEE):
+        return
     tcoffee = TcoffeeService()
     test_filename = "tests/unit/testdata/test_multi.fasta"
     out = tcoffee.align(test_filename)

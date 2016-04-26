@@ -1,30 +1,20 @@
-from mock import patch, Mock
-from nose.tools import eq_, ok_, assert_raises
+from mock import patch
+from nose.tools import eq_, ok_
 
 from kmad_web.parsers.phosphosite import PhosphositeParser
-from kmad_web.parsers.types import ParserError
 
 
+@patch('kmad_web.parsers.phosphosite.open')
 @patch('kmad_web.parsers.phosphosite.PhosphositeParser.parse_db')
 @patch('kmad_web.parsers.phosphosite.os.path.exists')
-def test_get_ptm_sites_success(mock_path_exists, mock_parse_db):
+def test_get_ptm_sites(mock_exists, mock_parse_db, mock_open):
+    mock_exists.return_value = True
     path = "/home/joanna/data/phosphosite"
     ptm_type = "phosph"
     uniprot_id = "P28360"
-    mock_path_exists.return_value = True
     psite = PhosphositeParser(path)
     psite.get_ptm_sites(uniprot_id, ptm_type)
     ok_(mock_parse_db.called)
-
-
-@patch('kmad_web.parsers.phosphosite.os.path.exists')
-def test_get_ptm_sites_failure(mock_path_exists):
-    path = "/home/joanna/data/phosphosite"
-    ptm_type = "phosph"
-    uniprot_id = "P28360"
-    mock_path_exists.return_value = False
-    psite = PhosphositeParser(path)
-    assert_raises(ParserError, psite.get_ptm_sites, uniprot_id, ptm_type)
 
 
 def test_parse_db():

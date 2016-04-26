@@ -116,10 +116,10 @@ class TestTasks(object):
 
     def test_process_prediction_results(self):
         fasta_seq = '>1\nSEQSEQ\n'
-        predictions_in = [
-            {'disopred': [0, 0, 0, 0, 2, 2]},
-            {'predisorder': [2, 2, 0, 0, 2, 2]}
-        ]
+        predictions_in = {
+            'disopred': [0, 0, 0, 0, 2, 2],
+            'predisorder': [2, 2, 0, 0, 2, 2]
+        }
 
         from kmad_web.tasks import process_prediction_results
 

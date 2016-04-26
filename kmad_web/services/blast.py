@@ -3,6 +3,7 @@ import os
 import subprocess
 import tempfile
 
+from kmad_web.default_settings import BLASTP
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm
 
@@ -33,7 +34,7 @@ class BlastService(object):
             f.write(fasta_sequence)
         fasta_filename = tmp_file.name
 
-        args = ['blastp', '-query', fasta_filename, '-evalue', '1e-5',
+        args = [BLASTP, '-query', fasta_filename, '-evalue', '1e-5',
                 '-num_threads', '15', '-db', self._db_path,
                 '-outfmt', self._outfmt, '-max_target_seqs', str(seq_limit)]
         try:
