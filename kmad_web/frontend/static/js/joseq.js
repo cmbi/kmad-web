@@ -344,7 +344,6 @@ PTMsLegend = function(container_id) {
     this.draw_residue(' ', 'O', x + 10, y);
     this.draw_residue(' ', 'P', x + 20, y);
     this.draw_residue(' ', 'Q', x + 30, y);
-    this.draw_residue(' ', 'd', x + 40, y);
     var res_text = new Kinetic.Text({
       x: x + 60,
       y: y,
