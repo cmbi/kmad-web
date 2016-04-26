@@ -1,12 +1,4 @@
 ProteinSequences = function(container_id, data, sequence) {
-  // TODO: Check arguments are same length
-  // TODO: Private methods are actually publicly visible.
-  // TODO: All methods are recreated per instance. Is this a problem?
-  // TODO: Fit to canvas width.
-  // TODO: Resize canvas when browser resized.
-  // TODO: Pass settings in constructor
-  // TODO: Smarter positioning of (long) tooltips
-  // TODO: Multiple types of info in tooltips
 
   // Constants
   this.methods = ['filtered', 'consensus'];
@@ -507,7 +499,7 @@ StructureLegend = function(container_id) {
   });
   this.v_header_layer = new Kinetic.Layer();
   this.seq_layer = new Kinetic.Layer();
-  var color_map = {'T': '#49ce6c', 'H': '#3e87d8', 'S': '#e15555',
+  var color_map = {'T': '#90558a', 'H': '#3e87d8', 'S': '#e15555',
       'C': '#e1d131', 'M': '#4e63ce'
   }
 
