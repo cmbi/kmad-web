@@ -33,11 +33,11 @@ class ElmService(object):
                                "instances.gff?q={}".format(uniprot_id))
             request = requests.get(url)
             if request.status_code != 200:
-                _log.error("ELM returned an error: {}".format(
-                    request.status_code))
+                _log.error("ELM returned an error: {}\nURL: {}".format(
+                    request.status_code, url))
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("ELM returned an error: {}".format(e))
+            _log.error("ELM returned an error: {}\nURL: {}".format(e, url))
             raise ServiceError(e)
         else:
             result = request.text
@@ -49,11 +49,11 @@ class ElmService(object):
             url = os.path.join(self._url, "elms", "elms_index.tsv")
             request = requests.get(url)
             if request.status_code != 200:
-                _log.error("ELM returned an error: {}".format(
-                    request.status_code))
+                _log.error("ELM returned an error: {}\nURL: {}".format(
+                    request.status_code, url))
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("ELM returned an error: {}".format(e))
+            _log.error("ELM returned an error: {}\nURL: {}".format(e, url))
             raise ServiceError(e)
         else:
             result = request.text
@@ -82,7 +82,7 @@ class ElmService(object):
                 _log.debug("No GO terms found for motif: {}".format(motif_id))
             return go_terms
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("ELM returned an error: {}".format(e))
+            _log.error("ELM returned an error: {}\nURL: {}".format(e, url))
             raise ServiceError(e)
 
     @cm.cache('redis')
