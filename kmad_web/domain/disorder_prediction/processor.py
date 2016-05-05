@@ -174,7 +174,15 @@ class PredictionProcessor(object):
         if predictions:
             order = ['consensus', 'filtered', 'disopred', 'globplot', 'iupred',
                      'predisorder', 'psipred', 'globplot', 'spined', 'd2p2']
+            # method names present in the predictions dict sorted by index in
+            # the order list
             methods = sorted(predictions.keys(), key=lambda x: order.index(x))
+            for k, v in predictions.iteritems():
+                if len(v) != len(sequence):
+                    _log.error("Prediction from {} has different length ({}) "
+                                "than the seuence ({}).\nPrediction: {}".format(
+                                    k, len(v), len(sequence), v))
+
             filtered = {k: v for k, v in predictions.iteritems() if
                         len(v) == len(sequence)}
             if len(predictions) != len(filtered):

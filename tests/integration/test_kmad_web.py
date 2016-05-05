@@ -83,6 +83,8 @@ class TestApi(object):
                     'gapped': False, 'seq_limit': 35}
         elif output_type == 'predict':
             prediction_methods = 'globplot'
+            prediction_methods = ['globplot', 'psipred', 'disopred', 'd2p2', 'iupred', 'predisorder']
+            prediction_methods = 'globplot psipred disopred d2p2 iupred predisorder'
             data = {'seq_data': fasta_content,
                     'prediction_methods': prediction_methods}
         elif output_type == 'refine':
