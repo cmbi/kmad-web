@@ -41,15 +41,17 @@ def parse_fasta_alignment(fastafile):
 
 
 def make_fasta(sequence_data):
+    seq_lines = sequence_data.splitlines()
     if check_fasta(sequence_data):
+        sequence_data = seq_lines[0] + '\n' + ''.join(seq_lines[1:])
         return sequence_data
     else:
-        if not ''.join(sequence_data.split()).isalpha():
-            _log.error("make_fasta raises a RuntimeError"
-                       ", sequence_data: {}".format(sequence_data))
+        if not ''.join(seq_lines).isalpha():
+            _log.error("make_fasta raises a RuntimeError, sequence_data: %s",
+                       sequence_data)
             raise RuntimeError("Sequence has to consist of only alphabetic "
-                               "characters: {}".format(sequence_data))
-        return ">sequence\n{}\n".format("".join(sequence_data.split()))
+                               "characters: %s", sequence_data)
+        return ">sequence\n{}\n".format(''.join(seq_lines))
 
 
 def sequences2fasta(sequences):

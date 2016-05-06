@@ -18,6 +18,10 @@ def test_make_fasta():
     eq_(">sequence\nSEQ\n", f.make_fasta(seq))
     seq = ">1\nSEQ"
     eq_(">1\nSEQ", f.make_fasta(seq))
+    seq = ">1\nSEQ\nSEQ"
+    eq_(">1\nSEQSEQ", f.make_fasta(seq))
+    seq = "SEQ\nSEQ"
+    eq_(">sequence\nSEQSEQ\n", f.make_fasta(seq))
 
     seq = "SE*"
     assert_raises(RuntimeError, f.make_fasta, seq)
