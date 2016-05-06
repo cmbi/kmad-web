@@ -172,7 +172,7 @@ ProteinSequences = function(container_id, data, sequence) {
       }
     }
     x = 50;
-    y = 55;
+    y = 45;
     for (var i = 0; i < MAX_RES_PER_ROW; i++) {
       if (i % 5 == 0) {
         var ruler_text = new Kinetic.Text({
