@@ -63,6 +63,7 @@ def get_kmad_status(output_type, id):
     :return: Either PENDING, STARTED, SUCCESS, FAILURE, RETRY, or REVOKED.
     """
     from kmad_web.tasks import get_task
+    _log.info("Get status for job id: %s", id)
     task = get_task(output_type)
     async_result = task.AsyncResult(id)
 
@@ -85,6 +86,7 @@ def get_kmad_result(output_type, id):
     """
 
     from kmad_web.tasks import get_task
+    _log.info("Get result for job id: %s", id)
 
     task = get_task(output_type)
     result = task.AsyncResult(id).get()
