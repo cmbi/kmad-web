@@ -224,32 +224,32 @@ class KmadForm(Form):
                  ('mafft', 'MAFFT'),
                  ('None', 'Provide your own alignment for refinement')],
         default='clustalo')
-    prediction_method = SelectMultipleField(
-        u'Prediction methods:',
-        choices=[('d2p2', 'D2P2'),
-                 ('globplot', 'GlobPlot'),
-                 ('disopred', 'DISOPRED'),
-                 ('spined', 'SPINE-D'),
-                 ('psipred', 'PSIPRED')],
-        default=['globplot', 'd2p2'],
-        option_widget=widgets.CheckboxInput(),
-        widget=MyListWidget(
-            html_tag='collist',
-            prefix_label=False))
     # prediction_method = SelectMultipleField(
     #     u'Prediction methods:',
     #     choices=[('d2p2', 'D2P2'),
     #              ('globplot', 'GlobPlot'),
     #              ('disopred', 'DISOPRED'),
     #              ('spined', 'SPINE-D'),
-    #              ('iupred', 'IUPred'),
-    #              ('psipred', 'PSIPRED'),
-    #              ('predisorder', 'PreDisorder')],
+    #              ('psipred', 'PSIPRED')],
     #     default=['globplot', 'd2p2'],
     #     option_widget=widgets.CheckboxInput(),
     #     widget=MyListWidget(
     #         html_tag='collist',
     #         prefix_label=False))
+    prediction_method = SelectMultipleField(
+        u'Prediction methods:',
+        choices=[('d2p2', 'D2P2'),
+                 ('globplot', 'GlobPlot'),
+                 ('disopred', 'DISOPRED'),
+                 ('spined', 'SPINE-D'),
+                 ('iupred', 'IUPred'),
+                 ('psipred', 'PSIPRED'),
+                 ('predisorder', 'PreDisorder')],
+        default=['globplot', 'd2p2'],
+        option_widget=widgets.CheckboxInput(),
+        widget=MyListWidget(
+            html_tag='collist',
+            prefix_label=False))
     add_feature = SubmitField()
     remove_feature = SubmitField()
     seq_limit = IntegerField(u'max. sequence number from BLAST', default=35)
