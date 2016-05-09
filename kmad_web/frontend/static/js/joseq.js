@@ -171,7 +171,7 @@ ProteinSequences = function(container_id, data, sequence) {
         x = x + res_text_width;
       }
     }
-    x = 60;
+    x = 50;
     y = 55;
     for (var i = 0; i < MAX_RES_PER_ROW; i++) {
       if (i % 5 == 0) {
