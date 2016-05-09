@@ -178,7 +178,7 @@ ProteinSequences = function(container_id, data, sequence) {
         var ruler_text = new Kinetic.Text({
           x: x,
           y: y,
-          text: i.toString() + 1,
+          text: (i + 1).toString(),
           fontSize: FONT_SIZE - 6,
           fontStyle: 'bold',
           fontFamily: FONT_FAMILY,
