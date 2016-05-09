@@ -171,14 +171,14 @@ ProteinSequences = function(container_id, data, sequence) {
         x = x + res_text_width;
       }
     }
-    x = 10;
+    x = 60;
     y = 55;
     for (var i = 0; i < MAX_RES_PER_ROW; i++) {
       if (i % 5 == 0) {
         var ruler_text = new Kinetic.Text({
           x: x,
           y: y,
-          text: (i + 1).toString(),
+          text: (i + 10).toString(),
           fontSize: FONT_SIZE - 6,
           fontStyle: 'bold',
           fontFamily: FONT_FAMILY,
