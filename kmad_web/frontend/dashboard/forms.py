@@ -238,7 +238,7 @@ class KmadForm(Form):
     #         prefix_label=False))
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
-        choices=[('d2p2', 'D2P2'),
+        choices=[('d2p2', 'D2P2 database'),
                  ('globplot', 'GlobPlot'),
                  ('disopred', 'DISOPRED'),
                  ('spined', 'SPINE-D'),
