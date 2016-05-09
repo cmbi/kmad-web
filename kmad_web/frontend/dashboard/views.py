@@ -27,6 +27,9 @@ def index():
             and form.ptm_score.data and form.domain_score.data
             and form.motif_score.data and form.gapped.data
             and form.seq_limit.data):
+        request_ip = get_ip()
+        _log.info("[IP: %s] Submitted job: %s", request_ip,
+                  form.output_type.data)
         seq_data = form.sequence.data.encode('ascii', errors='ignore')
         if form.output_type.data == "predict":
             strategy = PredictStrategy(seq_data, form.prediction_method.data)
@@ -181,3 +184,11 @@ def download_alignment():
     return send_file(strIO,
                      attachment_filename="kmad_alignment.txt",
                      as_attachment=True)
+
+
+def get_ip():
+    if request.headers.getlist("X-Forwarded-For"):
+        ip = request.headers.getlist("X-Forwarded-For")[0]
+    else:
+        ip = request.remote_addr
+    return ip
