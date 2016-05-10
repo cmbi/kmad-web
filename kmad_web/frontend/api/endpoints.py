@@ -74,9 +74,9 @@ def get_kmad_status(output_type, id):
 
     async_result = celery.AsyncResult(id)
     status = async_result.status
-    _log.info("Status for job id: %s, %s", id, status)
+    _log.info("Status for job %s with id %s: %s", output_type, id, status)
 
-    response = {'status': async_result.status}
+    response = {'status': status}
     if async_result.failed():
         response.update({'message': async_result.traceback})
     return jsonify(response)
