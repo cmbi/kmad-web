@@ -6,6 +6,7 @@ import re
 from flask import Blueprint, render_template, request
 from flask.json import jsonify
 
+from kmad_web.request_helpers import get_ip
 from kmad_web.services.kmad import (PredictStrategy, AlignStrategy,
                                     PtmsStrategy, RefineStrategy,
                                     MotifsStrategy)
@@ -24,6 +25,8 @@ def create_kmad(output_type):
     :return: The id of the job.
 
     """
+    request_ip = get_ip()
+    _log.info("[IP: %s] Submitted job: %s", request_ip, output_type)
     form = request.form
     if output_type == "predict":
         methods = form['prediction_methods'].split()

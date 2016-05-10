@@ -6,6 +6,7 @@ from flask import abort
 from flask import (Blueprint, render_template, request, redirect, url_for,
                    send_file)
 
+from kmad_web.request_helpers import get_ip
 from kmad_web.services.helpers import fieldlist
 from kmad_web.frontend.dashboard.forms import KmadForm
 from kmad_web.services.kmad import (AlignStrategy, AnnotateStrategy,
@@ -186,9 +187,3 @@ def download_alignment():
                      as_attachment=True)
 
 
-def get_ip():
-    if request.headers.getlist("X-Forwarded-For"):
-        ip = request.headers.getlist("X-Forwarded-For")[0]
-    else:
-        ip = request.remote_addr
-    return ip
