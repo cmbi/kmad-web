@@ -65,9 +65,14 @@ def get_kmad_status(output_type, id):
     :param id: The id returned by a call to the create method.
     :return: Either PENDING, STARTED, SUCCESS, FAILURE, RETRY, or REVOKED.
     """
-    from kmad_web.tasks import get_task
-    task = get_task(output_type)
-    async_result = task.AsyncResult(id)
+    # from kmad_web.tasks import get_task
+
+    # task = get_task(output_type)
+    # async_result = task.AsyncResult(id)
+
+    from kmad_web.application import celery
+
+    async_result = celery.AsyncResult(id)
     status = async_result.status
     _log.info("Status for job id: %s, %s", id, status)
 
