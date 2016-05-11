@@ -32,7 +32,7 @@ class PsipredService(object):
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
-                os.remove(out_file)
+                # os.remove(out_file)
                 return data
             else:
                 _log.error("Didn't find the output file: {}".format(
