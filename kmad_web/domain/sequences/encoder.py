@@ -20,7 +20,7 @@ class SequencesEncoder(object):
         self._strct_pos = 1
         self._create_code_alphabet()
 
-    def encode(self, sequences, aligned_mode=False, use_pfam=True):
+    def encode(self, sequences, aligned_mode=False, use_pfam=True, use_sstrct=True):
         _log.info("Encoding sequences")
         self._sequences = sequences
         self._create_codon_sequences()
@@ -45,7 +45,8 @@ class SequencesEncoder(object):
         # all feature positions are 1-based!
         self._encode_ptms()
         self._encode_motifs()
-        self._encode_structure()
+        if use_sstrct:
+            self._encode_structure()
         self._create_encoded_sequences()
         if aligned_mode:
             self._create_encoded_aligned_sequences()

@@ -169,7 +169,7 @@ def create_fles(sequences, aligned_mode=False, use_pfam=True, use_sstrct=True):
     annotator = SequencesAnnotator()
     annotator.annotate(sequences, use_pfam, use_sstrct)
     encoder = SequencesEncoder()
-    encoder.encode(sequences, aligned_mode, use_pfam)
+    encoder.encode(sequences, aligned_mode, use_pfam, use_sstrct)
     fles_file = make_fles(sequences, encoder.motif_prob_dict, aligned_mode)
     return {
         'fles_file': fles_file,
