@@ -32,7 +32,7 @@ class PsipredService(object):
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
-                # os.remove(out_file)
+                self.cleanup(out_file)
                 return data
             else:
                 _log.error("Didn't find the output file: {}".format(
@@ -42,5 +42,14 @@ class PsipredService(object):
         except subprocess.CalledProcessError as e:
             _log.error(e.message)
             raise ServiceError(e.message)
+
+    def cleanup(self, out_file):
+        os.remove(out_file)
+        ss_file = out_file[:-1]
+        horiz_file = out_file[:-3] + 'horiz'
+        if os.path.exists(ss_file):
+            os.remove(ss_file)
+        if os.path.exists(horiz_file):
+            os.remove(horiz_file)
 
 psipred = PsipredService(PSIPRED)
