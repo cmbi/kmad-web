@@ -181,8 +181,9 @@ class PredictionProcessor(object):
             for k, v in predictions.iteritems():
                 if len(v) != len(sequence):
                     _log.error("Prediction from {} has different length ({}) "
-                                "than the seuence ({}).\nPrediction: {}".format(
-                                    k, len(v), len(sequence), v))
+                               "than the seuence ({}).\nPrediction: {}\n"
+                               "Sequence: {}\n".format(
+                                   k, len(v), len(sequence), v, sequence))
 
             filtered = {k: v for k, v in predictions.iteritems() if
                         len(v) == len(sequence)}
