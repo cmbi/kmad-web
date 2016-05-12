@@ -153,7 +153,7 @@ def get_sequences_from_blast(blast_result):
 
 
 @celery_app.task
-def create_fles(sequences, aligned_mode=False, use_pfam=True):
+def create_fles(sequences, aligned_mode=False, use_pfam=True, use_sstrct=True):
     """
     Create FLES file (input file for KMAD)
     aligned_mode -> gets passed to the encoder, True if you want to encode
@@ -167,7 +167,7 @@ def create_fles(sequences, aligned_mode=False, use_pfam=True):
     _log.info("Creating FLES file from {} sequences with aligned_mode {}".format(
         len(sequences), aligned_mode))
     annotator = SequencesAnnotator()
-    annotator.annotate(sequences, use_pfam)
+    annotator.annotate(sequences, use_pfam, use_sstrct)
     encoder = SequencesEncoder()
     encoder.encode(sequences, aligned_mode, use_pfam)
     fles_file = make_fles(sequences, encoder.motif_prob_dict, aligned_mode)
