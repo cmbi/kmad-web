@@ -7,7 +7,7 @@ _log = logging.getLogger(__name__)
 class PredictionProcessor(object):
     def process_prediction(self, prediction, pred_name):
         # 0 - structured, 2 - disordered
-        _log.info("{} returned: {}".format(pred_name, prediction))
+        _log.debug("{} returned: {}".format(pred_name, prediction))
         if pred_name == "spined":
             prediction_lines = prediction.splitlines()
             disorder_list = self._process_spined(prediction_lines)
