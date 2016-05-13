@@ -28,7 +28,6 @@ class PsipredService(object):
         args = [self._path, fasta_filename]
         try:
             subprocess.call(args)
-            os.remove(fasta_filename)
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
@@ -39,6 +38,7 @@ class PsipredService(object):
                     out_file))
                 raise ServiceError("Didn't find the output file: {}".format(
                     out_file))
+            os.remove(fasta_filename)
         except subprocess.CalledProcessError as e:
             _log.error(e.message)
             raise ServiceError(e.message)
