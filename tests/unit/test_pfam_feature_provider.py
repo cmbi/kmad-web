@@ -12,8 +12,8 @@ def test_get_domains(mock_service, mock_parser):
     type(mock_parser.return_value).domains = PropertyMock(
         return_value=[{
             'accession': 'test_acc',
-            'start': '0',
-            'end': '0',
+            'ali_start': '0',
+            'ali_end': '0',
             'some_other_key': 'test'
         }])
 

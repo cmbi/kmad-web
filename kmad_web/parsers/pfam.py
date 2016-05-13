@@ -13,9 +13,9 @@ class PfamParser(object):
     def domains(self, domains):
         self._domains = domains
     """
-    output = [
+    self._domains = [
               {
-                'acc': domain_accession
+                'accession': domain_accession
                 'start': start_index
                 'end': end_index
               }

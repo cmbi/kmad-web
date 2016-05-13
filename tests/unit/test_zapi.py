@@ -3,7 +3,7 @@ import json
 import re
 
 from mock import patch
-from nose.tools import eq_, ok_, raises
+from nose.tools import eq_, ok_
 
 from kmad_web.factory import create_app
 
@@ -14,7 +14,8 @@ class TestEndpoints(object):
     def setup_class(cls):
         cls.flask_app = create_app({'TESTING': True,
                                     'SECRET_KEY': 'development_key',
-                                    'WTF_CSRF_ENABLED': False})
+                                    'WTF_CSRF_ENABLED': False,
+                                    'KMAD_WEB_SETTINGS': '../dev_settings.py'})
         cls.app = cls.flask_app.test_client()
 
     @patch('kmad_web.services.kmad.AlignStrategy.__call__')
@@ -55,80 +56,6 @@ class TestEndpoints(object):
     def test_create_kmad_align_no_data(self):
         rv = self.app.post('/api/create/align/')
         eq_(rv.status_code, 400)
-
-    @raises(ValueError)
-    def test_get_kmad_status_unknown_input_type(self):
-        rv = self.app.get('/api/status/unknown/12345/')
-        eq_(rv.status_code, 400)
-
-    @raises(ValueError)
-    def test_get_kmad_result_unknown_output_type(self):
-        rv = self.app.get('/api/result/unknown/12345/')
-        eq_(rv.status_code, 400)
-
-    @patch('kmad_web.tasks.process_prediction_results.AsyncResult')
-    def test_get_kmad_status_predict(self, mock_result):
-        mock_result.return_value.failed.return_value = False
-        mock_result.return_value.status = 'SUCCESS'
-        rv = self.app.get('/api/status/predict/12345/')
-        eq_(rv.status_code, 200)
-        response = json.loads(rv.data)
-        ok_('status' in response)
-        eq_(response['status'], 'SUCCESS')
-
-    @patch('kmad_web.tasks.process_kmad_alignment.AsyncResult')
-    def test_get_kmad_status_align(self, mock_result):
-        mock_result.return_value.failed.return_value = False
-        mock_result.return_value.status = 'SUCCESS'
-        rv = self.app.get('/api/status/align/12345/')
-        eq_(rv.status_code, 200)
-        response = json.loads(rv.data)
-        ok_('status' in response)
-        eq_(response['status'], 'SUCCESS')
-
-    @patch('kmad_web.tasks.process_prediction_results.AsyncResult')
-    def test_get_kmad_result_predict(self, mock_result):
-        mock_result.return_value.get.return_value = 'content-of-result'
-        rv = self.app.get('/api/result/predict/12345/')
-        eq_(rv.status_code, 200)
-        response = json.loads(rv.data)
-        ok_('result' in response)
-        eq_(response['result'], 'content-of-result')
-
-    @patch('kmad_web.tasks.process_kmad_alignment.AsyncResult')
-    def test_get_kmad_result_align(self, mock_result):
-        mock_result.return_value.get.return_value = 'content-of-result'
-        rv = self.app.get('/api/result/align/12345/')
-        eq_(rv.status_code, 200)
-        response = json.loads(rv.data)
-        ok_('result' in response)
-        eq_(response['result'], 'content-of-result')
-
-    @patch('kmad_web.tasks.process_prediction_results.AsyncResult')
-    def test_get_kmad_status_predict_failed(self, mock_result):
-        mock_result.return_value.failed.return_value = True
-        mock_result.return_value.status = 'FAILED'
-        mock_result.return_value.traceback = 'Error message'
-        rv = self.app.get('/api/status/predict/12345/')
-        eq_(rv.status_code, 200)
-        response = json.loads(rv.data)
-        ok_('status' in response)
-        eq_(response['status'], 'FAILED')
-        ok_('message' in response)
-        eq_(response['message'], 'Error message')
-
-    @patch('kmad_web.tasks.process_kmad_alignment.AsyncResult')
-    def test_get_kmad_status_align_failed(self, mock_result):
-        mock_result.return_value.failed.return_value = True
-        mock_result.return_value.status = 'FAILED'
-        mock_result.return_value.traceback = 'Error message'
-        rv = self.app.get('/api/status/align/12345/')
-        eq_(rv.status_code, 200)
-        response = json.loads(rv.data)
-        ok_('status' in response)
-        eq_(response['status'], 'FAILED')
-        ok_('message' in response)
-        eq_(response['message'], 'Error message')
 
     def test_api_docs(self):
         from kmad_web.frontend.api import endpoints
