@@ -32,6 +32,22 @@ def test_predict_success(mock_check_output):
     eq_("Netphos result", netphos.predict(test_fasta))
 
 
+@patch('kmad_web.services.netphos.os.remove')
+@patch('kmad_web.services.netphos.os.path.exists')
+@patch('kmad_web.services.netphos.subprocess.check_output')
+@with_setup(setup, teardown)
+def test_predict(mock_check_output, mock_exists, mock_rm):
+    mock_exists.return_value = True
+    mock_check_output.return_value = "Netphos result"
+
+    netphos = NetphosService(NETPHOS_PATH)
+    test_fasta = ">1\nSEQ"
+    eq_("Netphos result", netphos.predict(test_fasta))
+
+    mock_exists.return_value = False
+    assert_raises(ServiceError, netphos.predict, test_fasta)
+
+
 @patch('kmad_web.services.netphos.subprocess.check_output')
 @with_setup(setup, teardown)
 def test_predict_subprocess_error(mock_check_output):
