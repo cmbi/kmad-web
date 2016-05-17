@@ -71,7 +71,7 @@ class PredictionProcessor(object):
                         prev_state == next_state and
                         curr_length < self._find_next_length(disorder_list, i)):
                     # add curr_length elements of previous(=next) state
-                    new_cons += [prev_state for j in range(curr_length)]
+                    new_cons += [prev_state for k in range(curr_length)]
                 else:
                     new_cons += [curr_state for j in range(curr_length)]
                 prev_length = curr_length
