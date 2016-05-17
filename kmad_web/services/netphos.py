@@ -23,7 +23,7 @@ class NetphosService(object):
 
     @cm.cache('redis')
     def predict(self, fasta_sequence):
-        _log.info("Getting prediction from NetPhos")
+        _log.debug("Getting prediction from NetPhos")
         try:
             tmp_file = tempfile.NamedTemporaryFile(
                 suffix=".fasta", delete=False)

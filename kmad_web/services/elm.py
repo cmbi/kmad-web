@@ -25,7 +25,7 @@ class ElmService(object):
 
     @cm.cache('redis')
     def get_instances(self, uniprot_id):
-        _log.info("Getting motif instances from ELM for uniprot id: {}".format(
+        _log.debug("Getting motif instances from ELM for uniprot id: {}".format(
             uniprot_id
         ))
         try:
@@ -61,7 +61,7 @@ class ElmService(object):
 
     @cm.cache('redis')
     def get_motif_go_terms(self, motif_id):
-        _log.info("Getting GO terms for motif {}".format(
+        _log.debug("Getting GO terms for motif {}".format(
             motif_id
         ))
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
@@ -87,7 +87,7 @@ class ElmService(object):
 
     @cm.cache('redis')
     def get_motif_class(self, motif_id):
-        _log.info("Getting class for motif id: {}".format(motif_id))
+        _log.debug("Getting class for motif id: {}".format(motif_id))
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
         try:
             page = requests.get(url).text

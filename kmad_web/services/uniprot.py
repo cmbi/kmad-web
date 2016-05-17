@@ -22,7 +22,7 @@ class UniprotService(object):
 
     @cm.cache('redis')
     def get_xml(self, uniprot_id):
-        _log.info("Getting txt data from Uniprot for uniprot id {}".format(
+        _log.debug("Getting txt data from Uniprot for uniprot id {}".format(
             uniprot_id))
         try:
             url = os.path.join(self._url, uniprot_id + ".xml")
@@ -37,7 +37,7 @@ class UniprotService(object):
 
     @cm.cache('redis')
     def get_txt(self, uniprot_id):
-        _log.info("Getting txt data from Uniprot for uniprot id {}".format(
+        _log.debug("Getting txt data from Uniprot for uniprot id {}".format(
             uniprot_id))
         try:
             url = os.path.join(self._url, uniprot_id + ".txt")
@@ -52,7 +52,7 @@ class UniprotService(object):
 
     @cm.cache('redis')
     def get_fasta(self, uniprot_id):
-        _log.info("Getting fasta from Uniprot for uniprot id {}".format(
+        _log.debug("Getting fasta from Uniprot for uniprot id {}".format(
             uniprot_id))
         try:
             url = os.path.join(self._url, uniprot_id + ".fasta")

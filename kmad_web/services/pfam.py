@@ -26,7 +26,7 @@ class PfamService(object):
 
     @cm.cache('redis')
     def get_by_id(self, uniprot_id):
-        _log.info("Getting Pfam result for id {}".format(uniprot_id))
+        _log.debug("Getting Pfam result for id {}".format(uniprot_id))
         try:
             url = self._ID_URL_CREATE.format(uniprot_id)
             request = requests.get(url)
@@ -42,7 +42,7 @@ class PfamService(object):
 
     @cm.cache('redis')
     def search(self, fasta_sequence, timeout=1200, poll=7):
-        _log.info("Running Pfam search")
+        _log.debug("Running Pfam search")
         if self._url is None:
             raise ServiceError("PfamService hasn't been configured")
         result_url = self._create(fasta_sequence)
