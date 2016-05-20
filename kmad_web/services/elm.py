@@ -25,19 +25,18 @@ class ElmService(object):
 
     @cm.cache('redis')
     def get_instances(self, uniprot_id):
-        _log.debug("Getting motif instances from ELM for uniprot id: {}".format(
-            uniprot_id
-        ))
+        _log.debug("Getting motif instances from ELM for uniprot id: %s",
+                   uniprot_id)
         try:
             url = os.path.join(self._url,
                                "instances.gff?q={}".format(uniprot_id))
             request = requests.get(url)
             if request.status_code != 200:
-                _log.error("ELM returned an error: {}\nURL: {}".format(
-                    request.status_code, url))
+                _log.error("ELM returned an error: %s\nURL: %s",
+                           request.status_code, url)
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("ELM returned an error: {}\nURL: {}".format(e, url))
+            _log.error("ELM returned an error: %s\nURL: %s", e, url)
             raise ServiceError(e)
         else:
             result = request.text
@@ -49,11 +48,11 @@ class ElmService(object):
             url = os.path.join(self._url, "elms", "elms_index.tsv")
             request = requests.get(url)
             if request.status_code != 200:
-                _log.error("ELM returned an error: {}\nURL: {}".format(
-                    request.status_code, url))
+                _log.error("ELM returned an error: %s\nURL: %s",
+                           request.status_code, url)
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("ELM returned an error: {}\nURL: {}".format(e, url))
+            _log.error("ELM returned an error: %s\nURL: %s", e, url)
             raise ServiceError(e)
         else:
             result = request.text
@@ -61,9 +60,7 @@ class ElmService(object):
 
     @cm.cache('redis')
     def get_motif_go_terms(self, motif_id):
-        _log.debug("Getting GO terms for motif {}".format(
-            motif_id
-        ))
+        _log.debug("Getting GO terms for motif %s", motif_id)
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
         try:
             page = requests.get(url).text
@@ -79,15 +76,15 @@ class ElmService(object):
                     for match in reg.finditer(str(l)):
                         go_terms.add(match.groupdict('')['go_term'])
             else:
-                _log.debug("No GO terms found for motif: {}".format(motif_id))
+                _log.debug("No GO terms found for motif: %s", motif_id)
             return go_terms
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("ELM returned an error: {}\nURL: {}".format(e, url))
+            _log.error("ELM returned an error: %s\nURL: %s", e, url)
             raise ServiceError(e)
 
     @cm.cache('redis')
     def get_motif_class(self, motif_id):
-        _log.debug("Getting class for motif id: {}".format(motif_id))
+        _log.debug("Getting class for motif id: %s", motif_id)
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))
         try:
             page = requests.get(url).text
@@ -99,8 +96,8 @@ class ElmService(object):
                 raise ServiceError("No table with class elm_detail on"
                                    " the motif's website")
             rows = detail_table.findAll("tr")
-            if not len(rows) > 1:
-                _log.error("No class found for motif {}".format(motif_id))
+            if len(rows) <= 1:
+                _log.error("No class found for motif %s", motif_id)
                 raise ServiceError("No class found for motif {}".format(
                     motif_id))
 
@@ -108,9 +105,9 @@ class ElmService(object):
             if cells:
                 return cells[0].text
             else:
-                _log.error("No class found for motif {}".format(motif_id))
+                _log.error("No class found for motif %s", motif_id)
                 raise ServiceError("No class found for motif {}".format(
                     motif_id))
         except (requests.ConnectionError, requests.HTTPError) as e:
-            _log.error("ELM returned an error: {}".format(e))
+            _log.error("ELM returned an error: %s", e)
             raise ServiceError(e)

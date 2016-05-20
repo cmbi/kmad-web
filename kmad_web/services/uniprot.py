@@ -22,48 +22,47 @@ class UniprotService(object):
 
     @cm.cache('redis')
     def get_xml(self, uniprot_id):
-        _log.debug("Getting txt data from Uniprot for uniprot id {}".format(
-            uniprot_id))
+        _log.debug("Getting txt data from Uniprot for uniprot id %s",
+                   uniprot_id)
         try:
             url = os.path.join(self._url, uniprot_id + ".xml")
             request = requests.get(url)
             if request.status_code != 200:
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
-                raise ServiceError(e)
+            raise ServiceError(e)
         else:
             result = request.text
         return result
 
     @cm.cache('redis')
     def get_txt(self, uniprot_id):
-        _log.debug("Getting txt data from Uniprot for uniprot id {}".format(
-            uniprot_id))
+        _log.debug("Getting txt data from Uniprot for uniprot id %s",
+                   uniprot_id)
         try:
             url = os.path.join(self._url, uniprot_id + ".txt")
             request = requests.get(url)
             if request.status_code != 200:
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
-                raise ServiceError(e)
+            raise ServiceError(e)
         else:
             result = request.text
         return result
 
     @cm.cache('redis')
     def get_fasta(self, uniprot_id):
-        _log.debug("Getting fasta from Uniprot for uniprot id {}".format(
-            uniprot_id))
+        _log.debug("Getting fasta from Uniprot for uniprot id %s", uniprot_id)
         try:
             url = os.path.join(self._url, uniprot_id + ".fasta")
             request = requests.get(url)
             if request.status_code != 200:
-                _log.error("Couldn't get fasta from Uniprot: {}".format(
-                    request.status_code))
+                _log.error("Couldn't get fasta from Uniprot: %s",
+                           request.status_code)
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
-                _log.error("Couldn't get fasta from Uniprot: {}".format(e))
-                raise ServiceError(e)
+            _log.error("Couldn't get fasta from Uniprot: %s", e)
+            raise ServiceError(e)
         else:
             result = request.text
         return result

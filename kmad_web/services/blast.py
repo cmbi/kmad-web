@@ -38,12 +38,11 @@ class BlastService(object):
                 '-num_threads', '15', '-db', self._db_path,
                 '-outfmt', self._outfmt, '-max_target_seqs', str(seq_limit)]
         try:
-            _log.debug("Running BLAST with command {}".format(
-                subprocess.list2cmdline(args)
-            ))
+            _log.debug("Running BLAST with command %s",
+                       subprocess.list2cmdline(args))
             result = subprocess.check_output(args)
             os.remove(fasta_filename)
             return result
         except subprocess.CalledProcessError as e:
-            _log.error("BlastService returned an error: {}".format(e))
+            _log.error("BlastService returned an error: %s", e)
             raise ServiceError(e)
