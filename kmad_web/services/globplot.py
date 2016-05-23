@@ -22,12 +22,22 @@ class GlobplotService(object):
         with tmp_file as f:
             f.write(fasta_sequence)
         fasta_filename = tmp_file.name
+        errlog_name = fasta_filename + "_errlog"
 
         args = [self._path, '10', '8', '75', '8', '8',
                 fasta_filename]
         try:
-            data = subprocess.check_output(args)
-            os.remove(fasta_filename)
+            with open(errlog_name) as err:
+                data = subprocess.check_output(args, stderr=err)
+            empty_errlog = os.stat(errlog_name).st_size == 0
+            if empty_errlog:
+                os.remove(empty_errlog)
+                os.remove(fasta_filename)
+            else:
+                e = "GlobPlot raised an error, check logfile: {}".format(
+                    errlog_name)
+                _log.error(e)
+                raise ServiceError(e)
             if not data or not data.startswith('>'):
                 _log.error("No prediction was returned")
                 raise ServiceError("No prediction was returned")

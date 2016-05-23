@@ -26,9 +26,21 @@ class PsipredService(object):
         out_file = ('.'.join(
             fasta_filename.split('.')[:-1])+".ss2").split('/')[-1]
         args = [self._path, fasta_filename]
+        errlog_name = out_file + "_errlog"
         try:
-            subprocess.call(args)
-            os.remove(fasta_filename)
+            with open(errlog_name) as err:
+                subprocess.call(args, stderr=err)
+            # remove error log file if it's empty, otherwise raise an error
+            empty_errlog = os.stat(errlog_name).st_size == 0
+            if empty_errlog:
+                os.remove(empty_errlog)
+                os.remove(fasta_filename)
+            else:
+                e = "PSIPRED raised an error, check logfile: {}".format(
+                    errlog_name)
+                _log.error(e)
+                raise ServiceError(e)
+
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()

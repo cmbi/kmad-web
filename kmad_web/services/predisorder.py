@@ -25,8 +25,21 @@ class PredisorderService(object):
 
         out_file = '.'.join(fasta_filename.split('.')[:-1])+".predisorder"
         args = [self._path, fasta_filename, out_file]
+        errlog_name = out_file + "_errlog"
         try:
-            subprocess.call(args)
+            with open(errlog_name) as err:
+                subprocess.call(args, stderr=err)
+            # remove error log file if it's empty, otherwise raise an error
+            empty_errlog = os.stat(errlog_name).st_size == 0
+            if empty_errlog:
+                os.remove(empty_errlog)
+                os.remove(fasta_filename)
+            else:
+                e = "Disopred raised an error, check logfile: {}".format(
+                    errlog_name)
+                _log.error(e)
+                raise ServiceError(e)
+
             os.remove(fasta_filename)
             if os.path.exists(out_file):
                 with open(out_file) as a:

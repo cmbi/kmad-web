@@ -1,4 +1,5 @@
 import logging
+import os
 import subprocess
 import tempfile
 
@@ -22,11 +23,23 @@ class IupredService(object):
         with tmp_file as f:
             f.write(fasta_sequence)
         fasta_filename = tmp_file.name
+        errlog_name = fasta_filename + "_errlog"
 
         args = [self._path, fasta_filename, 'long']
         env = {"IUPred_PATH": self._dir}
         try:
-            data = subprocess.check_output(args, env=env)
+            with open(errlog_name) as err:
+                data = subprocess.check_output(args, stderr=err, env=env)
+            # remove error log file if it's empty, otherwise raise an error
+            empty_errlog = os.stat(errlog_name).st_size == 0
+            if empty_errlog:
+                os.remove(empty_errlog)
+                os.remove(fasta_filename)
+            else:
+                e = "IUPred raised an error, check logfile: {}".format(
+                    errlog_name)
+                _log.error(e)
+                raise ServiceError(e)
             if not data:
                 _log.error("No prediction was returned")
                 raise ServiceError("No prediction was returned")
