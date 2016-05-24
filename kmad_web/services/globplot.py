@@ -31,7 +31,7 @@ class GlobplotService(object):
                 data = subprocess.check_output(args, stderr=err)
             empty_errlog = os.stat(errlog_name).st_size == 0
             if empty_errlog:
-                os.remove(empty_errlog)
+                os.remove(errlog_name)
                 os.remove(fasta_filename)
             else:
                 e = "GlobPlot raised an error, check logfile: {}".format(

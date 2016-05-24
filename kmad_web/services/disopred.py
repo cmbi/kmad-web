@@ -32,7 +32,7 @@ class DisopredService(object):
             # remove error log file if it's empty, otherwise raise an error
             empty_errlog = os.stat(errlog_name).st_size == 0
             if empty_errlog:
-                os.remove(empty_errlog)
+                os.remove(errlog_name)
                 os.remove(fasta_filename)
             else:
                 e = "Disopred raised an error, check logfile: {}".format(
