@@ -29,7 +29,7 @@ class SpinedService(object):
         args = [self._path, tmp_path, tmp_name]
         errlog_name = tmp_path + "_errlog"
         try:
-            with open(errlog_name) as err:
+            with open(errlog_name, 'w') as err:
                 subprocess.call(args, stderr=err)
             # remove error log file if it's empty, otherwise raise an error
             empty_errlog = os.stat(errlog_name).st_size == 0

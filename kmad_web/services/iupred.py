@@ -28,7 +28,7 @@ class IupredService(object):
         args = [self._path, fasta_filename, 'long']
         env = {"IUPred_PATH": self._dir}
         try:
-            with open(errlog_name) as err:
+            with open(errlog_name, 'w') as err:
                 data = subprocess.check_output(args, stderr=err, env=env)
             # remove error log file if it's empty, otherwise raise an error
             empty_errlog = os.stat(errlog_name).st_size == 0

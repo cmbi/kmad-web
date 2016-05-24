@@ -27,7 +27,7 @@ class GlobplotService(object):
         args = [self._path, '10', '8', '75', '8', '8',
                 fasta_filename]
         try:
-            with open(errlog_name) as err:
+            with open(errlog_name, 'w') as err:
                 data = subprocess.check_output(args, stderr=err)
             empty_errlog = os.stat(errlog_name).st_size == 0
             if empty_errlog:
