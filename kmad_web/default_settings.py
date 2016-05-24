@@ -36,6 +36,8 @@ CACHE_CONFIG = {
     }
 }
 
+CELERYD_CONCURRENCY = 10
+
 # service urls
 ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
