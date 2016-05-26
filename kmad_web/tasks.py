@@ -360,3 +360,15 @@ def get_task(output_type):
 
     _log.debug("Got task '{}'".format(task.__name__))
     return task
+
+@celery_app.task
+def remove_old_tmps():
+    """
+    Removes all tmp files in /tmp/ dir owned by kmad-web that are older than
+    N days
+    """
+    _log.info("Removing old tmpl files")
+    N = 7
+    m = N * 24 * 60
+    cmd = "find /tmp -user kmad-web -mmin +{} -name 'tmp*' -delete".format(m)
+    os.system(cmd)

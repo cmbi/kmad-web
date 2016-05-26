@@ -22,6 +22,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(day_of_month=1, hour=0, minute=0),
         'args': ()
     },
+    'remove_old_tmps': {
+        'task': 'kmad_web.tasks.remove_errlogs',
+        'schedule': crontab(hour=13, minute=0),
+        'args': ()
+    },
 }
 
 # Cache (dogpile)
