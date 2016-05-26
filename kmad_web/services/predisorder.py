@@ -35,7 +35,7 @@ class PredisorderService(object):
                 os.remove(errlog_name)
                 os.remove(fasta_filename)
             else:
-                e = "Disopred raised an error, check logfile: {}".format(
+                e = "Predisorder raised an error, check logfile: {}".format(
                     errlog_name)
                 _log.error(e)
                 raise ServiceError(e)
