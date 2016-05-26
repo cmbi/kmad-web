@@ -39,7 +39,6 @@ class DisopredService(object):
                     errlog_name)
                 _log.error(e)
                 raise ServiceError(e)
-            os.remove(fasta_filename)
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
