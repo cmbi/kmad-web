@@ -31,26 +31,22 @@ class PredisorderService(object):
                 subprocess.call(args, stderr=err)
             # remove error log file if it's empty, otherwise raise an error
             empty_errlog = os.stat(errlog_name).st_size == 0
-            if empty_errlog:
-                os.remove(errlog_name)
-                os.remove(fasta_filename)
-            else:
+            os.remove(fasta_filename)
+            if not empty_errlog:
                 e = "Predisorder raised an error, check logfile: {}".format(
                     errlog_name)
-                _log.error(e)
-                raise ServiceError(e)
-
-            os.remove(fasta_filename)
+                _log.warning(e)
+            else:
+                os.remove(empty_errlog)
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
                 # os.remove(out_file)
                 return data
             else:
-                _log.error("Didn't find the output file: {}".format(
-                    out_file))
-                raise ServiceError("Didn't find the output file: {}".format(
-                    out_file))
+                e = "Didn't find the output file: {}".format(out_file)
+                _log.error(e)
+                raise ServiceError(e)
         except subprocess.CalledProcessError as e:
             _log.error(e)
             raise ServiceError(e.message)
