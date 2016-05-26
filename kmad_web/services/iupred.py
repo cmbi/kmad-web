@@ -40,12 +40,25 @@ class IupredService(object):
                     errlog_name)
                 _log.error(e)
                 raise ServiceError(e)
-            if not data:
-                _log.error("No prediction was returned")
-                raise ServiceError("No prediction was returned")
+            self.check_output(data, fasta_sequence)
             return data
         except (subprocess.CalledProcessError, OSError) as e:
             _log.error(e.message)
             raise ServiceError(e.message)
+
+    @staticmethod
+    def check_output(data, fasta_sequence):
+        if not data:
+            _log.error("No prediction was returned")
+            raise ServiceError("No prediction was returned")
+
+        seq_length = len(''.join(fasta_sequence.splitlines()[1:]))
+        prediction_length = len(data.splitlines()[9:])
+        if seq_length != prediction_length:
+            e = "IUPRED prediction length ({}) doesn't equal sequence length " \
+                "({}).\nSequence: {}\nPrediction:\n{}".format(
+                    seq_length, prediction_length, fasta_sequence, data)
+            _log.error(e)
+            raise ServiceError(e)
 
 iupred = IupredService(IUPRED, IUPRED_DIR)
