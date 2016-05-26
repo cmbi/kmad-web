@@ -41,8 +41,8 @@ CACHE_CONFIG = {
     }
 }
 
-CELERYD_CONCURRENCY = 2
-CELERYD_NODES = 2
+CELERYD_CONCURRENCY = 3
+CELERYD_NODES = 3
 
 # service urls
 ELM_URL = "http://elm.eu.org"
