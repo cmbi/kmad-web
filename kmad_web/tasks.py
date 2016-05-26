@@ -39,10 +39,13 @@ from kmad_web.default_settings import D2P2_URL, UNIPROT_PTMS_URL
 _log = logging.getLogger(__name__)
 
 
-@celery_app.task
+@celery_app.task(max_retries=1)
 def run_single_predictor(previous={}, fasta="", predictor=""):
     _log.info("Run single predictor: {}[task]".format(predictor))
-    data = globals()[predictor](fasta)
+    try:
+        data = globals()[predictor](fasta)
+    except RuntimeError as e:
+        raise run_single_predictor.retry(exc=e)
     processor = PredictionProcessor()
     prediction = processor.process_prediction(data, predictor)
     # return {predictor: prediction}
