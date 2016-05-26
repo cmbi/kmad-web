@@ -27,7 +27,7 @@ class SpinedService(object):
         out_file = os.path.join(SPINED_OUTPUT_DIR, tmp_name + '.spd')
         tmp_path = '/'.join(fasta_filename.split("/")[:-1])
         args = [self._path, tmp_path, tmp_name]
-        errlog_name = tmp_path + "_errlog"
+        errlog_name = fasta_filename + "_errlog"
         try:
             with open(errlog_name, 'w') as err:
                 subprocess.call(args, stderr=err)
