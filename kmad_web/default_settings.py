@@ -23,7 +23,7 @@ CELERYBEAT_SCHEDULE = {
         'args': ()
     },
     'remove_old_tmps': {
-        'task': 'kmad_web.tasks.remove_errlogs',
+        'task': 'kmad_web.tasks.remove_old_tmps',
         'schedule': crontab(hour=13, minute=0),
         'args': ()
     },
