@@ -1,6 +1,6 @@
 import logging
 
-from flask_debugtoolbar import DebugToolbarExtension
+#from flask_debugtoolbar import DebugToolbarExtension
 from flask_mail import Mail
 
 
@@ -8,5 +8,5 @@ from flask_mail import Mail
 # results in loggers with the incorrect level.
 _log = logging.getLogger(__name__)
 
-toolbar = DebugToolbarExtension()
+#toolbar = DebugToolbarExtension()
 mail = Mail()
