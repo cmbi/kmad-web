@@ -15,7 +15,7 @@ class IupredService(object):
         self._path = path
         self._dir = iupred_dir
 
-    @cm.cache('redis')
+    # @cm.cache('redis')
     def __call__(self, fasta_sequence):
         _log.info("Calling IupredService")
 

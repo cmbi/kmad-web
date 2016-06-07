@@ -361,6 +361,7 @@ def get_task(output_type):
     _log.debug("Got task '{}'".format(task.__name__))
     return task
 
+
 @celery_app.task
 def remove_old_tmps():
     """
