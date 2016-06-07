@@ -252,7 +252,7 @@ class KmadForm(Form):
             prefix_label=False))
     add_feature = SubmitField()
     remove_feature = SubmitField()
-    seq_limit = IntegerField(u'max. sequence number from BLAST', default=35)
+    seq_limit = IntegerField(u'max. number of sequences', default=35)
 
     usr_features = FieldList(FormField(UsrFeatureEntryForm),
                              label="User defined features")
