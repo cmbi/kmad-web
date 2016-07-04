@@ -30,7 +30,7 @@ class MotifsStrategy(object):
         self._ptm_score = '10'
         self._motif_score = '4'
         self._domain_score = '4'
-        self._full_ungapped = 'True'
+        self._gapped = 'True'
         self._seq_limit = 70
 
     def __call__(self):
@@ -43,7 +43,7 @@ class MotifsStrategy(object):
             create_fles.s(use_pfam=False, use_sstrct=False),
             run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
                        self._domain_score, self._motif_score,
-                       full_ungapped=self._full_ungapped),
+                       gapped=self._gapped),
             process_kmad_alignment.s(),
             analyze_motifs.s(self._raw_sequence, self._position,
                              self._mutant_aa)
@@ -67,7 +67,7 @@ class PtmsStrategy(object):
         self._ptm_score = '10'
         self._motif_score = '4'
         self._domain_score = '4'
-        self._full_ungapped = 'True'
+        self._gapped = 'True'
         self._seq_limit = 70
 
     def __call__(self):
@@ -80,7 +80,7 @@ class PtmsStrategy(object):
             create_fles.s(use_pfam=False, use_sstrct=False),
             run_kmad.s(self._gop, self._gep, self._egp, self._ptm_score,
                        self._domain_score, self._motif_score,
-                       full_ungapped=self._full_ungapped),
+                       gapped=self._gapped),
             process_kmad_alignment.s(),
             analyze_ptms.s(self._fasta_sequence, self._position,
                            self._mutant_aa)

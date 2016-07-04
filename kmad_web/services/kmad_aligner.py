@@ -17,8 +17,7 @@ class KmadAligner(object):
 
     @cm.cache('redis')
     def align(self, infile, gop, gep, egp, ptm_score, domain_score,
-              motif_score, conf_path, gapped, full_ungapped,
-              refine, codon_length='7'):
+              motif_score, conf_path, gapped, refine, codon_length='7'):
         _log.info("Running KMAD alignment [service]")
 
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
@@ -36,8 +35,6 @@ class KmadAligner(object):
             args.extend(['--refine'])
         if gapped:
             args.extend(['--gapped'])
-        elif full_ungapped:
-            args.extend(['--full_ungapped'])
 
         try:
             _log.info("Calling KMAD with command {}".format(

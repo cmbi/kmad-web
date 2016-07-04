@@ -200,8 +200,7 @@ def annotate(sequences):
 
 @celery_app.task
 def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
-             motif_score, conf_path=None, gapped=False, full_ungapped=False,
-             refine=False):
+             motif_score, conf_path=None, gapped=False, refine=False):
     """
     Run KMAD on the given fles_filename and return aligned sequences (dict)
 
@@ -223,8 +222,7 @@ def run_kmad(create_fles_result, gop, gep, egp, ptm_score, domain_score,
     fles_file = create_fles_result['fles_file']
     sequences = create_fles_result['sequences']
     result_file = kmad.align(fles_file, gop, gep, egp, ptm_score, domain_score,
-                             motif_score, conf_path, gapped, full_ungapped,
-                             refine)
+                             motif_score, conf_path, gapped, refine)
     return {
         'fles_file': result_file,
         'sequences': sequences,
