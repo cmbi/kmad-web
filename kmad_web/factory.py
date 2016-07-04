@@ -3,7 +3,6 @@ from logging.handlers import SMTPHandler
 
 from celery import Celery
 from flask import Flask, render_template
-from werkzeug.contrib.profiler import ProfilerMiddleware
 
 
 _log = logging.getLogger(__name__)
@@ -24,10 +23,6 @@ def create_app(settings=None):
     # to be sent in post requests. The largest PDB file found to date is 109MB
     # in size.
     app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 150
-
-    # setup profiling
-    app.config['PROFILE'] = True
-    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30])
 
     # Ignore Flask's built-in logging
     # app.logger is accessed here so Flask tries to create it
