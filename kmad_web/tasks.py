@@ -40,7 +40,7 @@ _log = logging.getLogger(__name__)
 
 
 @celery_app.task(max_retries=1)
-def run_single_predictor(previous={}, fasta="", predictor=""):
+def run_single_predictor(previous=None, fasta="", predictor=""):
     _log.info("Run single predictor: {}[task]".format(predictor))
     try:
         data = globals()[predictor](fasta)
@@ -49,6 +49,8 @@ def run_single_predictor(previous={}, fasta="", predictor=""):
     processor = PredictionProcessor()
     prediction = processor.process_prediction(data, predictor)
     # return {predictor: prediction}
+    if previous is None:
+        previous = {}
     previous[predictor] = prediction
     return previous
 
