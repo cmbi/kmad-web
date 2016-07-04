@@ -40,7 +40,7 @@ class KmadAligner(object):
             args.extend(['--full_ungapped'])
 
         try:
-            _log.debug("Calling KMAD with command {}".format(
+            _log.info("Calling KMAD with command {}".format(
                 subprocess.list2cmdline(args)))
             subprocess.call(args, stderr=subprocess.PIPE)
             if not os.path.exists(result_path):
