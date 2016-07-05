@@ -23,14 +23,15 @@ class DisopredService(object):
             f.write(fasta_sequence)
         fasta_filename = tmp_file.name
 
-        out_file = '.'.join(fasta_filename.split('.')[:-1])+".diso"
+        out_file = '.'.join(fasta_filename.split('.')[:-1]) + ".diso"
         args = [self._path, fasta_filename]
         errlog_name = out_file + "_errlog"
         try:
             with open(errlog_name, 'w') as err:
                 subprocess.call(args, stderr=err)
             # remove error log file if it's empty, otherwise raise an error
-            empty_errlog = os.stat(errlog_name).st_size == 0
+            stat = os.stat(errlog_name)
+            empty_errlog = stat.st_size == 0
             if empty_errlog:
                 os.remove(errlog_name)
                 os.remove(fasta_filename)
