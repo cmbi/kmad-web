@@ -37,8 +37,6 @@ class KmadAligner(object):
             args.extend(['--gapped'])
 
         try:
-            _log.info("Calling KMAD with command {}".format(
-                subprocess.list2cmdline(args)))
             subprocess.call(args, stderr=subprocess.PIPE)
             if not os.path.exists(result_path):
                 raise ServiceError(
@@ -51,6 +49,7 @@ class KmadAligner(object):
             os.remove(result_path)
             return result_file
         except subprocess.CalledProcessError as e:
+            _log.info("KMAD call arguments: {}".format(args))
             _log.error("KMAD returned an error: {}".format(e))
             raise ServiceError(e)
         else:

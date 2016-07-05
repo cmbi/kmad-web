@@ -45,8 +45,7 @@ def test_kmad_aligner(mock_call, mock_temp, mock_exists, mock_remove):
         kmad.align('', '', '', '', '', '', '', '', '', '', ''))
     mock_call.reset_mock()
 
-    kmad.align('', '', '', '', '', '', '', 'path', True,
-               False, True)
+    kmad.align('', '', '', '', '', '', '', 'path', True, True)
     args = [KMAD, '-i', 'tempname', '-o', 'tempname', '-g', '',
             '-e', '', '-n', '', '-p', '', '-m', '',
             '-d', '', '--out-encoded', '-c', '7', '--conf', 'path',
@@ -54,9 +53,8 @@ def test_kmad_aligner(mock_call, mock_temp, mock_exists, mock_remove):
     mock_call.assert_called_once_with(args, stderr=-1)
     mock_call.reset_mock()
 
-    kmad.align('', '', '', '', '', '', '', 'path', False,
-               True, True)
+    kmad.align('', '', '', '', '', '', '', 'path', False, True)
     args = [KMAD, '-i', 'tempname', '-o', 'tempname', '-g', '', '-e', '',
             '-n', '', '-p', '', '-m', '', '-d', '', '--out-encoded', '-c', '7',
-            '--conf', 'path', '--refine', '--full_ungapped']
+            '--conf', 'path', '--refine']
     mock_call.assert_called_once_with(args, stderr=-1)
