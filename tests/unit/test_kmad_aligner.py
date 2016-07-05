@@ -1,5 +1,6 @@
-from mock import patch, PropertyMock, mock_open
+import os
 
+from mock import patch, PropertyMock, mock_open
 from nose.tools import eq_, with_setup, assert_raises
 
 from kmad_web.services.helpers.cache import cache_manager as cm
@@ -22,10 +23,13 @@ def teardown():
 def test_kmad_aligner_error(mock_temp):
 
     from kmad_web.services.kmad_aligner import kmad
+    if not os.path.exists(KMAD):
+        return
 
     type(mock_temp.return_value).name = PropertyMock(return_value='tempname')
     assert_raises(ServiceError, kmad.align, '', '', '', '', '', '', '', '',
                   '', '', '')
+
 
 @patch('kmad_web.services.kmad_aligner.os.remove')
 @patch('kmad_web.services.kmad_aligner.os.path.exists')
