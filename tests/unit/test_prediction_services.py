@@ -32,7 +32,7 @@ def test_disopred_service(mock_call, mock_exists, mock_remove):
     assert_raises(ServiceError, disopred, '>1\nSEQ')
 
 
-@patch('kmad_web.services.disopred.os.remove')
+@patch('kmad_web.services.psipred.os.remove')
 @patch('kmad_web.services.psipred.os.path.exists')
 @patch('kmad_web.services.psipred.subprocess.call')
 @patch('kmad_web.services.psipred.open', mock_open(read_data='prediction'),
@@ -48,7 +48,7 @@ def test_psipred_service(mock_call, mock_exists, mock_remove):
     assert_raises(ServiceError, psipred, 'fasta_path')
 
 
-@patch('kmad_web.services.disopred.os.remove')
+@patch('kmad_web.services.predisorder.os.remove')
 @patch('kmad_web.services.predisorder.os.path.exists')
 @patch('kmad_web.services.predisorder.subprocess.call')
 @patch('kmad_web.services.predisorder.open', mock_open(read_data='prediction'),
@@ -64,7 +64,7 @@ def test_predisorder_service(mock_call, mock_exists, mock_remove):
     assert_raises(ServiceError, predisorder, 'fasta_path')
 
 
-@patch('kmad_web.services.disopred.os.remove')
+@patch('kmad_web.services.globplot.os.remove')
 @patch('kmad_web.services.globplot.subprocess.check_output')
 @with_setup(setup, teardown)
 def test_globplot_service(mock_check_output, mock_rmeove):
@@ -77,7 +77,7 @@ def test_globplot_service(mock_check_output, mock_rmeove):
     assert_raises(ServiceError, globplot, 'fasta_path')
 
 
-@patch('kmad_web.services.disopred.os.remove')
+@patch('kmad_web.services.iupred.os.remove')
 @patch('kmad_web.services.iupred.subprocess.check_output')
 @with_setup(setup, teardown)
 def test_iupred_service(mock_check_output, mock_remove):
@@ -90,7 +90,7 @@ def test_iupred_service(mock_check_output, mock_remove):
     assert_raises(ServiceError, iupred, 'fasta_path')
 
 
-@patch('kmad_web.services.disopred.os.remove')
+@patch('kmad_web.services.spined.os.remove')
 @patch('kmad_web.services.spined.os.path.exists')
 @patch('kmad_web.services.spined.subprocess.call')
 @patch('kmad_web.services.spined.open', mock_open(read_data='prediction'),
