@@ -39,6 +39,8 @@ class KmadAligner(object):
         try:
             subprocess.call(args, stderr=subprocess.PIPE)
             if not os.path.exists(result_path):
+                _log.error("Call {} didn't create an output file".format(
+                    subprocess.list2cmdline(args)))
                 raise ServiceError(
                     "Couldn't find the alignment file: {}".format(result_path)
                 )
