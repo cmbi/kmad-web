@@ -42,8 +42,8 @@ draw_alignment = function(container_id, sequences) {
   }
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
+    if (sequences[i]['id'].length > longest_header) {
+        longest_header = sequences[i]['id'].length;
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
@@ -78,7 +78,7 @@ draw_alignment = function(container_id, sequences) {
   // draw sequence headers
   for (var i = 0; i < sequences.length; i++) {
     y = 30 + i * ROW_HEIGHT;
-    ctx.fillText(sequences[i]['header'], x, y)
+    ctx.fillText(sequences[i]['id'], x, y)
   }
 
   // draw numbering
@@ -240,8 +240,8 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
 
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
+    if (sequences[i]['id'].length > longest_header) {
+        longest_header = sequences[i]['id'].length;
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
@@ -328,11 +328,11 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   // draw headers
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
+    if (sequences[i]['id'].length > longest_header) {
+        longest_header = sequences[i]['id'].length;
     }
     y = 30 + i * ROW_HEIGHT;
-    ctx.fillText(sequences[i]['header'], x, y)
+    ctx.fillText(sequences[i]['id'], x, y)
   }
 
   // draw numbering
@@ -375,8 +375,8 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
 
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
+    if (sequences[i]['id'].length > longest_header) {
+        longest_header = sequences[i]['id'].length;
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
@@ -461,9 +461,9 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
   // draw headers
   ctx.fillStyle = "#515454";
   for (var i in sequences) {
-    ctx.fillText(sequences[i]['header'], x, y)
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
+    ctx.fillText(sequences[i]['id'], x, y)
+    if (sequences[i]['id'].length > longest_header) {
+        longest_header = sequences[i]['id'].length;
     }
     y += ROW_HEIGHT;
   }
@@ -646,8 +646,8 @@ draw_alignment_with_structure = function(container_id, sequences) {
 
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
+    if (sequences[i]['id'].length > longest_header) {
+        longest_header = sequences[i]['id'].length;
     }
   }
   var container_width = sequences[0]['aligned'].length * 10.5 + longest_header*7;
@@ -729,11 +729,11 @@ draw_alignment_with_structure = function(container_id, sequences) {
   // draw headers
   var longest_header = 0;
   for (var i = 0; i < sequences.length; i++) {
-    if (sequences[i]['header'].length > longest_header) {
-        longest_header = sequences[i]['header'].length;
+    if (sequences[i]['id'].length > longest_header) {
+        longest_header = sequences[i]['id'].length;
     }
     y = 30 + i * ROW_HEIGHT;
-    ctx.fillText(sequences[i]['header'], x, y)
+    ctx.fillText(sequences[i]['id'], x, y)
   }
 
   // draw numbering
