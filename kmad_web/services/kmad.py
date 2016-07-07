@@ -149,7 +149,9 @@ class AlignStrategy(object):
         config_path = user_feat_parser.write_conf_file(self._usr_features)
 
         if self._multi_fasta:
+            _log.info("User provided fasta: {}".format(self._fasta))
             sequences = parse_fasta(self._fasta)
+            _log.info("sequences from fasta: {}".format(sequences))
             tasks = [create_fles.s(sequences)]
         else:
             tasks = [run_blast.s(self._fasta, self._seq_limit),
