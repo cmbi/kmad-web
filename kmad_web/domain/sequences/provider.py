@@ -15,6 +15,7 @@ class UniprotSequenceProvider(object):
         _log.debug("Getting sequence for uniprot id {}".format(uniprot_id))
         uniprot = UniprotService(self._url)
         fasta = uniprot.get_fasta(uniprot_id)
-        sequence = parse_fasta(fasta)[0]['seq']
+        sequence = {}
+        sequence['seq'] = parse_fasta(fasta)[0]['seq']
         sequence['id'] = uniprot_id
         return sequence
