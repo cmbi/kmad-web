@@ -35,15 +35,15 @@ class UniprotFeatureProvider(object):
         strct_elements = []
         if sequence['id']:
             strct_elements = self._get_secondary_structure(sequence['id'])
-        else:
-            closest_hit = blast.find_closest_hit(sequence['seq'])
-            if closest_hit:
-                result = self._get_secondary_structure(
-                    closest_hit['id'])
-                uniprot = UniprotSequenceProvider()
-                closest_hit['seq'] = uniprot.get_sequence(closest_hit['id'])['seq']
-                strct_elements = transfer_data_from_homologue(
-                    sequence['seq'], closest_hit['seq'], result)
+        # else:
+        #     closest_hit = blast.find_closest_hit(sequence['seq'])
+        #     if closest_hit:
+        #         result = self._get_secondary_structure(
+        #             closest_hit['id'])
+        #         uniprot = UniprotSequenceProvider()
+        #         closest_hit['seq'] = uniprot.get_sequence(closest_hit['id'])['seq']
+        #         strct_elements = transfer_data_from_homologue(
+        #             sequence['seq'], closest_hit['seq'], result)
         return strct_elements
 
     def _get_secondary_structure(self, seq_id):
