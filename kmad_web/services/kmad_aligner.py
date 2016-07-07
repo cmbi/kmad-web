@@ -49,6 +49,7 @@ class KmadAligner(object):
             # clean up
             os.remove(tmp_file.name)
             os.remove(result_path)
+            _log.info("KMAD alignment: {}".format(result_file))
             return result_file
         except subprocess.CalledProcessError as e:
             _log.info("KMAD call arguments: {}".format(args))
