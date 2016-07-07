@@ -42,6 +42,7 @@ def parse_fasta_alignment(fastafile):
 
 def make_fasta(sequence_data):
     seq_lines = sequence_data.splitlines()
+    _log.info("make_fasta seqlines: {}".format(seq_lines))
     if check_fasta(sequence_data):
         sequence_data = seq_lines[0] + '\n' + ''.join(seq_lines[1:])
         return sequence_data
