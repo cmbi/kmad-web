@@ -207,8 +207,11 @@ class SequencesEncoder(object):
     """
     def _create_codon_sequences(self):
         for s in self._sequences:
+
             s['codon_seq'] = [[r, 'A', 'A', 'A', 'A', 'A', 'A']
                               for r in s['seq']]
+            _log.info("codon seq: {}".format(s['codon_seq']))
+            _log.info("seq: {}".format(s['seq']))
 
     def _encode_structure(self):
         order = ['TURN', 'HELIX', 'TRANSMEM', 'STRAND', 'DISULFID']
