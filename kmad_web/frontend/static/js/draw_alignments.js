@@ -82,7 +82,7 @@ draw_alignment = function(container_id, sequences) {
   }
 
   // draw numbering
-  x = longest_header * 6 + 10;
+  x = longest_header * 6 + 20;
   y = 10;
   for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
@@ -97,7 +97,7 @@ draw_alignment = function(container_id, sequences) {
   var current_color;
   var last_index = sequences[0]['aligned'].length - 1;
   for (var i = 0; i < sequences.length; i++) {
-    x = longest_header * 6 + 10;
+    x = longest_header * 6 + 20;
     y = 20 + (i * ROW_HEIGHT);
     for (var j = 0; j < sequences[i]['aligned'].length; j++) {
       res = sequences[i]['aligned'].charAt(j);
@@ -336,7 +336,7 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   }
 
   // draw numbering
-  x = longest_header * 6 + 10;
+  x = longest_header * 6 + 20;
   y = 10;
   for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
@@ -347,7 +347,7 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
   }
 
   for (var i = 0; i < sequences.length; i++) {
-    x = longest_header * 6 + 10;
+    x = longest_header * 6 + 20;
     y = 20+(i * ROW_HEIGHT);
     for (var j = 0; j < sequences[i]['encoded_aligned'].length; j+=codon_length) {
       draw_residue(j, i, x, y);
@@ -468,7 +468,7 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
     y += ROW_HEIGHT;
   }
   // draw numbering
-  x = longest_header * 6 + 10;
+  x = longest_header * 6 + 20;
   y = 10;
   for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
@@ -479,7 +479,7 @@ draw_alignment_ptms = function(container_id, sequences, codon_length) {
   }
   y = 20;
   for (var i =0; i < sequences.length; i++) {
-    x = longest_header * 6 + 10;
+    x = longest_header * 6 + 20;
     for (var j = 0; j < sequences[i]['encoded_aligned'].length; j += codon_length) {
       draw_residue(j, i, x, y);
       x += 10;
@@ -737,7 +737,7 @@ draw_alignment_with_structure = function(container_id, sequences) {
   }
 
   // draw numbering
-  x = longest_header * 6 + 10;
+  x = longest_header * 6 + 20;
   y = 10;
   for (var i = 0; i < sequences[0]['aligned'].length; i++) {
     if (i % 5 == 0) {
@@ -748,7 +748,7 @@ draw_alignment_with_structure = function(container_id, sequences) {
   }
 
   for (var i = 0; i < sequences.length; i++) {
-    x = longest_header * 6 + 10;
+    x = longest_header * 6 + 20;
     y = 20+(i * ROW_HEIGHT);
     for (var j = 0; j < sequences[i]['encoded_aligned'].length; j+=codon_length) {
       draw_residue(j, i, x, y);
