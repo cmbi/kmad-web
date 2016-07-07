@@ -10,7 +10,7 @@ def make_fles(sequences, motifs_dict, aligned_mode=False):
     if aligned_mode:
         sequence_key = 'encoded_aligned'
     for s in sequences:
-        out_text += "{}\n{}\n".format(s['header'], s[sequence_key])
+        out_text += "{}\n{}\n".format(s['id'], s[sequence_key])
     out_text += "## PROBABILITIES\n"
     for m in motifs_dict.keys():
         out_text += "{} {}\n".format(m, motifs_dict[m])
