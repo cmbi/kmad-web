@@ -33,8 +33,8 @@ class UniprotFeatureProvider(object):
 
     def get_secondary_structure(self, sequence):
         strct_elements = []
-        if sequence['id']:
-            strct_elements = self._get_secondary_structure(sequence['id'])
+        # if sequence['id']:
+        #     strct_elements = self._get_secondary_structure(sequence['id'])
         # else:
         #     closest_hit = blast.find_closest_hit(sequence['seq'])
         #     if closest_hit:
