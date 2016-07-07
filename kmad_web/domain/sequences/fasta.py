@@ -45,6 +45,7 @@ def make_fasta(sequence_data):
     _log.info("make_fasta seqlines: {}".format(seq_lines))
     if check_fasta(sequence_data):
         sequence_data = seq_lines[0] + '\n' + ''.join(seq_lines[1:])
+        _log.info("seqdata: {}".format(sequence_data))
         return sequence_data
     else:
         if not ''.join(seq_lines).isalpha():
