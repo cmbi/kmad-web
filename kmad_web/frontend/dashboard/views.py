@@ -32,6 +32,7 @@ def index():
         _log.info("[IP: %s] Submitted job: %s", request_ip,
                   form.output_type.data)
         seq_data = form.sequence.data
+        _log.info("Submitted seq data")
         if form.output_type.data == "predict":
             strategy = PredictStrategy(seq_data, form.prediction_method.data)
             celery_id = strategy()
