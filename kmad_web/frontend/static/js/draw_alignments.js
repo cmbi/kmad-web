@@ -35,7 +35,7 @@ draw_residue_rect = function(residues, x, y, context, rect_color) {
 draw_alignment = function(container_id, sequences) {
   var start = Date.now();
   const ROW_HEIGHT = 15;
-  const ROWS = sequences.length;
+  const ROWS = sequences.length + 1;
   aa_to_hex = {};
   for (key in aa_to_color) {
     aa_to_hex[key] = color_to_hex[aa_to_color[key]];
@@ -234,7 +234,7 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
     feature_codemap, feature_type) {
   var start = Date.now();
   const ROW_HEIGHT = 15;
-  const ROWS = sequences.length;
+  const ROWS = sequences.length + 1;
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
@@ -369,7 +369,7 @@ draw_alignment_with_features = function(container_id, sequences, codon_length,
 
 draw_alignment_ptms = function(container_id, sequences, codon_length) {
   const ROW_HEIGHT = 15;
-  const ROWS = sequences.length;
+  const ROWS = sequences.length + 1;
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
 
@@ -639,7 +639,7 @@ DomainsLegend = function(container_id, domains) {
 draw_alignment_with_structure = function(container_id, sequences) {
   var start = Date.now();
   const ROW_HEIGHT = 15;
-  const ROWS = sequences.length;
+  const ROWS = sequences.length + 1;
   const FONT_SIZE = 13;
   const FONT_FAMILY = "Monospace";
   var codon_length = 7;
