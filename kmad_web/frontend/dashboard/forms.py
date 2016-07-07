@@ -109,7 +109,7 @@ def check_if_fasta(sequences):
 
 
 class KmadForm(Form):
-    def validate_sequence(form, field):
+    def validate_sequence_disable(form, field):
         i = 0
         seq_list = field.data.splitlines()
         # check seq length
