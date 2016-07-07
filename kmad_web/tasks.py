@@ -128,7 +128,7 @@ def get_sequences_from_blast(blast_result):
     uniprot = UniprotSequenceProvider()
 
     query_seq = parse_fasta(blast_result['query_fasta'])[0]
-    query_seq['id'] = ""
+    query_seq['id'] = "seq"
     sequences.append(query_seq)
     if blast_result['blast_result']:
         try:
