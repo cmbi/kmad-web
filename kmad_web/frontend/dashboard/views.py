@@ -33,6 +33,7 @@ def index():
                   form.output_type.data)
         seq_data = form.sequence.data
         _log.info("Submitted seq data: {}".format(seq_data))
+        _log.info("Submitted seq data: {}".format(seq_data.splitlines()))
         if form.output_type.data == "predict":
             strategy = PredictStrategy(seq_data, form.prediction_method.data)
             celery_id = strategy()
