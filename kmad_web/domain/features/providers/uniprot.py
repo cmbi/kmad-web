@@ -58,13 +58,15 @@ class UniprotFeatureProvider(object):
             return []
 
     def _get_annotation_level(self, eco):
-        levels_dict = {'0000269': 0, '0000314': 0, '0000353': 0, '0000315': 0,
-                       '0000316': 0, '0000270': 0, '0000250': 1, '0000266': 1,
-                       '0000244': 1, '0000213': 2, '0000312': 1, '0000313': 2,
-                       '0000247': 1, '0000255': 1, '0000317': 1, '0000318': 1,
-                       '0000319': 1, '0000320': 1, '0000321': 1, '0000245': 1,
-                       '0000304': 2, '0000303': 2, '0000305': 2, '0000307': 2,
-                       '0000501': 3}
+        levels_dict = {
+            '0000269': 0, '0000314': 0, '0000353': 0, '0000315': 0,
+            '0000316': 0, '0000270': 0, '0000250': 1, '0000266': 1,
+            '0000244': 1, '0000213': 2, '0000312': 1, '0000313': 2,
+            '0000247': 1, '0000255': 1, '0000317': 1, '0000318': 1,
+            '0000319': 1, '0000320': 1, '0000321': 1, '0000245': 1,
+            '0000304': 2, '0000303': 2, '0000305': 2, '0000307': 2,
+            '0000501': 3
+        }
         # the first eco code is always the 'best' one ( = highest annotation
         # level), therefore taking only the first one
         lowest = 3
@@ -72,7 +74,6 @@ class UniprotFeatureProvider(object):
             if e in levels_dict.keys() and levels_dict[e] < lowest:
                 lowest = levels_dict[e]
         return lowest
-
 
     def _get_ptm_type(self, ptm_info):
         types_dict = OrderedDict([
@@ -83,7 +84,7 @@ class UniprotFeatureProvider(object):
             ('acetyl', 'acetylation'),
             ('hydroxy', 'hydroxylation'),
             ('methyl', 'methylation')
-            ])
+        ])
         for t in types_dict:
             if t in ptm_info:
                 return types_dict[t]

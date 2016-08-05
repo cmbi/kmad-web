@@ -166,7 +166,7 @@ def create_fles(sequences, aligned_mode=False, use_pfam=True, use_sstrct=True):
             {'header': '', 'seq': 'SEQ', 'aligned': 'SE--Q'}
         )
 
-    :param sequences: list sequence dictionaries ({'header': '', 'seq': ''})
+    :param sequences: list of sequence dictionaries ({'header': '', 'seq': ''})
     :return: filename
     """
     _log.info("Creating FLES file from {} sequences with aligned_mode {}".format(
@@ -340,7 +340,7 @@ def get_task(output_type):
     """
     Get the task for the given output_type.
 
-    If the output_type is not allowed, a ValueError is raised.
+    If the output_type value is not allowed, a ValueError is raised.
     """
     _log.info("Getting task for output '{}'".format(output_type))
     if output_type in ['align', 'refine']:

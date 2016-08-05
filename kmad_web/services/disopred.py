@@ -31,15 +31,17 @@ class DisopredService(object):
                 subprocess.call(args, stderr=err)
             # remove error log file if it's empty, otherwise raise an error
             stat = os.stat(errlog_name)
-            empty_errlog = stat.st_size == 0
-            if empty_errlog:
-                os.remove(errlog_name)
-                os.remove(fasta_filename)
-            else:
-                e = "Disopred raised an error, check logfile: {}".format(
-                    errlog_name)
-                _log.error(e)
-                raise ServiceError(e)
+            os.remove(errlog_name)
+            os.remove(fasta_filename)
+            # empty_errlog = stat.st_size == 0
+            # if empty_errlog:
+            #     os.remove(errlog_name)
+            #     os.remove(fasta_filename)
+            # else:
+            #     e = "Disopred raised an error, check logfile: {}".format(
+            #         errlog_name)
+            #     _log.error(e)
+            #     raise ServiceError(e)
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
