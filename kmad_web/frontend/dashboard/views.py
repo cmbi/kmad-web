@@ -94,71 +94,85 @@ def output(output_type, celery_id):
 
 @bp.route('/help/', methods=['GET'])
 def help():
+    _log.info("Rendering 'help' page")
     return render_template('dashboard/help.html')
 
 
 @bp.route('/examples/<filename>/', methods=['GET'])
 def alignment_example(filename):
+    _log.info("Rendering 'examples' page")
     return render_template('dashboard/examples/{}.html'.format(filename))
 
 
 @bp.route('/disprot_clustal_examples/', methods=['GET'])
 def disprot_clustal_examples():
+    _log.info("Rendering 'disprot clustal examples' page")
     return render_template('dashboard/disprot_clustal_examples.html')
 
 
 @bp.route('/disprot_tcoffee_examples/', methods=['GET'])
 def disprot_tcoffee_examples():
+    _log.info("Rendering 'disprot tcoffee examples' page")
     return render_template('dashboard/disprot_tcoffee_examples.html')
 
 
 @bp.route('/reviewer_comments/', methods=['GET'])
 def reviewer_comments():
+    _log.info("Rendering 'reviewer comments' page")
     return render_template('dashboard/reviewer_comments.html')
 
 
 @bp.route('/methods/', methods=['GET'])
 def methods():
+    _log.info("Rendering 'methods' page")
     return render_template('dashboard/methods.html')
 
 
 @bp.route('/about/', methods=['GET'])
 def about():
+    _log.info("Rendering 'about' page")
     return render_template('dashboard/about.html')
 
 
 @bp.route('/standalone/', methods=['GET'])
 def standalone():
+    _log.info("Rendering 'standalone' page")
     return render_template('dashboard/standalone.html')
 
 
 @bp.route('/additional_information/', methods=['GET'])
 def additional_information():
+    _log.info("Rendering 'additional information' page")
     return render_template('dashboard/additional_information.html')
 
 
 @bp.route('/why/', methods=['GET'])
 def why():
+    _log.info("Rendering 'why' page")
     return render_template('dashboard/why.html')
 
 
 @bp.route('/comparison/', methods=['GET'])
 def comparison():
+    _log.info("Rendering 'comparison' page")
     return render_template('dashboard/comparison.html')
 
 
 @bp.route('/balibase/', methods=['GET'])
 def balibase():
+    _log.info("Rendering 'balibase' page")
     return render_template('dashboard/balibase.html')
 
 
 @bp.route('/prefab/', methods=['GET'])
 def prefab():
+    _log.info("Rendering 'prefab' page")
     return render_template('dashboard/prefab.html')
 
 
 @bp.route('/cram/', methods=['GET'])
 def cram():
+    _log.info("Rendering 'cram' page")
     return render_template('dashboard/cram.html')
 
 
@@ -169,6 +183,7 @@ def yasara_example():
 
 @bp.route('/download', methods=['POST'])
 def download():
+    _log.info("Downloading prediction file")
     prediction = str(request.form['prediction'])
     strIO = StringIO.StringIO()
     strIO.write(prediction)
@@ -180,6 +195,7 @@ def download():
 
 @bp.route('/download_alignment', methods=['POST'])
 def download_alignment():
+    _log.info("Downloading alignment file")
     alignment = str(request.form['alignment'])
     strIO = StringIO.StringIO()
     strIO.write(alignment)
@@ -187,5 +203,3 @@ def download_alignment():
     return send_file(strIO,
                      attachment_filename="kmad_alignment.txt",
                      as_attachment=True)
-
-
