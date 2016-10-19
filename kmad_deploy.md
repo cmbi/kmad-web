@@ -108,6 +108,7 @@
 
 # IUPred (done)
 
+* get iupred (sent by email): http://iupred.enzim.hu/Downloads.php
 * >copy iupred.tar.gz to machine<
 * tar zxvf iupred.tar.gz
 * sudo mv iupred /usr/local/src
