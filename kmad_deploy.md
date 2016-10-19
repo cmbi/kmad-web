@@ -26,7 +26,8 @@
 
 # netphos (done)
 
-* >copy the netphos archive to the machine<
+* get the netphos arhcive: http://www.cbs.dtu.dk/cgi-bin/nph-sw_request?netphos
+        (sent by email)
 * tar zxvf netphos-3.1.Linux.tar.Z
 * follow installation instructions at
   http://www.cbs.dtu.dk/services/doc/netphos-3.1.readme
