@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #ports:
+      #- "18090:18090"
+    #volumes:
+      #- "/srv/olddata:/srv/mrs-data/raw"
+      #- "/srv/mrs:/srv/mrs-data/mrs"
