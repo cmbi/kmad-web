@@ -135,7 +135,3 @@ RUN apt-get install -y python-pip ;\
     pip install --no-cache -r requirements.txt
 COPY . /usr/src/app
 WORKDIR /usr/src/app
-
-ENV KMAD_WEB_SETTINGS=/usr/src/app/prd_settings.py
-
-CMD ["celery", "-A", "kmad_web.application:celery", "worker", "-B", "-n", "kmad_web.%h"]
