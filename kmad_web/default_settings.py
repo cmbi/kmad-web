@@ -3,18 +3,15 @@ from kombu import Exchange, Queue
 
 
 # Celery
-CELERY_BROKER_URL = 'amqp://guest@localhost'
-
+CELERY_BROKER_URL = 'amqp://guest@kmadweb_rabbitmq_1'
 CELERY_DEFAULT_QUEUE = 'kmad_web'
 CELERY_QUEUES = (
     Queue('kmad_web', Exchange('kmad_web'), routing_key='kmad_web'),
 )
-CELERY_RESULT_BACKEND = 'redis://localhost/1'
-
+CELERY_RESULT_BACKEND = 'redis://kmadweb_redis_1/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
 CELERYBEAT_SCHEDULE = {
     # Every month on the 1st at midnight
     'update_elmdb': {
@@ -33,9 +30,9 @@ CELERYBEAT_SCHEDULE = {
 CACHE_CONFIG = {
     'redis': {
         'redis.backend': 'dogpile.cache.redis',
-        'redis.arguments.host': 'localhost',
+        'redis.arguments.host': 'kmadweb_redis_1',
         'redis.arguments.port': 6379,
-        'redis.arguments.db': 9,
+        'redis.arguments.db': 1,
         'redis.arguments.redis_expiration_time': 60*60*24*30,  # 30 days
         'redis.arguments.distributed_lock': True
     }
@@ -62,6 +59,7 @@ CLUSTALW = '/usr/local/bin/clustalw2'
 MAFFT = '/usr/local/bin/mafft'
 MUSCLE = '/srv/www/kmad-web/bin/muscle'
 TCOFFEE = '/srv/www/kmad-web/bin/t_coffee'
+
 # predictors
 IUPRED = "/srv/kmad/iupred/iupred"
 IUPRED_DIR = "/srv/kmad/iupred/"

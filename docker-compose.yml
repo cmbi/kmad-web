@@ -1,12 +1,22 @@
 version: "2"
 
 services:
-  frontend:
+  web:
     build:
       context: .
-      dockerfile: Dockerfile
-    #ports:
-      #- "18090:18090"
-    #volumes:
-      #- "/srv/olddata:/srv/mrs-data/raw"
-      #- "/srv/mrs:/srv/mrs-data/mrs"
+      dockerfile: Dockerfile-web
+    depends_on:
+      - redis
+    ports:
+      - "5000:5000"
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile-celery
+    depends_on:
+      - rabbitmq
+      - redis
+  redis:
+    image: redis
+  rabbitmq:
+    image: rabbitmq

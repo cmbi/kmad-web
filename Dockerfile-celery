@@ -56,9 +56,19 @@ COPY vendor/sspro4.tar.gz /deps
 RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-components=1 ;\
     cd /deps/sspro4 ;\
     mkdir -p /data/nr ; mkdir -p /data/big ;\
+    # Set paths for installation and databanks
     sed -i '24s/.*/$install_dir = "\/deps\/sspro4";/' configure.pl ;\
     sed -i '44s/.*/$nr_db_dir = "\/data\/nr\/";/' configure.pl ;\
     sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
+    # Remove lines that check if the databanks are present. These will be
+    # mounted later when the container runs.
+    sed -i '72,77 d' configure.pl ;\
+    sed -i '73,79 d' configure.pl ;\
+    sed -i '93,97 d' configure.pl ;\
+    # Remove lines that check if project subfolders exist. Some have been
+    # removed because the size was too big.
+    #sed -i '106,110 d' configure.pl ;\
+    # Fix process-blast
     sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
     ./configure.pl
 
@@ -117,3 +127,15 @@ RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.9/blast-2.2.9-amd64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
     tar zxf /deps/blast-2.2.9-amd64-linux.tar.gz -C /deps/blast --strip-components=1
+
+
+COPY requirements.txt .
+RUN apt-get install -y python-pip ;\
+    pip install --upgrade pip ;\
+    pip install --no-cache -r requirements.txt
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+
+ENV KMAD_WEB_SETTINGS=/usr/src/app/prd_settings.py
+
+CMD ["celery", "-A", "kmad_web.application:celery", "worker", "-B", "-n", "kmad_web.%h"]
