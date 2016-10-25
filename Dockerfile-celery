@@ -34,7 +34,8 @@ RUN wget -q http://globplot.embl.de/html/GlobPipe-2.3.tgz -P /deps;\
 COPY vendor/netphos-3.1.Linux.tar.Z /deps
 RUN mkdir -p /deps/netphos ; tar zxf /deps/netphos-3.1.Linux.tar.Z -C /deps/netphos --strip-components=1
 RUN ln -s /deps/netphos/ape /usr/local/bin/netphos-3.1 ;\
-    ln -s /usr/local/bin/netphos-3.1 netphos
+    ln -s /usr/local/bin/netphos-3.1 netphos ;\
+    rm /deps/netphos-3.1.Linux.tar.Z ; rm -rf /deps/netphos
 
 # disopred
 # TODO: edit run_disopred.pl after install
@@ -78,7 +79,8 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
 # TODO: get libstdc++.so.5
 # TODO: install?
 RUN wget -q http://sysbio.rnet.missouri.edu/multicom_toolbox/tools/predisorder1.1.tar.gz -P /deps;\
-    mkdir -p /deps/predisorder ; tar zxf /deps/predisorder1.1.tar.gz -C /deps/predisorder --strip-components=1
+    mkdir -p /deps/predisorder ; tar zxf /deps/predisorder1.1.tar.gz -C /deps/predisorder --strip-components=1 ;\
+    rm /deps/predisorder1.1.tar.gz
 
 # TODO: follow instructions in readme
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipred3.5.tar.gz -P /deps;\
@@ -104,7 +106,8 @@ RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spineXpublic.tgz -P /deps;
     mkdir -p /deps/spinex ; tar zxf /deps/spineXpublic.tgz -C /deps/spinex --strip-components=1
 RUN cd /deps/spinex/code ;\
     sed -i '6s/read complr/complr=gfortran/' compile ;\
-    ./compile
+    ./compile ;\
+    rm /deps/spineXpublic.tgz
 
 # iupred
 # TODO: fix iupred.c?
@@ -121,12 +124,15 @@ RUN mkdir -p /deps/iupred ;\
 # TODO: edit values in bin/run_spine-d
 # TODO: test
 RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P /deps ;\
-    mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1
+    mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
+    rm /deps/spinedlocal_v2.0.tar.gz
 
 # ncbi blast
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.9/blast-2.2.9-amd64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
-    tar zxf /deps/blast-2.2.9-amd64-linux.tar.gz -C /deps/blast --strip-components=1
+    tar zxf /deps/blast-2.2.9-amd64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+    find /deps/blast/ -perm /a+x | xargs cp /usr/local/bin ;\
+    rm /deps/blast-2.2.9-amd64-linux.tar.gz ;\ rm -rf /deps/blast
 
 
 COPY requirements.txt .
