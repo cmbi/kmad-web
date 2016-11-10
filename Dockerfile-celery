@@ -63,7 +63,6 @@ RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast
     rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast
 
 # disopred
-# TODO: edit run_disopred.pl after install
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.tar.gz -P /deps;\
     mkdir -p /deps/disopred ; tar zxf /deps/DISOPRED3.15.tar.gz -C /deps/disopred --strip-components=1 ;\
     rm /deps/DISOPRED3.15.tar.gz ;\
@@ -156,6 +155,7 @@ RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P
     sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
     sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
     sed -i '28s/.*/export IUPred_PATH=\/deps\/iupred/' /deps/spined/bin/run_spine-d && \
+    sed -i 's/${workdir}\/compile/bash ${workdir}\/compile/g' /deps/spined/bin/run_spine-d && \
     rm /deps/spinedlocal_v2.0.tar.gz
 RUN /deps/spined/bin/run_spine-d . 1crn
 
