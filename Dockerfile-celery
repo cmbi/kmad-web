@@ -48,7 +48,7 @@ RUN netphos 1crn.fasta
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.tar.gz -P /deps;\
     mkdir -p /deps/disopred ; tar zxf /deps/DISOPRED3.15.tar.gz -C /deps/disopred --strip-components=1 ;\
     rm /deps/DISOPRED3.15.tar.gz ;\
-    sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin";/' /deps/disopred/run_disopred.pl ;\
+    sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin\/";/' /deps/disopred/run_disopred.pl ;\
     sed -i '19s/.*/my $SEQ_DB = "\/data\/uniref\/uniref90";/' /deps/disopred/run_disopred.pl
 RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
     /deps/disopred/run_disopred.pl 1crn.fasta ;\
