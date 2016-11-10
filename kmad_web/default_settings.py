@@ -54,11 +54,11 @@ KMAD = "/usr/local/bin/kmad"
 # paths
 ELMDB_PATH = 'kmad_web/frontend/static/dbs/elm_complete.txt'
 NETPHOS_PATH = '/usr/local/bin/netphos'
-CLUSTALO = '/usr/bin/clustalo'
+CLUSTALO = '/usr/local/bin/clustalo'
 CLUSTALW = '/usr/local/bin/clustalw2'
 MAFFT = '/usr/local/bin/mafft'
-MUSCLE = '/srv/www/kmad-web/bin/muscle'
-TCOFFEE = '/srv/www/kmad-web/bin/t_coffee'
+MUSCLE = '/usr/local/bin/muscle'
+TCOFFEE = '/usr/local/bin/t_coffee'
 
 # predictors
 IUPRED = "/srv/kmad/iupred/iupred"
