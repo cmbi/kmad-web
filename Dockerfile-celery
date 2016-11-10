@@ -132,7 +132,7 @@ RUN mkdir -p /deps/iupred ;\
 # spine-d
 RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P /deps ;\
     mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
-    sed -i '16s/.*/blast_prog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
+    sed -i '16s/.*/blastprog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
     sed -i '19s/.*/nrdb=\/data\/nr/' /deps/spined/bin/run_spine-d && \
     sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
     sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
