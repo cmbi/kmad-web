@@ -121,11 +121,12 @@ ENV spineXcodir /deps/spinex/code
 ENV spineXblast /usr
 
 # iupred
-# TODO: fix iupred.c?
 COPY vendor/iupred.tar.gz /deps
 RUN mkdir -p /deps/iupred ;\
     tar zxf /deps/iupred.tar.gz -C /deps/iupred --strip-components=1 ;\
-    cd /deps/iupred ; cc iupred.c -o iupred ;\
+    cd /deps/iupred ;\
+    sed -i 's/ allocate enough memory: %d bytes/ allocate enough memory: %zu bytes/g' iupred.c ;\
+    cc iupred.c -o iupred ;\
     rm /deps/iupred.tar.gz
 
 # spine-d
