@@ -43,6 +43,25 @@ RUN ln -s /deps/netphos/ape /usr/local/bin/netphos-3.1 ;\
 # TODO: When the test below fails, docker can't detect it (tcsh related?)
 RUN netphos 1crn.fasta
 
+# ncbi blast
+# version 2.2.9 for blastpgp, formatdb
+# TODO: copy above executables only
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.9/blast-2.2.9-amd64-linux.tar.gz -P /deps ;\
+    mkdir -p /deps/blast ;\
+    tar zxf /deps/blast-2.2.9-amd64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+    cp /deps/blast/blastpgp /usr/local/bin ;\
+    cp /deps/blast/formatdb /usr/local/bin ;\
+    rm /deps/blast-2.2.9-amd64-linux.tar.gz ; rm -rf /deps/blast
+
+# version 2.5.0 for blastp, makeblastdb, psiblast
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
+    mkdir -p /deps/blast ;\
+    tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+    cp /deps/blast/bin/blastp /usr/local/bin ;\
+    cp /deps/blast/bin/makeblastdb /usr/local/bin ;\
+    cp /deps/blast/bin/psiblast /usr/local/bin ;\
+    rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast
+
 # disopred
 # TODO: edit run_disopred.pl after install
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.tar.gz -P /deps;\
@@ -139,25 +158,6 @@ RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P
     sed -i '28s/.*/export IUPred_PATH=\/deps\/iupred/' /deps/spined/bin/run_spine-d && \
     rm /deps/spinedlocal_v2.0.tar.gz
 RUN /deps/spined/bin/run_spine-d . 1crn
-
-# ncbi blast
-# version 2.2.9 for blastpgp, formatdb
-# TODO: copy above executables only
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.9/blast-2.2.9-amd64-linux.tar.gz -P /deps ;\
-    mkdir -p /deps/blast ;\
-    tar zxf /deps/blast-2.2.9-amd64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
-    cp /deps/blast/blastpgp /usr/local/bin ;\
-    cp /deps/blast/formatdb /usr/local/bin ;\
-    rm /deps/blast-2.2.9-amd64-linux.tar.gz ; rm -rf /deps/blast
-
-# version 2.5.0 for blastp, makeblastdb, psiblast
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
-    mkdir -p /deps/blast ;\
-    tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
-    cp /deps/blast/bin/blastp /usr/local/bin ;\
-    cp /deps/blast/bin/makeblastdb /usr/local/bin ;\
-    cp /deps/blast/bin/psiblast /usr/local/bin ;\
-    rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast
 
 # clustalo/clustalw
 RUN wget -q http://www.clustal.org/omega/clustalo-1.2.3-Ubuntu-x86_64 -P /deps ;\
