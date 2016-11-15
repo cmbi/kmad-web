@@ -163,7 +163,7 @@ RUN /deps/spined/bin/run_spine-d . 1crn
 RUN wget -q http://www.clustal.org/omega/clustalo-1.2.3-Ubuntu-x86_64 -P /deps ;\
     mv /deps/clustalo-1.2.3-Ubuntu-x86_64 /usr/local/bin/clustalo
 RUN wget -q http://www.clustal.org/download/current/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -P /deps ;\
-    mkdir -p /deps/clustalw ; tar zxf /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -C /deps/spined --strip-components=1 ;\
+    mkdir -p /deps/clustalw ; tar zxf /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -C /deps/clustalw --strip-components=1 ;\
     cp /deps/clustalw/clustalw2 /usr/local/bin ;\
     rm /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz ; rm -rf /deps/clustalw
 
