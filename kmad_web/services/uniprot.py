@@ -30,6 +30,9 @@ class UniprotService(object):
             if request.status_code != 200:
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
+            msg = "requests raised an error when trying to reach the " \
+                "following url:\n{}".format(url)
+            _log.error(msg)
             raise ServiceError(e)
         else:
             result = request.text
@@ -45,6 +48,9 @@ class UniprotService(object):
             if request.status_code != 200:
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
+            msg = "requests raised an error when trying to reach the " \
+                "following url:\n{}".format(url)
+            _log.error(msg)
             raise ServiceError(e)
         else:
             result = request.text
@@ -62,6 +68,9 @@ class UniprotService(object):
                 raise ServiceError(request.status_code)
         except (requests.ConnectionError, requests.HTTPError) as e:
             _log.error("Couldn't get fasta from Uniprot: %s", e)
+            msg = "requests raised an error when trying to reach the " \
+                "following url:\n{}".format(url)
+            _log.error(msg)
             raise ServiceError(e)
         else:
             result = request.text

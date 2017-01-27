@@ -146,4 +146,3 @@
 # nr db
 * wget ftp://ftp.ncbi.nlm.nih.gov/blast/db/nr\*.tar.gz
 * tar xzvf nr*.tar.gz
-* formatdb nr*fasta
