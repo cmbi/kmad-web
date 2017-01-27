@@ -157,7 +157,6 @@ RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P
     sed -i '28s/.*/export IUPred_PATH=\/deps\/iupred/' /deps/spined/bin/run_spine-d && \
     sed -i 's/${workdir}\/compile/bash ${workdir}\/compile/g' /deps/spined/bin/run_spine-d && \
     rm /deps/spinedlocal_v2.0.tar.gz
-RUN /deps/spined/bin/run_spine-d . 1crn
 
 # clustalo/clustalw
 RUN wget -q http://www.clustal.org/omega/clustalo-1.2.3-Ubuntu-x86_64 -P /deps ;\
