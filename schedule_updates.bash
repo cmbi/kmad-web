@@ -5,7 +5,7 @@ MYDIR=$(dirname $0)
 UPDATE=$MYDIR/update_databanks.bash
 chmod 755 $UPDATE
 
-if ! [ -f /data/nr.pal ] ; then
+if ! [ -f /data/nr.pal ] || ! [ -f /data/blast/sprot.psq ] ; then
 
     # Databanks not present, build now!
     $UPDATE
