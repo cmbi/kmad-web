@@ -1,7 +1,10 @@
+#!/bin/bash
+
 cd /data
-/usr/bin/wget ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/nr.gz
-/bin/gunzip nr.gz
-/usr/bin/makeblastdb -in nr -out nr -dbtype prot -parse_seqids
+/usr/bin/wget ftp://ftp.ncbi.nlm.nih.gov/blast/db/nr.\*.tar.gz
+for ar in nr.*.tar.gz; do
+    /bin/tar xzf $ar
+done
 
 if ! [ -d blast ] ; then mkdir blast; fi
 cd blast
