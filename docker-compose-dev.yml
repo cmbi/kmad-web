@@ -13,3 +13,9 @@ services:
     command: watchmedo auto-restart -d /usr/src/app -p "*.py" -D -R -- celery -A kmad_web.application:celery worker -B -n kmad_web.%h
     environment:
       - KMAD_WEB_SETTINGS=/usr/src/app/dev_settings.py
+  databanks:
+    volumes:
+      - ".:/usr/src/app"
+    command: watchmedo auto-restart -d /usr/src/app -p "*.py" -D -R -- bash /usr/src/app/schedule_updates.bash
+    environment:
+      - DEVELOPMENT=1
