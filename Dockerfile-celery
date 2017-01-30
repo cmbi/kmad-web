@@ -160,10 +160,12 @@ RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P
 
 # clustalo/clustalw
 RUN wget -q http://www.clustal.org/omega/clustalo-1.2.3-Ubuntu-x86_64 -P /deps ;\
-    mv /deps/clustalo-1.2.3-Ubuntu-x86_64 /usr/local/bin/clustalo
+    mv /deps/clustalo-1.2.3-Ubuntu-x86_64 /usr/local/bin/clustalo; \
+    chmod +x /usr/local/bin/clustalo
 RUN wget -q http://www.clustal.org/download/current/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -P /deps ;\
     mkdir -p /deps/clustalw ; tar zxf /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -C /deps/clustalw --strip-components=1 ;\
-    cp /deps/clustalw/clustalw2 /usr/local/bin ;\
+    cp /deps/clustalw/clustalw2 /usr/local/bin ; \
+    chmod +x /usr/local/bin/clustalw2 ; \
     rm /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz ; rm -rf /deps/clustalw
 
 # mafft
