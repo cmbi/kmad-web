@@ -19,5 +19,6 @@ CRONFILE=$MYDIR/update_cron
 
 /bin/echo -e "$ENV\n0 20 * * 5 /bin/bash $UPDATE\n" > $CRONFILE
 crontab $CRONFILE
+rm -f $CRONFILE
 
 cron -f
