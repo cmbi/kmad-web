@@ -16,5 +16,3 @@ services:
   databanks:
     volumes:
       - ".:/usr/src/app"
-    environment:
-      - DEVELOPMENT=1
