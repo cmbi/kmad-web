@@ -1,0 +1,8 @@
+FROM ubuntu:16.04
+
+# dependencies
+RUN apt-get update && apt-get install -y cron ncbi-blast\+ wget
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY . /usr/src/app
