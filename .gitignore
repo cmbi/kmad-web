@@ -1,3 +1,7 @@
+# Cron intermediate file
+update_cron
+
+# Python runtime files
 *.py[cod]
 
 # C extensions
