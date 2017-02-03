@@ -32,11 +32,13 @@ def test_fles2fasta():
 def test_make_fles():
     sequences = [
         {
+            'id': '1',
             'header': '>1',
             'encoded_seq': 'SAAAAAAEAAAAAAQAAAAAA',
             'encoded_aligned': '-AAAAAASAAAAAAEAAAAAAQAAAAAA'
         },
         {
+            'id': '2',
             'header': '>2',
             'encoded_seq': 'PAAAAAASAAAAAAEAAAAAA',
             'encoded_aligned': 'PAAAAAASAAAAAAEAAAAAA-AAAAAA'
