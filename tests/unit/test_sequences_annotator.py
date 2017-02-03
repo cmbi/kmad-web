@@ -1,6 +1,6 @@
 import os
 
-from mock import patch
+from mock import Mock, patch
 from nose.tools import eq_, with_setup
 
 from kmad_web.default_settings import BLASTP
@@ -73,12 +73,14 @@ def test_annotate_ptms(mock_netphos, mock_uniprot):
     eq_(expected, seq_ann.sequences)
 
 
-@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._get_go_terms')
-@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_domains')
-@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_ptms')
-@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_motifs')
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._add_missing_uniprot_ids', Mock())
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._get_go_terms', Mock())
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_domains', Mock())
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_ptms', Mock())
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_motifs', Mock())
+@patch('kmad_web.domain.sequences.annotator.SequencesAnnotator._annotate_secondary_structure', Mock())
 @with_setup(setup, teardown)
-def test_annotate(mock_motifs, mock_ptms, mock_domains, mock_go_terms):
+def test_annotate():
     if not os.path.exists(BLASTP):
         return
     crambin = 'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'
@@ -86,38 +88,13 @@ def test_annotate(mock_motifs, mock_ptms, mock_domains, mock_go_terms):
            {'seq': crambin, 'id': ''},
            {'seq': crambin[:-1], 'id': ''}
            ]
-    expected = [{'seq': 'SEQSEQ', 'id': 'TEST_ID', 'secondary_structure': []},
-                {'seq': crambin, 'id': 'P01542',
-                 'secondary_structure': [
-                     {'position': 3, 'name': u'DISULFID'},
-                     {'position': 40, 'name': u'DISULFID'},
-                     {'position': 4, 'name': u'DISULFID'},
-                     {'position': 32, 'name': u'DISULFID'},
-                     {'position': 16, 'name': u'DISULFID'},
-                     {'position': 26, 'name': u'DISULFID'},
-                     {'start': 2, 'end': 6, 'name': u'STRAND'},
-                     {'start': 7, 'end': 17, 'name': u'HELIX'},
-                     {'start': 18, 'end': 22, 'name': u'TURN'},
-                     {'start': 26, 'end': 30, 'name': u'HELIX'},
-                     {'start': 36, 'end': 38, 'name': u'STRAND'},
-                     {'start': 42, 'end': 44, 'name': u'HELIX'}]},
-                {'seq': crambin[:-1], 'id': '',
-                 'secondary_structure': [
-                     {'position': 3, 'name': u'DISULFID'},
-                     {'position': 40, 'name': u'DISULFID'},
-                     {'position': 4, 'name': u'DISULFID'},
-                     {'position': 32, 'name': u'DISULFID'},
-                     {'position': 16, 'name': u'DISULFID'},
-                     {'position': 26, 'name': u'DISULFID'},
-                     {'start': 2, 'end': 6, 'name': u'STRAND'},
-                     {'start': 7, 'end': 17, 'name': u'HELIX'},
-                     {'start': 18, 'end': 22, 'name': u'TURN'},
-                     {'start': 26, 'end': 30, 'name': u'HELIX'},
-                     {'start': 36, 'end': 38, 'name': u'STRAND'},
-                     {'start': 42, 'end': 44, 'name': u'HELIX'}]}
-                ]
+    expected = [
+        {'id': 'TEST_ID', 'seq': 'SEQSEQ'},
+        {'id': '', 'seq': 'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYAN'},
+        {'id': '', 'seq': 'TTCCPSIVARSNFNVCRLPGTPEALCATYTGCIIIPGATCPGDYA'}
+    ]
     seq_ann = SequencesAnnotator()
-    seq_ann.annotate(seq, use_pfam=True)
+    seq_ann.annotate(seq, use_pfam=True, use_sstrct=True)
     eq_(expected, seq_ann.sequences)
 
 

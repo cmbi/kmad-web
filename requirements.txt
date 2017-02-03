@@ -1,3 +1,4 @@
+numpy==1.10.1
 BeautifulSoup==3.2.1
 Flask-DebugToolbar==0.10.0
 Flask-Mail==0.9.1
@@ -24,7 +25,6 @@ itsdangerous==0.24
 kombu==3.0.30
 mock==1.3.0
 nose==1.3.7
-numpy==1.10.1
 pbr==1.8.1
 pytz==2015.7
 redis==2.10.5
