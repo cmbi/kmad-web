@@ -44,7 +44,6 @@ CELERYD_NODES = 3
 # service urls
 ELM_URL = "http://elm.eu.org"
 GO_URL = "http://www.ebi.ac.uk/ols/api/ontologies/go/terms/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252F"
-GO_URL = "http://www.ebi.ac.uk/ols/api/ontologies/go/terms/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252F"
 
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
 UNIPROT_PTMS_URL = "http://www.uniprot.org/docs/ptmslist.txt"
