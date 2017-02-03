@@ -14,25 +14,23 @@ class GoProvider(object):
         go = GoService(GO_URL)
         query = 'parents'
 
-        if not go_term.startswith('GO:'):
-            go_term = "GO:" + go_term
-        assert self._go_reg.match(go_term)
-
-        response = go.call(go_term, query)
-        terms = [term['obo_id'] for term in response]
-
-        return terms
-
-    def get_children_terms(self, go_term):
-        go = GoService(GO_URL)
-        query = 'descendants'
-        if not go_term.startswith('GO:'):
+        if not go_term.startswith('GO'):
             go_term = "GO_" + go_term
         else:
             go_term = go_term.replace(":", "_")
         assert self._go_reg.match(go_term)
 
         response = go.call(go_term, query)
-        terms = [term['obo_id'] for term in response]
+        self.parents = set([term['obo_id'] for term in response])
 
-        return terms
+    def get_children_terms(self, go_term):
+        go = GoService(GO_URL)
+        query = 'descendants'
+        if not go_term.startswith('GO'):
+            go_term = "GO_" + go_term
+        else:
+            go_term = go_term.replace(":", "_")
+        assert self._go_reg.match(go_term)
+
+        response = go.call(go_term, query)
+        self.children = set([term['obo_id'] for term in response])
