@@ -1,4 +1,5 @@
 from nose.tools import eq_, with_setup
+import pprint as pp
 
 from kmad_web.services.go import GoService
 from kmad_web.services.helpers.cache import cache_manager as cm
@@ -16,16 +17,16 @@ def teardown():
 
 @with_setup(setup, teardown)
 def test_call():
-    method = "getTermParents"
-    go_term = "GO:0001940"
+    query_type = 'parents'
+    go_term = "GO_0001940"
     go = GoService()
-    go._url = "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"
-    result_parents = go.call(method, go_term, "GO")['item']
-    eq_('GO:0045120', result_parents[0]['key'])
+    go._url = "http://www.ebi.ac.uk/ols/api/ontologies/go/terms/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252F"
+    result_parents = go.call(go_term, query_type)
+    eq_('GO:0045120', result_parents[0]['obo_id'])
 
-    method = "getTermChildren"
-    go_term = "GO:0045120"
+    query_type = 'children'
+    go_term = "GO_0045120"
     distance = -1
-    expected_keys = ['GO:0001940', 'GO:0001939']
-    result_children = go.call(method, go_term, "GO", distance)['item']
-    eq_([i['key'] for i in result_children], expected_keys)
+    expected_keys = ['GO:0001939', 'GO:0001940']
+    result_children = go.call(go_term, query_type)
+    eq_([i['obo_id'] for i in result_children], expected_keys)

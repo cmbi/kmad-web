@@ -1,7 +1,8 @@
 import logging
+import requests
 
 from kmad_web.services.types import ServiceError
-from kmad_web.services.helpers import soap
+# from kmad_web.services.helpers import soap
 from kmad_web.services.helpers.cache import cache_manager as cm
 
 _log = logging.getLogger(__name__)
@@ -21,12 +22,21 @@ class GoService(object):
         self._url = url
 
     @cm.cache('redis')
-    def call(self, method, *args, **kwargs):
-        _log.info("Calling go search method '{}'".format(method))
+    def call(self, go_term, query_type):
+        _log.info("Calling go search method '{}'".format(query_type))
         if self._url is None:
             _log.error("Goservice hasn't been configured")
             raise ServiceError("GoService hasn't been configured")
-
-        if 'soap_timeout' not in kwargs:
-            soap_timeout = 100
-        return soap.run(self._url, soap_timeout, method, *args)
+        url = "{}{}/{}".format(self._url, go_term, query_type)
+        try:
+            request = requests.get(url, data={"Accept": "application/json"})
+            if request.status_code != 200:
+                    raise ServiceError(request.status_code)
+        except (requests.ConnectionError, requests.HTTPError) as e:
+            msg = "requests raised an error when trying to reach the " \
+                "following url:\n{}".format(url)
+            _log.error(msg)
+            raise ServiceError(e)
+        else:
+            result = request.json()['_embedded']['terms']
+        return result

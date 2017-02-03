@@ -8,29 +8,31 @@ class GoProvider(object):
     def __init__(self):
         self.children = set()
         self.parents = set()
-        self._go_reg = re.compile("^GO:[0-9]{7}$")
+        self._go_reg = re.compile("^GO_[0-9]{7}$")
 
     def get_parent_terms(self, go_term):
         go = GoService(GO_URL)
-        method = 'getTermParents'
+        query = 'parents'
 
         if not go_term.startswith('GO:'):
             go_term = "GO:" + go_term
         assert self._go_reg.match(go_term)
 
-        response = dict(go.call(method, go_term, "GO"))
-        if response:
-            self.parents = set([str(g['key']) for g in response['item']])
+        response = go.call(go_term, query)
+        terms = [term['obo_id'] for term in response]
+
+        return terms
 
     def get_children_terms(self, go_term):
         go = GoService(GO_URL)
-        method = 'getTermChildren'
+        query = 'descendants'
         if not go_term.startswith('GO:'):
-            go_term = "GO:" + go_term
+            go_term = "GO_" + go_term
+        else:
+            go_term = go_term.replace(":", "_")
         assert self._go_reg.match(go_term)
 
-        # distance < 0 to get all children
-        distance = -1
-        response = dict(go.call(method, go_term, "GO", distance))
-        if response:
-            self.children = set([g['key'] for g in response['item']])
+        response = go.call(go_term, query)
+        terms = [term['obo_id'] for term in response]
+
+        return terms
