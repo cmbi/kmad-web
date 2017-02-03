@@ -19,7 +19,7 @@ def test_make_fasta():
     seq = ">1\nSEQ"
     eq_(">1\nSEQ", f.make_fasta(seq))
     seq = ">1\nSEQ\nSEQ"
-    eq_(">1\nSEQSEQ", f.make_fasta(seq))
+    eq_(">1\nSEQ\nSEQ", f.make_fasta(seq))
     seq = "SEQ\nSEQ"
     eq_(">sequence\nSEQSEQ\n", f.make_fasta(seq))
 
