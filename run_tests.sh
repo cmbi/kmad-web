@@ -32,7 +32,7 @@ case "$_tests" in
         ;;
 esac
 
-_nose_opts="-v -a !disabled --with-coverage --cover-inclusive --cover-package hope"
+_nose_opts="-v -a !disabled --with-coverage --cover-inclusive --cover-package kmad_web"
 _dc_opts="-f docker-compose.yml -f docker-compose-dev.yml"
 _command="docker-compose $_dc_opts run $_dc_run_opts celery nosetests $_nose_opts $_tests"
 echo $_command
