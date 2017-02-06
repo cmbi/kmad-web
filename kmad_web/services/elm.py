@@ -58,7 +58,6 @@ class ElmService(object):
             result = request.text
         return result
 
-    @cm.cache('redis')
     def get_motif_go_terms(self, motif_id):
         _log.debug("Getting GO terms for motif %s", motif_id)
         url = os.path.join(self._url, 'elms/{}.html'.format(motif_id))

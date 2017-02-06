@@ -73,7 +73,9 @@ class ElmUpdater(object):
         else:
             return False
 
-    # change sets to lists
     def _make_json_friendly(self, full_motif_classes):
+        '''
+        change sets to lists
+        '''
         for m in full_motif_classes.values():
             m['GO'] = list(m['GO'])
