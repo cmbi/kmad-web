@@ -2,6 +2,7 @@ import re
 
 from kmad_web.default_settings import GO_URL
 from kmad_web.services.go import GoService
+from kmad_web.services.types import ServiceError
 
 
 class GoProvider(object):
@@ -19,9 +20,11 @@ class GoProvider(object):
         else:
             go_term = go_term.replace(":", "_")
         assert self._go_reg.match(go_term)
-
-        response = go.call(go_term, query)
-        self.parents = set([term['obo_id'] for term in response])
+        try:
+            response = go.call(go_term, query)
+            self.parents = set([term['obo_id'] for term in response])
+        except ServiceError:
+            pass
 
     def get_children_terms(self, go_term):
         go = GoService(GO_URL)
@@ -32,5 +35,8 @@ class GoProvider(object):
             go_term = go_term.replace(":", "_")
         assert self._go_reg.match(go_term)
 
-        response = go.call(go_term, query)
-        self.children = set([term['obo_id'] for term in response])
+        try:
+            response = go.call(go_term, query)
+            self.children = set([term['obo_id'] for term in response])
+        except ServiceError:
+            pass
