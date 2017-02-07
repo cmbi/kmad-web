@@ -56,7 +56,7 @@ class ElmFeatureProvider(object):
                         motif['end'] = match.span()[1]
                         # calc 0-1 probbaility from the ELM's e-value like
                         # probability
-                        motif['probability'] = 1 + 1/math.log(
+                        motif['probability'] = 1 + 1 / math.log(
                             float(m['probability']))
                         motif['id'] = m_id
                         motif['class'] = m['class']

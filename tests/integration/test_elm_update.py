@@ -3,13 +3,14 @@ import os
 
 from nose.tools import ok_
 
+from kmad_web.domain.updaters.elm import ElmUpdater
 from kmad_web.factory import create_app, create_celery_app
-# from kmad_web.services.types import ServiceError
+
 logging.basicConfig()
 _log = logging.getLogger(__name__)
 
 
-class TestTasks(object):
+class TestElmUpdate(object):
 
     @classmethod
     def setup_class(cls):
@@ -18,9 +19,9 @@ class TestTasks(object):
         cls.celery = create_celery_app(flask_app)
 
     def test_elm_update(self):
-        from kmad_web.tasks import update_elmdb
 
-        update_elmdb()
+        elm = ElmUpdater()
+        elm.update()
 
         outfile = 'kmad_web/frontend/static/dbs/elm_complete.txt'
         # check if output file exists

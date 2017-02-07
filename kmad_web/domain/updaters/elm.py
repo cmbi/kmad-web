@@ -28,14 +28,13 @@ class ElmUpdater(object):
         # and parse it
         elm_parser.parse_motif_classes(elm_data)
         full_motif_classes = elm_parser.motif_classes.copy()
-        for motif_id in elm_parser.motif_classes.keys():
+        total_motifs = len(elm_parser.motif_classes)
+        for i, motif_id in enumerate(elm_parser.motif_classes.keys()):
+            if i + 1 % 10 == 0:
+                _log.info("Updated %s out of %s motifs", i + 1, total_motifs)
+                print "Updated %s out of %s motifs" % (i + 1, total_motifs)
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
-            # try:
-            #     m_class = elm_service.get_motif_class(motif_id)
-            #     full_motif_classes[motif_id]['class'] = m_class
-            # except ServiceError:
-            #     del full_motif_classes[motif_id]
         # make json serializable
         self._make_json_friendly(full_motif_classes)
         if self._not_ok(full_motif_classes):
@@ -51,15 +50,15 @@ class ElmUpdater(object):
         _log.debug("Getting GO terms for the {} motif".format(motif_id))
         elm_service = ElmService(ELM_URL)
         go_terms = elm_service.get_motif_go_terms(motif_id)
+        go = GoProvider()
         for go_term in list(go_terms):
             if go_term not in self._go_families.keys():
                 _log.debug("go: {}".format(go_term))
-                go = GoProvider()
-                go.get_parent_terms(go_term)
-                go.get_children_terms(go_term)
-                _log.debug("go parents: {}".format(go.parents))
-                _log.debug("go children: {}".format(go.children))
-                go_family = go.parents.union(go.children)
+                parents = go.get_parent_terms(go_term)
+                children = go.get_children_terms(go_term)
+                _log.debug("go parents: {}".format(parents))
+                _log.debug("go children: {}".format(children))
+                go_family = parents.union(children)
                 self._go_families[go_term] = go_family
             else:
                 go_family = self._go_families[go_term]

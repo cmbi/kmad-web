@@ -69,8 +69,8 @@ def test_get_extended_go_terms(mock_go, mock_get_go):
     mock_get_go.return_value = set(['GO:0000001'])
     parents = set(['GO:0000101', 'GO:0000102'])
     children = set(['GO:0000111', 'GO:0000112'])
-    type(mock_go.return_value).children = PropertyMock(return_value=children)
-    type(mock_go.return_value).parents = PropertyMock(return_value=parents)
+    mock_go.return_value.get_children_terms.return_value = children
+    mock_go.return_value.get_parent_terms.return_value = parents
     expected = set(['GO:0000001', 'GO:0000101', 'GO:0000102',
                     'GO:0000111', 'GO:0000112'])
     eq_(expected, elm._get_extended_go_terms("motif_id"))
