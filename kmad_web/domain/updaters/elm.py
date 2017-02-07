@@ -12,9 +12,12 @@ _log = logging.getLogger(__name__)
 
 
 class ElmUpdater(object):
-    def __init__(self, poll=5):
+    def __init__(self, poll=5, outpath=None):
         self._poll = poll
-        self._elmdb_path = ELMDB_PATH
+        if outpath:
+            self._elmdb_path = outpath
+        else:
+            self._elmdb_path = ELMDB_PATH
         # hold extended go_terms (go term family = go_term + parents + all
         # descendants) in _go_families not to look twice for the same thing
         self._go_families = {}

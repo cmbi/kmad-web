@@ -19,16 +19,17 @@ def test_filter_motifs():
 
 @patch('kmad_web.domain.features.providers.elm.ElmService')
 def test_get_motif_instances(mock_service):
+    elmdb_path = 'tests/unit/testdata/test_update_elm_complete.txt'
     test_id = "test_id"
     seq = "KDEL"
 
     term = "GO:0031873"
-    elm = ElmFeatureProvider([term])
+    elm = ElmFeatureProvider([term], elmdb_path=elmdb_path)
     result = elm.get_motif_instances(seq, test_id)
     ok_(not result)
 
     term = "GO:0045038"
-    elm = ElmFeatureProvider([term])
+    elm = ElmFeatureProvider([term], elmdb_path=elmdb_path)
     result = elm.get_motif_instances(seq, test_id)
     eq_(1, len(result))
     expected_id = 'TRG_ER_KDEL_1'

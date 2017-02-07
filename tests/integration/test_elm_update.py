@@ -19,13 +19,18 @@ class TestElmUpdate(object):
         cls.celery = create_celery_app(flask_app)
 
     def test_elm_update(self):
+        outpath = 'tests/integration/testdata/test_update_elm_complete.txt'
+        if os.path.exists(outpath):
+            os.remove(outpath)
 
-        elm = ElmUpdater()
+        elm = ElmUpdater(outpath=outpath)
         elm.update()
 
-        outfile = 'kmad_web/frontend/static/dbs/elm_complete.txt'
         # check if output file exists
-        ok_(os.path.exists(outfile))
+        ok_(os.path.exists(outpath))
 
         # check if output file is not empty
-        ok_(os.stat(outfile).st_size)
+        ok_(os.stat(outpath).st_size)
+
+        # cleanup
+        os.remove(outpath)
