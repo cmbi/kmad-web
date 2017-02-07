@@ -1,0 +1,1 @@
+# tests/integration/testdata dir needs to exist because integration tests write their output to it
