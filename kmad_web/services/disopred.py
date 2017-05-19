@@ -30,9 +30,6 @@ class DisopredService(object):
             with open(errlog_name, 'w') as err:
                 subprocess.call(args, stderr=err)
             # remove error log file if it's empty, otherwise raise an error
-            stat = os.stat(errlog_name)
-            os.remove(errlog_name)
-            os.remove(fasta_filename)
             # empty_errlog = stat.st_size == 0
             # if empty_errlog:
             #     os.remove(errlog_name)
@@ -45,13 +42,24 @@ class DisopredService(object):
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
-                os.remove(out_file)
                 return data
             else:
-                _log.error("Didn't find the output file: %s", out_file)
-                raise ServiceError("Didn't find the output file: %s", out_file)
+                content = out_file
+                if os.path.isfile(errlog_name):
+                    with open(errlog_name, 'r') as err:
+                        content = err.read()
+                _log.error("Didn't find the output file: %s", content)
+                raise ServiceError("Didn't find the output file: %s", content)
         except (subprocess.CalledProcessError, OSError) as e:
-            _log.error(e)
+            msg = "\'{}\' raised:\n{}".format(' '.join(args), e)
+            _log.error(msg)
             raise ServiceError(e.message)
+        finally:
+            if os.path.isfile(errlog_name):
+                os.remove(errlog_name)
+            if os.path.isfile(fasta_filename):
+                os.remove(fasta_filename)
+            if os.path.isfile(out_file):
+                os.remove(out_file)
 
 disopred = DisopredService(DISOPRED)
