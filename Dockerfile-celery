@@ -44,14 +44,14 @@ RUN ln -s /deps/netphos/ape /usr/local/bin/netphos-3.1 ;\
 RUN netphos 1crn.fasta
 
 # ncbi blast
-# version 2.2.9 for blastpgp
+# version 2.2.26 for blastpgp
 # TODO: copy above executables only
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.9/blast-2.2.9-amd64-linux.tar.gz -P /deps ;\
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-amd64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
-    tar zxf /deps/blast-2.2.9-amd64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+    tar zxf /deps/blast-2.2.26-amd64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
     cp /deps/blast/blastpgp /usr/local/bin ;\
     cp -r /deps/blast/data /usr/local/bin/ ;\
-    rm /deps/blast-2.2.9-amd64-linux.tar.gz ; rm -rf /deps/blast
+    rm /deps/blast-2.2.26-amd64-linux.tar.gz ; rm -rf /deps/blast
 
 # version 2.5.0 for blastp, psiblast
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
@@ -73,7 +73,7 @@ RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn
 
 # sspro4
 # depends on volume mounts for nr, big
-# depends on nciblast2.2.9
+# depends on nciblast2.2.8
 # TODO: edit process-blast.pl with sed (in readme)
 # TODO: get libstdc++.so.5
 # TODO: install?
@@ -93,6 +93,12 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     # Fix process-blast
     sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
     ./configure.pl
+
+# version 2.2.8 for sspro4
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.8/blast-2.2.8-amd64-linux.tar.gz -P /deps/sspro4 ;\
+    mkdir -p /deps/sspro4/blast2.2.8 ; \
+    tar zxf /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz -C /deps/sspro4/blast2.2.8 --strip-components=1 ;\
+    rm /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz ; 
 
 # predisorder
 # TODO: get libstdc++.so.5
@@ -122,6 +128,7 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipr
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipred.4.0.tar.gz -P /deps;\
     mkdir -p /deps/psipred ; tar zxf /deps/psipred.4.0.tar.gz -C /deps/psipred --strip-components=1 ;\
     cd /deps/psipred/src ; make -j ; make install ;\
+    sed -i 's/uniref90/\/data\/uniref\/uniref90/' /deps/psipred/runpsipred ;\
     rm /deps/psipred.4.0.tar.gz
 RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
     /deps/psipred/runpsipred 1crn.fasta
