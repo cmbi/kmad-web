@@ -28,33 +28,38 @@ class PsipredService(object):
         args = [self._path, fasta_filename]
         errlog_name = out_file + "_errlog"
         try:
+            _log.debug("calling PSIPRED: {}".format(' '.join(args)))
             with open(errlog_name, 'w') as err:
                 subprocess.call(args, stderr=err)
-            # remove error log file if it's empty, otherwise raise an error
-            empty_errlog = os.stat(errlog_name).st_size == 0
-            if empty_errlog:
-                os.remove(errlog_name)
-            else:
-                e = "PSIPRED raised an error, check logfile: {}".format(
-                    errlog_name)
-                _log.error(e)
-                raise ServiceError(e)
 
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
-                self.cleanup(out_file)
                 return data
             else:
-                _log.error("Didn't find the output file: {}\n"
-                           "Submitted sequence: {}".format(
-                               out_file, fasta_sequence))
-                raise ServiceError("Didn't find the output file: {}".format(
-                    out_file))
-            os.remove(fasta_filename)
+                e = ("Didn't get the output file from PSIPRED: {}\n"
+                     "Submitted sequence: {}".format(
+                         out_file, fasta_sequence))
+                empty_errlog = os.stat(errlog_name).st_size == 0
+                if not empty_errlog:
+                    with open(errlog_name, 'r') as f:
+                        e = "PSIPRED raised an error: {}".format(
+                            f.read())
+                    _log.error(e)
+                    raise ServiceError(e)
+                _log.error(e)
+                raise ServiceError(e)
+
         except subprocess.CalledProcessError as e:
             _log.error(e.message)
             raise ServiceError(e.message)
+        finally:
+            for path in [errlog_name, fasta_filename]:
+                if os.path.isfile(path):
+                    os.remove(path)
+
+            if os.path.exists(out_file):
+                self.cleanup(out_file)
 
     def cleanup(self, out_file):
         os.remove(out_file)
