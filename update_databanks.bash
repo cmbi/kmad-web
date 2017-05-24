@@ -23,7 +23,6 @@ mv uniref90filt.fasta.pal uniref90filt.pal
 /usr/bin/formatdb -i uniref90.fasta -t uniref90
 mv uniref90.fasta.pal uniref90.pal
 
-cd /data
-if ! [ -d big ] ; then mkdir big; fi
-cd big
-# TODO: /data/big/big_98_X database, required by Predisorder
+cd /
+/usr/bin/wget -N http://download.igb.uci.edu/sspro4.tar.gz
+/bin/tar --overwrite -xzf sspro4.tar.gz sspro4/data/big --strip-components=1
