@@ -3,34 +3,19 @@ FROM ubuntu:16.04
 # dependencies
 RUN apt-get update && apt-get install -y cron wget build-essential tcsh
 
-RUN wget http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipred3.5.tar.gz -P /deps;\
-    mkdir -p /deps/psipred3.5 ; tar zxf /deps/psipred3.5.tar.gz -C /deps/psipred3.5 --strip-components=1 ;\
-    cd /deps/psipred3.5/src ; make -j ; make install ;\
-    rm /deps/psipred3.5.tar.gz ; rm -rf /deps/psipred3.5
-
-# psipred
-# TODO: follow instructions in readme
-# TODO: set paths in runpsipred
-RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipred.4.0.tar.gz -P /deps;\
-    mkdir -p /deps/psipred ; tar zxf /deps/psipred.4.0.tar.gz -C /deps/psipred --strip-components=1 ;\
-    cd /deps/psipred/src ; make -j ; make install ;\
-    rm /deps/psipred.4.0.tar.gz
-RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
-    /deps/psipred/runpsipred 1crn.fasta
-
 # ncbi blast
 # version 2.2.26 for formatdb
 # TODO: copy above executables only
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-amd64-linux.tar.gz -P /deps ;\
-    mkdir -p /deps/blast-2.2.26-amd64-linux ;\
-    tar zxf /deps/blast-2.2.26-amd64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
-    cp /deps/blast-2.2.26-amd64-linux/formatdb /usr/local/bin ;\
-    rm /deps/blast-2.2.26-amd64-linux.tar.gz ; rm -rf /deps/blast-2.2.26-amd64-linux
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-x64-linux.tar.gz -P /deps ;\
+    mkdir -p /deps/blast-2.2.26-x64-linux ;\
+    tar zxf /deps/blast-2.2.26-x64-linux.tar.gz -C /deps/blast-2.2.26-x64-linux --strip-components=1 ;\
+    cp /deps/blast-2.2.26-x64-linux/bin/formatdb /usr/local/bin ;\
+    rm /deps/blast-2.2.26-x64-linux.tar.gz ; rm -rf /deps/blast-2.2.26-x64-linux
 
 # version 2.5.0 for makeblastdb
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast-2.5.0+-x64-linux ;\
-    tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+    tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast-2.5.0+-x64-linux --strip-components=1 ;\
     cp /deps/blast-2.5.0+-x64-linux/bin/makeblastdb /usr/local/bin/makeblastdb ;\
     rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast-2.5.0+-x64-linux
 
