@@ -67,7 +67,7 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.
     mkdir -p /deps/disopred ; tar zxf /deps/DISOPRED3.15.tar.gz -C /deps/disopred --strip-components=1 ;\
     cd /deps/disopred/src; make; make install ;\
     rm /deps/DISOPRED3.15.tar.gz ;\
-    sed -i '23s/-a 1 /-a 5 /' /deps/disopred/run_disopred.pl ;\
+    sed -i '23s/-a 1 /-a 7 /' /deps/disopred/run_disopred.pl ;\
     sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin\/";/' /deps/disopred/run_disopred.pl ;\
     sed -i '19s/.*/my $SEQ_DB = "\/data\/uniref\/uniref90";/' /deps/disopred/run_disopred.pl
 
@@ -157,6 +157,7 @@ RUN mkdir -p /deps/iupred ;\
 RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P /deps ;\
     mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
     sed -i '16s/.*/blastprog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
+    sed -i '38s/ncpu=4/ncpu=7/' /deps/spined/bin/run_spine-d && \
     sed -i '19s/.*/nrdb=\/data\/nr/' /deps/spined/bin/run_spine-d && \
     sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
     sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
