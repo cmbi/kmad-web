@@ -7,7 +7,7 @@ from kmad_web.domain.sequences.provider import UniprotSequenceProvider
 from kmad_web.services.types import ServiceError
 from kmad_web.domain.blast.provider import blast
 from kmad_web.domain.features.helpers.homology import transfer_data_from_homologue
-from kmad_web.parsers.uniprot import UniprotParser
+from kmad_web.parsers.uniprot import UniprotParser, valid_uniprot_id
 
 _log = logging.getLogger(__name__)
 
@@ -15,6 +15,9 @@ _log = logging.getLogger(__name__)
 class UniprotFeatureProvider(object):
 
     def get_ptms(self, uniprot_id):
+        if not uniprot_id or not valid_uniprot_id(uniprot_id):
+            return []
+
         ptms = []
         uniprot_service = UniprotService(UNIPROT_URL)
         uniprot_parser = UniprotParser()

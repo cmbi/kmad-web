@@ -1,5 +1,5 @@
 from mock import patch
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 
 from kmad_web.domain.features.providers.elm import ElmFeatureProvider
 
@@ -19,14 +19,20 @@ def test_filter_motifs():
 
 @patch('kmad_web.domain.features.providers.elm.ElmService')
 def test_get_motif_instances(mock_service):
+    elmdb_path = 'tests/unit/testdata/test_update_elm_complete.txt'
     test_id = "test_id"
     seq = "KDEL"
 
-    elm = ElmFeatureProvider(['GO:0031873'])
-    expected_id = 'TRG_ER_KDEL_1'
+    term = "GO:0031873"
+    elm = ElmFeatureProvider([term], elmdb_path=elmdb_path)
     result = elm.get_motif_instances(seq, test_id)
+    ok_(not result)
 
+    term = "GO:0045038"
+    elm = ElmFeatureProvider([term], elmdb_path=elmdb_path)
+    result = elm.get_motif_instances(seq, test_id)
     eq_(1, len(result))
+    expected_id = 'TRG_ER_KDEL_1'
     eq_(expected_id, result[0]['id'])
 
 

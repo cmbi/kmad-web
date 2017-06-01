@@ -38,5 +38,9 @@ class GoService(object):
             _log.error(msg)
             raise ServiceError(e)
         else:
-            result = request.json()['_embedded']['terms']
+            json_res = request.json()
+            if '_embedded' in json_res and 'terms' in json_res['_embedded']:
+                result = request.json()['_embedded']['terms']
+            else:
+                result = []
         return result

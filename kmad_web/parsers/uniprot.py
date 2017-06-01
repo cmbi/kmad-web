@@ -136,3 +136,12 @@ class UniprotParser(object):
                         eco_codes.append(eco)
                 i += 1
         return eco_codes
+
+
+# source: http://www.uniprot.org/help/accession_numbers
+uniprot_ac_pattern = re.compile(r"^[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}$")
+swissprot_id_pattern = re.compile(r"^[A-Z][A-Z0-9]+_[A-Z]+$")
+
+def valid_uniprot_id(uniprot_id):
+    return uniprot_ac_pattern.match(uniprot_id) or \
+           swissprot_id_pattern.match(uniprot_id)

@@ -28,23 +28,26 @@ class IupredService(object):
         args = [self._path, fasta_filename, 'long']
         env = {"IUPred_PATH": self._dir}
         try:
+            _log.debug("running iupred: {}".format(' '.join(args)))
             with open(errlog_name, 'w') as err:
                 data = subprocess.check_output(args, stderr=err, env=env)
-            # remove error log file if it's empty, otherwise raise an error
             empty_errlog = os.stat(errlog_name).st_size == 0
-            if empty_errlog:
-                os.remove(errlog_name)
-                os.remove(fasta_filename)
-            else:
-                e = "IUPred raised an error, check logfile: {}".format(
-                    errlog_name)
+            if not empty_errlog:
+                with open(errlog_name, 'r') as f:
+                    e = "IUPred raised an error: {}".format(
+                        f.read())
                 _log.error(e)
                 raise ServiceError(e)
+
             self.check_output(data, fasta_sequence)
             return data
         except (subprocess.CalledProcessError, OSError) as e:
             _log.error(e.message)
             raise ServiceError(e.message)
+        finally:
+            for path in [errlog_name, fasta_filename]:
+                if os.path.isfile(path):
+                    os.remove(path)
 
     @staticmethod
     def check_output(data, fasta_sequence):

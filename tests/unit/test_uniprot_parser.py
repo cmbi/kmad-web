@@ -1,5 +1,5 @@
-from nose.tools import eq_
-from kmad_web.parsers.uniprot import UniprotParser
+from nose.tools import eq_, ok_
+from kmad_web.parsers.uniprot import UniprotParser, valid_uniprot_id
 
 
 def test_parse_txt():
@@ -20,3 +20,8 @@ def test_parse_txt():
                    'description': 'axon'}
     uniprot.parse_go_terms(test_txt)
     eq_(uniprot.go_terms[0], exp_go_term)
+
+def test_valid_uniprot_id():
+    ok_(not valid_uniprot_id('seq'))
+    ok_(valid_uniprot_id('P01542'))
+    ok_(valid_uniprot_id('CRAM_CRAAB'))

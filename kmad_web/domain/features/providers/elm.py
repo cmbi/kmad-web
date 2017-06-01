@@ -11,8 +11,10 @@ _log = logging.getLogger(__name__)
 
 class ElmFeatureProvider(object):
     # go_terms[set] - go_terms for the full set of sequences
-    def __init__(self, go_terms):
-        elm_parser = ElmParser(ELMDB_PATH)
+    def __init__(self, go_terms, elmdb_path=None):
+        if not elmdb_path:
+            elmdb_path = ELMDB_PATH
+        elm_parser = ElmParser(elmdb_path)
         elm_parser.parse_full_motif_classes()
         self._full_motif_classes = elm_parser.full_motif_classes.copy()
         self._process_motif_classes()
@@ -56,7 +58,7 @@ class ElmFeatureProvider(object):
                         motif['end'] = match.span()[1]
                         # calc 0-1 probbaility from the ELM's e-value like
                         # probability
-                        motif['probability'] = 1 + 1/math.log(
+                        motif['probability'] = 1 + 1 / math.log(
                             float(m['probability']))
                         motif['id'] = m_id
                         motif['class'] = m['class']
