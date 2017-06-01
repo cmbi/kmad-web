@@ -44,16 +44,6 @@ RUN ln -s /deps/netphos/ape /usr/local/bin/netphos-3.1 ;\
 RUN netphos 1crn.fasta
 
 # ncbi blast
-<<<<<<< HEAD
-# version 2.2.25 for blastpgp, formatdb
-# TODO: copy above executables only
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.25/blast-2.2.25-x64-linux.tar.gz -P /deps ;\
-    mkdir -p /deps/blast ;\
-    tar zxf /deps/blast-2.2.25-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
-    cp /deps/blast/bin/blastpgp /usr/local/bin ;\
-    cp /deps/blast/bin/formatdb /usr/local/bin ;\
-    rm /deps/blast-2.2.25-x64-linux.tar.gz ; rm -rf /deps/blast
-=======
 # version 2.2.26 for blastpgp
 # TODO: copy above executables only
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-x64-linux.tar.gz -P /deps ;\
@@ -63,7 +53,6 @@ RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2
     cp /deps/blast/bin/makemat /usr/local/bin/ ;\
     cp -r /deps/blast/data /usr/local/bin/ ;\
     rm /deps/blast-2.2.26-x64-linux.tar.gz ; rm -rf /deps/blast
->>>>>>> 64b183a02a30eddc729ec41d5299133a4f854442
 
 # version 2.5.0 for blastp, psiblast
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
