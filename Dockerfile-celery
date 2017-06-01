@@ -49,7 +49,8 @@ RUN netphos 1crn.fasta
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-x64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
     tar zxf /deps/blast-2.2.26-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
-    cp /deps/blast/bin/blastpgp /usr/local/bin ;\
+    cp /deps/blast/bin/blastpgp /usr/local/bin/ ;\
+    cp /deps/blast/bin/makemat /usr/local/bin/ ;\
     cp -r /deps/blast/data /usr/local/bin/ ;\
     rm /deps/blast-2.2.26-x64-linux.tar.gz ; rm -rf /deps/blast
 
@@ -64,12 +65,10 @@ RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast
 # disopred
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.tar.gz -P /deps;\
     mkdir -p /deps/disopred ; tar zxf /deps/DISOPRED3.15.tar.gz -C /deps/disopred --strip-components=1 ;\
+    cd /deps/disopred/src; make; make install ;\
     rm /deps/DISOPRED3.15.tar.gz ;\
     sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin\/";/' /deps/disopred/run_disopred.pl ;\
     sed -i '19s/.*/my $SEQ_DB = "\/data\/uniref\/uniref90";/' /deps/disopred/run_disopred.pl
-RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
-    /deps/disopred/run_disopred.pl 1crn.fasta ;\
-    rm 1crn.fasta
 
 # sspro4
 # depends on volume mounts for nr, big
