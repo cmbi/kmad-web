@@ -7,11 +7,11 @@ services:
       dockerfile: Dockerfile-web
     environment:
       - KMAD_WEB_SETTINGS=/usr/src/app/prd_settings.py
-    command: gunicorn -k gevent -b 0.0.0.0:5000 kmad_web.application:app
+    command: gunicorn -k gevent -b 0.0.0.0:8000 kmad_web.application:app
     depends_on:
       - redis
     ports:
-      - "5000:5000"
+      - "8000:8000"
   celery:
     build:
       context: .

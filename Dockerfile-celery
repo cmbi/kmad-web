@@ -67,7 +67,7 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.
     mkdir -p /deps/disopred ; tar zxf /deps/DISOPRED3.15.tar.gz -C /deps/disopred --strip-components=1 ;\
     cd /deps/disopred/src; make; make install ;\
     rm /deps/DISOPRED3.15.tar.gz ;\
-    sed -i '23s/-a 1 /-a 5 /' run_disopred.pl ;\
+    sed -i '23s/-a 1 /-a 5 /' /deps/disopred/run_disopred.pl ;\
     sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin\/";/' /deps/disopred/run_disopred.pl ;\
     sed -i '19s/.*/my $SEQ_DB = "\/data\/uniref\/uniref90";/' /deps/disopred/run_disopred.pl
 
