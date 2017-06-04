@@ -7,6 +7,12 @@ ProteinSequences = function(container_id, data, sequence) {
         this.methods.push(m);
       }
   }
+  if (this.methods.length <= 3) {
+        // if there is only one method prediction (so methods array contains 
+        // filtered, consensus and one method) then remove consensus 
+        // (2nd element in the array)
+        this.methods.splice(1, 1);
+  }
   const MAX_RES_PER_ROW = data[this.methods[0]].length;
   const SEQ_LAYER_OFFSET_X = 50;
   const FONT_FAMILY = "Monospace";
