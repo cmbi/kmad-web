@@ -68,7 +68,7 @@ def process_prediction_results(predictions, fasta_sequence):
         predictions = filter(None, predictions)
         predictions = {x.keys()[0]: x.values()[0] for x in predictions}
     processor = PredictionProcessor()
-    _log.info("Predictions: {}".format(predictions))
+    _log.debug("Predictions: {}".format(predictions))
     if predictions:
         consensus = processor.get_consensus_disorder(predictions)
         predictions['consensus'] = consensus
