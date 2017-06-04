@@ -41,7 +41,7 @@ _log = logging.getLogger(__name__)
 
 @celery_app.task(max_retries=1)
 def run_single_predictor(previous=None, fasta="", predictor=""):
-    _log.info("Run single predictor: {}[task]".format(predictor))
+    _log.info("Run single predictor: %s[task]", predictor)
     try:
         data = globals()[predictor](fasta)
     except RuntimeError as e:
@@ -52,6 +52,7 @@ def run_single_predictor(previous=None, fasta="", predictor=""):
     if previous is None:
         previous = {}
     previous[predictor] = prediction
+    _log.info("%s prediction finished", predictor)
     return previous
 
 
