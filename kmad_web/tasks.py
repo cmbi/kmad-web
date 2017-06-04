@@ -24,12 +24,12 @@ from kmad_web.domain.features.analysis import motifs as am
 from kmad_web.domain.sequences.fasta import parse_fasta
 from kmad_web.helpers import invert_dict
 from kmad_web.parsers.uniprot import UniprotParser
-from kmad_web.services.iupred import iupred
-from kmad_web.services.psipred import psipred
-from kmad_web.services.disopred import disopred
-from kmad_web.services.predisorder import predisorder
-from kmad_web.services.globplot import globplot
-from kmad_web.services.spined import spined
+from kmad_web.services.iupred import iupred  # pylint: disable=W0611
+from kmad_web.services.psipred import psipred  # pylint: disable=W0611
+from kmad_web.services.disopred import disopred  # pylint: disable=W0611
+from kmad_web.services.predisorder import predisorder  # pylint: disable=W0611
+from kmad_web.services.globplot import globplot  # pylint: disable=W0611
+from kmad_web.services.spined import spined  # pylint: disable=W0611
 from kmad_web.services.kmad_aligner import kmad
 from kmad_web.services.uniprot import UniprotService
 from kmad_web.services.types import ServiceError
@@ -41,6 +41,10 @@ _log = logging.getLogger(__name__)
 
 @celery_app.task(max_retries=1)
 def run_single_predictor(previous=None, fasta="", predictor=""):
+    """
+    Run the given prediction tool
+    :return: dict, key: name, value: prediction result
+    """
     _log.info("Run single predictor: %s[task]", predictor)
     try:
         data = globals()[predictor](fasta)
@@ -48,7 +52,6 @@ def run_single_predictor(previous=None, fasta="", predictor=""):
         raise run_single_predictor.retry(exc=e)
     processor = PredictionProcessor()
     prediction = processor.process_prediction(data, predictor)
-    # return {predictor: prediction}
     if previous is None:
         previous = {}
     previous[predictor] = prediction
@@ -58,17 +61,19 @@ def run_single_predictor(previous=None, fasta="", predictor=""):
 
 @celery_app.task
 def process_prediction_results(predictions, fasta_sequence):
+    """
+    predictions are passed here as a list of single key dictionaries
+    or a single dictionary (if only one predictor was used)
+    -> merge into one dictionary
+    """
     _log.info("Processing prediction results")
-    _log.debug("Prediction: {}".format(predictions))
+    _log.debug("Prediction: %s", predictions)
     sequence = ''.join(fasta_sequence.splitlines()[1:])
-    # predictions are passed here as a list of single key dictionaries
-    # or a single dictionary (if only one predictor was used)
-    # -> merge into one dictionary
-    if type(predictions) is list:
+    if isinstance(predictions, list):
         predictions = filter(None, predictions)
         predictions = {x.keys()[0]: x.values()[0] for x in predictions}
     processor = PredictionProcessor()
-    _log.debug("Predictions: {}".format(predictions))
+    _log.debug("Predictions: %s", predictions)
     if predictions:
         consensus = processor.get_consensus_disorder(predictions)
         predictions['consensus'] = consensus
@@ -76,13 +81,16 @@ def process_prediction_results(predictions, fasta_sequence):
             consensus)
         prediction_text = processor.make_text(predictions, sequence)
         _log.debug("Finished processing prediction results: "
-                   "{}".format(predictions.keys()))
+                   "%s", predictions.keys())
         return {'prediction': predictions, 'sequence': sequence,
                 'prediction_text': prediction_text}
 
 
 @celery_app.task
 def prealign(sequences, alignment_method):
+    """
+    Run one of the pre-kmad alignment methods
+    """
     service_dict = {
         'clustalo': ClustaloService,
         'clustalw': ClustalwService,
@@ -107,7 +115,7 @@ def prealign(sequences, alignment_method):
 @celery_app.task
 def run_blast(fasta_sequence, seq_limit):
     _log.info("Running blast[task]")
-    _log.debug("Runing blast with sequence {}".format(fasta_sequence))
+    _log.debug("Runing blast with sequence %s", fasta_sequence)
 
     blast_result = blast.get_result(fasta_sequence, seq_limit)
     exact_hit = blast.get_exact_hit(blast_result)
@@ -123,8 +131,8 @@ def run_blast(fasta_sequence, seq_limit):
 
 @celery_app.task
 def get_sequences_from_blast(blast_result):
-    _log.info("Getting sequences from {} BLAST results".format(
-        len(blast_result['blast_result'])))
+    _log.info("Getting sequences from %s BLAST results",
+              len(blast_result['blast_result']))
     sequences = []
     uniprot = UniprotSequenceProvider()
 
@@ -137,8 +145,8 @@ def get_sequences_from_blast(blast_result):
                 uniprot.get_sequence(blast_result['blast_result'][0]['id'])
         except ServiceError:
             first_blast_seq = ""
-            _log.warning("Couldn't get sequence for id: {}".format(
-                blast_result['blast_result'][0]['id']))
+            _log.warning("Couldn't get sequence for id: %s",
+                         blast_result['blast_result'][0]['id'])
 
         # if the first sequence from blast is not the same as query sequence then
         # add it to sequence
@@ -153,8 +161,8 @@ def get_sequences_from_blast(blast_result):
                 sequence = uniprot.get_sequence(s['id'])
                 sequences.append(sequence)
             except ServiceError:
-                _log.warning("Couldn't get sequence for id: {}".format(s['id']))
-        _log.info("Got {} sequences".format(len(sequences)))
+                _log.warning("Couldn't get sequence for id: %s", s['id'])
+        _log.info("Got %s sequences", len(sequences))
     return sequences
 
 
@@ -170,8 +178,8 @@ def create_fles(sequences, aligned_mode=False, use_pfam=True, use_sstrct=True):
     :param sequences: list of sequence dictionaries ({'header': '', 'seq': ''})
     :return: filename
     """
-    _log.info("Creating FLES file from {} sequences with aligned_mode {}".format(
-        len(sequences), aligned_mode))
+    _log.info("Creating FLES file from %s sequences with aligned_mode %s",
+              len(sequences), aligned_mode)
     annotator = SequencesAnnotator()
     annotator.annotate(sequences, use_pfam, use_sstrct)
     encoder = SequencesEncoder()
@@ -187,7 +195,7 @@ def create_fles(sequences, aligned_mode=False, use_pfam=True, use_sstrct=True):
 
 @celery_app.task
 def annotate(sequences):
-    _log.info("Annotating {} sequences".format(len(sequences)))
+    _log.info("Annotating %s sequences", len(sequences))
     annotator = SequencesAnnotator()
     annotator.annotate(sequences, use_pfam=True, use_sstrct=True)
     encoder = SequencesEncoder()
