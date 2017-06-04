@@ -85,6 +85,8 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     sed -i '24s/.*/$install_dir = "\/deps\/sspro4"; chdir $install_dir;/' configure.pl ;\
     sed -i '44s/.*/$nr_db_dir = "\/data\/";/' configure.pl ;\
     sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
+    sed -i '48s/blastpgp -i/blastpgp -a 7 -i /' script/generate_flatblast.pl ;\
+    sed -i '49s/blastpgp -i/blastpgp -a 7 -i /' script/generate_flatblast.pl ;\
     # Remove lines that check if the databanks are present. These will be
     # mounted later when the container runs.
     sed -i '72,77 d' configure.pl ;\
