@@ -371,5 +371,5 @@ def remove_old_tmps():
     _log.info("Removing old tmpl files")
     N = 7
     m = N * 24 * 60
-    cmd = "find /tmp -user kmad-web -mmin +{} -name 'tmp*' -delete".format(m)
+    cmd = "find /tmp -mmin +{} -name 'tmp*' -delete".format(m)
     os.system(cmd)

@@ -6,6 +6,42 @@ RUN apt-get install -y build-essential git wget gfortran
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /deps
 
+# sspro4
+# depends on volume mounts for nr, big
+# depends on nciblast2.2.8
+# TODO: edit process-blast.pl with sed (in readme)
+# TODO: get libstdc++.so.5
+# TODO: install?
+COPY vendor/sspro4.tar.gz /deps
+RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-components=1 ;\
+    cd /deps/sspro4 ;\
+    mkdir -p /data/nr ; mkdir -p /data/big ;\
+    # Set paths for installation and databanks
+    sed -i '24s/.*/$install_dir = "\/deps\/sspro4";/' configure.pl ;\
+    sed -i '44s/.*/$nr_db_dir = "\/data\/";/' configure.pl ;\
+    sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
+    sed -i '90s/.*/$blast_dir = "\/usr\/local\/bin\/";/' configure.pl ;\
+    # sed -i '112s/.*/$big_db = "\/data\/big\/big_98_X";/' configure.pl ;\
+    # sed -i '113s/.*/$nr_db = "\/data\/nr";/' configure.pl ;\
+    # Remove lines that check if the databanks are present. These will be
+    # mounted later when the container runs.
+    sed -i '72,77 d' configure.pl ;\
+    sed -i '73,79 d' configure.pl ;\
+    sed -i '93,97 d' configure.pl ;\
+    sed -i '69,70 d' configure.pl ;\
+    sed -i '/data_dir/d' configure.pl ;\
+    sed -i '/test_dir/d' configure.pl ;\
+    sed -i 's/*cur_dir*pwd*/chdir \/deps\/sspro4/ ; $cur_dir = $ENV{PWD}; print $cur_dir; print "shit"/g' configure.pl ;\
+    # Fix process-blast
+    sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
+    ./configure.pl
+
+# version 2.2.8 for sspro4
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.8/blast-2.2.8-amd64-linux.tar.gz -P /deps/sspro4 ;\
+    mkdir -p /deps/sspro4/blast2.2.8 ; \
+    tar zxf /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz -C /deps/sspro4/blast2.2.8 --strip-components=1 ;\
+    rm /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz ; 
+
 # kmad
 RUN apt-get install -y libboost-all-dev libconfig++-dev
 RUN git clone https://github.com/cmbi/kmad.git /deps/kmad ;\
@@ -13,6 +49,35 @@ RUN git clone https://github.com/cmbi/kmad.git /deps/kmad ;\
     git checkout v1.08 ;\
     cd /deps/kmad ; ./configure ; make -j ; make install ;\
     rm -rf /deps/kmad
+
+# clustalo/clustalw
+RUN wget -q http://www.clustal.org/omega/clustalo-1.2.3-Ubuntu-x86_64 -P /deps ;\
+    mv /deps/clustalo-1.2.3-Ubuntu-x86_64 /usr/local/bin/clustalo; \
+    chmod +x /usr/local/bin/clustalo
+RUN wget -q http://www.clustal.org/download/current/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -P /deps ;\
+    mkdir -p /deps/clustalw ; tar zxf /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -C /deps/clustalw --strip-components=1 ;\
+    cp /deps/clustalw/clustalw2 /usr/local/bin ; \
+    chmod +x /usr/local/bin/clustalw2 ; \
+    rm /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz ; rm -rf /deps/clustalw
+
+# mafft
+RUN apt-get install -y mafft
+
+# muscle
+RUN wget -q http://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz -P /deps ;\
+    mkdir -p /deps/muscle ; tar zxf /deps/muscle3.8.31_i86linux64.tar.gz -C /deps/muscle ;\
+    cp /deps/muscle/muscle3.8.31_i86linux64 /usr/local/bin/muscle && \
+    rm /deps/muscle3.8.31_i86linux64.tar.gz ; rm -rf /deps/muscle
+
+# tcoffee
+RUN wget http://www.tcoffee.org/Packages/Stable/Latest/T-COFFEE_distribution_Version_11.00.8cbe486.tar.gz -P /deps ;\
+    mkdir -p /deps/tcoffee ; tar zxf /deps/T-COFFEE_distribution_Version_11.00.8cbe486.tar.gz -C /deps/tcoffee --strip-components=1 ;\
+    cd /deps/tcoffee/t_coffee_source ; make -j t_coffee && cp /deps/tcoffee/t_coffee_source/t_coffee /usr/local/bin
+
+COPY requirements.txt .
+RUN apt-get install -y python-pip ;\
+    pip install --upgrade pip ;\
+    pip install --no-cache -r requirements.txt
 
 # Tisean
 RUN wget -q http://www.mpipks-dresden.mpg.de/%7Etisean/TISEAN_3.0.1.tar.gz -P /deps ;\
@@ -71,34 +136,37 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.
     sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin\/";/' /deps/disopred/run_disopred.pl ;\
     sed -i '19s/.*/my $SEQ_DB = "\/data\/uniref\/uniref90";/' /deps/disopred/run_disopred.pl
 
-# sspro4
-# depends on volume mounts for nr, big
-# depends on nciblast2.2.8
-# TODO: edit process-blast.pl with sed (in readme)
-# TODO: get libstdc++.so.5
-# TODO: install?
-COPY vendor/sspro4.tar.gz /deps
-RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-components=1 ;\
-    cd /deps/sspro4 ;\
-    mkdir -p /data/nr ; mkdir -p /data/big ;\
-    # Set paths for installation and databanks
-    sed -i '24s/.*/$install_dir = "\/deps\/sspro4";/' configure.pl ;\
-    sed -i '44s/.*/$nr_db_dir = "\/data\/";/' configure.pl ;\
-    sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
-    # Remove lines that check if the databanks are present. These will be
-    # mounted later when the container runs.
-    sed -i '72,77 d' configure.pl ;\
-    sed -i '73,79 d' configure.pl ;\
-    sed -i '93,97 d' configure.pl ;\
-    # Fix process-blast
-    sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
-    ./configure.pl
+# iupred
+COPY vendor/iupred.tar.gz /deps
+RUN mkdir -p /deps/iupred ;\
+    tar zxf /deps/iupred.tar.gz -C /deps/iupred --strip-components=1 ;\
+    cd /deps/iupred ;\
+    sed -i 's/ allocate enough memory: %d bytes/ allocate enough memory: %zu bytes/g' iupred.c &&\
+    cc iupred.c -o iupred ;\
+    rm /deps/iupred.tar.gz
 
-# version 2.2.8 for sspro4
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.8/blast-2.2.8-amd64-linux.tar.gz -P /deps/sspro4 ;\
-    mkdir -p /deps/sspro4/blast2.2.8 ; \
-    tar zxf /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz -C /deps/sspro4/blast2.2.8 --strip-components=1 ;\
-    rm /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz ; 
+# spine-x
+# The sed command sets fortran, removing the prompt for a compiler.
+RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spineXpublic.tgz -P /deps;\
+    mkdir -p /deps/spinex ; tar zxf /deps/spineXpublic.tgz -C /deps/spinex --strip-components=1
+RUN cd /deps/spinex/code ;\
+    sed -i '6s/read complr/complr=gfortran/' compile ;\
+    ./compile ;\
+    rm /deps/spineXpublic.tgz
+ENV spineXcodir /deps/spinex/code
+ENV spineXblast /usr
+
+# spine-d
+RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P /deps ;\
+    mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
+    sed -i '16s/.*/blastprog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
+    sed -i '38s/ncpu=4/ncpu=7/' /deps/spined/bin/run_spine-d && \
+    sed -i '19s/.*/nrdb=\/data\/nr/' /deps/spined/bin/run_spine-d && \
+    sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
+    sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
+    sed -i '28s/.*/export IUPred_PATH=\/deps\/iupred/' /deps/spined/bin/run_spine-d && \
+    sed -i 's/${workdir}\/compile/bash ${workdir}\/compile/g' /deps/spined/bin/run_spine-d && \
+    rm /deps/spinedlocal_v2.0.tar.gz
 
 # predisorder
 # TODO: get libstdc++.so.5
@@ -136,65 +204,5 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipr
 RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
     /deps/psipred/runpsipred 1crn.fasta
 
-# spine-x
-# The sed command sets fortran, removing the prompt for a compiler.
-RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spineXpublic.tgz -P /deps;\
-    mkdir -p /deps/spinex ; tar zxf /deps/spineXpublic.tgz -C /deps/spinex --strip-components=1
-RUN cd /deps/spinex/code ;\
-    sed -i '6s/read complr/complr=gfortran/' compile ;\
-    ./compile ;\
-    rm /deps/spineXpublic.tgz
-ENV spineXcodir /deps/spinex/code
-ENV spineXblast /usr
-
-# iupred
-COPY vendor/iupred.tar.gz /deps
-RUN mkdir -p /deps/iupred ;\
-    tar zxf /deps/iupred.tar.gz -C /deps/iupred --strip-components=1 ;\
-    cd /deps/iupred ;\
-    sed -i 's/ allocate enough memory: %d bytes/ allocate enough memory: %zu bytes/g' iupred.c &&\
-    cc iupred.c -o iupred ;\
-    rm /deps/iupred.tar.gz
-
-# spine-d
-RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P /deps ;\
-    mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
-    sed -i '16s/.*/blastprog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
-    sed -i '38s/ncpu=4/ncpu=7/' /deps/spined/bin/run_spine-d && \
-    sed -i '19s/.*/nrdb=\/data\/nr/' /deps/spined/bin/run_spine-d && \
-    sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
-    sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
-    sed -i '28s/.*/export IUPred_PATH=\/deps\/iupred/' /deps/spined/bin/run_spine-d && \
-    sed -i 's/${workdir}\/compile/bash ${workdir}\/compile/g' /deps/spined/bin/run_spine-d && \
-    rm /deps/spinedlocal_v2.0.tar.gz
-
-# clustalo/clustalw
-RUN wget -q http://www.clustal.org/omega/clustalo-1.2.3-Ubuntu-x86_64 -P /deps ;\
-    mv /deps/clustalo-1.2.3-Ubuntu-x86_64 /usr/local/bin/clustalo; \
-    chmod +x /usr/local/bin/clustalo
-RUN wget -q http://www.clustal.org/download/current/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -P /deps ;\
-    mkdir -p /deps/clustalw ; tar zxf /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz -C /deps/clustalw --strip-components=1 ;\
-    cp /deps/clustalw/clustalw2 /usr/local/bin ; \
-    chmod +x /usr/local/bin/clustalw2 ; \
-    rm /deps/clustalw-2.1-linux-x86_64-libcppstatic.tar.gz ; rm -rf /deps/clustalw
-
-# mafft
-RUN apt-get install -y mafft
-
-# muscle
-RUN wget -q http://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz -P /deps ;\
-    mkdir -p /deps/muscle ; tar zxf /deps/muscle3.8.31_i86linux64.tar.gz -C /deps/muscle ;\
-    cp /deps/muscle/muscle3.8.31_i86linux64 /usr/local/bin/muscle && \
-    rm /deps/muscle3.8.31_i86linux64.tar.gz ; rm -rf /deps/muscle
-
-# tcoffee
-RUN wget http://www.tcoffee.org/Packages/Stable/Latest/T-COFFEE_distribution_Version_11.00.8cbe486.tar.gz -P /deps ;\
-    mkdir -p /deps/tcoffee ; tar zxf /deps/T-COFFEE_distribution_Version_11.00.8cbe486.tar.gz -C /deps/tcoffee --strip-components=1 ;\
-    cd /deps/tcoffee/t_coffee_source ; make -j t_coffee && cp /deps/tcoffee/t_coffee_source/t_coffee /usr/local/bin
-
-COPY requirements.txt .
-RUN apt-get install -y python-pip ;\
-    pip install --upgrade pip ;\
-    pip install --no-cache -r requirements.txt
 COPY . /usr/src/app
 WORKDIR /usr/src/app
