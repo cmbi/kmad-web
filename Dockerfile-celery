@@ -17,12 +17,9 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     cd /deps/sspro4 ;\
     mkdir -p /data/nr ; mkdir -p /data/big ;\
     # Set paths for installation and databanks
-    sed -i '24s/.*/$install_dir = "\/deps\/sspro4";/' configure.pl ;\
+    sed -i '24s/.*/$install_dir = "\/deps\/sspro4"; chdir $install_dir;/' configure.pl ;\
     sed -i '44s/.*/$nr_db_dir = "\/data\/";/' configure.pl ;\
     sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
-    sed -i '90s/.*/$blast_dir = "\/usr\/local\/bin\/";/' configure.pl ;\
-    # sed -i '112s/.*/$big_db = "\/data\/big\/big_98_X";/' configure.pl ;\
-    # sed -i '113s/.*/$nr_db = "\/data\/nr";/' configure.pl ;\
     # Remove lines that check if the databanks are present. These will be
     # mounted later when the container runs.
     sed -i '72,77 d' configure.pl ;\
@@ -31,7 +28,6 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     sed -i '69,70 d' configure.pl ;\
     sed -i '/data_dir/d' configure.pl ;\
     sed -i '/test_dir/d' configure.pl ;\
-    sed -i 's/*cur_dir*pwd*/chdir \/deps\/sspro4/ ; $cur_dir = $ENV{PWD}; print $cur_dir; print "shit"/g' configure.pl ;\
     # Fix process-blast
     sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
     ./configure.pl
