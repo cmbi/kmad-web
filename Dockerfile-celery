@@ -82,14 +82,19 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     cd /deps/sspro4 ;\
     mkdir -p /data/nr ; mkdir -p /data/big ;\
     # Set paths for installation and databanks
-    sed -i '24s/.*/$install_dir = "\/deps\/sspro4";/' configure.pl ;\
-    sed -i '44s/.*/$nr_db_dir = "\/data\/nr\/";/' configure.pl ;\
+    sed -i '24s/.*/$install_dir = "\/deps\/sspro4"; chdir $install_dir;/' configure.pl ;\
+    sed -i '44s/.*/$nr_db_dir = "\/data\/";/' configure.pl ;\
     sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
+    sed -i '48s/blastpgp -i/blastpgp -a 7 -i /' script/generate_flatblast.pl ;\
+    sed -i '49s/blastpgp -i/blastpgp -a 7 -i /' script/generate_flatblast.pl ;\
     # Remove lines that check if the databanks are present. These will be
     # mounted later when the container runs.
     sed -i '72,77 d' configure.pl ;\
     sed -i '73,79 d' configure.pl ;\
     sed -i '93,97 d' configure.pl ;\
+    sed -i '69,70 d' configure.pl ;\
+    sed -i '/data_dir/d' configure.pl ;\
+    sed -i '/test_dir/d' configure.pl ;\
     # Fix process-blast
     sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
     ./configure.pl
@@ -113,6 +118,7 @@ RUN wget -q http://sysbio.rnet.missouri.edu/multicom_toolbox/tools/predisorder1.
     chmod a+x /deps/predisorder/script/predict_diso.pl ;\
     ./configure.pl ;\
     rm /deps/predisorder1.1.tar.gz
+
 RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
     /deps/predisorder/bin/predict_diso.sh 1crn.fasta test_name ;\
     rm 1crn.fasta
@@ -128,6 +134,9 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipr
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipred.4.0.tar.gz -P /deps;\
     mkdir -p /deps/psipred ; tar zxf /deps/psipred.4.0.tar.gz -C /deps/psipred --strip-components=1 ;\
     cd /deps/psipred/src ; make -j ; make install ;\
+    sed -i '20s/.\/bin/\/deps\/psipred\/bin/' /deps/psipred/runpsipred ; \
+    sed -i '23s/.\/data/\/deps\/psipred\/data/' /deps/psipred/runpsipred ; \
+    sed -i '36s/blastpgp/blastpgp -a 7/' /deps/psipred/runpsipred ;\
     sed -i 's/uniref90/\/data\/uniref\/uniref90/' /deps/psipred/runpsipred ;\
     rm /deps/psipred.4.0.tar.gz
 RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
@@ -193,5 +202,6 @@ COPY requirements.txt .
 RUN apt-get install -y python-pip ;\
     pip install --upgrade pip ;\
     pip install --no-cache -r requirements.txt
+
 COPY . /usr/src/app
 WORKDIR /usr/src/app

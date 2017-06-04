@@ -41,7 +41,7 @@ _log = logging.getLogger(__name__)
 
 @celery_app.task(max_retries=1)
 def run_single_predictor(previous=None, fasta="", predictor=""):
-    _log.info("Run single predictor: {}[task]".format(predictor))
+    _log.info("Run single predictor: %s[task]", predictor)
     try:
         data = globals()[predictor](fasta)
     except RuntimeError as e:
@@ -52,6 +52,7 @@ def run_single_predictor(previous=None, fasta="", predictor=""):
     if previous is None:
         previous = {}
     previous[predictor] = prediction
+    _log.info("%s prediction finished", predictor)
     return previous
 
 
@@ -67,7 +68,7 @@ def process_prediction_results(predictions, fasta_sequence):
         predictions = filter(None, predictions)
         predictions = {x.keys()[0]: x.values()[0] for x in predictions}
     processor = PredictionProcessor()
-    _log.info("Predictions: {}".format(predictions))
+    _log.debug("Predictions: {}".format(predictions))
     if predictions:
         consensus = processor.get_consensus_disorder(predictions)
         predictions['consensus'] = consensus
@@ -371,5 +372,5 @@ def remove_old_tmps():
     _log.info("Removing old tmpl files")
     N = 7
     m = N * 24 * 60
-    cmd = "find /tmp -user kmad-web -mmin +{} -name 'tmp*' -delete".format(m)
+    cmd = "find /tmp -mmin +{} -name 'tmp*' -delete".format(m)
     os.system(cmd)

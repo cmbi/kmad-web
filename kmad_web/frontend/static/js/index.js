@@ -114,7 +114,7 @@ $(document).ready( function() {
     {
       element: "",
       title: "Start Tour",
-      content: "This tour will walk you through the usage of KMAN." +
+      content: "This tour will walk you through the usage of KMAD." +
                " Once the tour is complete, you can get started!" +
                "<br><br>Click next to begin."
     },
