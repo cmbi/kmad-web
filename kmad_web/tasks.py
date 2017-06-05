@@ -23,7 +23,6 @@ from kmad_web.domain.features.analysis import ptms as ap
 from kmad_web.domain.features.analysis import motifs as am
 from kmad_web.domain.sequences.fasta import parse_fasta
 from kmad_web.helpers import invert_dict
-from kmad_web.parsers.uniprot import UniprotParser
 from kmad_web.services.iupred import iupred  # pylint: disable=W0611
 from kmad_web.services.psipred import psipred  # pylint: disable=W0611
 from kmad_web.services.disopred import disopred  # pylint: disable=W0611
@@ -31,9 +30,8 @@ from kmad_web.services.predisorder import predisorder  # pylint: disable=W0611
 from kmad_web.services.globplot import globplot  # pylint: disable=W0611
 from kmad_web.services.spined import spined  # pylint: disable=W0611
 from kmad_web.services.kmad_aligner import kmad
-from kmad_web.services.uniprot import UniprotService
 from kmad_web.services.types import ServiceError
-from kmad_web.default_settings import D2P2_URL, UNIPROT_PTMS_URL
+from kmad_web.default_settings import D2P2_URL
 
 
 _log = logging.getLogger(__name__)
@@ -297,14 +295,13 @@ def query_d2p2(blast_result):
                 processor = PredictionProcessor()
                 result = processor.process_prediction(prediction, 'd2p2')
             else:
-                _log.debug("D2P2 error: {}".format(result))
+                _log.debug("D2P2 error: %s", result)
     except (requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError):
         _log.debug("D2P2 HTTP/URL Error")
     if result and len(result) == blast_result['blast_result'][0]['qlen']:
         return {'d2p2': result}
-    else:
-        return None
+    return None
 
 
 @celery_app.task
@@ -337,21 +334,13 @@ def update_elmdb():
     elm.update()
 
 
-@celery_app.task
-def update_ptm_map():
-    uniprot_service = UniprotService(UNIPROT_PTMS_URL)
-    ptmlist = uniprot_service.get_ptm_list()
-    uniprot_parser = UniprotParser()
-    uniprot_parser.update_ptm_map(ptmlist)
-
-
 def get_task(output_type):
     """
     Get the task for the given output_type.
 
     If the output_type value is not allowed, a ValueError is raised.
     """
-    _log.info("Getting task for output '{}'".format(output_type))
+    _log.info("Getting task for output '%s'", output_type)
     if output_type in ['align', 'refine']:
         task = process_kmad_alignment
     elif output_type == 'predict_and_align':
@@ -367,7 +356,7 @@ def get_task(output_type):
     else:
         raise ValueError("Unexpected output_type '{}'".format(output_type))
 
-    _log.debug("Got task '{}'".format(task.__name__))
+    _log.debug("Got task '%s'", task.__name__)
     return task
 
 

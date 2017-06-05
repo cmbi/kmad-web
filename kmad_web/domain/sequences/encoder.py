@@ -4,12 +4,25 @@ import string
 from collections import OrderedDict
 
 _log = logging.getLogger(__name__)
+PTM_CODE_DICT = OrderedDict([
+    ('phosphorylation', ["N", "O", "P", "Q", "d"]),
+    ('acetylation', ["B", "C", "D", "E"]),
+    ('N-glycosylation', ["F", "G", "H", "I"]),
+    ('amidation', ["J", "K", "L", "M"]),
+    ('hydroxylation', ["R", "S", "T", "U"]),
+    ('methylation', ["V", "W", "X", "Y"]),
+    ('O-glycosylation', ["Z", "a", "b", "c"])
+])
 
 
 class SequencesEncoder(object):
+    """
+    Converts sequences and annotation data to the fles format
+    """
     def __init__(self):
         self._sequences = []
         self.motif_code_dict = {}
+        self.motif_prob_dict = {}
         self.domain_code_dict = {}
         # domain code is 2 chars long
         self._domain_pos = 2
@@ -33,15 +46,6 @@ class SequencesEncoder(object):
             self._encode_domains()
         else:
             self.domain_code_dict = {}
-        self._ptm_code_dict = OrderedDict([
-            ('phosphorylation', ["N", "O", "P", "Q", "d"]),
-            ('acetylation',     ["B", "C", "D", "E"]),
-            ('N-glycosylation', ["F", "G", "H", "I"]),
-            ('amidation',       ["J", "K", "L", "M"]),
-            ('hydroxylation',   ["R", "S", "T", "U"]),
-            ('methylation',     ["V", "W", "X", "Y"]),
-            ('O-glycosylation', ["Z", "a", "b", "c"])
-        ])
         # all feature positions are 1-based!
         self._encode_ptms()
         self._encode_motifs()
@@ -112,8 +116,8 @@ class SequencesEncoder(object):
             for p in ptms:
                 ptm_pos = p['position'] - 1
                 if ptm_pos < len(s['codon_seq']) \
-                        and p['name'] in self._ptm_code_dict:
-                    ptm_code = self._ptm_code_dict[p['name']][p['annotation_level']]
+                        and p['name'] in PTM_CODE_DICT:
+                    ptm_code = PTM_CODE_DICT[p['name']][p['annotation_level']]
                     s['codon_seq'][ptm_pos][codon_pos] = ptm_code
 
     """
@@ -132,7 +136,7 @@ class SequencesEncoder(object):
                 ptm = self._choose_ptm_to_encode(p)
                 if not ptm:
                     continue
-            elif p[0]['name'] in self._ptm_code_dict:
+            elif p[0]['name'] in PTM_CODE_DICT:
                 ptm = p[0]
             if ptm:
                 filtered_ptms.append(ptm)
@@ -142,18 +146,18 @@ class SequencesEncoder(object):
         # highest level -> lowest number
         # this only returns one PTM with the highest level
         encodable_ptms = [p for p in ptms
-                          if p['name'] in self._ptm_code_dict.keys()]
+                          if p['name'] in PTM_CODE_DICT.keys()]
         ptm = {}
         if encodable_ptms:
             highest_level = min([p['annotation_level'] for p in encodable_ptms])
             # find all PTMs with highest level and names in our code dict
             highest_level_ptms = [i for i in encodable_ptms
-                                  if (i['annotation_level'] == highest_level)]
+                                  if i['annotation_level'] == highest_level]
             if len(highest_level_ptms) > 1:
                 # if there is more than one PTM with the highest level choose the
                 # one with lowest index in the ptm_code_dict
                 ptm = min(highest_level_ptms,
-                          key=lambda x: self._ptm_code_dict.keys().index(x['name']))
+                          key=lambda x: PTM_CODE_DICT.keys().index(x['name']))
             else:
                 ptm = highest_level_ptms[0]
         return ptm

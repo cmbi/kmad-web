@@ -28,7 +28,7 @@ class UniprotService(object):
             url = os.path.join(self._url, uniprot_id + ".xml")
             request = requests.get(url)
             if request.status_code != 200:
-                msg = "Recieved {} for url {}".format(request.status_code, url)
+                msg = "Received {} for url {}".format(request.status_code, url)
                 raise ServiceError(msg)
         except (requests.ConnectionError, requests.HTTPError) as e:
             msg = "requests raised an error when trying to reach the " \
@@ -47,7 +47,7 @@ class UniprotService(object):
             url = os.path.join(self._url, uniprot_id + ".txt")
             request = requests.get(url)
             if request.status_code != 200:
-                msg = "Recieved {} for url {}".format(request.status_code, url)
+                msg = "Received {} for url {}".format(request.status_code, url)
                 raise ServiceError(msg)
         except (requests.ConnectionError, requests.HTTPError) as e:
             msg = "requests raised an error when trying to reach the " \
@@ -65,7 +65,7 @@ class UniprotService(object):
             url = os.path.join(self._url, uniprot_id + ".fasta")
             request = requests.get(url)
             if request.status_code != 200:
-                msg = "Recieved {} for url {}".format(request.status_code, url)
+                msg = "Received {} for url {}".format(request.status_code, url)
                 _log.error("Couldn't get fasta from Uniprot: %s",
                            msg)
                 raise ServiceError(msg)
