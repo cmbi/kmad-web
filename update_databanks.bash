@@ -38,6 +38,7 @@ wget -N http://download.igb.uci.edu/sspro4.tar.gz
 tar -xzf sspro4.tar.gz
 cp -r sspro4/data/pdb_large/* pdb_large/
 cp -r sspro4/data/pdb_small/* pdb_small/
+rm -rf sspro4/
 
 cd /
 /usr/bin/wget -N http://download.igb.uci.edu/sspro4.tar.gz
