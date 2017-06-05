@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# non-redundant db
 cd /data
 /usr/bin/wget -N ftp://ftp.ncbi.nlm.nih.gov/blast/db/nr.\*.tar.gz
 for ar in nr.*.tar.gz; do
@@ -9,12 +10,14 @@ for ar in nr.*.tar.gz; do
     fi
 done
 
+# swiss-prot db
 if ! [ -d blast ] ; then mkdir blast; fi
 cd blast
 /usr/bin/wget -N ftp://ftp.ebi.ac.uk/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz
 /bin/gunzip -f uniprot_sprot.fasta.gz
 /usr/bin/makeblastdb -in uniprot_sprot.fasta -out sprot -dbtype prot -parse_seqids
 
+# uniref90 db
 cd /data
 if ! [ -d uniref ] ; then mkdir uniref; fi
 cd uniref
@@ -27,6 +30,14 @@ if [ uniref90.fasta.gz -nt uniref90.pal ] ; then
     /usr/local/bin/formatdb -i uniref90.fasta -t uniref90
     mv uniref90.fasta.pal uniref90.pal
 fi
+
+# pdb_large & pdb_small (for sspro4)
+if ! [ -d pdb_large ] ; then mkdir pdb_large; fi
+if ! [ -d pdb_small ] ; then mkdir pdb_small; fi
+wget -N http://download.igb.uci.edu/sspro4.tar.gz
+tar -xzf sspro4.tar.gz
+cp -r sspro4/data/pdb_large/* pdb_large/
+cp -r sspro4/data/pdb_small/* pdb_small/
 
 cd /
 /usr/bin/wget -N http://download.igb.uci.edu/sspro4.tar.gz
