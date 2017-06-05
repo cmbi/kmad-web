@@ -146,21 +146,14 @@ class KmadForm(Form):
                     else:
                         tmp_seq[-1] += i
                 if any([len(i) != len(tmp_seq[0]) for i in tmp_seq]):
-                    _log.debug("Sequences: {}".format(tmp_seq))
-                    raise validators.ValidationError('Sequences have different \
-                                                     lengths - in the \
-                                                     refinement and \
-                                                     annotations \
-                                                     modes  \
-                                                     the input should be \
-                                                     a multiple \
-                                                     sequence alignment in \
-                                                     FASTA format (unless you \
-                                                     specify  a method for \
-                                                     preliminary alignment - \
-                                                     then the provided input \
-                                                     should be just plain \
-                                                     sequences in FASTA format)')
+                    _log.debug("Sequences: %s", tmp_seq)
+                    raise validators.ValidationError(
+                        'Sequences have different lengths - in the refinement \
+                        and annotations modes the input should be a multiple \
+                        sequence alignment in FASTA format (unless you \
+                        specify a method for preliminary alignment - \
+                        then the provided input should be sequences in FASTA \
+                        format)')
 
     def validate_gop(form, field):
         if field.data >= 0:
@@ -193,16 +186,10 @@ class KmadForm(Form):
                                              cannot be negative")
 
     sequence = TextAreaField(u'sequence')
-    output_type = SelectField(u'Action', choices=[('align',
-                                                   'align'),
-                                                  ('refine',
-                                                   'refine alignment'),
-                                                  ('predict_and_align',
-                                                   'predict and align'),
-                                                  ('predict',
-                                                   'predict disorder'),
-                                                  ('annotate',
-                                                   'annotate alignment')])
+    output_type = SelectField(u'Action', choices=[
+        ('align', 'align'), ('refine', 'refine alignment'),
+        ('predict_and_align', 'predict and align'),
+        ('predict', 'predict disorder'), ('annotate', 'annotate alignment')])
     gop = FloatField(u'gap opening penalty', default=-12)
     gep = FloatField(u'gap extension penalty', default=-1.2)
     egp = FloatField(u'end gap penalty', default=-1.2)
@@ -224,18 +211,6 @@ class KmadForm(Form):
                  ('mafft', 'MAFFT'),
                  ('None', 'Provide your own alignment for refinement')],
         default='clustalo')
-    # prediction_method = SelectMultipleField(
-    #     u'Prediction methods:',
-    #     choices=[('d2p2', 'D2P2'),
-    #              ('globplot', 'GlobPlot'),
-    #              ('disopred', 'DISOPRED'),
-    #              ('spined', 'SPINE-D'),
-    #              ('psipred', 'PSIPRED')],
-    #     default=['globplot', 'd2p2'],
-    #     option_widget=widgets.CheckboxInput(),
-    #     widget=MyListWidget(
-    #         html_tag='collist',
-    #         prefix_label=False))
     prediction_method = SelectMultipleField(
         u'Prediction methods:',
         choices=[('d2p2', 'D2P2 database'),

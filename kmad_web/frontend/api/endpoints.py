@@ -52,12 +52,12 @@ def create_kmad(output_type):
         strategy = MotifsStrategy(form['seq_data'], int(form['position']),
                                   form['mutant_aa'])
     celery_id = strategy()
-    _log.info("Task created with id '{}'".format(celery_id))
+    _log.info("Task created with id '%s'", celery_id)
     return jsonify({'id': celery_id}), 202
 
 
-@bp.route('/status/<output_type>/<id>/', methods=['GET'])
-def get_kmad_status(output_type, id):
+@bp.route('/status/<output_type>/<job_id>/', methods=['GET'])
+def get_kmad_status(output_type, job_id):
     """
     Get the status of a previous job submission.
     :param output_type: Either 'predict', 'predict_and_align', 'align'
@@ -65,16 +65,11 @@ def get_kmad_status(output_type, id):
     :param id: The id returned by a call to the create method.
     :return: Either PENDING, STARTED, SUCCESS, FAILURE, RETRY, or REVOKED.
     """
-    # from kmad_web.tasks import get_task
-
-    # task = get_task(output_type)
-    # async_result = task.AsyncResult(id)
-
     from kmad_web.application import celery
 
-    async_result = celery.AsyncResult(id)
+    async_result = celery.AsyncResult(job_id)
     status = async_result.status
-    _log.info("Status for job %s with id %s: %s", output_type, id, status)
+    _log.info("Status for job %s with id %s: %s", output_type, job_id, status)
 
     response = {'status': status}
     if async_result.failed():
@@ -82,8 +77,8 @@ def get_kmad_status(output_type, id):
     return jsonify(response)
 
 
-@bp.route('/result/<output_type>/<id>/', methods=['GET'])
-def get_kmad_result(output_type, id):
+@bp.route('/result/<output_type>/<job_id>/', methods=['GET'])
+def get_kmad_result(output_type, job_id):
     """
     Get the result of a previous job submission.
 
@@ -95,12 +90,12 @@ def get_kmad_result(output_type, id):
     """
 
     from kmad_web.tasks import get_task
-    _log.info("Get result for job id: %s", id)
+    _log.info("Get result for job id: %s", job_id)
 
     task = get_task(output_type)
-    result = task.AsyncResult(id).get()
+    result = task.AsyncResult(job_id).get()
     response = {'result': result}
-    _log.debug("Returning result: {}".format(response))
+    _log.debug("Returning result: %s", response)
     return jsonify(response)
 
 
@@ -115,7 +110,7 @@ def api_docs():
         m = re.search(r"@bp\.route\('([\w\/<>]*)', methods=\['([A-Z]*)']\)",
                       src[0][0])
         if not m:  # pragma: no cover
-            _log.debug("Unable to document function '{}'".format(f))
+            _log.debug("Unable to document function '%s'", f)
             continue
 
         url = m.group(1)

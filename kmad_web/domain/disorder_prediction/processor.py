@@ -7,7 +7,7 @@ _log = logging.getLogger(__name__)
 class PredictionProcessor(object):
     def process_prediction(self, prediction, pred_name):
         # 0 - structured, 2 - disordered
-        _log.debug("{} returned: {}".format(pred_name, prediction))
+        _log.debug("%s returned: %s", pred_name, prediction)
         if pred_name == "spined":
             prediction_lines = prediction.splitlines()
             disorder_list = self._process_spined(prediction_lines)
@@ -59,8 +59,8 @@ class PredictionProcessor(object):
         prev_length, curr_length = 0, 0
         # current state {no, maybe, yes} {0,1,2}
         prev_state, curr_state = disorder_list, disorder_list
-        for i in range(len(disorder_list)):
-            if disorder_list[i] == curr_state:
+        for i, dis_state in enumerate(disorder_list):
+            if dis_state == curr_state:
                 curr_length += 1
             else:
                 # the end of the current state - check if it's long enough
@@ -71,17 +71,17 @@ class PredictionProcessor(object):
                         prev_state == next_state and
                         curr_length < self._find_next_length(disorder_list, i)):
                     # add curr_length elements of previous(=next) state
-                    new_cons += [prev_state for k in range(curr_length)]
+                    new_cons += [prev_state] * curr_length
                 else:
-                    new_cons += [curr_state for j in range(curr_length)]
+                    new_cons += [curr_state] * curr_length
                 prev_length = curr_length
                 prev_state = curr_state
                 curr_state = disorder_list[i]
                 curr_length = 1
         if curr_length < 4 and curr_length < prev_length:
-            new_cons += [prev_state for j in range(curr_length)]
+            new_cons += [prev_state] * curr_length
         else:
-            new_cons += [curr_state for j in range(curr_length)]
+            new_cons += [curr_state] * curr_length
         return new_cons
 
     def _process_d2p2(self, prediction):
@@ -98,7 +98,7 @@ class PredictionProcessor(object):
     def _process_spined(self, prediction_lines):
         disorder_list = []
         disorder_symbol = 'D'
-        for i, lineI in enumerate(prediction_lines):
+        for lineI in prediction_lines:
             line_list = lineI.split()
             if len(line_list) > 1:
                 disorder = 0
@@ -111,7 +111,7 @@ class PredictionProcessor(object):
         disorder_list = []
         start = 3
         disorder_symbol = '*'
-        for i, lineI in enumerate(prediction_lines[start:]):
+        for lineI in prediction_lines[start:]:
             line_list = lineI.split()
             if len(line_list) > 2:
                 if line_list[2] == disorder_symbol:
@@ -125,7 +125,7 @@ class PredictionProcessor(object):
         disorder_list = []
         start = 2
         disorder_symbol = 'C'
-        for i, lineI in enumerate(prediction_lines[start:]):
+        for lineI in prediction_lines[start:]:
             line_list = lineI.split()
             if len(line_list) > 2:
                 if line_list[2] == disorder_symbol:
@@ -180,10 +180,10 @@ class PredictionProcessor(object):
             methods = sorted(predictions.keys(), key=lambda x: order.index(x))
             for k, v in predictions.iteritems():
                 if len(v) != len(sequence):
-                    _log.error("Prediction from {} has different length ({}) "
-                               "than the seuence ({}).\nPrediction: {}\n"
-                               "Sequence: {}\n".format(
-                                   k, len(v), len(sequence), v, sequence))
+                    _log.error("Prediction from %s has different length (%s) "
+                               "than the seuence (%s).\nPrediction: %s\n"
+                               "Sequence: %s\n", k, len(v), len(sequence), v,
+                               sequence)
 
             filtered = {k: v for k, v in predictions.iteritems() if
                         len(v) == len(sequence)}
