@@ -91,6 +91,9 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     sed -i '72,77 d' configure.pl ;\
     sed -i '73,79 d' configure.pl ;\
     sed -i '93,97 d' configure.pl ;\
+    # make symlinks to the pdb databases
+    ln -s /data/pdb_large/ /deps/sspro4/data/pdb_large
+    ln -s /data/pdb_small/ /deps/sspro4/data/pdb_small
     # Fix process-blast
     sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
     ./configure.pl
