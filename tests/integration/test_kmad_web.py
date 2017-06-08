@@ -140,3 +140,6 @@ class TestApi(object):
         else:
             _log.info("Full sequence")
         return fasta
+
+test_api = TestApi()
+test_api.test_sequence()

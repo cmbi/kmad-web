@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 
+RUN dpkg --add-architecture i386  # for sspro4
 RUN apt-get update
-RUN apt-get install -y build-essential git wget gfortran
+RUN apt-get install -y build-essential git wget gfortran libc6:i386 libncurses5:i386 libstdc++5:i386
 
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /deps
