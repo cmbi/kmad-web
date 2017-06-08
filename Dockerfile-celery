@@ -117,6 +117,7 @@ RUN wget -q http://sysbio.rnet.missouri.edu/multicom_toolbox/tools/predisorder1.
     chmod a+x configure.pl ;\
     chmod a+x /deps/predisorder/bin/predict_diso.sh ;\
     chmod a+x /deps/predisorder/script/predict_diso.pl ;\
+    chmod a+x /deps/predisorder/server/predict_seq ; \
     ./configure.pl ;\
     rm /deps/predisorder1.1.tar.gz
 
