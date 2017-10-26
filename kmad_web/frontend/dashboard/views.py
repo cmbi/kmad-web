@@ -22,19 +22,18 @@ bp = Blueprint('dashboard', __name__)
 @bp.route("/", methods=['POST', 'GET'])
 def index():
     form = KmadForm()
-    form_data_ok = all([
-        form.submit_job.data, form.validate_on_submit(), form.sequence.data,
-        form.output_type.data, form.gop.data, form.gep.data, form.egp.data,
-        form.ptm_score.data, form.domain_score.data, form.motif_score.data,
-        form.gapped.data, form.seq_limit.data
-    ])
-    if form_data_ok:
+    if (form.submit_job.data and form.validate_on_submit()
+            and form.sequence.data and form.output_type.data
+            and form.gop.data and form.gep.data and form.egp.data
+            and form.ptm_score.data and form.domain_score.data
+            and form.motif_score.data and form.gapped.data
+            and form.seq_limit.data):
         request_ip = get_ip()
         _log.info("[IP: %s] Submitted job: %s", request_ip,
                   form.output_type.data)
         seq_data = form.sequence.data
-        _log.info("Submitted seq data: %s", seq_data)
-        _log.info("Submitted seq data: %s", seq_data.splitlines())
+        _log.info("Submitted seq data: {}".format(seq_data))
+        _log.info("Submitted seq data: {}".format(seq_data.splitlines()))
         if form.output_type.data == "predict":
             strategy = PredictStrategy(seq_data, form.prediction_method.data)
             celery_id = strategy()
@@ -69,7 +68,7 @@ def index():
             celery_id = strategy()
         else:
             abort(500, description='Unknown output type')
-        _log.info("Job has id '%s'", celery_id)
+        _log.info("Job has id '{}'".format(celery_id))
         _log.info("Redirecting to output page")
         return redirect(url_for('dashboard.output',
                                 output_type=form.output_type.data,

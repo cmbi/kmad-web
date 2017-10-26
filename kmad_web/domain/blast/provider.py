@@ -25,16 +25,18 @@ class BlastResultProvider(object):
         return filtered
 
     def get_exact_hit(self, blast_hits):
-        if blast_hits and blast_hits[0]['slen'] == blast_hits[0]['qlen'] and \
-                blast_hits[0]['pident'] == '100.00':
+        if (blast_hits and blast_hits[0]['slen'] == blast_hits[0]['qlen']
+                and blast_hits[0]['pident'] == '100.00'):
             return blast_hits[0]['id']
-        return ''
+        else:
+            return ''
 
     def find_closest_hit(self, fasta_sequence, seq_limit=1):
         blast_hits = self.get_result(fasta_sequence, seq_limit)
-        if blast_hits and float(blast_hits[0]['pident']) >= 80:
+        if len(blast_hits) > 0 and float(blast_hits[0]['pident']) >= 80:
             return blast_hits[0]
-        return ''
+        else:
+            return ''
 
     def _filter_out_duplicates(self, blast_hits):
         filtered_hits = []

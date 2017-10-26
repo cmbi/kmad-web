@@ -4,6 +4,7 @@ import time
 
 from kmad_web.parsers.elm import ElmParser
 from kmad_web.services.elm import ElmService
+from kmad_web.services.types import ServiceError
 from kmad_web.domain.go.providers.go import GoProvider
 from kmad_web.default_settings import ELM_URL, ELMDB_PATH
 
@@ -42,24 +43,24 @@ class ElmUpdater(object):
         if self._not_ok(full_motif_classes):
             _log.error("Update raises a RuntimeError,"
                        " full_motif_classes not ok;"
-                       " full_motif_classes: %s", full_motif_classes)
+                       " full_motif_classes: {}".format(full_motif_classes))
             raise RuntimeError("ElmUpdater: not enough motif classes")
         # write processed motif_classes to a json file
         with open(self._elmdb_path, 'w') as outfile:
             json.dump(full_motif_classes, outfile, indent=4)
 
     def _get_extended_go_terms(self, motif_id):
-        _log.debug("Getting GO terms for the %s motif", motif_id)
+        _log.debug("Getting GO terms for the {} motif".format(motif_id))
         elm_service = ElmService(ELM_URL)
         go_terms = elm_service.get_motif_go_terms(motif_id)
         go = GoProvider()
         for go_term in list(go_terms):
             if go_term not in self._go_families.keys():
-                _log.debug("go: %s", go_term)
+                _log.debug("go: {}".format(go_term))
                 parents = go.get_parent_terms(go_term)
                 children = go.get_children_terms(go_term)
-                _log.debug("go parents: %s", parents)
-                _log.debug("go children: %s", children)
+                _log.debug("go parents: {}".format(parents))
+                _log.debug("go children: {}".format(children))
                 go_family = parents.union(children)
                 self._go_families[go_term] = go_family
             else:
@@ -71,7 +72,8 @@ class ElmUpdater(object):
     def _not_ok(self, full_motif_classes):
         if len(full_motif_classes.keys()) < 200:
             return True
-        return False
+        else:
+            return False
 
     def _make_json_friendly(self, full_motif_classes):
         '''
