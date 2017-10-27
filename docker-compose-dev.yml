@@ -4,7 +4,7 @@ services:
   web:
     volumes:
       - ".:/usr/src/app"
-    command: watchmedo auto-restart -d /usr/src/app -p "*.py" -D -R -- gunicorn -k gevent -b 0.0.0.0:5000 kmad_web.application:app
+    command: watchmedo auto-restart -d /usr/src/app -p "*.py" -D -R -- gunicorn -k gevent -b 0.0.0.0:8030 kmad_web.application:app
     environment:
       - KMAD_WEB_SETTINGS=/usr/src/app/dev_settings.py
   celery:
