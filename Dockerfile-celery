@@ -68,7 +68,7 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.
     mkdir -p /deps/disopred ; tar zxf /deps/DISOPRED3.15.tar.gz -C /deps/disopred --strip-components=1 ;\
     cd /deps/disopred/src; make; make install ;\
     rm /deps/DISOPRED3.15.tar.gz ;\
-    sed -i '23s/-a 1 /-a 7 /' /deps/disopred/run_disopred.pl ;\
+    sed -i '23s/-a 1 /-a 15 /' /deps/disopred/run_disopred.pl ;\
     sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin\/";/' /deps/disopred/run_disopred.pl ;\
     sed -i '19s/.*/my $SEQ_DB = "\/data\/uniref\/uniref90";/' /deps/disopred/run_disopred.pl
 
@@ -86,8 +86,8 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     sed -i '24s/.*/$install_dir = "\/deps\/sspro4"; chdir $install_dir;/' configure.pl ;\
     sed -i '44s/.*/$nr_db_dir = "\/data\/";/' configure.pl ;\
     sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
-    sed -i '48s/blastpgp -i/blastpgp -a 7 -i /' script/generate_flatblast.pl ;\
-    sed -i '49s/blastpgp -i/blastpgp -a 7 -i /' script/generate_flatblast.pl ;\
+    sed -i '48s/blastpgp -i/blastpgp -a 15 -i /' script/generate_flatblast.pl ;\
+    sed -i '49s/blastpgp -i/blastpgp -a 15 -i /' script/generate_flatblast.pl ;\
     # Remove lines that check if the databanks are present. These will be
     # mounted later when the container runs.
     sed -i '72,77 d' configure.pl ;\
@@ -138,7 +138,7 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipr
     cd /deps/psipred/src ; make -j ; make install ;\
     sed -i '20s/.\/bin/\/deps\/psipred\/bin/' /deps/psipred/runpsipred ; \
     sed -i '23s/.\/data/\/deps\/psipred\/data/' /deps/psipred/runpsipred ; \
-    sed -i '36s/blastpgp/blastpgp -a 7/' /deps/psipred/runpsipred ;\
+    sed -i '36s/blastpgp/blastpgp -a 15 /' /deps/psipred/runpsipred ;\
     sed -i 's/uniref90/\/data\/uniref\/uniref90/' /deps/psipred/runpsipred ;\
     rm /deps/psipred.4.0.tar.gz
 RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
