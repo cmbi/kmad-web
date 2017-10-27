@@ -12,4 +12,4 @@ CSRF_ENABLED = False
 MAIL_SERVER = "131.174.165.22"
 MAIL_SMTP_PORT = 25
 MAIL_FROM = "kmad-web@cmbi.umcn.nl"
-MAIL_TO = ["j.lange@radboudumc.nl"]
+MAIL_TO = ["jlange@bio-prodict.nl"]

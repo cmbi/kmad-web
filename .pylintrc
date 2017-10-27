@@ -22,7 +22,7 @@
 #R0201(no-self-use)
 #W0232(no-init)
 #W0511(fixme)
-disable=I0011,W0511,R0201,C0111,W0232,C0103
+disable=I0011,W0511,R0201,C0111,W0232,C0103,R0903
 
 [REPORTS]
 
@@ -37,7 +37,7 @@ output-format=text
 files-output=no
 
 # Tells whether to display a full report or only the messages
-reports=no
+reports=yes
 
 # Python expression which should return a note less than 10 (10 is the highest
 # note). You have access to the variables errors warning, statement which

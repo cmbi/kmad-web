@@ -43,7 +43,8 @@ CELERYD_NODES = 3
 
 # service urls
 ELM_URL = "http://elm.eu.org"
-GO_URL = "http://www.ebi.ac.uk/ols/api/ontologies/go/terms/http%253A%252F%252Fpurl.obolibrary.org%252Fobo%252F"
+GO_URL = "http://www.ebi.ac.uk/ols/api/ontologies/go/terms/http%253A%252F%252F" \
+    "purl.obolibrary.org%252Fobo%252F"
 
 UNIPROT_URL = "http://www.uniprot.org/uniprot"
 UNIPROT_PTMS_URL = "http://www.uniprot.org/docs/ptmslist.txt"
@@ -62,13 +63,13 @@ MUSCLE = '/usr/local/bin/muscle'
 TCOFFEE = '/usr/local/bin/t_coffee'
 
 # predictors
-IUPRED = "/srv/kmad/iupred/iupred"
-IUPRED_DIR = "/srv/kmad/iupred/"
-SPINED = "/srv/kmad/spined/bin/run_spine-d"
-SPINED_OUTPUT_DIR = "/srv/kmad/spined/predout/"
-DISOPRED = "/srv/kmad/disopred/run_disopred.pl"
-PREDISORDER = "/srv/kmad/predisorder/bin/predict_diso.sh"
-PSIPRED = "/srv/kmad/psipred4.0/runpsipred"
+IUPRED = "/deps/iupred/iupred"
+IUPRED_DIR = "/deps/iupred/"
+SPINED = "/deps/spined/bin/run_spine-d"
+SPINED_OUTPUT_DIR = "/deps/spined/predout/"
+DISOPRED = "/deps/disopred/run_disopred.pl"
+PREDISORDER = "/deps/predisorder/bin/predict_diso.sh"
+PSIPRED = "/deps/psipred/runpsipred"
 GLOBPLOT = "/usr/local/bin/GlobPipe.py"
 BLAST_DB = "/data/blast/sprot"
 BLASTP = "/usr/local/bin/blastp"

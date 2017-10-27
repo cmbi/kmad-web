@@ -21,6 +21,8 @@ bp = Blueprint('dashboard', __name__)
 
 @bp.route("/", methods=['POST', 'GET'])
 def index():
+    _log.info("request for 'index' page")
+
     form = KmadForm()
     if (form.submit_job.data and form.validate_on_submit()
             and form.sequence.data and form.output_type.data
@@ -87,6 +89,9 @@ def index():
 
 @bp.route("/output/<output_type>/<celery_id>/", methods=['GET'])
 def output(output_type, celery_id):
+    _log.info("Rendering 'output' page")
+    _log.info("output_type: %s", output_type)
+    _log.info("celery_id: %s", celery_id)
     return render_template("dashboard/output.html",
                            output_type=output_type,
                            celery_id=celery_id)
