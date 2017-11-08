@@ -366,8 +366,9 @@ def remove_old_tmps():
     Removes all tmp files in /tmp/ dir owned by kmad-web that are older than
     N days
     """
-    _log.info("Removing old tmpl files")
+    _log.info("Removing old tmp files")
     N = 7
     m = N * 24 * 60
-    cmd = "find /tmp -mmin +{} -name 'tmp*' -delete".format(m)
+    tmp_dir = "/var/tmp"
+    cmd = "find {} -mmin +{} -name 'tmp*' -delete".format(tmp_dir, m)
     os.system(cmd)
