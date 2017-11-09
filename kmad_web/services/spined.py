@@ -29,31 +29,29 @@ class SpinedService(object):
         args = [self._path, tmp_path, tmp_name]
         errlog_name = fasta_filename + "_errlog"
         try:
+            _log.debug("running spined: {}".format(' '.join(args)))
             with open(errlog_name, 'w') as err:
                 subprocess.call(args, stderr=err)
-            # remove error log file if it's empty, otherwise raise an error
-            empty_errlog = os.stat(errlog_name).st_size == 0
-            if empty_errlog:
-                os.remove(errlog_name)
-                os.remove(fasta_filename)
-            else:
-                e = "spine-d raised an error, check logfile: {}".format(
-                    errlog_name)
-                _log.error(e)
-                raise ServiceError(e)
             # read output file
             if os.path.exists(out_file):
                 with open(out_file) as a:
                     data = a.read()
-                os.remove(out_file)
                 return data
             else:
-                _log.error("Didn't find the output file: {}".format(
-                    out_file))
-                raise ServiceError("Didn't find the output file: {}".format(
-                    out_file))
+                e = "Didn't find the output file: {}".format(out_file)
+                empty_errlog = os.stat(errlog_name).st_size == 0
+                if not empty_errlog:
+                    with open(empty_errlog, 'r') as f:
+                        e = "spine-d raised an error: {}".format(
+                            r.read())
+                _log.error(e)
+                raise ServiceError(e)
         except subprocess.CalledProcessError as e:
             _log.error(e)
             raise ServiceError(e.message)
+        finally:
+            for file_path in [fasta_filename, out_file, errlog_name]:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
 
 spined = SpinedService(SPINED)

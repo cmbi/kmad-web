@@ -1,7 +1,29 @@
 FROM ubuntu:16.04
 
 # dependencies
-RUN apt-get update && apt-get install -y cron ncbi-blast\+ wget
+RUN apt-get update && apt-get install -y cron wget build-essential tcsh
+
+# ncbi blast
+# version 2.2.26 for formatdb
+# TODO: copy above executables only
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-x64-linux.tar.gz -P /deps ;\
+    mkdir -p /deps/blast-2.2.26-x64-linux ;\
+    tar zxf /deps/blast-2.2.26-x64-linux.tar.gz -C /deps/blast-2.2.26-x64-linux --strip-components=1 ;\
+    cp /deps/blast-2.2.26-x64-linux/bin/formatdb /usr/local/bin ;\
+    rm /deps/blast-2.2.26-x64-linux.tar.gz ; rm -rf /deps/blast-2.2.26-x64-linux
+
+# version 2.5.0 for makeblastdb
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
+    mkdir -p /deps/blast-2.5.0+-x64-linux ;\
+    tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast-2.5.0+-x64-linux --strip-components=1 ;\
+    cp /deps/blast-2.5.0+-x64-linux/bin/makeblastdb /usr/local/bin/makeblastdb ;\
+    rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast-2.5.0+-x64-linux
+
+# pfilt
+RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/pfilt/pfilt1.5.tar.gz -P /deps ;\
+    mkdir -p /deps/pfilt ;\
+    tar zxf /deps/pfilt1.5.tar.gz -C /deps/pfilt --strip-components=1 ;\
+    cd /deps/pfilt ; make -j ; cp pfilt /usr/local/bin
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

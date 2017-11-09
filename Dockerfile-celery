@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 
+RUN dpkg --add-architecture i386  # for sspro4
 RUN apt-get update
-RUN apt-get install -y build-essential git wget gfortran
+RUN apt-get install -y build-essential git wget gfortran libc6:i386 libncurses5:i386 libstdc++5:i386
 
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /deps
@@ -41,40 +42,41 @@ RUN ln -s /deps/netphos/ape /usr/local/bin/netphos-3.1 ;\
     sed -i '28s/.*/setenv  TMP     \/tmp/' /deps/netphos/ape ;\
     rm /deps/netphos-3.1.Linux.tar.Z
 # TODO: When the test below fails, docker can't detect it (tcsh related?)
-RUN netphos 1crn.fasta
+RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
+    netphos 1crn.fasta ;\
+    rm 1crn.fasta
 
 # ncbi blast
-# version 2.2.25 for blastpgp, formatdb
+# version 2.2.26 for blastpgp
 # TODO: copy above executables only
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.25/blast-2.2.25-x64-linux.tar.gz -P /deps ;\
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-x64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
-    tar zxf /deps/blast-2.2.25-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
-    cp /deps/blast/bin/blastpgp /usr/local/bin ;\
-    cp /deps/blast/bin/formatdb /usr/local/bin ;\
-    rm /deps/blast-2.2.25-x64-linux.tar.gz ; rm -rf /deps/blast
+    tar zxf /deps/blast-2.2.26-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+    cp /deps/blast/bin/blastpgp /usr/local/bin/ ;\
+    cp /deps/blast/bin/makemat /usr/local/bin/ ;\
+    cp -r /deps/blast/data /usr/local/bin/ ;\
+    rm /deps/blast-2.2.26-x64-linux.tar.gz ; rm -rf /deps/blast
 
-# version 2.5.0 for blastp, makeblastdb, psiblast
+# version 2.5.0 for blastp, psiblast
 RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
     tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
     cp /deps/blast/bin/blastp /usr/local/bin ;\
-    cp /deps/blast/bin/makeblastdb /usr/local/bin ;\
     cp /deps/blast/bin/psiblast /usr/local/bin ;\
     rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast
 
 # disopred
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.tar.gz -P /deps;\
     mkdir -p /deps/disopred ; tar zxf /deps/DISOPRED3.15.tar.gz -C /deps/disopred --strip-components=1 ;\
+    cd /deps/disopred/src; make; make install ;\
     rm /deps/DISOPRED3.15.tar.gz ;\
+    sed -i '23s/-a 1 /-a 15 /' /deps/disopred/run_disopred.pl ;\
     sed -i '18s/.*/my $NCBI_DIR = "\/usr\/local\/bin\/";/' /deps/disopred/run_disopred.pl ;\
     sed -i '19s/.*/my $SEQ_DB = "\/data\/uniref\/uniref90";/' /deps/disopred/run_disopred.pl
-RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
-    /deps/disopred/run_disopred.pl 1crn.fasta ;\
-    rm 1crn.fasta
 
 # sspro4
 # depends on volume mounts for nr, big
-# depends on nciblast2.2.9
+# depends on nciblast2.2.8
 # TODO: edit process-blast.pl with sed (in readme)
 # TODO: get libstdc++.so.5
 # TODO: install?
@@ -83,20 +85,31 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     cd /deps/sspro4 ;\
     mkdir -p /data/nr ; mkdir -p /data/big ;\
     # Set paths for installation and databanks
-    sed -i '24s/.*/$install_dir = "\/deps\/sspro4";/' configure.pl ;\
-    sed -i '44s/.*/$nr_db_dir = "\/data\/nr\/";/' configure.pl ;\
+    sed -i '24s/.*/$install_dir = "\/deps\/sspro4"; chdir $install_dir;/' configure.pl ;\
+    sed -i '44s/.*/$nr_db_dir = "\/data\/";/' configure.pl ;\
     sed -i '47s/.*/$big_db_dir = "\/data\/big\/";/' configure.pl ;\
+    sed -i '48s/blastpgp -i/blastpgp -a 15 -i /' script/generate_flatblast.pl ;\
+    sed -i '49s/blastpgp -i/blastpgp -a 15 -i /' script/generate_flatblast.pl ;\
     # Remove lines that check if the databanks are present. These will be
     # mounted later when the container runs.
     sed -i '72,77 d' configure.pl ;\
     sed -i '73,79 d' configure.pl ;\
     sed -i '93,97 d' configure.pl ;\
     # make symlinks to the pdb databases
-    ln -s /data/pdb_large/ /deps/sspro4/data/pdb_large
-    ln -s /data/pdb_small/ /deps/sspro4/data/pdb_small
+    ln -s /data/pdb_large/ /deps/sspro4/data/pdb_large ;\
+    ln -s /data/pdb_small/ /deps/sspro4/data/pdb_small ;\
+    sed -i '69,70 d' configure.pl ;\
+    sed -i '/data_dir/d' configure.pl ;\
+    sed -i '/test_dir/d' configure.pl ;\
     # Fix process-blast
     sed -i "s/$fileo.'.app'/$fileo/g" script/process-blast.pl ;\
     ./configure.pl
+
+# version 2.2.8 for sspro4
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.8/blast-2.2.8-amd64-linux.tar.gz -P /deps/sspro4 ;\
+    mkdir -p /deps/sspro4/blast2.2.8 ; \
+    tar zxf /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz -C /deps/sspro4/blast2.2.8 --strip-components=1 ;\
+    rm /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz ; 
 
 # predisorder
 # TODO: get libstdc++.so.5
@@ -109,9 +122,11 @@ RUN wget -q http://sysbio.rnet.missouri.edu/multicom_toolbox/tools/predisorder1.
     chmod a+x configure.pl ;\
     chmod a+x /deps/predisorder/bin/predict_diso.sh ;\
     chmod a+x /deps/predisorder/script/predict_diso.pl ;\
+    chmod a+x /deps/predisorder/server/predict_seq ; \
     ./configure.pl ;\
     rm /deps/predisorder1.1.tar.gz
-RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
+
+RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
     /deps/predisorder/bin/predict_diso.sh 1crn.fasta test_name ;\
     rm 1crn.fasta
 
@@ -126,9 +141,14 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipr
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipred.4.0.tar.gz -P /deps;\
     mkdir -p /deps/psipred ; tar zxf /deps/psipred.4.0.tar.gz -C /deps/psipred --strip-components=1 ;\
     cd /deps/psipred/src ; make -j ; make install ;\
+    sed -i '20s/.\/bin/\/deps\/psipred\/bin/' /deps/psipred/runpsipred ; \
+    sed -i '23s/.\/data/\/deps\/psipred\/data/' /deps/psipred/runpsipred ; \
+    sed -i '36s/blastpgp/blastpgp -a 15 /' /deps/psipred/runpsipred ;\
+    sed -i 's/uniref90/\/data\/uniref\/uniref90/' /deps/psipred/runpsipred ;\
     rm /deps/psipred.4.0.tar.gz
-RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
-    /deps/psipred/runpsipred 1crn.fasta
+RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
+    /deps/psipred/runpsipred 1crn.fasta ;\
+    rm 1crn.fasta
 
 # spine-x
 # The sed command sets fortran, removing the prompt for a compiler.
@@ -154,6 +174,7 @@ RUN mkdir -p /deps/iupred ;\
 RUN wget -q http://sparks-lab.org/pmwiki/download/lib/spinedlocal_v2.0.tar.gz -P /deps ;\
     mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
     sed -i '16s/.*/blastprog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
+    sed -i '38s/ncpu=4/ncpu=7/' /deps/spined/bin/run_spine-d && \
     sed -i '19s/.*/nrdb=\/data\/nr/' /deps/spined/bin/run_spine-d && \
     sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
     sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
@@ -189,5 +210,6 @@ COPY requirements.txt .
 RUN apt-get install -y python-pip ;\
     pip install --upgrade pip ;\
     pip install --no-cache -r requirements.txt
+
 COPY . /usr/src/app
 WORKDIR /usr/src/app

@@ -21,6 +21,8 @@ bp = Blueprint('dashboard', __name__)
 
 @bp.route("/", methods=['POST', 'GET'])
 def index():
+    _log.info("Request for 'index' page from IP %s", request.remote_addr)
+
     form = KmadForm()
     if (form.submit_job.data and form.validate_on_submit()
             and form.sequence.data and form.output_type.data
@@ -81,12 +83,15 @@ def index():
         del_index = trash_it_data.index(True)
         fieldlist.delete(form.usr_features, del_index)
 
-    _log.info("Rendering index page")
+    _log.info("Rendering 'index' page, IP: %s", request.remote_addr)
     return render_template('dashboard/index.html', form=form)
 
 
 @bp.route("/output/<output_type>/<celery_id>/", methods=['GET'])
 def output(output_type, celery_id):
+    _log.info("Rendering 'output' page, IP: %s", request.remote_addr)
+    _log.info("output_type: %s", output_type)
+    _log.info("celery_id: %s", celery_id)
     return render_template("dashboard/output.html",
                            output_type=output_type,
                            celery_id=celery_id)
@@ -94,85 +99,85 @@ def output(output_type, celery_id):
 
 @bp.route('/help/', methods=['GET'])
 def help():
-    _log.info("Rendering 'help' page")
+    _log.info("Rendering 'help' page, IP: %s", request.remote_addr)
     return render_template('dashboard/help.html')
 
 
 @bp.route('/examples/<filename>/', methods=['GET'])
 def alignment_example(filename):
-    _log.info("Rendering 'examples' page")
+    _log.info("Rendering 'examples' page, IP: %s", request.remote_addr)
     return render_template('dashboard/examples/{}.html'.format(filename))
 
 
 @bp.route('/disprot_clustal_examples/', methods=['GET'])
 def disprot_clustal_examples():
-    _log.info("Rendering 'disprot clustal examples' page")
+    _log.info("Rendering 'disprot clustal examples' page, IP: %s", request.remote_addr)
     return render_template('dashboard/disprot_clustal_examples.html')
 
 
 @bp.route('/disprot_tcoffee_examples/', methods=['GET'])
 def disprot_tcoffee_examples():
-    _log.info("Rendering 'disprot tcoffee examples' page")
+    _log.info("Rendering 'disprot tcoffee examples' page, IP: %s", request.remote_addr)
     return render_template('dashboard/disprot_tcoffee_examples.html')
 
 
 @bp.route('/reviewer_comments/', methods=['GET'])
 def reviewer_comments():
-    _log.info("Rendering 'reviewer comments' page")
+    _log.info("Rendering 'reviewer comments' page, IP: %s", request.remote_addr)
     return render_template('dashboard/reviewer_comments.html')
 
 
 @bp.route('/methods/', methods=['GET'])
 def methods():
-    _log.info("Rendering 'methods' page")
+    _log.info("Rendering 'methods' page, IP: %s", request.remote_addr)
     return render_template('dashboard/methods.html')
 
 
 @bp.route('/about/', methods=['GET'])
 def about():
-    _log.info("Rendering 'about' page")
+    _log.info("Rendering 'about' page, IP: %s", request.remote_addr)
     return render_template('dashboard/about.html')
 
 
 @bp.route('/standalone/', methods=['GET'])
 def standalone():
-    _log.info("Rendering 'standalone' page")
+    _log.info("Rendering 'standalone' page, IP: %s", request.remote_addr)
     return render_template('dashboard/standalone.html')
 
 
 @bp.route('/additional_information/', methods=['GET'])
 def additional_information():
-    _log.info("Rendering 'additional information' page")
+    _log.info("Rendering 'additional_information' page, IP: %s", request.remote_addr)
     return render_template('dashboard/additional_information.html')
 
 
 @bp.route('/why/', methods=['GET'])
 def why():
-    _log.info("Rendering 'why' page")
+    _log.info("Rendering 'why' page, IP: %s", request.remote_addr)
     return render_template('dashboard/why.html')
 
 
 @bp.route('/comparison/', methods=['GET'])
 def comparison():
-    _log.info("Rendering 'comparison' page")
+    _log.info("Rendering 'comparison' page, IP: %s", request.remote_addr)
     return render_template('dashboard/comparison.html')
 
 
 @bp.route('/balibase/', methods=['GET'])
 def balibase():
-    _log.info("Rendering 'balibase' page")
+    _log.info("Rendering 'balibase' page, IP: %s", request.remote_addr)
     return render_template('dashboard/balibase.html')
 
 
 @bp.route('/prefab/', methods=['GET'])
 def prefab():
-    _log.info("Rendering 'prefab' page")
+    _log.info("Rendering 'prefab' page, IP: %s", request.remote_addr)
     return render_template('dashboard/prefab.html')
 
 
 @bp.route('/cram/', methods=['GET'])
 def cram():
-    _log.info("Rendering 'cram' page")
+    _log.info("Rendering 'cram' page, IP: %s", request.remote_addr)
     return render_template('dashboard/cram.html')
 
 
@@ -183,7 +188,7 @@ def yasara_example():
 
 @bp.route('/download', methods=['POST'])
 def download():
-    _log.info("Downloading prediction file")
+    _log.info("Downloading prediction file, IP: %s", request.remote_addr)
     prediction = str(request.form['prediction'])
     strIO = StringIO.StringIO()
     strIO.write(prediction)
@@ -195,7 +200,7 @@ def download():
 
 @bp.route('/download_alignment', methods=['POST'])
 def download_alignment():
-    _log.info("Downloading alignment file")
+    _log.info("Downloading alignment file, IP: %s", request.remote_addr)
     alignment = str(request.form['alignment'])
     strIO = StringIO.StringIO()
     strIO.write(alignment)

@@ -21,12 +21,12 @@ def test_get_children_terms():
     expected = set(['GO:0070139'])
 
     go = GoProvider()
-    go.get_children_terms(go_term)
-    eq_(expected, go.children)
+    children = go.get_children_terms(go_term)
+    eq_(expected, children)
 
     go_term = '0070137'
-    go.get_children_terms(go_term)
-    eq_(expected, go.children)
+    children = go.get_children_terms(go_term)
+    eq_(expected, children)
 
 
 @with_setup(setup, teardown)
@@ -37,9 +37,10 @@ def test_get_parent_terms():
     expected = set(['GO:0070137', 'GO:0016929'])
 
     go = GoProvider()
-    go.get_parent_terms(go_term)
-    eq_(expected, go.parents)
+    parents = go.get_parent_terms(go_term)
+    eq_(expected, parents)
 
     go_term = '0070139'
     go.get_parent_terms(go_term)
-    eq_(expected, go.parents)
+    parents = go.get_parent_terms(go_term)
+    eq_(expected, parents)
