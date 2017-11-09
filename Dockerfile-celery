@@ -42,7 +42,9 @@ RUN ln -s /deps/netphos/ape /usr/local/bin/netphos-3.1 ;\
     sed -i '28s/.*/setenv  TMP     \/tmp/' /deps/netphos/ape ;\
     rm /deps/netphos-3.1.Linux.tar.Z
 # TODO: When the test below fails, docker can't detect it (tcsh related?)
-RUN netphos 1crn.fasta
+RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
+    netphos 1crn.fasta
+    rm 1crn.fasta
 
 # ncbi blast
 # version 2.2.26 for blastpgp
@@ -121,7 +123,7 @@ RUN wget -q http://sysbio.rnet.missouri.edu/multicom_toolbox/tools/predisorder1.
     ./configure.pl ;\
     rm /deps/predisorder1.1.tar.gz
 
-RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
+RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
     /deps/predisorder/bin/predict_diso.sh 1crn.fasta test_name ;\
     rm 1crn.fasta
 
@@ -141,8 +143,9 @@ RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipr
     sed -i '36s/blastpgp/blastpgp -a 15 /' /deps/psipred/runpsipred ;\
     sed -i 's/uniref90/\/data\/uniref\/uniref90/' /deps/psipred/runpsipred ;\
     rm /deps/psipred.4.0.tar.gz
-RUN wget -q http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1CRN -O 1crn.fasta ;\
+RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
     /deps/psipred/runpsipred 1crn.fasta
+    rm 1crn.fasta
 
 # spine-x
 # The sed command sets fortran, removing the prompt for a compiler.
