@@ -185,7 +185,7 @@ ProteinSequences = function(container_id, data, sequence) {
           x: x,
           y: y,
           text: (i + 5).toString(),
-          fontSize: FONT_SIZE - 6,
+          fontSize: FONT_SIZE,
           fontStyle: 'bold',
           fontFamily: FONT_FAMILY,
           fill: 'gray'
@@ -194,7 +194,7 @@ ProteinSequences = function(container_id, data, sequence) {
           x: x,
           y: y + 10,
           text: '|',
-          fontSize: FONT_SIZE - 7,
+          fontSize: FONT_SIZE,
           fontStyle: 'bold',
           fontFamily: FONT_FAMILY,
           fill: 'gray'
