@@ -6,6 +6,7 @@ from flask import abort
 from flask import (Blueprint, render_template, request, redirect, url_for,
                    send_file)
 
+from kmad_web.helpers import get_ip_data
 from kmad_web.request_helpers import get_ip
 from kmad_web.services.helpers import fieldlist
 from kmad_web.frontend.dashboard.forms import KmadForm
@@ -22,7 +23,7 @@ bp = Blueprint('dashboard', __name__)
 @bp.route("/", methods=['POST', 'GET'])
 def index():
     request_ip = get_ip()
-    _log.info("Request for 'index' page from IP %s", request_ip)
+    _log.info("Request for 'index' page from %s", get_ip_data(request_ip))
 
     form = KmadForm()
     if (form.submit_job.data and form.validate_on_submit()
