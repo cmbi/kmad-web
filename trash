@@ -1,0 +1,37 @@
+/usr/local/lib/python2.7/site-packages/ipwhois/net.py:138: UserWarning: allow_permutations has been deprecated and will be removed. It is no longer needed, due to the deprecation of asn_alts, and the addition of the asn_methods argument.
+  warn('allow_permutations has been deprecated and will be removed. '
+/usr/local/lib/python2.7/site-packages/ipwhois/asn.py:178: UserWarning: IPASN._parse_fields_dns() has been deprecated and will be removed. You should now use IPASN.parse_fields_dns().
+  warn('IPASN._parse_fields_dns() has been deprecated and will be '
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/site-packages/gunicorn/workers/base.py", line 153, in handle_quit
+    time.sleep(0.1)
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 82, in sleep
+Traceback (most recent call last):
+  File "gevent/core.pyx", line 348, in gevent.core.loop.handle_error (gevent/gevent.core.c:6053)
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 300, in handle_error
+    self.print_exception(context, type, value, tb)
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 323, in print_exception
+    traceback.print_exception(type, value, tb)
+  File "/usr/local/lib/python2.7/traceback.py", line 125, in print_exception
+    print_tb(tb, limit, file)
+  File "/usr/local/lib/python2.7/traceback.py", line 69, in print_tb
+    line = linecache.getline(filename, lineno, f.f_globals)
+  File "/usr/local/lib/python2.7/linecache.py", line 14, in getline
+    lines = getlines(filename, module_globals)
+  File "/usr/local/lib/python2.7/linecache.py", line 41, in getlines
+    return updatecache(filename, module_globals)
+  File "/usr/local/lib/python2.7/linecache.py", line 132, in updatecache
+    lines = fp.readlines()
+  File "/usr/local/lib/python2.7/site-packages/gunicorn/workers/base.py", line 153, in handle_quit
+    time.sleep(0.1)
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 82, in sleep
+    hub.wait(loop.timer(seconds, ref=ref))
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 348, in wait
+    result = waiter.get()
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 575, in get
+    return self.hub.switch()
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 337, in switch
+    switch_out()
+  File "/usr/local/lib/python2.7/site-packages/gevent/hub.py", line 341, in switch_out
+    raise AssertionError('Impossible to call blocking function in the event loop callback')
+AssertionError: Impossible to call blocking function in the event loop callback
