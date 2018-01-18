@@ -1,3 +1,5 @@
+# MacOS
+.DS_store/
 # Cron intermediate file
 update_cron
 
