@@ -35,4 +35,3 @@ suds==0.4
 watchdog==0.8.3
 wheel==0.24.0
 xmltodict==0.9.2
-ipwhois==1.0.0
