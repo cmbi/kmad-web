@@ -32,8 +32,8 @@ Add the upstream repository:
 
 In the project folder, build the docker images:
 
-    docker-compose build --force-rm
-
+    docker-compose build --force-rm  -f Dockerfile-web .
+ 
 To start the development environment, run:
 
     ./run_dev.sh
@@ -56,7 +56,7 @@ Log in to the production machine and clone the upstream project:
 
 In the project folder, build the docker images:
 
-    docker-compose build --force-rm
+    docker-compose build --force-rm  -f Dockerfile-web .
 
 To run the container in production:
 
