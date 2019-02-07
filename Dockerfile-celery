@@ -49,7 +49,7 @@ RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureId
 # ncbi blast
 # version 2.2.26 for blastpgp
 # TODO: copy above executables only
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.26/blast-2.2.26-x64-linux.tar.gz -P /deps ;\
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy.NOTSUPPORTED/2.2.26/blast-2.2.26-x64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
     tar zxf /deps/blast-2.2.26-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
     cp /deps/blast/bin/blastpgp /usr/local/bin/ ;\
@@ -106,7 +106,7 @@ RUN mkdir -p /deps/sspro4 ; tar zxf /deps/sspro4.tar.gz -C /deps/sspro4 --strip-
     ./configure.pl
 
 # version 2.2.8 for sspro4
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy/2.2.8/blast-2.2.8-amd64-linux.tar.gz -P /deps/sspro4 ;\
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy.NOTSUPPORTED/2.2.8/blast-2.2.8-amd64-linux.tar.gz -P /deps/sspro4 ;\
     mkdir -p /deps/sspro4/blast2.2.8 ; \
     tar zxf /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz -C /deps/sspro4/blast2.2.8 --strip-components=1 ;\
     rm /deps/sspro4/blast-2.2.8-amd64-linux.tar.gz ; 
