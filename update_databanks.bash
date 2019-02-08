@@ -7,6 +7,7 @@ for ar in nr.*.tar.gz; do
     name=${ar%.tar.gz}
     if [ $ar -nt $name'.psq' ] ; then
         /bin/tar --overwrite -xzf $ar
+        rm $ar
     fi
 done
 
