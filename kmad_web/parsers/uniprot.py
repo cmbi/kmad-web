@@ -55,12 +55,14 @@ class UniprotParser(object):
         for i, line in enumerate(txt_list):
             if line.startswith("FT"):
                 if "MOD_RES" in line or "CARBOHYD" in line:
-                    feature = {}
-                    feature['type'] = line.split()[1]
-                    feature['position'] = line.split()[2]
-                    feature['info'] = ' '.join(line.split()[4:]).split(';')[0]
-                    feature['pub_med'] = self._get_pubmed_ids(txt_list, i)
-                    feature['eco'] = self._get_eco_codes(txt_list, i)
+                    feature = {
+                        'type': line.split()[1],
+                        'position': line.split()[2],
+                        # info is on the next line
+                        'info': "/".join(txt_list[i + 1].split("/")[1:]).replace("note=", "").strip('"'),
+                        'pub_med': self._get_pubmed_ids(txt_list, i),
+                        'eco': self._get_eco_codes(txt_list, i)
+                    }
                     self.ptms.append(feature)
 
     def parse_structure(self, txt_file):

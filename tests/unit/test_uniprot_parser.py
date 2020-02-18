@@ -22,6 +22,14 @@ def test_parse_txt():
     eq_(uniprot.go_terms[0], exp_go_term)
 
 
+def test_parse_ptms():
+    with open("tests/unit/testdata/P21815.txt") as a:
+        test_txt = a.read()
+    uniprot = UniprotParser()
+    uniprot.parse_ptms(test_txt)
+    print(uniprot.ptms)
+
+
 def test_parse_structure():
     with open("tests/unit/testdata/Q8CFN5.txt") as a:
         test_txt = a.read()

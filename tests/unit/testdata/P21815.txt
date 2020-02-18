@@ -1,0 +1,302 @@
+ID   SIAL_HUMAN              Reviewed;         317 AA.
+AC   P21815;
+DT   01-MAY-1991, integrated into UniProtKB/Swiss-Prot.
+DT   11-JAN-2011, sequence version 4.
+DT   11-DEC-2019, entry version 153.
+DE   RecName: Full=Bone sialoprotein 2;
+DE   AltName: Full=Bone sialoprotein II;
+DE            Short=BSP II;
+DE   AltName: Full=Cell-binding sialoprotein;
+DE   AltName: Full=Integrin-binding sialoprotein;
+DE   Flags: Precursor;
+GN   Name=IBSP; Synonyms=BNSP;
+OS   Homo sapiens (Human).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi; Mammalia;
+OC   Eutheria; Euarchontoglires; Primates; Haplorrhini; Catarrhini; Hominidae;
+OC   Homo.
+OX   NCBI_TaxID=9606;
+RN   [1]
+RP   NUCLEOTIDE SEQUENCE [MRNA], AND VARIANTS GLY-213; GLY-219 AND VAL-268.
+RX   PubMed=2404984;
+RA   Fisher L.W., McBride O.W., Termine J.D., Young M.F.;
+RT   "Human bone sialoprotein. Deduced protein sequence and chromosomal
+RT   localization.";
+RL   J. Biol. Chem. 265:2347-2351(1990).
+RN   [2]
+RP   NUCLEOTIDE SEQUENCE [GENOMIC DNA], AND VARIANTS GLU-195; GLY-213; GLY-219
+RP   AND ASP-270.
+RX   PubMed=8406493; DOI=10.1006/geno.1993.1340;
+RA   Kerr J.M., Fisher L.W., Termine J.D., Wang M.G., McBride W., Young M.F.;
+RT   "The human bone sialoprotein gene (IBSP): genomic localization and
+RT   characterization.";
+RL   Genomics 17:408-415(1993).
+RN   [3]
+RP   NUCLEOTIDE SEQUENCE [GENOMIC DNA], AND VARIANTS GLU-195; GLY-213 AND
+RP   ASP-270.
+RX   PubMed=8061918; DOI=10.1016/0945-053x(94)90027-2;
+RA   Kim R.H., Shapiro H.S., Li J.J., Wrana J.L., Sodek J.;
+RT   "Characterization of the human bone sialoprotein (BSP) gene and its
+RT   promoter sequence.";
+RL   Matrix Biol. 14:31-40(1994).
+RN   [4]
+RP   NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA].
+RX   PubMed=15815621; DOI=10.1038/nature03466;
+RA   Hillier L.W., Graves T.A., Fulton R.S., Fulton L.A., Pepin K.H., Minx P.,
+RA   Wagner-McPherson C., Layman D., Wylie K., Sekhon M., Becker M.C.,
+RA   Fewell G.A., Delehaunty K.D., Miner T.L., Nash W.E., Kremitzki C., Oddy L.,
+RA   Du H., Sun H., Bradshaw-Cordum H., Ali J., Carter J., Cordes M., Harris A.,
+RA   Isak A., van Brunt A., Nguyen C., Du F., Courtney L., Kalicki J.,
+RA   Ozersky P., Abbott S., Armstrong J., Belter E.A., Caruso L., Cedroni M.,
+RA   Cotton M., Davidson T., Desai A., Elliott G., Erb T., Fronick C., Gaige T.,
+RA   Haakenson W., Haglund K., Holmes A., Harkins R., Kim K., Kruchowski S.S.,
+RA   Strong C.M., Grewal N., Goyea E., Hou S., Levy A., Martinka S., Mead K.,
+RA   McLellan M.D., Meyer R., Randall-Maher J., Tomlinson C.,
+RA   Dauphin-Kohlberg S., Kozlowicz-Reilly A., Shah N., Swearengen-Shahid S.,
+RA   Snider J., Strong J.T., Thompson J., Yoakum M., Leonard S., Pearman C.,
+RA   Trani L., Radionenko M., Waligorski J.E., Wang C., Rock S.M.,
+RA   Tin-Wollam A.-M., Maupin R., Latreille P., Wendl M.C., Yang S.-P., Pohl C.,
+RA   Wallis J.W., Spieth J., Bieri T.A., Berkowicz N., Nelson J.O., Osborne J.,
+RA   Ding L., Meyer R., Sabo A., Shotland Y., Sinha P., Wohldmann P.E.,
+RA   Cook L.L., Hickenbotham M.T., Eldred J., Williams D., Jones T.A., She X.,
+RA   Ciccarelli F.D., Izaurralde E., Taylor J., Schmutz J., Myers R.M.,
+RA   Cox D.R., Huang X., McPherson J.D., Mardis E.R., Clifton S.W., Warren W.C.,
+RA   Chinwalla A.T., Eddy S.R., Marra M.A., Ovcharenko I., Furey T.S.,
+RA   Miller W., Eichler E.E., Bork P., Suyama M., Torrents D., Waterston R.H.,
+RA   Wilson R.K.;
+RT   "Generation and annotation of the DNA sequences of human chromosomes 2 and
+RT   4.";
+RL   Nature 434:724-731(2005).
+RN   [5]
+RP   PARTIAL PROTEIN SEQUENCE, AND CHARACTERIZATION.
+RX   PubMed=3597437;
+RA   Fisher L.W., Hawkins G.R., Tuross N., Termine J.D.;
+RT   "Purification and partial characterization of small proteoglycans I and II,
+RT   bone sialoproteins I and II, and osteonectin from the mineral compartment
+RT   of developing human bone.";
+RL   J. Biol. Chem. 262:9702-9708(1987).
+RN   [6]
+RP   PARTIAL PROTEIN SEQUENCE, GLYCOSYLATION AT THR-119; THR-122; THR-227;
+RP   THR-228; THR-229; THR-238 AND THR-239, STRUCTURE OF CARBOHYDRATE, VARIANT
+RP   GLY-213, AND IDENTIFICATION BY MASS SPECTROMETRY.
+RX   PubMed=11459848; DOI=10.1074/jbc.m105689200;
+RA   Wuttke M., Muller S., Nitsche D.P., Paulsson M., Hanisch F.G., Maurer P.;
+RT   "Structural characterization of human recombinant and bone-derived bone
+RT   sialoprotein. Functional implications for cell attachment and
+RT   hydroxyapatite binding.";
+RL   J. Biol. Chem. 276:36839-36848(2001).
+RN   [7]
+RP   PHOSPHORYLATION AT SER-31, SULFATION AT TYR-313 AND TYR-314, AND
+RP   IDENTIFICATION BY MASS SPECTROMETRY.
+RX   PubMed=11669636; DOI=10.1021/bi010887r;
+RA   Zaia J., Boynton R., Heinegard D., Barry F.;
+RT   "Posttranslational modifications to human bone sialoprotein determined by
+RT   mass spectrometry.";
+RL   Biochemistry 40:12983-12991(2001).
+CC   -!- FUNCTION: Binds tightly to hydroxyapatite. Appears to form an integral
+CC       part of the mineralized matrix. Probably important to cell-matrix
+CC       interaction. Promotes Arg-Gly-Asp-dependent cell attachment.
+CC   -!- SUBCELLULAR LOCATION: Secreted.
+CC   -!- PTM: N-glycosylated; glycans consist of sialylated and core-fucosylated
+CC       bi-, tri- and tetraantennary chains. {ECO:0000269|PubMed:11459848}.
+CC   -!- PTM: O-glycosylated at eight sites; mucin-type glycans contain Gal,
+CC       GlcNAc, GalNAc and terminal NeuAc. {ECO:0000269|PubMed:11459848}.
+CC   -!- PTM: Sulfated on either Tyr-313 or Tyr-314.
+CC       {ECO:0000269|PubMed:11669636}.
+CC   -!- MISCELLANEOUS: It is possible that the segments of clustered carboxyl
+CC       groups mediate the strong binding to hydroxyapatite.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   EMBL; J05213; AAC95490.1; -; mRNA.
+DR   EMBL; L09558; AAA60549.1; -; Genomic_DNA.
+DR   EMBL; L09554; AAA60549.1; JOINED; Genomic_DNA.
+DR   EMBL; L09555; AAA60549.1; JOINED; Genomic_DNA.
+DR   EMBL; L09556; AAA60549.1; JOINED; Genomic_DNA.
+DR   EMBL; L09557; AAA60549.1; JOINED; Genomic_DNA.
+DR   EMBL; L24759; AAC37560.1; -; Genomic_DNA.
+DR   EMBL; L24757; AAC37560.1; JOINED; Genomic_DNA.
+DR   EMBL; AC093768; -; NOT_ANNOTATED_CDS; Genomic_DNA.
+DR   CCDS; CCDS3624.1; -.
+DR   PIR; A35043; GEHUS.
+DR   RefSeq; NP_004958.2; NM_004967.3.
+DR   SMR; P21815; -.
+DR   IntAct; P21815; 1.
+DR   STRING; 9606.ENSP00000226284; -.
+DR   iPTMnet; P21815; -.
+DR   PhosphoSitePlus; P21815; -.
+DR   BioMuta; IBSP; -.
+DR   DMDM; 317373545; -.
+DR   PaxDb; P21815; -.
+DR   PeptideAtlas; P21815; -.
+DR   PRIDE; P21815; -.
+DR   ProteomicsDB; 53929; -.
+DR   DNASU; 3381; -.
+DR   Ensembl; ENST00000226284; ENSP00000226284; ENSG00000029559.
+DR   GeneID; 3381; -.
+DR   KEGG; hsa:3381; -.
+DR   UCSC; uc003hqx.5; human.
+DR   CTD; 3381; -.
+DR   DisGeNET; 3381; -.
+DR   EuPathDB; HostDB:ENSG00000029559.6; -.
+DR   GeneCards; IBSP; -.
+DR   HGNC; HGNC:5341; IBSP.
+DR   MIM; 147563; gene.
+DR   neXtProt; NX_P21815; -.
+DR   OpenTargets; ENSG00000029559; -.
+DR   PharmGKB; PA29590; -.
+DR   eggNOG; KOG1181; Eukaryota.
+DR   eggNOG; ENOG4111M3T; LUCA.
+DR   GeneTree; ENSGT00390000002485; -.
+DR   HOGENOM; HOG000234824; -.
+DR   InParanoid; P21815; -.
+DR   KO; K06253; -.
+DR   OMA; QDYYYHQ; -.
+DR   OrthoDB; 1565775at2759; -.
+DR   PhylomeDB; P21815; -.
+DR   TreeFam; TF338678; -.
+DR   Reactome; R-HSA-216083; Integrin cell surface interactions.
+DR   Reactome; R-HSA-3000178; ECM proteoglycans.
+DR   SIGNOR; P21815; -.
+DR   ChiTaRS; IBSP; human.
+DR   GeneWiki; Bone_sialoprotein; -.
+DR   GenomeRNAi; 3381; -.
+DR   Pharos; P21815; Tbio.
+DR   PRO; PR:P21815; -.
+DR   Proteomes; UP000005640; Chromosome 4.
+DR   RNAct; P21815; protein.
+DR   Bgee; ENSG00000029559; Expressed in 157 organ(s), highest expression level in tibia.
+DR   Genevisible; P21815; HS.
+DR   GO; GO:0005576; C:extracellular region; TAS:Reactome.
+DR   GO; GO:0005615; C:extracellular space; ISS:UniProtKB.
+DR   GO; GO:0016020; C:membrane; HDA:UniProtKB.
+DR   GO; GO:0031982; C:vesicle; ISS:UniProtKB.
+DR   GO; GO:0005178; F:integrin binding; IMP:CAFA.
+DR   GO; GO:0030282; P:bone mineralization; IEA:Ensembl.
+DR   GO; GO:0007155; P:cell adhesion; ISS:UniProtKB.
+DR   GO; GO:0071363; P:cellular response to growth factor stimulus; ISS:UniProtKB.
+DR   GO; GO:0030198; P:extracellular matrix organization; ISS:UniProtKB.
+DR   GO; GO:0001649; P:osteoblast differentiation; HDA:UniProtKB.
+DR   GO; GO:0045785; P:positive regulation of cell adhesion; IMP:CAFA.
+DR   DisProt; DP00332; -.
+DR   InterPro; IPR008412; BSP_II.
+DR   PANTHER; PTHR10345; PTHR10345; 1.
+DR   Pfam; PF05432; BSP_II; 1.
+PE   1: Evidence at protein level;
+KW   Biomineralization; Cell adhesion; Direct protein sequencing; Glycoprotein;
+KW   Phosphoprotein; Polymorphism; Reference proteome; Secreted; Sialic acid;
+KW   Signal; Sulfation.
+FT   SIGNAL          1..16
+FT   CHAIN           17..317
+FT                   /note="Bone sialoprotein 2"
+FT                   /id="PRO_0000020330"
+FT   MOTIF           286..288
+FT                   /note="Cell attachment site"
+FT   COMPBIAS        65..173
+FT                   /note="Asp/Glu-rich (acidic)"
+FT   COMPBIAS        76..83
+FT                   /note="Poly-Glu"
+FT   COMPBIAS        151..158
+FT                   /note="Poly-Glu"
+FT   MOD_RES         31
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000269|PubMed:11669636"
+FT   MOD_RES         67
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000250|UniProtKB:Q28862"
+FT   MOD_RES         74
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000250|UniProtKB:Q28862"
+FT   MOD_RES         75
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000250|UniProtKB:Q28862"
+FT   MOD_RES         94
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000250|UniProtKB:Q28862"
+FT   MOD_RES         100
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000250|UniProtKB:Q28862"
+FT   MOD_RES         149
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000250|UniProtKB:Q28862"
+FT   MOD_RES         280
+FT                   /note="Phosphoserine"
+FT                   /evidence="ECO:0000250|UniProtKB:Q28862"
+FT   MOD_RES         313
+FT                   /note="Sulfotyrosine"
+FT                   /evidence="ECO:0000269|PubMed:11669636"
+FT   MOD_RES         314
+FT                   /note="Sulfotyrosine"
+FT                   /evidence="ECO:0000269|PubMed:11669636"
+FT   CARBOHYD        104
+FT                   /note="N-linked (GlcNAc...) asparagine"
+FT                   /evidence="ECO:0000255"
+FT   CARBOHYD        119
+FT                   /note="O-linked (GalNAc...) threonine"
+FT                   /evidence="ECO:0000305|PubMed:11459848"
+FT   CARBOHYD        122
+FT                   /note="O-linked (GalNAc...) threonine"
+FT                   /evidence="ECO:0000305|PubMed:11459848"
+FT   CARBOHYD        177
+FT                   /note="N-linked (GlcNAc...) asparagine"
+FT                   /evidence="ECO:0000255"
+FT   CARBOHYD        182
+FT                   /note="N-linked (GlcNAc...) asparagine"
+FT                   /evidence="ECO:0000255"
+FT   CARBOHYD        190
+FT                   /note="N-linked (GlcNAc...) asparagine"
+FT                   /evidence="ECO:0000255"
+FT   CARBOHYD        227
+FT                   /note="O-linked (GalNAc...) threonine"
+FT                   /evidence="ECO:0000305|PubMed:11459848"
+FT   CARBOHYD        228
+FT                   /note="O-linked (GalNAc...) threonine"
+FT                   /evidence="ECO:0000305|PubMed:11459848"
+FT   CARBOHYD        229
+FT                   /note="O-linked (GalNAc...) threonine"
+FT                   /evidence="ECO:0000305|PubMed:11459848"
+FT   CARBOHYD        238
+FT                   /note="O-linked (GalNAc...) threonine"
+FT                   /evidence="ECO:0000305|PubMed:11459848"
+FT   CARBOHYD        239
+FT                   /note="O-linked (GalNAc...) threonine"
+FT                   /evidence="ECO:0000305|PubMed:11459848"
+FT   VARIANT         195
+FT                   /note="G -> E (in dbSNP:rs1054627)"
+FT                   /evidence="ECO:0000269|PubMed:8061918,
+FT                   ECO:0000269|PubMed:8406493"
+FT                   /id="VAR_058014"
+FT   VARIANT         213
+FT                   /note="D -> G (in dbSNP:rs13144371)"
+FT                   /evidence="ECO:0000269|PubMed:11459848,
+FT                   ECO:0000269|PubMed:2404984, ECO:0000269|PubMed:8061918,
+FT                   ECO:0000269|PubMed:8406493"
+FT                   /id="VAR_058015"
+FT   VARIANT         219
+FT                   /note="R -> G (in dbSNP:rs17013181)"
+FT                   /evidence="ECO:0000269|PubMed:2404984,
+FT                   ECO:0000269|PubMed:8406493"
+FT                   /id="VAR_058016"
+FT   VARIANT         256
+FT                   /note="T -> A (in dbSNP:rs17013182)"
+FT                   /id="VAR_056579"
+FT   VARIANT         268
+FT                   /note="A -> V (in dbSNP:rs1054628)"
+FT                   /evidence="ECO:0000269|PubMed:2404984"
+FT                   /id="VAR_056580"
+FT   VARIANT         270
+FT                   /note="E -> D (in dbSNP:rs1054629)"
+FT                   /evidence="ECO:0000269|PubMed:8061918,
+FT                   ECO:0000269|PubMed:8406493"
+FT                   /id="VAR_058017"
+FT   CONFLICT        94
+FT                   /note="S -> L (in Ref. 3; AAC37560)"
+FT                   /evidence="ECO:0000305"
+SQ   SEQUENCE   317 AA;  35148 MW;  736CB6B8C3716FE7 CRC64;
+     MKTALILLSI LGMACAFSMK NLHRRVKIED SEENGVFKYR PRYYLYKHAY FYPHLKRFPV
+     QGSSDSSEEN GDDSSEEEEE EEETSNEGEN NEESNEDEDS EAENTTLSAT TLGYGEDATP
+     GTGYTGLAAI QLPKKAGDIT NKATKEKESD EEEEEEEEGN ENEESEAEVD ENEQGINGTS
+     TNSTEAENGN GSSGGDNGEE GEEESVTGAN AEDTTETGRQ GKGTSKTTTS PNGGFEPTTP
+     PQVYRTTSPP FGKTTTVEYE GEYEYTGANE YDNGYEIYES ENGEPRGDNY RAYEDEYSYF
+     KGQGYDGYDG QNYYHHQ
+//
