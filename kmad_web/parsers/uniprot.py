@@ -71,8 +71,9 @@ class UniprotParser(object):
                 if i.split()[1] != 'DISULFID':
                     feature = {}
                     feature['name'] = i.split()[1]
-                    start = i.split()[2].lstrip('<').lstrip('>')
-                    end = i.split()[3].lstrip('<').lstrip('>')
+                    ss_range = i.split()[-1].split(".")
+                    start = ss_range[0]
+                    end = ss_range[-1]
                     if start.isdigit() and end.isdigit():
                         feature['start'] = int(start)
                         feature['end'] = int(end)
