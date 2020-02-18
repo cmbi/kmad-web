@@ -70,3 +70,6 @@ tmp*
 error.log
 
 core
+
+# JetBrains
+.idea/

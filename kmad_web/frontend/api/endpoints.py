@@ -27,7 +27,12 @@ def create_kmad(output_type):
     """
     request_ip = get_ip()
     _log.info("[IP: %s] Submitted job: %s", request_ip, output_type)
-    form = request.form
+
+    form = request.data
+    _log.info(type(request.data))
+    _log.info(dir(request))
+    _log.info(dir(request.data))
+    _log.info("form:", request.json)
     if output_type == "predict":
         methods = form['prediction_methods'].split()
         strategy = PredictStrategy(form['seq_data'], methods)
