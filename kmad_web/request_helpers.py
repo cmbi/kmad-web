@@ -7,7 +7,7 @@ def get_ip():
     else:
         ip = request.remote_addr
 
-    if isinstance(ip, basestring) and len(ip.split(",")) > 1:
+    if isinstance(ip, str) and len(ip.split(",")) > 1:
         ip = ip.split(",")[0]
 
     return ip

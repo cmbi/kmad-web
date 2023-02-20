@@ -2,11 +2,12 @@ import logging
 
 from flask_wtf import Form
 from wtforms import widgets, validators
-from wtforms.fields import (FloatField, IntegerField, SelectField,
-                            TextAreaField, SelectMultipleField,
-                            FieldList, FormField, TextField,
-                            SubmitField, RadioField)
-from wtforms.widgets import html_params, HTMLString
+from wtforms import (FloatField, IntegerField, SelectField,
+                     TextAreaField, SelectMultipleField,
+                     FieldList, FormField, StringField,
+                     SubmitField, RadioField)
+from wtforms.widgets import html_params
+from markupsafe import Markup
 
 _log = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class MyListWidget(object):
             else:
                 html.append(u'<li>%s %s</li>' % (subfield(), subfield.label))
         html.append(u'</%s>' % self.html_end_tag)
-        return HTMLString(u''.join(html))
+        return Markup(u''.join(html))
 
 
 class UsrFeatureEntryForm(Form):
@@ -65,11 +66,11 @@ class UsrFeatureEntryForm(Form):
                                              positions) OR by pattern - \
                                              not both')
 
-    featname = TextField(u'Feature name', [validators.length(max=10)])
+    featname = StringField(u'Feature name', [validators.length(max=10)])
     add_score = FloatField(u'Add score', [validators.Optional()])
     sequence_number = IntegerField(u'Sequence number', [validators.Optional()])
-    positions = TextField(u'Feature positions', [validators.Optional()])
-    pattern = TextField(u'Feature pattern(regex)', [validators.Optional()])
+    positions = StringField(u'Feature positions', [validators.Optional()])
+    pattern = StringField(u'Feature pattern(regex)', [validators.Optional()])
     trash_it = SubmitField()
 
 

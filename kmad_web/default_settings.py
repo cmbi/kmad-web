@@ -3,12 +3,12 @@ from kombu import Exchange, Queue
 
 
 # Celery
-CELERY_BROKER_URL = 'amqp://guest@kmadweb_rabbitmq_1'
+CELERY_BROKER_URL = 'amqp://guest@kmad-web_rabbitmq_1'
 CELERY_DEFAULT_QUEUE = 'kmad_web'
 CELERY_QUEUES = (
     Queue('kmad_web', Exchange('kmad_web'), routing_key='kmad_web'),
 )
-CELERY_RESULT_BACKEND = 'redis://kmadweb_redis_1/0'
+CELERY_RESULT_BACKEND = 'redis://kmad-web_redis_1/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -30,7 +30,7 @@ CELERYBEAT_SCHEDULE = {
 CACHE_CONFIG = {
     'redis': {
         'redis.backend': 'dogpile.cache.redis',
-        'redis.arguments.host': 'kmadweb_redis_1',
+        'redis.arguments.host': 'kmad-web_redis_1',
         'redis.arguments.port': 6379,
         'redis.arguments.db': 1,
         'redis.arguments.redis_expiration_time': 60*60*24*30,  # 30 days

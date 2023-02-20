@@ -178,14 +178,14 @@ class PredictionProcessor(object):
             # method names present in the predictions dict sorted by index in
             # the order list
             methods = sorted(predictions.keys(), key=lambda x: order.index(x))
-            for k, v in predictions.iteritems():
+            for k, v in predictions.items():
                 if len(v) != len(sequence):
                     _log.error("Prediction from {} has different length ({}) "
                                "than the seuence ({}).\nPrediction: {}\n"
                                "Sequence: {}\n".format(
                                    k, len(v), len(sequence), v, sequence))
 
-            filtered = {k: v for k, v in predictions.iteritems() if
+            filtered = {k: v for k, v in predictions.items() if
                         len(v) == len(sequence)}
             if len(predictions) != len(filtered):
                 _log.warn("Not all predictions are of the same length as the "

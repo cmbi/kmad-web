@@ -54,8 +54,6 @@ class KmadAligner(object):
             _log.info("KMAD call arguments: {}".format(args))
             _log.error("KMAD returned an error: {}".format(e))
             raise ServiceError(e)
-        else:
-            _log.error("KMAD result not found: {}".format(result_path))
-            raise ServiceError("KMAD result not found: {}".format(result_path))
+
 
 kmad = KmadAligner(KMAD)

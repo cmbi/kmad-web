@@ -3,7 +3,7 @@ import os
 import re
 import requests
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from kmad_web.services.types import ServiceError
 from kmad_web.services.helpers.cache import cache_manager as cm

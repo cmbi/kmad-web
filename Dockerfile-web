@@ -1,9 +1,23 @@
-FROM python:2.7-onbuild
+FROM python:3.10
 
+# dependencies
 RUN apt-get install -y curl
-RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
 
-RUN . ~/.nvm/nvm.sh ; nvm install v4.4.0 ; npm install -g bower; bower install --allow-root
-
+# hope
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-EXPOSE 8030
+
+COPY bower.json /usr/src/app/
+COPY .bowerrc /usr/src/app/
+RUN . ~/.nvm/nvm.sh && nvm install v17.3.0 && \
+    npm install -g bower && bower install --allow-root
+RUN . ~/.nvm/nvm.sh && npm install --prefix /usr/src/app/hope/frontend/static/libs mdb-ui-kit
+
+COPY requirements.txt /usr/src/app/
+RUN echo "restart"
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . /usr/src/app
+
+# settings
+EXPOSE 5000

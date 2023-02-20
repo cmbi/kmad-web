@@ -1,7 +1,7 @@
 import ast
 import logging
-import StringIO
 
+from io import StringIO
 from flask import abort
 from flask import (Blueprint, render_template, request, redirect, url_for,
                    send_file)

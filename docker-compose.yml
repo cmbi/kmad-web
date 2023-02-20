@@ -20,17 +20,17 @@ services:
       - KMAD_WEB_SETTINGS=/usr/src/app/prd_settings.py
     command: celery -A kmad_web.application:celery worker -B -n kmad_web.%h
     volumes:
-      - "/srv/kmad:/data"
+      - "/Users/langej10/data/kmad:/data"
     depends_on:
       - rabbitmq
       - redis
-  databanks:
-    build:
-      context: .
-      dockerfile: Dockerfile-databanks
-    command: bash /usr/src/app/schedule_updates.bash
-    volumes:
-      - "/srv/kmad:/data"
+        # databanks:
+        #   build:
+        #     context: .
+        #     dockerfile: Dockerfile-databanks
+        #   command: bash /usr/src/app/schedule_updates.bash
+        #   volumes:
+        #     - "/srv/kmad:/data"
   redis:
     image: redis
   rabbitmq:

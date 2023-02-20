@@ -35,7 +35,6 @@ class ElmUpdater(object):
         for i, motif_id in enumerate(elm_parser.motif_classes.keys()):
             if i + 1 % 10 == 0:
                 _log.info("Updated %s out of %s motifs", i + 1, total_motifs)
-                print "Updated %s out of %s motifs" % (i + 1, total_motifs)
             extended_go_terms = self._get_extended_go_terms(motif_id)
             full_motif_classes[motif_id]['GO'] = extended_go_terms
         # make json serializable

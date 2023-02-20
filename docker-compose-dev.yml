@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile-celery
     volumes:
       - ".:/usr/src/app"
-      - "/srv/kmad:/data"
+      - "/Users/langej10/data/kmad:/data"
     command: watchmedo auto-restart -d /usr/src/app -p "*.py" -D -R -- celery -A kmad_web.application:celery worker -B -n kmad_web.%h
     depends_on:
       - rabbitmq
@@ -33,15 +33,15 @@ services:
     env_file:
       - kmadweb.env
 
-  databanks:
-    build:
-      context: .
-      dockerfile: Dockerfile-databanks
-    volumes:
-      - ".:/usr/src/app"
-      - "/srv/kmad:/data"
-    env_file:
-      - kmadweb.env
+        # databanks:
+        #   build:
+        #     context: .
+        #     dockerfile: Dockerfile-databanks
+        #   volumes:
+        #     - ".:/usr/src/app"
+        #     - "/Users/langej10/data/kmad:/data"
+        #   env_file:
+        #     - kmadweb.env
 
   redis:
     image: redis

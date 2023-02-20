@@ -17,7 +17,7 @@ _log = logging.getLogger(__name__)
 def recursive_asdict(d):
     """Convert Suds object into serializable format."""
     out = {}
-    for k, v in asdict(d).iteritems():
+    for k, v in asdict(d).items():
         if hasattr(v, '__keylist__'):
             out[k] = recursive_asdict(v)
         elif isinstance(v, list):

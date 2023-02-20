@@ -16,7 +16,7 @@ class CacheManager(object):
             self.load_config(config)
 
     def load_config(self, config):
-        for region, config in config.iteritems():
+        for region, config in config.items():
             self.regions[region] = make_region().configure_from_config(
                 config, '{}.'.format(region))
 

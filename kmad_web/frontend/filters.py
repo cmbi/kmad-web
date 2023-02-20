@@ -2,7 +2,7 @@
 import logging
 import re
 
-from jinja2 import Markup
+from jinja2.utils import markupsafe
 
 
 _log = logging.getLogger(__name__)
@@ -35,4 +35,4 @@ def beautify_docstring(docstring):
     for rv in m_ret:
         result = '{}\n<p>{}</p>'.format(result, rv)
 
-    return Markup(result)
+    return markupsafe.Markup(result)

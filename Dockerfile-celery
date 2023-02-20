@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:22.04
 
 RUN dpkg --add-architecture i386  # for sspro4
 RUN apt-get update
@@ -113,22 +113,22 @@ RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy.NOTSUPPORTED/2.2
 
 # predisorder
 # TODO: get libstdc++.so.5
-RUN wget -q http://sysbio.rnet.missouri.edu/multicom_toolbox/tools/predisorder1.1.tar.gz -P /deps;\
-    mkdir -p /deps/predisorder ; tar zxf /deps/predisorder1.1.tar.gz -C /deps/predisorder --strip-components=1 ;\
-    cd /deps/predisorder ;\
-    # Set paths for installation and sspro4
-    sed -i '17s/.*/$install_dir = "\/deps\/predisorder";/' configure.pl ;\
-    sed -i '20s/.*/$pspro_dir = "\/deps\/sspro4";/' configure.pl ;\
-    chmod a+x configure.pl ;\
-    chmod a+x /deps/predisorder/bin/predict_diso.sh ;\
-    chmod a+x /deps/predisorder/script/predict_diso.pl ;\
-    chmod a+x /deps/predisorder/server/predict_seq ; \
-    ./configure.pl ;\
-    rm /deps/predisorder1.1.tar.gz
-
-RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
-    /deps/predisorder/bin/predict_diso.sh 1crn.fasta test_name ;\
-    rm 1crn.fasta
+# RUN wget -q http://sysbio.rnet.missouri.edu/multicom_toolbox/tools/predisorder1.1.tar.gz -P /deps;\
+#     mkdir -p /deps/predisorder ; tar zxf /deps/predisorder1.1.tar.gz -C /deps/predisorder --strip-components=1 ;\
+#     cd /deps/predisorder ;\
+#     # Set paths for installation and sspro4
+#     sed -i '17s/.*/$install_dir = "\/deps\/predisorder";/' configure.pl ;\
+#     sed -i '20s/.*/$pspro_dir = "\/deps\/sspro4";/' configure.pl ;\
+#     chmod a+x configure.pl ;\
+#     chmod a+x /deps/predisorder/bin/predict_diso.sh ;\
+#     chmod a+x /deps/predisorder/script/predict_diso.pl ;\
+#     chmod a+x /deps/predisorder/server/predict_seq ; \
+#     ./configure.pl ;\
+#     rm /deps/predisorder1.1.tar.gz
+# 
+# RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureIdList=1CRN&compressionType=uncompressed" -O 1crn.fasta ;\
+#     /deps/predisorder/bin/predict_diso.sh 1crn.fasta test_name ;\
+#     rm 1crn.fasta
 
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/old_versions/psipred3.5.tar.gz -P /deps;\
     mkdir -p /deps/psipred3.5 ; tar zxf /deps/psipred3.5.tar.gz -C /deps/psipred3.5 --strip-components=1 ;\
@@ -152,14 +152,14 @@ RUN wget -q "https://www.rcsb.org/pdb/download/downloadFastaFiles.do?structureId
 
 # spine-x
 # The sed command sets fortran, removing the prompt for a compiler.
-RUN wget -q https://servers.sparks-lab.org/downloads/spineXpublic.tgz -P /deps;\
-    mkdir -p /deps/spinex ; tar zxf /deps/spineXpublic.tgz -C /deps/spinex --strip-components=1
-RUN cd /deps/spinex/code ;\
-    sed -i '6s/read complr/complr=gfortran/' compile ;\
-    ./compile ;\
-    rm /deps/spineXpublic.tgz
-ENV spineXcodir /deps/spinex/code
-ENV spineXblast /usr
+# RUN wget -q https://servers.sparks-lab.org/downloads/spineXpublic.tgz -P /deps;\
+#     mkdir -p /deps/spinex ; tar zxf /deps/spineXpublic.tgz -C /deps/spinex --strip-components=1
+# RUN cd /deps/spinex/code ;\
+#     sed -i '6s/read complr/complr=gfortran/' compile ;\
+#     ./compile ;\
+#     rm /deps/spineXpublic.tgz
+# ENV spineXcodir /deps/spinex/code
+# ENV spineXblast /usr
 
 # iupred
 COPY vendor/iupred.tar.gz /deps
@@ -171,16 +171,16 @@ RUN mkdir -p /deps/iupred ;\
     rm /deps/iupred.tar.gz
 
 # spine-d
-RUN wget -q https://servers.sparks-lab.org/downloads/spinedlocal_v2.0.tar.gz -P /deps ;\
-    mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
-    sed -i '16s/.*/blastprog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
-    sed -i '38s/ncpu=4/ncpu=7/' /deps/spined/bin/run_spine-d && \
-    sed -i '19s/.*/nrdb=\/data\/nr/' /deps/spined/bin/run_spine-d && \
-    sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
-    sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
-    sed -i '28s/.*/export IUPred_PATH=\/deps\/iupred/' /deps/spined/bin/run_spine-d && \
-    sed -i 's/${workdir}\/compile/bash ${workdir}\/compile/g' /deps/spined/bin/run_spine-d && \
-    rm /deps/spinedlocal_v2.0.tar.gz
+# RUN wget -q https://servers.sparks-lab.org/downloads/spinedlocal_v2.0.tar.gz -P /deps ;\
+#     mkdir -p /deps/spined ; tar zxf /deps/spinedlocal_v2.0.tar.gz -C /deps/spined --strip-components=1 ;\
+#     sed -i '16s/.*/blastprog=\/usr\/local\/bin\/psiblast/' /deps/spined/bin/run_spine-d && \
+#     sed -i '38s/ncpu=4/ncpu=7/' /deps/spined/bin/run_spine-d && \
+#     sed -i '19s/.*/nrdb=\/data\/nr/' /deps/spined/bin/run_spine-d && \
+#     sed -i '22s/.*/spx=\/deps\/spinex/' /deps/spined/bin/run_spine-d && \
+#     sed -i '25s/.*/export spd=\/deps\/spined/' /deps/spined/bin/run_spine-d && \
+#     sed -i '28s/.*/export IUPred_PATH=\/deps\/iupred/' /deps/spined/bin/run_spine-d && \
+#     sed -i 's/${workdir}\/compile/bash ${workdir}\/compile/g' /deps/spined/bin/run_spine-d && \
+#     rm /deps/spinedlocal_v2.0.tar.gz
 
 # clustalo/clustalw
 RUN wget -q http://www.clustal.org/omega/clustalo-1.2.3-Ubuntu-x86_64 -P /deps ;\
@@ -203,14 +203,15 @@ RUN wget -q http://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64
     rm /deps/muscle3.8.31_i86linux64.tar.gz ; rm -rf /deps/muscle
 
 # tcoffee
-RUN wget  http://www.tcoffee.org/Packages/Stable/Latest/T-COFFEE_distribution_Version_13.41.0.28bdc39.tar.gz -P /deps ;\
-    mkdir -p /deps/tcoffee ; tar zxf /deps/T-COFFEE_distribution_Version_13.41.0.28bdc39.tar.gz -C /deps/tcoffee --strip-components=1 ;\
-    cd /deps/tcoffee/t_coffee_source ; make -j t_coffee && cp /deps/tcoffee/t_coffee_source/t_coffee /usr/local/bin
+# RUN wget  http://www.tcoffee.org/Packages/Stable/Latest/T-COFFEE_distribution_Version_13.41.0.28bdc39.tar.gz -P /deps ;\*/
+#     mkdir -p /deps/tcoffee ; tar zxf /deps/T-COFFEE_distribution_Version_13.41.0.28bdc39.tar.gz -C /deps/tcoffee --strip-components=1 ;\*/
+#     cd /deps/tcoffee/t_coffee_source ; make -j t_coffee && cp /deps/tcoffee/t_coffee_source/t_coffee /usr/local/bin
 
 COPY requirements.txt .
-RUN apt-get install -y python-pip
-RUN pip install --upgrade pip
-RUN pip install --no-cache -r requirements.txt
+RUN apt-get install -y python3-pip
+RUN pip3 install --upgrade pip
+RUN echo "restart"
+RUN pip3 install --no-cache -r requirements.txt
 
 COPY . /usr/src/app
 WORKDIR /usr/src/app
