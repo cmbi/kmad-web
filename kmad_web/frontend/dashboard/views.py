@@ -25,6 +25,14 @@ def index():
     _log.info("Request for 'index' page from IP %s", request_ip)
 
     form = KmadForm()
+    print("shit")
+    _log.info(form.submit_job)
+    _log.info("daa: %s", form.data)
+    if form.submit_job.data:
+        _log.info("Submitted")
+        if form.validate_on_submit():
+            _log.info("Validation OK")
+        _log.info("sequence: %s", form.sequence.data)
     if (form.submit_job.data and form.validate_on_submit()
             and form.sequence.data and form.output_type.data
             and form.gop.data and form.gep.data and form.egp.data

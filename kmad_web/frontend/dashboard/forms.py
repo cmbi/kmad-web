@@ -1,6 +1,6 @@
 import logging
 
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import widgets, validators
 from wtforms import (FloatField, IntegerField, SelectField,
                      TextAreaField, SelectMultipleField,
@@ -42,7 +42,10 @@ class MyListWidget(object):
         return Markup(u''.join(html))
 
 
-class UsrFeatureEntryForm(Form):
+class UsrFeatureEntryForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     def validate_positions(form, field):
         if field.data:
             data_list = field.data.replace(' ', '').split(',')
@@ -109,7 +112,10 @@ def check_if_fasta(sequences):
                                           acid codes')
 
 
-class KmadForm(Form):
+class KmadForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     def validate_sequence(form, field):
         i = 0
         seq_list = field.data.splitlines()
