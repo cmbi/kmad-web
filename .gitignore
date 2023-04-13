@@ -73,3 +73,5 @@ core
 
 # JetBrains
 .idea/
+
+.DS_Store

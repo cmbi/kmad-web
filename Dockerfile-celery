@@ -57,13 +57,23 @@ RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy.NOTSUPPORTED/2.2
     cp -r /deps/blast/data /usr/local/bin/ ;\
     rm /deps/blast-2.2.26-x64-linux.tar.gz ; rm -rf /deps/blast
 
+# # version 2.5.0 for blastp, psiblast
+# RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
+#     mkdir -p /deps/blast ;\
+#     tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+#     cp /deps/blast/bin/blastp /usr/local/bin ;\
+#     cp /deps/blast/bin/psiblast /usr/local/bin ;\
+#     rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast
+
+
 # version 2.5.0 for blastp, psiblast
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz -P /deps ;\
+RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.13.0/ncbi-blast-2.13.0+-x64-linux.tar.gz -P /deps ;\
     mkdir -p /deps/blast ;\
-    tar zxf /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+    tar zxf /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
     cp /deps/blast/bin/blastp /usr/local/bin ;\
     cp /deps/blast/bin/psiblast /usr/local/bin ;\
-    rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast
+    rm /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz ; rm -rf /deps/blast
+
 
 # disopred
 RUN wget -q http://bioinfadmin.cs.ucl.ac.uk/downloads/DISOPRED/OLD/DISOPRED3.15.tar.gz -P /deps;\

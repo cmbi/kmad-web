@@ -151,12 +151,12 @@ class PredictionProcessor(object):
         _log.debug(prediction_lines)
         dis_regions = [i.split('-')
                        for i in prediction_lines[0].split(':')[-1].split(', ')]
-        disorder_list = [0 for i in xrange(seqlength)]
+        disorder_list = [0 for i in range(seqlength)]
         for i in dis_regions:
             if i[0] and i[1]:
                 start = int(i[0]) - 1
                 end = int(i[1])
-                for j in xrange(start, end):
+                for j in range(start, end):
                     disorder_list[j] = 2
         return disorder_list
 
@@ -194,7 +194,7 @@ class PredictionProcessor(object):
             pred_text.append("ResNo AA {}".format(
                 ' '.join(methods)
             ))
-            for j in xrange(len(sequence)):
+            for j in range(len(sequence)):
                 pred_text.append("{} {} {}".format(
                     str(j + 1), sequence[j],
                     ' '.join([str(predictions[m][j]) for m in methods])

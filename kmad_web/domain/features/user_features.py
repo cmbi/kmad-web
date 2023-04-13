@@ -68,8 +68,7 @@ class UserFeaturesParser(object):
 
     def _remove_empty(self, usr_features):
         new_features = usr_features[:]
-        indexes = range(len(usr_features))
-        indexes.reverse()
+        indexes = list(range(len(usr_features)))[::-1]
         for i in indexes:
             for j in usr_features[i].keys():
                 if not usr_features[i][j]:
@@ -101,6 +100,6 @@ class UserFeaturesParser(object):
             if i.isdigit():
                 parsed += [i]
             elif len(i.split('-')) == 2:
-                parsed += [str(j) for j in xrange(int(i.split('-')[0]),
-                                                  int(i.split('-')[1]) + 1)]
+                parsed += [str(j) for j in range(int(i.split('-')[0]),
+                                                 int(i.split('-')[1]) + 1)]
         return parsed
