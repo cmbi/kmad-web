@@ -27,7 +27,7 @@ class NetphosService(object):
         try:
             tmp_file = tempfile.NamedTemporaryFile(
                 suffix=".fasta", delete=False)
-            with tmp_file as f:
+            with open(tmp_file.name, "w") as f:
                 f.write(fasta_sequence)
             fasta_filename = tmp_file.name
 
@@ -37,7 +37,9 @@ class NetphosService(object):
                 _log.debug("Calling NetPhos with command {}".format(
                     subprocess.list2cmdline(args)
                 ))
-                result = subprocess.check_output(args, stderr=subprocess.PIPE)
+                result = subprocess.check_output(
+                    args, stderr=subprocess.PIPE
+                ).decode("utf-8")
                 os.remove(fasta_filename)
             else:
                 _log.error("NetPhos not found: {}".format(self._path))

@@ -66,6 +66,8 @@ class PfamService(object):
         try:
             data = {'seq': fasta_sequence, 'output': 'xml'}
             _log.debug("Submitting sequence:\n{}".format(fasta_sequence))
+            _log.info("Submitting sequence:\n{}".format(fasta_sequence))
+            _log.info("url:\n{}".format(self._url))
             request = requests.post(self._url, data=data)
             request.raise_for_status()
         except (requests.ConnectionError, requests.HTTPError) as e:
@@ -78,7 +80,7 @@ class PfamService(object):
             except (KeyError, ExpatError) as e:
                 _log.info("Pfam returned an error: {}".format(e))
                 raise ServiceError(
-                    "{}\nUnexpected response from Pfam".format(e.message))
+                    "{}\nUnexpected response from Pfam".format(e))
 
         return result_url
 

@@ -66,13 +66,13 @@ RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/legacy.NOTSUPPORTED/2.2
 #     rm /deps/ncbi-blast-2.5.0+-x64-linux.tar.gz ; rm -rf /deps/blast
 
 
-# version 2.5.0 for blastp, psiblast
-RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.13.0/ncbi-blast-2.13.0+-x64-linux.tar.gz -P /deps ;\
-    mkdir -p /deps/blast ;\
-    tar zxf /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
-    cp /deps/blast/bin/blastp /usr/local/bin ;\
-    cp /deps/blast/bin/psiblast /usr/local/bin ;\
-    rm /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz ; rm -rf /deps/blast
+# # version 2.5.0 for blastp, psiblast
+# RUN wget -q ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.13.0/ncbi-blast-2.13.0+-x64-linux.tar.gz -P /deps ;\
+#     mkdir -p /deps/blast ;\
+#     tar zxf /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+#     cp /deps/blast/bin/blastp /usr/local/bin ;\
+#     cp /deps/blast/bin/psiblast /usr/local/bin ;\
+#     rm /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz ; rm -rf /deps/blast
 
 
 # disopred
@@ -216,6 +216,16 @@ RUN wget -q http://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64
 # RUN wget  http://www.tcoffee.org/Packages/Stable/Latest/T-COFFEE_distribution_Version_13.41.0.28bdc39.tar.gz -P /deps ;\*/
 #     mkdir -p /deps/tcoffee ; tar zxf /deps/T-COFFEE_distribution_Version_13.41.0.28bdc39.tar.gz -C /deps/tcoffee --strip-components=1 ;\*/
 #     cd /deps/tcoffee/t_coffee_source ; make -j t_coffee && cp /deps/tcoffee/t_coffee_source/t_coffee /usr/local/bin
+
+
+# version 2.13.0 for blastp, psiblast
+RUN wget -q https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.13.0+-x64-linux.tar.gz -P /deps ;\
+        mkdir -p /deps/blast ;\
+        tar zxf /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz -C /deps/blast --strip-components=1 ;\
+        cp /deps/blast/ncbi-blast-2.13.0+/bin/blastp /usr/local/bin ;\
+        cp /deps/blast/ncbi-blast-2.13.0+/bin/psiblast /usr/local/bin ;\
+        rm /deps/ncbi-blast-2.13.0+-x64-linux.tar.gz ;\
+        rm -rf /deps/blast
 
 COPY requirements.txt .
 RUN apt-get install -y python3-pip

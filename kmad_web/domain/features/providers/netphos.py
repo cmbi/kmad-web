@@ -12,7 +12,7 @@ class NetphosFeatureProvider(object):
         netphos_service = NetphosService(NETPHOS_PATH)
         netphos_parser = NetphosParser()
         netphos_result = netphos_service.predict(fasta_sequence)
-        netphos_parser.parse(netphos_result)
+        netphos_parser.parse(netphos_result.decode("utf-8"))
         phosphorylations = []
         for p in netphos_parser.phosph_positions:
             phosph = {'name': 'phosphorylation',

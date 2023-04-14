@@ -41,11 +41,12 @@ class SequencesEncoder(object):
         # (code dict for PTMs is constant)
         self.motif_code_dict = self._create_motif_code_dict()
         self.motif_prob_dict = self._create_motif_prob_dict()
-        if use_pfam:
-            self.domain_code_dict = self._create_domain_code_dict()
-            self._encode_domains()
-        else:
-            self.domain_code_dict = {}
+        self.domain_code_dict = {}
+        # if use_pfam:
+        #     self.domain_code_dict = self._create_domain_code_dict()
+        #     self._encode_domains()
+        # else:
+        #     self.domain_code_dict = {}
         # all feature positions are 1-based!
         self._encode_ptms()
         self._encode_motifs()

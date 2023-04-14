@@ -38,8 +38,8 @@ class SequencesAnnotator(object):
         go_terms = self._get_go_terms()
         self._annotate_ptms()
         self._annotate_motifs(go_terms)
-        if use_pfam:
-            self._annotate_domains()
+        # if use_pfam:
+        #     self._annotate_domains()
         if use_sstrct:
             self._annotate_secondary_structure()
 

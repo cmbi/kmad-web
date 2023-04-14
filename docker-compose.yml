@@ -24,13 +24,13 @@ services:
     depends_on:
       - rabbitmq
       - redis
-        # databanks:
-        #   build:
-        #     context: .
-        #     dockerfile: Dockerfile-databanks
-        #   command: bash /usr/src/app/schedule_updates.bash
-        #   volumes:
-        #     - "/srv/kmad:/data"
+  databanks:
+    build:
+      context: .
+      dockerfile: Dockerfile-databanks
+    command: bash /usr/src/app/schedule_updates.bash
+    #volumes:
+    #  - "/srv/kmad:/data"
   redis:
     image: redis
   rabbitmq:

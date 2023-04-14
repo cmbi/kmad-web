@@ -8,9 +8,11 @@ class BlastParser(object):
         self._swiss_db = True if db == 'swiss' else False
 
     def parse(self, blast_result):
+        blast_result = blast_result.decode('utf8')
         for l in blast_result.splitlines():
             blast_hit = {}
-            line_list = l.split(',')
+
+            line_list = l.split(",")
             blast_hit['header'] = line_list[1]
             if self._swiss_db:
                 blast_hit['entry_name'] = line_list[1].split('|')[2]

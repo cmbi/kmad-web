@@ -195,9 +195,9 @@ def create_fles(sequences, aligned_mode=False, use_pfam=True, use_sstrct=True):
 def annotate(sequences):
     _log.info("Annotating %s sequences", len(sequences))
     annotator = SequencesAnnotator()
-    annotator.annotate(sequences, use_pfam=True, use_sstrct=True)
+    annotator.annotate(sequences, use_pfam=False, use_sstrct=True)
     encoder = SequencesEncoder()
-    encoder.encode(sequences, aligned_mode=True, use_pfam=True, use_sstrct=True)
+    encoder.encode(sequences, aligned_mode=True, use_pfam=False, use_sstrct=True)
     return {
         'sequences': sequences,
         'motif_code_dict': invert_dict(encoder.motif_code_dict),
