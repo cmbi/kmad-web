@@ -11,8 +11,8 @@ RUN mkdir -p /deps
 RUN apt-get install -y libboost-all-dev libconfig++-dev
 RUN git clone https://github.com/cmbi/kmad.git /deps/kmad ;\
     cd /deps/kmad ;\
-    git checkout v1.08 ;\
-    cd /deps/kmad ; ./configure ; make -j ; make install ;\
+    git checkout kmad-fix ;\
+    cd /deps/kmad ; ./autogen.sh ; ./configure ; make -j ; make install ;\
     rm -rf /deps/kmad
 
 # Tisean
