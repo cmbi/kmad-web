@@ -40,6 +40,9 @@ class NetphosService(object):
                 result = subprocess.check_output(
                     args, stderr=subprocess.PIPE
                 ).decode("utf-8")
+                if "netphos-3.1b prediction results" not in result:
+                    raise ServiceError(f"Netphos run unsuccessful:\n{result}")
+
                 os.remove(fasta_filename)
             else:
                 _log.error("NetPhos not found: {}".format(self._path))

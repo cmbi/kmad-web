@@ -37,6 +37,7 @@ COPY vendor/netphos-3.1.Linux.tar.Z /deps
 RUN mkdir -p /deps/netphos ; tar zxf /deps/netphos-3.1.Linux.tar.Z -C /deps/netphos --strip-components=1
 RUN ln -s /deps/netphos/ape /usr/local/bin/netphos-3.1 ;\
     ln -s /usr/local/bin/netphos-3.1 /usr/local/bin/netphos ;\
+    ln -s /deps/netphos/bin/nnhowplayer6_Linux.i686 /deps/netphos/bin/nnhowplayer6_Linux.x86_64 ;\
     # Set environment variables
     sed -i '21s/.*/setenv  APE     \/deps\/netphos/' /deps/netphos/ape ;\
     sed -i '28s/.*/setenv  TMP     \/tmp/' /deps/netphos/ape ;\
