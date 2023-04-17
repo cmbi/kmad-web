@@ -76,5 +76,5 @@ class UniprotService(object):
             _log.error(msg)
             raise ServiceError(e)
         else:
-            result = request.text.decode("utf-8")
+            result = request.text
         return result
