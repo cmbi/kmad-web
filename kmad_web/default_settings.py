@@ -4,15 +4,15 @@ from kombu import Exchange, Queue
 
 # Celery
 CELERY_BROKER_URL = 'amqp://guest@kmad-web-rabbitmq-1'
-CELERY_DEFAULT_QUEUE = 'kmad_web'
-CELERY_QUEUES = (
+task_default_queue = 'kmad_web'
+task_queues = (
     Queue('kmad_web', Exchange('kmad_web'), routing_key='kmad_web'),
 )
 CELERY_RESULT_BACKEND = 'redis://kmad-web-redis-1/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERYBEAT_SCHEDULE = {
+accept_content = ['json']
+task_serializer = 'json'
+result_serializer = 'json'
+beat_schedule = {
     # Every month on the 1st at midnight
     'update_elmdb': {
         'task': 'kmad_web.tasks.update_elmdb',
@@ -38,7 +38,7 @@ CACHE_CONFIG = {
     }
 }
 
-CELERYD_CONCURRENCY = 8
+worker_concurrency = 8
 CELERYD_NODES = 3
 
 # service urls
