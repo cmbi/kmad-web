@@ -53,7 +53,7 @@ class DisopredService(object):
         except (subprocess.CalledProcessError, OSError) as e:
             msg = "\'{}\' raised:\n{}".format(' '.join(args), e)
             _log.error(msg)
-            raise ServiceError(e.message)
+            raise ServiceError(e)
         finally:
             if os.path.isfile(errlog_name):
                 os.remove(errlog_name)

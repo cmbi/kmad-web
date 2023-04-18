@@ -69,7 +69,8 @@ def process_prediction_results(predictions, fasta_sequence):
     sequence = ''.join(fasta_sequence.splitlines()[1:])
     if isinstance(predictions, list):
         predictions = filter(None, predictions)
-        predictions = {x.keys()[0]: x.values()[0] for x in predictions}
+        predictions = {list(x.keys())[0]: list(x.values())[0] for x in
+                       predictions}
     processor = PredictionProcessor()
     _log.debug("Predictions: %s", predictions)
     if predictions:

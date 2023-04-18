@@ -23,12 +23,20 @@ RUN wget -q http://www.mpipks-dresden.mpg.de/%7Etisean/TISEAN_3.0.1.tar.gz -P /d
     rm /deps/TISEAN_3.0.1.tar.gz ; rm -rf /deps/tisean
 
 # GlobPipe
-COPY globplot-fix_biopython.diff /usr/src/app
-RUN wget -q http://globplot.embl.de/html/GlobPipe-2.3.tgz -P /deps;\
-    mkdir -p /deps/globpipe ; tar zxf /deps/GlobPipe-2.3.tgz -C /deps/globpipe --strip-components=1 ;\
-    patch /deps/globpipe/GlobPipe.py /usr/src/app/globplot-fix_biopython.diff ;\
-    cp /deps/globpipe/GlobPipe.py /usr/local/bin ;\
-    rm /deps/GlobPipe-2.3.tgz ; rm -rf /deps/globpipe
+COPY vendor/GlobPipe.py /usr/local/bin/GlobPipe.py
+/*COPY globplot-fix_biopython.diff /usr/src/app*/
+/*RUN wget -q http://globplot.embl.de/html/GlobPipe-2.3.tgz -P /deps;\*/
+/*    mkdir -p /deps/globpipe ; tar zxf /deps/GlobPipe-2.3.tgz -C /deps/globpipe --strip-components=1 ;\*/
+/*    patch /deps/globpipe/GlobPipe.py /usr/src/app/globplot-fix_biopython.diff ;\*/
+/*    sed -i 's/env python/env python2.7/g' ;\*/
+/*    cp /deps/globpipe/GlobPipe.py /usr/local/bin ;\*/
+/*    rm /deps/GlobPipe-2.3.tgz ; rm -rf /deps/globpipe*/
+
+# install python2.7 with biopython for globpipe
+RUN apt-get install python2.7-dev ;\
+    wget https://bootstrap.pypa.io/pip/2.7/get-pip.py ;\
+    python2.7 get-pip.py ;\
+    pip2.7 install biopython==1.76
 
 # netphos
 # TODO: edit tsch script variables with sed

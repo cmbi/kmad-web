@@ -48,7 +48,7 @@ class SpinedService(object):
                 raise ServiceError(e)
         except subprocess.CalledProcessError as e:
             _log.error(e)
-            raise ServiceError(e.message)
+            raise ServiceError(e)
         finally:
             for file_path in [fasta_filename, out_file, errlog_name]:
                 if os.path.isfile(file_path):

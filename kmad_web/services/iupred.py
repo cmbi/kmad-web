@@ -42,8 +42,8 @@ class IupredService(object):
             self.check_output(data, fasta_sequence)
             return data
         except (subprocess.CalledProcessError, OSError) as e:
-            _log.error(e.message)
-            raise ServiceError(e.message)
+            _log.error(e)
+            raise ServiceError(e)
         finally:
             for path in [errlog_name, fasta_filename]:
                 if os.path.isfile(path):

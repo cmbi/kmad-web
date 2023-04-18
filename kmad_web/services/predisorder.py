@@ -46,7 +46,7 @@ class PredisorderService(object):
                 raise ServiceError(e)
         except subprocess.CalledProcessError as e:
             _log.error(e)
-            raise ServiceError(e.message)
+            raise ServiceError(e)
         finally:
             for path in [errlog_name, out_file, fasta_filename]:
                 if os.path.isfile(path):

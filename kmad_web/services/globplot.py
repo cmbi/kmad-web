@@ -19,7 +19,7 @@ class GlobplotService(object):
         _log.info("Calling GlobplotService")
 
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-        with tmp_file as f:
+        with open(tmp_file.name, "w") as f:
             f.write(fasta_sequence)
         fasta_filename = tmp_file.name
         errlog_name = fasta_filename + "_errlog"
@@ -28,7 +28,7 @@ class GlobplotService(object):
                 fasta_filename]
         try:
             with open(errlog_name, 'w') as err:
-                data = subprocess.check_output(args, stderr=err)
+                data = subprocess.check_output(args, stderr=err).decode("utf-8")
             empty_errlog = os.stat(errlog_name).st_size == 0
             if empty_errlog:
                 os.remove(errlog_name)
@@ -44,7 +44,7 @@ class GlobplotService(object):
             return data
         except subprocess.CalledProcessError as e:
             _log.error(e)
-            raise ServiceError(e.message)
+            raise ServiceError(e)
 
 
 globplot = GlobplotService(GLOBPLOT)

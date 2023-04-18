@@ -32,8 +32,8 @@ class PredictionProcessor(object):
 
     def get_consensus_disorder(self, predictions):
         consensus = []
-        half = float(len(predictions.keys()))/2
-        pred_keys = predictions.keys()
+        pred_keys = list(predictions.keys())
+        half = float(len(pred_keys)) / 2
         for i in range(len(predictions[pred_keys[0]])):
             column = [predictions[k][i] for k in pred_keys]
             if column.count(0) > half:

@@ -38,5 +38,5 @@ class PfamFeatureProvider(object):
         except (ServiceError, TimeoutError) as e:
             _log.info("Pfam service returns an error: {},"
                       "skipping domain search for this sequence".format(
-                          e.message))
+                          e))
         return domains
