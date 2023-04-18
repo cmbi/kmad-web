@@ -100,7 +100,7 @@ def prealign(sequences, alignment_method):
     fasta = sequences2fasta(sequences)
 
     tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-    with tmp_file as f:
+    with open(tmp_file.name, "w") as f:
         f.write(fasta)
 
     alignment_service = service_dict[alignment_method]()

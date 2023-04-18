@@ -59,7 +59,7 @@ class UserFeaturesParser(object):
             parsed_features = self._parse(usr_features)
             tmp_file = tempfile.NamedTemporaryFile(suffix=".cfg", delete=False)
             _log.debug("Created tmp file '{}'".format(tmp_file.name))
-            with tmp_file as f:
+            with open(tmp_file.name, "w") as f:
                 _log.debug("Writing data to '{}'".format(tmp_file.name))
                 f.write(parsed_features)
             return tmp_file.name

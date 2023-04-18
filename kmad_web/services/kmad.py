@@ -269,7 +269,7 @@ class PredictAndAlignStrategy(object):
 
         single_fasta_seq = get_first_seq(self._fasta)
         tmp_file = tempfile.NamedTemporaryFile(suffix=".fasta", delete=False)
-        with tmp_file as f:
+        with open(tmp_file.name, "w") as f:
             f.write(single_fasta_seq)
 
         if 'd2p2' in self._prediction_methods:
